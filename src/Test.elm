@@ -19,3 +19,84 @@ Integer nunc turpis, tristique ut leo in, ultricies rutrum purus. Pellentesque s
 
 Nullam fermentum purus vel sapien tristique ullamcorper. Duis at lacus felis. Phasellus eu ex porttitor, lacinia neque et, faucibus ante. Etiam sit amet libero in quam vehicula eleifend at eget dolor. Maecenas semper mi id magna facilisis ultrices. Donec nec enim auctor, aliquet turpis sed, gravida ipsum. Phasellus lacus ex, congue eget urna nec, placerat tincidunt augue. Proin aliquam magna nec ultrices ullamcorper. Proin eleifend urna velit, ullamcorper feugiat felis dignissim sed. Duis risus turpis, mattis a neque vitae, tempus tempus turpis. Donec nec tortor sodales, aliquet leo vitae, lacinia lacus. Vivamus ultricies lacus magna, cursus facilisis erat consequat et. Mauris in facilisis est.
 """
+
+
+dummyAsciidocText =
+    """
+
+== Elm: The Road to Mastery
+
+
+image::first_image.png[float=right, width=200]
+
+This course is a journey in which you will meet, then
+overcome a series of challenges.  Each challenge will
+ask that you build something.  At first these will
+acts of imitation, for no mastery is possible without
+learning from those who have come before.  Later challenges
+will ask you to create something of your own invention.
+
+
+You will make this journey in the company
+of your Elm Master, who will help you to find your way.
+You may ask your  Master any
+questions you have, and ask for whatever help you need.  In the
+beginning, you will have many questions and will need much help,
+for you are a Novice, and know little about the black
+art of Code.  However, as time progresses, you will have fewer questions
+will need less help, and steps that were painful and slow
+will become effortless and rapid.  How do I know this?  Because, I, your Elm Master,
+began as a Novice, as all Masters do.  The path is steep at first, even
+frustrating, but soon you gain both confidence and skill, and will
+be striding forward with ever quickening pace.  Let the quest begin!
+
+.Master's note
+This text, _The Road to Mastery,_ is deliberately spare.
+With fewer words to read, there is more time to think, and to do.
+Most important, on this journey, you travel with your Master.
+He is there for you, and for your questions. _Never
+ hesitate to ask a question.  He who asks learns
+faster than he who does not._
+
+.A word about mastery
+As mentioned, every master was once a Novice, then a Journeyman,
+and finally a Master.  But that is not the end.  A Master crafstman
+continues to learn from his fellows, and as well, higher masters.
+There is always more to learn about one's craft, one's craft is
+in a constant state of evolution and change. It is important that
+the Novice keep this in mind, for if he becomes a Master and then
+stops learning, his power will wither and a master he will no longer be.
+
+== The first mile
+
+Challenge 1:: Look at the web page http://elm-lang.org/examples[Elm examples].
+Run some of the code there
+
+Challenge 2::  Use `elm-reactor` to run the program `shapes.elm`. What do you
+see when the program runs?  Now look at the code. Study it.  Then explain it
+to your Master, line by line.
+
+.Master's note
+What is `elm-reactor`?  Where is the program `shapes.elm`?  Who knows?
+For that matter, what is code?  If you have not worked with it, touching
+it with your bare hands, you do not know, even if you have heard the
+words many times. Remember, you are a Novice.  Ask the Master.
+
+
+Challenge 3:: As you have seen, `shapes.elm` creates an image.  It was a beginner's
+image designed for you by your Master.  Make a copy of the file `shapes.elm`.  Then modify it
+to make a more interesting picture, one with more shapes.  It should please your
+eye.  When it does, look back at the code you have written. It should
+also please your eye.  If it does not, edit it.  When you are done,
+show the image you have made to your Master.  Also show him your code. Discuss
+it with him over a cup of tea.  The master loves conversation, for it reminds
+him of his youth.
+
+It is not too early to begin thinking about your own programs, which will be challenges
+not set by the Master, but set by you.  Discuss your ideas with your master.
+He too has set himself many challenges.
+
+Challenge 4:: You must begin to explore the world on your own. Take a look
+at http://elm-lang.org/[elm-lang.org]. And also at this: http://krisajenkins.github.io/elm-rays/[rays].
+What do you find?
+"""

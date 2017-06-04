@@ -7,6 +7,9 @@ import Css exposing (asPairs)
 import Test exposing (dummyText)
 
 
+-- import Koko.Asciidoc exposing (toHtml)
+
+
 type alias KWindow =
     { width : Int
     , height : Int
@@ -59,7 +62,9 @@ view model =
     --
     div []
         [ div [ id "header" ] [ text "Noteshare" ]
-        , div [ id "textPane" ] [ text Test.dummyText ]
+        , div [ id "textPane" ] [ text Test.dummyAsciidocText ]
+          --, div [ id "textPane2" ] [ toHtml [] Test.dummyAsciidocText ]
+        , div [ id "textPane2" ] [ text Test.dummyAsciidocText ]
         , div [ id "footer" ] [ text model.message ]
         ]
 

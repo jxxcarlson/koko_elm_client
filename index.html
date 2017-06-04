@@ -16,12 +16,17 @@
          overflow: scroll; margin-left:1em; background-color: #eee;
          width: 40%; height: Calc(100% - 109px);
          padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+      #textPane2 {position: absolute; top: 38px; left: Calc(40% + 70px);
+            overflow: scroll; margin-left:1em; background-color: #eee;
+            width: 40%; height: Calc(100% - 109px);
+            padding-left: 1em; padding-right: 1em; padding-top: 2em;}
     </style>
   </head>
 
   <body>
     <div id="elm-area"></div>
     <script src="elm.js"></script>
+    <script src="node_modules/asciidoctor.js/dist/asciidoctor.js"></script>
     <script>
       var app = Elm.Main.fullscreen(
           {
