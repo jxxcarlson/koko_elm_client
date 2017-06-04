@@ -4,15 +4,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Window exposing (..)
 import Css exposing (asPairs)
-
-
-styles =
-    Css.asPairs >> Html.Attributes.style
+import Test exposing (dummyText)
 
 
 type alias KWindow =
-    { height : Int
-    , width : Int
+    { width : Int
+    , height : Int
     }
 
 
@@ -33,7 +30,6 @@ updateWindow model w h =
         new_window =
             KWindow w h
     in
-        -- { model | window = new_window, message = "w: " ++ (toString w) ++ ", h: " ++ (toString h) }
         { model | window = new_window, message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height) }
 
 
@@ -60,14 +56,12 @@ windowCss model =
 
 view : Model -> Html Msg
 view model =
-    div [ styles (windowCss model) ]
+    --
+    div []
         [ div [ id "header" ] [ text "Noteshare" ]
+        , div [ id "textPane" ] [ text Test.dummyText ]
         , div [ id "footer" ] [ text model.message ]
         ]
-
-
-
--- main : Program Never Model Msg
 
 
 type alias Flags =
