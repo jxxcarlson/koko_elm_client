@@ -1,0 +1,11 @@
+elm-stuff/
+# elm.js
+experiments/
+node_modules/
+scratch.txt
+NOTES.html
+.idea/
+old_src
+elm.js
+references.adoc
+NOTES.adoc

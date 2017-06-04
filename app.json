@@ -1,0 +1,15 @@
+{
+    "name": "DocViewer in Elm",
+    "repository": "https://github.com/jxxcarlson/doc_viewer",
+    "env": {
+        "ELM_COMPILE": "elm make doc_viewer.elm --output elm.js"
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/srid/heroku-buildpack-elm.git"
+        },
+        {
+            "url": "https://github.com/hone/heroku-buildpack-static"
+        }
+    ]
+}
