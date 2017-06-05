@@ -3,28 +3,26 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Window exposing (..)
-import Css exposing (asPairs)
 import Test exposing (dummyText)
+import Types exposing (..)
+import Views.Component exposing (pageSelector)
+import Views.Home exposing (home)
+import Views.Reader exposing (reader)
+import Views.Editor exposing (editor)
+import Css exposing (asPairs)
+import Utility exposing (styles)
 
 
 -- import Koko.Asciidoc exposing (toHtml)
 
 
-type alias KWindow =
-    { width : Int
-    , height : Int
-    }
-
-
-type alias Model =
-    { window : KWindow
-    , message : String
-    }
-
-
-type Msg
-    = NoOp
-    | Resize Int Int
+main =
+    programWithFlags
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 updateWindow : Model -> Int -> Int -> Model
@@ -45,6 +43,9 @@ update msg model =
         Resize w h ->
             ( (updateWindow model w h), Cmd.none )
 
+        GoTo p ->
+            ( { model | page = p }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -57,14 +58,27 @@ windowCss model =
     ]
 
 
+page : Model -> Html Msg
+page model =
+    case model.page of
+        ReaderPage ->
+            reader model
+
+        EditorPage ->
+            editor model
+
+        HomePage ->
+            home model
+
+
 view : Model -> Html Msg
 view model =
     --
     div []
-        [ div [ id "header" ] [ text "Noteshare" ]
-        , div [ id "textPane" ] [ text Test.dummyAsciidocText ]
-          --, div [ id "textPane2" ] [ toHtml [] Test.dummyAsciidocText ]
-        , div [ id "textPane2" ] [ text Test.dummyAsciidocText ]
+        [ div [ id "header" ]
+            [ Views.Component.pageSelector model
+            ]
+        , (page model)
         , div [ id "footer" ] [ text model.message ]
         ]
 
@@ -77,15 +91,6 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( Model (KWindow flags.width flags.height) "Start!"
+    ( Model (KWindow flags.width flags.height) HomePage "Start!"
     , Cmd.none
     )
-
-
-main =
-    programWithFlags
-        { init = init
-        , view = view
-        , update = update
-        , subscriptions = subscriptions
-        }
