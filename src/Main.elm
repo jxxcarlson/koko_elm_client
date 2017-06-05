@@ -5,9 +5,7 @@ import Html.Attributes exposing (..)
 import Window exposing (..)
 import Css exposing (asPairs)
 import Test exposing (dummyText)
-
-
--- import Koko.Asciidoc exposing (toHtml)
+import Koko.Asciidoc exposing (toHtml)
 
 
 type alias KWindow =
@@ -63,8 +61,8 @@ view model =
     div []
         [ div [ id "header" ] [ text "Noteshare" ]
         , div [ id "textPane" ] [ text Test.dummyAsciidocText ]
-          --, div [ id "textPane2" ] [ toHtml [] Test.dummyAsciidocText ]
-        , div [ id "textPane2" ] [ text Test.dummyAsciidocText ]
+        , div [ id "textPane2" ] [ toHtml [] Test.dummyAsciidocText ]
+          -- , div [ id "textPane2" ] [ text Test.dummyAsciidocText ]
         , div [ id "footer" ] [ text model.message ]
         ]
 
