@@ -49,10 +49,11 @@ subscriptions model =
     Window.resizes (\{ width, height } -> Resize width height)
 
 
-windowCss model =
-    [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
-    , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
-    ]
+
+-- windowCss model =
+--     [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
+--     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
+--     ]
 
 
 view : Model -> Html Msg
