@@ -34,7 +34,7 @@ updateWindow model w h =
         new_window =
             KWindow w h
     in
-        { model | window = new_window, message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height) }
+        { model | window = new_window }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -106,10 +106,14 @@ view model =
     --
     div []
         [ div [ id "header" ]
-            [ Views.Component.pageSelector model
+            [ span [] [ text "Noteshare" ]
+            , Views.Component.pageSelector model
             ]
         , (page model)
-        , div [ id "footer" ] [ text (model.message ++ ", info: " ++ model.info) ]
+        , div [ id "footer" ]
+            [ span [ id "message" ] [ text model.message ]
+            , span [ id "info" ] [ text model.info ]
+            ]
         ]
 
 
@@ -131,7 +135,7 @@ init flags =
         ( Model
             (KWindow flags.width flags.height)
             HomePage
-            "Start!"
+            "Please sign in"
             current_user
             registerUser
             ""

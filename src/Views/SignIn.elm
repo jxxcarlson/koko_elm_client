@@ -37,12 +37,14 @@ signoutView : Model -> Html Msg
 signoutView model =
     div []
         [ div [ id "login" ]
-            [ p [ id "username" ] [ text ("Signed in as " ++ model.current_user.username) ]
-            , br [] []
-            , br [] []
-            , button [ id "logoutButton", onClick Signout ] [ text "Sign out" ]
-            , div [ id "carbonAd" ] [ text "Carbon B" ]
+            [ div [ id "loginForm2" ]
+                [ p [ id "username" ] [ text ("Signed in as " ++ model.current_user.username) ]
+                , br [] []
+                , br [] []
+                , button [ id "logoutButton", onClick Signout ] [ text "Sign out" ]
+                ]
             ]
+        , div [ id "carbonAd2" ] [ text "Carbon B" ]
         ]
 
 
@@ -73,6 +75,7 @@ signinForm model =
         , button [ id "loginButton", onClick Login ] [ text "Sign in" ]
         , br [] []
         , br [] []
+        , p [] [ text model.info ]
         ]
 
 
@@ -94,4 +97,5 @@ registerUserForm model =
         , button [ id "loginButton", onClick Register ] [ text "Sign up" ]
         , br [] []
         , br [] []
+        , p [] [ text model.info ]
         ]
