@@ -11,6 +11,9 @@ import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Css exposing (asPairs)
 import Utility exposing (styles)
+import Action.User exposing (..)
+import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
+import Request.Api exposing (loginUrl, registerUserUrl)
 
 
 -- import Koko.Asciidoc exposing (toHtml)
@@ -46,6 +49,33 @@ update msg model =
         GoTo p ->
             ( { model | page = p }, Cmd.none )
 
+        Name name ->
+            updateName model name
+
+        Username username ->
+            updateUsername model username
+
+        Email email ->
+            updateEmail model email
+
+        Password password ->
+            updatePassword model password
+
+        Login ->
+            ( model, loginUserCmd model loginUrl )
+
+        Register ->
+            ( model, registerUserCmd model registerUserUrl )
+
+        GetTokenCompleted result ->
+            getTokenCompleted model result
+
+        Signout ->
+            signout model
+
+        ToggleRegister ->
+            ( { model | registerUser = not model.registerUser }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -79,7 +109,7 @@ view model =
             [ Views.Component.pageSelector model
             ]
         , (page model)
-        , div [ id "footer" ] [ text model.message ]
+        , div [ id "footer" ] [ text (model.message ++ ", info: " ++ model.info) ]
         ]
 
 
@@ -91,6 +121,20 @@ type alias Flags =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( Model (KWindow flags.width flags.height) HomePage "Start!"
-    , Cmd.none
-    )
+    let
+        current_user =
+            User "" "" "" "" ""
+
+        registerUser =
+            False
+    in
+        ( Model
+            (KWindow flags.width flags.height)
+            HomePage
+            "Start!"
+            current_user
+            registerUser
+            ""
+            ""
+        , Cmd.none
+        )
