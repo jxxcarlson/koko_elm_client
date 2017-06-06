@@ -8,7 +8,7 @@ import Types exposing (Model, Msg)
 import Test exposing (..)
 
 
--- import Koko.Asciidoc
+import Koko.Asciidoc
 
 
 styles =

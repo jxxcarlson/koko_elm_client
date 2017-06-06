@@ -39,9 +39,7 @@ module.exports = {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file-loader',
       },
-    ],
-
-    noParse: /\.elm$/,
+    ]
   },
 
   devServer: {
@@ -49,5 +47,10 @@ module.exports = {
     stats: { colors: true },
   },
 
+    node: {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty'
+    }
 
 };
