@@ -5,8 +5,10 @@ import Html.Attributes exposing (..)
 import Html.Events as HE exposing (onClick)
 import Css exposing (asPairs)
 import Types exposing (Model, Msg)
-import Test exposing (..)
-import Koko.Mathjax exposing (toHtml)
+import Views.Component exposing (toolSelectorPanel, toolSelector)
+
+
+-- import Koko.Mathjax exposing (toHtml)
 
 
 styles =
@@ -16,5 +18,8 @@ styles =
 reader : Model -> Html Msg
 reader model =
     div []
-        [ div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
+        [ div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
+        , div [ id "toolPane" ] [ toolSelector model ]
+        , div [ id "textPane" ] [ text model.current_document.rendered_content ]
+          --[ div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
         ]

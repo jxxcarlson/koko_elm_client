@@ -1,7 +1,6 @@
 module Types exposing (..)
 
 import Http
-import Navigation
 
 
 type alias User =
@@ -24,6 +23,7 @@ type alias Document =
 type alias Model =
     { window : KWindow
     , page : Page
+    , tool : Tool
     , message : String
     , current_user : User
     , registerUser : Bool
@@ -48,6 +48,7 @@ type Msg
     | Username String
     | SendToJs String
     | UpdateStr String
+    | SelectTool Tool
 
 
 type Page
@@ -69,6 +70,11 @@ pageName page =
             "Editor"
 
 
+type Tool
+    = TableOfContents
+    | EditorTools
+
+
 type alias Flags =
     { width : Int
     , height : Int
@@ -84,15 +90,22 @@ init flags =
         registerUser =
             False
 
+        title =
+            "Test document"
+
         text =
-            "The formula is $\\int_0^1 x^n = \\frac{1}{n}$"
+            "The correct formula is $$\\int_0^1 x^n = \\frac{1}{n}$$"
+
+        rendered_text =
+            "The *RENDERED formula* is $$\\int_0^1 x^n = \\frac{1}{n}$$ (HA HA HA!)"
 
         doc =
-            Document "Test document" text text
+            Document title text rendered_text
     in
         ( Model
             (KWindow flags.width flags.height)
             HomePage
+            TableOfContents
             "Please sign in"
             current_user
             registerUser

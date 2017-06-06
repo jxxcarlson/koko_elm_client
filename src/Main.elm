@@ -50,6 +50,9 @@ update msg model =
         GoTo p ->
             ( { model | page = p }, Cmd.none )
 
+        SelectTool t ->
+            ( { model | tool = t }, Cmd.none )
+
         Name name ->
             updateName model name
 

@@ -16,6 +16,46 @@ selectedClass page model =
         "isNotSelected"
 
 
+selectedToolClass : Tool -> Model -> String
+selectedToolClass tool model =
+    if tool == model.tool then
+        "isSelected"
+    else
+        "isNotSelected"
+
+
+toolSelectorPanel : Model -> Html Msg
+toolSelectorPanel model =
+    span
+        [ styles [ Css.marginLeft (Css.px 8.0) ] ]
+        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass TableOfContents model) ]
+            [ Html.text "TOC" ]
+        , button
+            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass EditorTools model) ]
+            [ Html.text "Edit" ]
+        ]
+
+
+toolSelector : Model -> Html Msg
+toolSelector model =
+    case model.tool of
+        TableOfContents ->
+            tableOfContents model
+
+        EditorTools ->
+            editorTools model
+
+
+editorTools : Model -> Html Msg
+editorTools model =
+    div [] [ Html.text "Editor Tools" ]
+
+
+tableOfContents : Model -> Html Msg
+tableOfContents model =
+    div [] [ Html.text "Table of Contents" ]
+
+
 pageSelector : Model -> Html Msg
 pageSelector model =
     span [ styles [ Css.marginLeft (Css.px 100.0) ] ]
