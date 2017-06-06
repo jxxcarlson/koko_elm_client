@@ -19,9 +19,6 @@ editor model =
         [ div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
         , div [ id "toolPane" ] [ toolSelector model ]
         , div [ id "editPane" ] [ text model.current_document.content ]
-        , div [ id "editPane2" ] [ toHtml [] "*This* is a _TEST!_" ]
+        , div [ id "editPane2" ] [ text model.current_document.rendered_content ]
+          --, div [ id "editPane2" ] [ toHtml [] model.current_document.rendered_content ]
         ]
-
-
-
---  div [ id "editPane2" ] [ toHtml [] model.current_document.rendered_content ]

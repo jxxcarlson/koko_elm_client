@@ -1,0 +1,67 @@
+html { background-color: #aaa}
+body { margin-left: auto; margin-right:auto; font-family: Verdana; }
+button { width: 70px; height: 24px;  margin-right: 10px;
+  font-size:0.9em; border: none; background-color: white;}
+input { width: 280px; height: 26px;  margin-right: 10px; padding-left: 1em;
+    font-size:0.9em; border: none; background-color: white;}
+smallButton { width: 55px; height: 30px; margin-right: 8px;
+    background-color: black; color: white;}
+#elm-area { background-color: #fafafa; }
+#header {position: absolute; left: 0px; top: 0px;
+   width:100%; height:30px; padding-left: 10px; padding-top:7px;
+   color: white;background-color:#444; }
+#footer {position: absolute; left: 0px; bottom: 0px;
+   width:100%; height:30px; padding-left: 10px; padding-top:7px;
+   color: white;background-color:#444; }
+
+
+
+#login {  position: absolute; right: 30px; top: 40px; padding-bottom: 1em;  }
+
+#loginForm {
+      width: 300px; height: 240px; background-color: #ddd;
+      padding-left: 1.4em; padding-right: 1em; padding-top: 2em;}
+
+#loginForm2 { position: absolute; right: 60px; top: 40px;
+            width: 240px; height: 240px; background-color: #ddd;
+            padding-left: 1.4em; padding-right: 1em; padding-top: 2em;}
+
+#carbonAd { position: absolute; right: 140px; top: 440px; padding: 15px;
+  width: 200px; height: 150px; color: white; background-color: #444;}
+
+#carbonAd2 { position: absolute; right: 90px; top: 390px; padding: 15px;
+    width: 250px; height: 200px; color: white; background-color: #444;}
+
+
+#toolSelectorPanel {position: absolute; top: 37px; left: 0;
+    background-color: #444; border: solid 1px; padding-top: 7px;
+           width: 25%; height: 30px;
+  }
+
+#toolPane {position: absolute; top: 75px; left: 0;
+      overflow: scroll;
+      width: 20%; height: Calc(100% - 149px);
+      background-color: #eeeeff; border: solid 1px;
+      padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+
+#textPane {position: absolute; top: 37px; left: Calc(20% + 1em);
+       overflow: scroll; margin-left:1em; background-color: #eee;
+       width: 40%; height: Calc(100% - 109px); border: solid 1px;
+       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+
+#editPane {position: absolute; top: 38px; right: Calc(35% + 5px);;
+   overflow: scroll; margin-left:1em; background-color: #eee;
+   width: 40%; height: Calc(100% - 109px); border: solid 1px;
+   padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+
+#editPane2 {position: absolute; top: 38px; right: 0px;
+      overflow: scroll; margin-left:1em; background-color: #eee;
+      width: 38%; height: Calc(100% - 109px);
+      background-color: #ffffee; border:1px; border: solid 1px;
+      padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+
+#id {margin-left: 20px;}
+#info{margin-left: 200px; }
+.isSelected { background-color: #780000; color: white; }
+.isNotSelected {}
+.wide_button { width: 140px; height: 30px;}
