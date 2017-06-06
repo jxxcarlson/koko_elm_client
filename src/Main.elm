@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Window exposing (..)
 import Test exposing (dummyText)
+<<<<<<< HEAD
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
 import Views.Home exposing (home)
@@ -18,6 +19,8 @@ import Request.Api exposing (loginUrl, registerUserUrl)
 
 -- import JSInterface exposing (toJs)
 -- import Koko.Asciidoc exposing (toHtml)
+
+import Koko.Asciidoc exposing (toHtml)
 
 
 main =
@@ -111,6 +114,12 @@ windowCss model =
     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
     ]
 
+-- windowCss model =
+--     [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
+--     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
+--     ]
+
+
 
 page : Model -> Html Msg
 page model =
@@ -129,6 +138,7 @@ view : Model -> Html Msg
 view model =
     --
     div []
+
         [ div [ id "header" ]
             [ span [] [ text "Noteshare" ]
             , Views.Component.pageSelector model
