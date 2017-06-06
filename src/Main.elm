@@ -4,7 +4,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Window exposing (..)
 import Test exposing (dummyText)
-<<<<<<< HEAD
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
 import Views.Home exposing (home)
@@ -114,11 +113,12 @@ windowCss model =
     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
     ]
 
+
+
 -- windowCss model =
 --     [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
 --     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
 --     ]
-
 
 
 page : Model -> Html Msg
@@ -138,7 +138,6 @@ view : Model -> Html Msg
 view model =
     --
     div []
-
         [ div [ id "header" ]
             [ span [] [ text "Noteshare" ]
             , Views.Component.pageSelector model

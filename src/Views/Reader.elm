@@ -6,6 +6,7 @@ import Html.Events as HE exposing (onClick)
 import Css exposing (asPairs)
 import Types exposing (Model, Msg)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
+import Koko.Mathjax exposing (toHtml)
 
 
 -- import Koko.Mathjax exposing (toHtml)
@@ -20,6 +21,5 @@ reader model =
     div []
         [ div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
         , div [ id "toolPane" ] [ toolSelector model ]
-        , div [ id "textPane" ] [ text model.current_document.rendered_content ]
-          --[ div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
+        , div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
         ]

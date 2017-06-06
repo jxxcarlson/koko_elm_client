@@ -4,6 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE exposing (onClick)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
+import Koko.Mathjax exposing (toHtml)
 
 
 -- import Css exposing (asPairs)
@@ -18,5 +19,9 @@ editor model =
         [ div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
         , div [ id "toolPane" ] [ toolSelector model ]
         , div [ id "editPane" ] [ text model.current_document.content ]
-        , div [ id "editPane2" ] [ text model.current_document.rendered_content ]
+        , div [ id "editPane2" ] [ toHtml [] "*This* is a _TEST!_" ]
         ]
+
+
+
+--  div [ id "editPane2" ] [ toHtml [] model.current_document.rendered_content ]

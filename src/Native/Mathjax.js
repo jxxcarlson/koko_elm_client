@@ -1,5 +1,5 @@
 
-var MathJax = require('MathJax');
+// var MathJax = require('MathJax');
 
 var _user$project$Native_Mathjax = function() {
 
