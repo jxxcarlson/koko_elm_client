@@ -14,6 +14,13 @@ type alias KWindow =
     }
 
 
+type alias Document =
+    { title : String
+    , content : String
+    , rendered_content : String
+    }
+
+
 type alias Model =
     { window : KWindow
     , page : Page
@@ -22,6 +29,7 @@ type alias Model =
     , registerUser : Bool
     , errorMsg : String
     , info : String
+    , current_document : Document
     }
 
 
@@ -38,6 +46,8 @@ type Msg
     | Password String
     | Name String
     | Username String
+    | SendToJs String
+    | UpdateStr String
 
 
 type Page
@@ -57,3 +67,37 @@ pageName page =
 
         EditorPage ->
             "Editor"
+
+
+type alias Flags =
+    { width : Int
+    , height : Int
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    let
+        current_user =
+            User "" "" "" "" ""
+
+        registerUser =
+            False
+
+        text =
+            "The formula is $\\int_0^1 x^n = \\frac{1}{n}$"
+
+        doc =
+            Document "Test document" text text
+    in
+        ( Model
+            (KWindow flags.width flags.height)
+            HomePage
+            "Please sign in"
+            current_user
+            registerUser
+            ""
+            ""
+            doc
+        , Cmd.none
+        )

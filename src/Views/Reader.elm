@@ -6,6 +6,7 @@ import Html.Events as HE exposing (onClick)
 import Css exposing (asPairs)
 import Types exposing (Model, Msg)
 import Test exposing (..)
+import Koko.Mathjax exposing (toHtml)
 
 
 styles =
@@ -15,5 +16,5 @@ styles =
 reader : Model -> Html Msg
 reader model =
     div []
-        [ div [ id "textPane" ] [ text Test.dummyAsciidocText ]
+        [ div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
         ]

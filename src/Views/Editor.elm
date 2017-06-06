@@ -3,13 +3,12 @@ module Views.Editor exposing (editor)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE exposing (onClick)
-import Css exposing (asPairs)
+
+
+-- import Css exposing (asPairs)
+
 import Types exposing (Model, Msg)
 import Test exposing (..)
-
-
-styles =
-    Css.asPairs >> Html.Attributes.style
 
 
 editor : Model -> Html Msg

@@ -11,6 +11,16 @@ var mountNode = document.getElementById('main');
 
 // .embed() can take an optional second argument. This would be an object describing the data we need to start a program, i.e. a userID or some token
 // var app = Elm.Main.embed(mountNode);
+// receive something from Elm
+
+// https://hackernoon.com/how-elm-ports-work-with-a-picture-just-one-25144ba43cdd
+
+// <script type="text/x-mathjax-config">
+//   MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+// </script>
+//     <script type="text/javascript" async
+//             src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+//     </script>
 
 var app = Elm.Main.fullscreen(
     {
@@ -18,3 +28,15 @@ var app = Elm.Main.fullscreen(
         height: window.innerHeight
     }
   );
+
+
+  app.ports.render.subscribe(function(rendered_text) {
+        document.getElementById('textPane').innerHTML = rendered_text
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    });
+
+  app.ports.toJs.subscribe(function (str) {
+    console.log("got from Elm:", str);
+  });
+
+  app.ports.toElm.send("undefined is not a function");

@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -16,6 +16,7 @@ import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Api exposing (loginUrl, registerUserUrl)
 
 
+-- import JSInterface exposing (toJs)
 -- import Koko.Asciidoc exposing (toHtml)
 
 
@@ -76,10 +77,30 @@ update msg model =
         ToggleRegister ->
             ( { model | registerUser = not model.registerUser }, Cmd.none )
 
+        SendToJs str ->
+            ( model, toJs str )
+
+        UpdateStr str ->
+            ( { model | info = str }, Cmd.none )
+
+
+port toJs : String -> Cmd msg
+
+
+port toElm : (String -> msg) -> Sub msg
+
+
+port render : String -> Cmd msg
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Window.resizes (\{ width, height } -> Resize width height)
+
+
+subscriptions2 : Model -> Sub Msg
+subscriptions2 model =
+    toElm UpdateStr
 
 
 windowCss model =
@@ -115,30 +136,3 @@ view model =
             , span [ id "info" ] [ text model.info ]
             ]
         ]
-
-
-type alias Flags =
-    { width : Int
-    , height : Int
-    }
-
-
-init : Flags -> ( Model, Cmd Msg )
-init flags =
-    let
-        current_user =
-            User "" "" "" "" ""
-
-        registerUser =
-            False
-    in
-        ( Model
-            (KWindow flags.width flags.height)
-            HomePage
-            "Please sign in"
-            current_user
-            registerUser
-            ""
-            ""
-        , Cmd.none
-        )
