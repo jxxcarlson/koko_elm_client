@@ -6,6 +6,7 @@ import Html.Events as HE exposing (onClick)
 import Utility exposing (styles)
 import Types exposing (..)
 import Css exposing (..)
+import Views.Search exposing (documentListView)
 
 
 selectedClass : Page -> Model -> String
@@ -53,7 +54,7 @@ editorTools model =
 
 tableOfContents : Model -> Html Msg
 tableOfContents model =
-    div [] [ Html.text "Table of Contents" ]
+    div [] [ documentListView model ]
 
 
 pageSelector : Model -> Html Msg

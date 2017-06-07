@@ -22,6 +22,15 @@ type alias Document =
     }
 
 
+type alias Documents =
+    List Document
+
+
+type alias DocumentsRecord =
+    { documents : Documents
+    }
+
+
 type alias Model =
     { window : KWindow
     , page : Page
@@ -32,6 +41,7 @@ type alias Model =
     , errorMsg : String
     , info : String
     , current_document : Document
+    , documents : Documents
     , searchTerms : String
     }
 
@@ -45,6 +55,7 @@ type Msg
     | Signout
     | ToggleRegister
     | GetTokenCompleted (Result Http.Error String)
+    | GetDocuments (Result Http.Error String)
     | Email String
     | Password String
     | Name String
@@ -54,6 +65,7 @@ type Msg
     | SelectTool Tool
     | SetSearchTerm String
     | KeyUp Int
+    | SelectDocument Document
 
 
 type Page
@@ -84,6 +96,10 @@ type alias Flags =
     { width : Int
     , height : Int
     }
+
+
+defaultDocument =
+    Document 0 0 "Default document" "Yada" "Yada"
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -117,6 +133,7 @@ init flags =
             ""
             ""
             doc
+            [ doc ]
             ""
         , Cmd.none
         )

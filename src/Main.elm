@@ -13,7 +13,10 @@ import Css exposing (asPairs)
 import Utility exposing (styles)
 import Action.User exposing (..)
 import Action.Search exposing (..)
+import Action.Document exposing (updateDocuments)
+import Data.Document exposing (documents)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
+import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
 
@@ -96,10 +99,24 @@ update msg model =
         KeyUp key ->
             if key == 13 then
                 ( { model | info = "I will search on: " ++ model.searchTerms }
-                , Cmd.none
+                , getDocumentsWith model.searchTerms
                 )
             else
                 ( model, Cmd.none )
+
+        GetDocuments (Ok serverReply) ->
+            case (Data.Document.documents serverReply) of
+                Ok documentsRecord ->
+                    updateDocuments model documentsRecord
+
+                Err _ ->
+                    ( { model | info = "Could not decode server reply" }, Cmd.none )
+
+        GetDocuments (Err _) ->
+            ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+
+        SelectDocument document ->
+            ( { model | current_document = document }, Cmd.none )
 
 
 port toJs : String -> Cmd msg
