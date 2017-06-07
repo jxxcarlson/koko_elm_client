@@ -45,8 +45,8 @@ readerToolSelectorPanel model =
         ]
 
 
-editorToolSelectorPanel : Model -> Html Msg
-editorToolSelectorPanel model =
+toolSelectorPanel : Model -> Html Msg
+toolSelectorPanel model =
     span
         [ styles [ Css.marginLeft (Css.px 8.0) ] ]
         [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass2 TableOfContents model) ]
@@ -57,26 +57,17 @@ editorToolSelectorPanel model =
         ]
 
 
-readerToolSelector : Model -> Html Msg
-readerToolSelector model =
+toolSelector : Model -> Html Msg
+toolSelector model =
     case model.tool of
         TableOfContents ->
             tableOfContents model
 
+        EditorTools ->
+            editorTools model
+
         ReaderTools ->
             readerTools model
-
-
-toolSelector : Model -> Page -> Html Msg
-toolSelector model page =
-    case page of
-        EditorPage ->
-            case model.editor_tool of
-                TableOfContents ->
-                    tableOfContents model
-
-                EditorTools ->
-                    editorTools model
 
 
 editorTools : Model -> Html Msg

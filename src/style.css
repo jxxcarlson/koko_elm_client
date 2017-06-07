@@ -73,6 +73,8 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 .selected { color: #944; font-style: bold}
 .isSelected { background-color: #780000; color: white; }
 .isNotSelected {}
+.isSelected2 { background-color: #780000; color: white; }
+.isNotSelected2 {}  
 .wide_button { width: 140px; height: 30px;}
 ul { list-style-type: none; margin:0; padding:0; font-size:0.95em;}
 li {margin-bottom: 0.3em;}

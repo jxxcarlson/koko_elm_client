@@ -90,6 +90,7 @@ pageName page =
 type Tool
     = TableOfContents
     | EditorTools
+    | ReaderTools
 
 
 type alias Flags =
