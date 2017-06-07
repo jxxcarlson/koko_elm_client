@@ -12,8 +12,10 @@ import Views.Editor exposing (editor)
 import Css exposing (asPairs)
 import Utility exposing (styles)
 import Action.User exposing (..)
+import Action.Search exposing (..)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Api exposing (loginUrl, registerUserUrl)
+import Views.Search exposing (documentSearchForm)
 
 
 -- import JSInterface exposing (toJs)
@@ -88,6 +90,17 @@ update msg model =
         UpdateStr str ->
             ( { model | info = str }, Cmd.none )
 
+        SetSearchTerm searchTerms ->
+            updateSearch model searchTerms
+
+        KeyUp key ->
+            if key == 13 then
+                ( { model | info = "I will search on: " ++ model.searchTerms }
+                , Cmd.none
+                )
+            else
+                ( model, Cmd.none )
+
 
 port toJs : String -> Cmd msg
 
@@ -141,6 +154,7 @@ view model =
         [ div [ id "header" ]
             [ span [] [ text "Noteshare" ]
             , Views.Component.pageSelector model
+            , Views.Search.documentSearchForm model
             ]
         , (page model)
         , div [ id "footer" ]

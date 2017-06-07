@@ -14,7 +14,9 @@ type alias KWindow =
 
 
 type alias Document =
-    { title : String
+    { id : Int
+    , author_id : Int
+    , title : String
     , content : String
     , rendered_content : String
     }
@@ -30,6 +32,7 @@ type alias Model =
     , errorMsg : String
     , info : String
     , current_document : Document
+    , searchTerms : String
     }
 
 
@@ -49,6 +52,8 @@ type Msg
     | SendToJs String
     | UpdateStr String
     | SelectTool Tool
+    | SetSearchTerm String
+    | KeyUp Int
 
 
 type Page
@@ -100,7 +105,7 @@ init flags =
             "The *RENDERED formula* is $$\\int_0^1 x^n = \\frac{1}{n}$$ (HA HA HA!)"
 
         doc =
-            Document title text rendered_text
+            Document 0 0 title text rendered_text
     in
         ( Model
             (KWindow flags.width flags.height)
@@ -112,5 +117,6 @@ init flags =
             ""
             ""
             doc
+            ""
         , Cmd.none
         )
