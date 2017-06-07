@@ -13,11 +13,18 @@ updateDocuments model documentsRecord =
 
                 Nothing ->
                     defaultDocument
+
+        page =
+            if model.page == HomePage then
+                ReaderPage
+            else
+                model.page
     in
         ( { model
             | documents = documentsRecord.documents
             , current_document = current_document
-            , info = (toString (List.length model.documents)) ++ " documents found"
+            , page = page
+            , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.none
         )

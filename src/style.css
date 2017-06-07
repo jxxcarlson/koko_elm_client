@@ -9,6 +9,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 #elm-area { background-color: #fafafa; }
 #header {position: absolute; left: 0px; top: 0px;
    width:100%; height:30px; padding-left: 10px; padding-top:7px;
+   padding-bottom:7px;
    color: white;background-color:#444; }
 #footer {position: absolute; left: 0px; bottom: 0px;
    width:100%; height:30px; padding-left: 10px; padding-top:7px;
@@ -33,44 +34,45 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
     width: 250px; height: 200px; color: white; background-color: #444;}
 
 
-#toolSelectorPanel {position: absolute; top: 37px; left: 0;
-    background-color: #777; padding-top: 7px;
+#toolSelectorPanel {position: absolute; top: 44px; left: 0;
+    background-color: #777; padding-top: 7px; padding-left: 1em;
            width: 20%; height: 32px;
   }
 
-#toolPane {position: absolute; top: 75px; left: 0;
+#toolPane {position: absolute; top: 82px; left: 0;
       overflow: scroll;
       width: 20%; height: Calc(100% - 145px);
-      background-color: #eeeeff; border: solid 1px;
+      background-color: #ccccff; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
-#titlePane {position: absolute; top: 37px; left: Calc(20% + 32px);
+#titlePane {position: absolute; top: 44px; left: Calc(20%);
     background-color: #eee; padding-top: 7px;
     padding-left: 1em; padding-right: 1em;
-           width: Calc(40% - 10px); height: 32px;
+           width: Calc(40% - 2em); height: 32px;
            font-size: 1.3em;
   }
 
-#textPane {position: absolute; top: 75px; left: Calc(20% + 1em);
+#textPane {position: absolute; top: 82px; left: Calc(20% - 1em);
        overflow: scroll; margin-left:1em; background-color: #eee;
-       width: 40%; height: Calc(100% - 145px); border: solid 1px;
+       width: Calc(40% - 2em); height: Calc(100% - 145px); border: solid 1px;
        padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
-#editPane {position: absolute; top: 38px; right: Calc(35% + 5px);;
+#editPane {position: absolute; top: 70px; right: 40%;
    overflow: scroll; margin-left:1em; background-color: #eee;
-   width: 40%; height: Calc(100% - 109px); border: solid 1px;
+   width: Calc(40% - 2em); height: Calc(100% - 147px); border: solid 1px;
    padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
-#editPane2 {position: absolute; top: 38px; right: 0px;
-      overflow: scroll; margin-left:1em; background-color: #eee;
-      width: 38%; height: Calc(100% - 109px);
+#editPane2 {position: absolute; top: 43px; right: 0px;
+      overflow: scroll; background-color: #eee;
+      width: Calc(40% - 2em); height: Calc(100% - 109px);
       background-color: #ffffee; border:1px; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
 #id {margin-left: 20px;}
 #info{margin-left: 200px; }
-.selected { color: #d44; font-style: bold}
+.selected { color: #944; font-style: bold}
 .isSelected { background-color: #780000; color: white; }
 .isNotSelected {}
 .wide_button { width: 140px; height: 30px;}
-ul { list-style-type: none; margin:0; padding:0; font-size:0.85em;}
+ul { list-style-type: none; margin:0; padding:0; font-size:0.95em;}
+li {margin-bottom: 0.3em;}

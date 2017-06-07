@@ -25,31 +25,68 @@ selectedToolClass tool model =
         "isNotSelected"
 
 
-toolSelectorPanel : Model -> Html Msg
-toolSelectorPanel model =
+selectedToolClass2 : Tool -> Model -> String
+selectedToolClass2 tool model =
+    if tool == model.tool then
+        "isSelected2"
+    else
+        "isNotSelected2"
+
+
+readerToolSelectorPanel : Model -> Html Msg
+readerToolSelectorPanel model =
     span
         [ styles [ Css.marginLeft (Css.px 8.0) ] ]
-        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass TableOfContents model) ]
+        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass2 TableOfContents model) ]
             [ Html.text "TOC" ]
         , button
-            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass EditorTools model) ]
-            [ Html.text "Edit" ]
+            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass2 ReaderTools model) ]
+            [ Html.text "Tools" ]
         ]
 
 
-toolSelector : Model -> Html Msg
-toolSelector model =
+editorToolSelectorPanel : Model -> Html Msg
+editorToolSelectorPanel model =
+    span
+        [ styles [ Css.marginLeft (Css.px 8.0) ] ]
+        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass2 TableOfContents model) ]
+            [ Html.text "TOC" ]
+        , button
+            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass2 EditorTools model) ]
+            [ Html.text "Tools" ]
+        ]
+
+
+readerToolSelector : Model -> Html Msg
+readerToolSelector model =
     case model.tool of
         TableOfContents ->
             tableOfContents model
 
-        EditorTools ->
-            editorTools model
+        ReaderTools ->
+            readerTools model
+
+
+toolSelector : Model -> Page -> Html Msg
+toolSelector model page =
+    case page of
+        EditorPage ->
+            case model.editor_tool of
+                TableOfContents ->
+                    tableOfContents model
+
+                EditorTools ->
+                    editorTools model
 
 
 editorTools : Model -> Html Msg
 editorTools model =
-    div [] [ Html.text "Editor Tools" ]
+    div [] [ Html.text "Tools" ]
+
+
+readerTools : Model -> Html Msg
+readerTools model =
+    div [] [ Html.text "Reader Tools" ]
 
 
 tableOfContents : Model -> Html Msg
