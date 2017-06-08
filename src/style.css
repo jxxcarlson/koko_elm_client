@@ -45,7 +45,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
       background-color: #ccccff; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
-#titlePane {position: absolute; top: 44px; left: Calc(20%);
+#titlePane {position: absolute; top: 44px; left: Calc(20% + 1px);
     background-color: #eee; padding-top: 7px;
     padding-left: 1em; padding-right: 1em;
            width: Calc(40% - 2em); height: 32px;
@@ -62,15 +62,23 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
    width: Calc(40% - 2em); height: Calc(100% - 147px); border: solid 1px;
    padding-left: 1em; padding-right: 1em; padding-top: 2em; font-size: 1em;}
 
-#editPane2 {position: absolute; top: 43px; right: 0px;
+#editor_info_pane { position: absolute; top: 43px; right: 0;
+    background-color: #ffefef; padding-top: 10px;padding-bottom: 2px;
+    border: solid 1px;
+    padding-left: 1em; padding-right: 1em;
+           width: Calc(40% - 31px); height: 31px;
+           font-size: 0.9em;
+}
+
+#editPane2 {position: absolute; top: 82px; right: 0px;
       overflow: scroll; background-color: #eee;
-      width: Calc(40% - 2em); height: Calc(100% - 109px);
+      width: Calc(40% - 2.1em); height: Calc(100% - 109px);
       background-color: #ffffee; border:1px; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
 #id {margin-left: 20px;}
 #info{margin-left: 200px; }
-.selected { color: #944; font-style: bold}
+.selected { color: #944; font-weight: bold}
 .isSelected { background-color: #780000; color: white; }
 .isNotSelected {}
 .isSelected2 { background-color: #780000; color: white; }

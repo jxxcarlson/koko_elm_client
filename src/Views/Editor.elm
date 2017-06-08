@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events as HE exposing (onClick, onInput)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
 import Koko.Mathjax exposing (toHtml)
+import Action.Document exposing (wordCount)
 
 
 -- import Css exposing (asPairs)
@@ -28,7 +29,7 @@ editor model =
             , HE.onInput InputContent
             ]
             []
-        , div [ id "editor_info_pane" ] [ text "WORD COUNT" ]
+        , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]
         , div [ id "editPane2" ] [ text model.current_document.rendered_content ]
           --, div [ id "editPane2" ] [ toHtml [] model.current_document.rendered_content ]
         ]

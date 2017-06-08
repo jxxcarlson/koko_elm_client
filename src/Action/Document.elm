@@ -1,4 +1,4 @@
-module Action.Document exposing (..)
+module Action.Document exposing (updateDocuments, updateContent, wordCount)
 
 import Types exposing (..)
 
@@ -40,3 +40,10 @@ updateContent model content =
             { old_document | content = content }
     in
         ( { model | current_document = new_document }, Cmd.none )
+
+
+wordCount : Document -> Int
+wordCount document =
+    document.content
+        |> String.split (" ")
+        |> List.length
