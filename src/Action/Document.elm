@@ -1,6 +1,7 @@
-module Action.Document exposing (updateDocuments, updateContent, wordCount)
+module Action.Document exposing (..)
 
 import Types exposing (..)
+import Utility exposing (replaceIf)
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -33,13 +34,39 @@ updateDocuments model documentsRecord =
 updateContent : Model -> String -> ( Model, Cmd Msg )
 updateContent model content =
     let
+        docInfo =
+            case (getDocumentById model model.current_document.id) of
+                Just theDoc ->
+                    "Doc id = " ++ (toString theDoc.id)
+
+                Nothing ->
+                    "Cannot get doc_info"
+
         old_document =
             model.current_document
 
         new_document =
             { old_document | content = content }
+
+        -- (a -> Bool) -> a -> List a -> List a
+        old_documents =
+            model.documents
+
+        new_documents =
+            replaceIf (hasId new_document.id) new_document old_documents
     in
-        ( { model | current_document = new_document }, Cmd.none )
+        ( { model
+            | current_document = new_document
+            , info = docInfo
+            , documents = new_documents
+          }
+        , Cmd.none
+        )
+
+
+hasId : Int -> Document -> Bool
+hasId id document =
+    document.id == id
 
 
 wordCount : Document -> Int
@@ -47,3 +74,13 @@ wordCount document =
     document.content
         |> String.split (" ")
         |> List.length
+
+
+getDocumentsById : Model -> Int -> List Document
+getDocumentsById model k =
+    List.filter (\doc -> doc.id == k) model.documents
+
+
+getDocumentById : Model -> Int -> Maybe Document
+getDocumentById model k =
+    List.head (getDocumentsById model k)
