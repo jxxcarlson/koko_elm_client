@@ -10,7 +10,9 @@ import Koko.Mathjax exposing (toHtml)
 -- import Css exposing (asPairs)
 
 import Types exposing (Model, Msg)
-import Test exposing (..)
+
+
+-- import Test exposing (..)
 
 
 editor : Model -> Html Msg
