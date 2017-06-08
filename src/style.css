@@ -12,7 +12,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
    padding-bottom:7px;
    color: white;background-color:#444; }
 #footer {position: absolute; left: 0px; bottom: 0px;
-   width:100%; height:30px; padding-left: 10px; padding-top:7px;
+   width:100%; height:30px; padding-left: 10px; padding-top:7px; padding-left: 1em;
    color: white;background-color:#444; }
 
 #SearchForm {display: inline-block;; margin-left: 40px;}
