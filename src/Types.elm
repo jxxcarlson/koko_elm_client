@@ -78,6 +78,7 @@ type Msg
     | SetSearchTerm String
     | KeyUp Int
     | SelectDocument Document
+    | UseSearchDomain SearchDomain
 
 
 type Page

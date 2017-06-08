@@ -25,6 +25,22 @@ selectedToolClass tool model =
         "isNotSelected"
 
 
+searchOptionControl : Model -> Html Msg
+searchOptionControl model =
+    div []
+        [ fieldset [ HA.id "searchOptionControl" ]
+            [ label []
+                [ input [ type_ "radio", name "searchDomain", onClick (UseSearchDomain Private) ] []
+                , Html.text "Private"
+                ]
+            , label []
+                [ input [ type_ "radio", name "searchDomain", onClick (UseSearchDomain Public) ] []
+                , Html.text "Public"
+                ]
+            ]
+        ]
+
+
 readerToolSelectorPanel : Model -> Html Msg
 readerToolSelectorPanel model =
     span
@@ -64,12 +80,12 @@ toolSelector model =
 
 editorTools : Model -> Html Msg
 editorTools model =
-    div [] [ Html.text "Tools" ]
+    div [] [ searchOptionControl model ]
 
 
 readerTools : Model -> Html Msg
 readerTools model =
-    div [] [ Html.text "Reader Tools" ]
+    div [] [ searchOptionControl model ]
 
 
 tableOfContents : Model -> Html Msg

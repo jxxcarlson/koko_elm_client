@@ -45,6 +45,9 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
       background-color: #ccccff; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
+#searchOptionControl { border: none; font-size:0.9em;
+  width: 100px;}      
+
 #titlePane {position: absolute; top: 44px; left: Calc(20% + 1px);
     background-color: #eee; padding-top: 7px;
     padding-left: 1em; padding-right: 1em;

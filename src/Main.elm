@@ -120,6 +120,9 @@ update msg model =
         InputContent content ->
             updateContent model content
 
+        UseSearchDomain searchDomain ->
+            updateSearchDomain model searchDomain
+
 
 port toJs : String -> Cmd msg
 
