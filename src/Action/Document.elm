@@ -28,3 +28,15 @@ updateDocuments model documentsRecord =
           }
         , Cmd.none
         )
+
+
+updateContent : Model -> String -> ( Model, Cmd Msg )
+updateContent model content =
+    let
+        old_document =
+            model.current_document
+
+        new_document =
+            { old_document | content = content }
+    in
+        ( { model | current_document = new_document }, Cmd.none )

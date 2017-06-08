@@ -57,10 +57,10 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
        width: Calc(40% - 2em); height: Calc(100% - 145px); border: solid 1px;
        padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
-#editPane {position: absolute; top: 70px; right: 40%;
+#editPane {position: absolute; top: 82px; right: 40%;
    overflow: scroll; margin-left:1em; background-color: #eee;
    width: Calc(40% - 2em); height: Calc(100% - 147px); border: solid 1px;
-   padding-left: 1em; padding-right: 1em; padding-top: 2em;}
+   padding-left: 1em; padding-right: 1em; padding-top: 2em; font-size: 1em;}
 
 #editPane2 {position: absolute; top: 43px; right: 0px;
       overflow: scroll; background-color: #eee;
@@ -74,7 +74,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 .isSelected { background-color: #780000; color: white; }
 .isNotSelected {}
 .isSelected2 { background-color: #780000; color: white; }
-.isNotSelected2 {}  
+.isNotSelected2 {}
 .wide_button { width: 140px; height: 30px;}
 ul { list-style-type: none; margin:0; padding:0; font-size:0.95em;}
 li {margin-bottom: 0.3em;}

@@ -12,7 +12,7 @@ import Css exposing (asPairs)
 import Utility exposing (styles)
 import Action.User exposing (..)
 import Action.Search exposing (..)
-import Action.Document exposing (updateDocuments)
+import Action.Document exposing (updateDocuments, updateContent)
 import Data.Document exposing (documents)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
@@ -116,6 +116,9 @@ update msg model =
 
         SelectDocument document ->
             ( { model | current_document = document }, Cmd.none )
+
+        InputContent content ->
+            updateContent model content
 
 
 port toJs : String -> Cmd msg
