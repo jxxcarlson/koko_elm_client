@@ -97,8 +97,8 @@ update msg model =
 
         KeyUp key ->
             if key == 13 then
-                ( { model | info = "I will search on: " ++ model.searchTerms }
-                , getDocumentsWith model.searchTerms
+                ( { model | info = "I will search on: " ++ model.searchState.query }
+                , getDocumentsWith model.searchState.query
                 )
             else
                 ( model, Cmd.none )

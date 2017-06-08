@@ -31,6 +31,17 @@ type alias DocumentsRecord =
     }
 
 
+type SearchDomain
+    = Private
+    | Public
+
+
+type alias SearchState =
+    { query : String
+    , domain : SearchDomain
+    }
+
+
 type alias Model =
     { window : KWindow
     , page : Page
@@ -42,7 +53,7 @@ type alias Model =
     , info : String
     , current_document : Document
     , documents : Documents
-    , searchTerms : String
+    , searchState : SearchState
     }
 
 
@@ -124,6 +135,9 @@ init flags =
 
         doc =
             Document 0 0 title text rendered_text
+
+        searchState =
+            SearchState "" Public
     in
         ( Model
             (KWindow flags.width flags.height)
@@ -136,6 +150,6 @@ init flags =
             ""
             doc
             [ doc ]
-            ""
+            searchState
         , Cmd.none
         )

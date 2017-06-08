@@ -25,22 +25,14 @@ selectedToolClass tool model =
         "isNotSelected"
 
 
-selectedToolClass2 : Tool -> Model -> String
-selectedToolClass2 tool model =
-    if tool == model.tool then
-        "isSelected2"
-    else
-        "isNotSelected2"
-
-
 readerToolSelectorPanel : Model -> Html Msg
 readerToolSelectorPanel model =
     span
         [ styles [ Css.marginLeft (Css.px 8.0) ] ]
-        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass2 TableOfContents model) ]
+        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass TableOfContents model) ]
             [ Html.text "TOC" ]
         , button
-            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass2 ReaderTools model) ]
+            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass ReaderTools model) ]
             [ Html.text "Tools" ]
         ]
 
@@ -49,10 +41,10 @@ toolSelectorPanel : Model -> Html Msg
 toolSelectorPanel model =
     span
         [ styles [ Css.marginLeft (Css.px 8.0) ] ]
-        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass2 TableOfContents model) ]
+        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass TableOfContents model) ]
             [ Html.text "TOC" ]
         , button
-            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass2 EditorTools model) ]
+            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass EditorTools model) ]
             [ Html.text "Tools" ]
         ]
 
