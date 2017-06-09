@@ -33,10 +33,9 @@ var app = Elm.Main.fullscreen(
 
   // MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 
-
+/**
   app.ports.render.subscribe(function(rendered_text) {
         document.getElementById('rendered_text2').innerHTML = rendered_text
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
     });
-
-  
+**/
