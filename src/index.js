@@ -31,9 +31,9 @@ var app = Elm.Main.fullscreen(
   );
 
 
-  app.ports.render.subscribe(function(rendered_text) {
-        document.getElementById('rendered_text2').innerHTML = rendered_text
-      });
+app.ports.render.subscribe(function(rendered_text) {
+    document.getElementById('rendered_text2').innerHTML = rendered_text
+});
 
 
   // MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
