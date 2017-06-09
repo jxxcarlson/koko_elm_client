@@ -9,7 +9,6 @@ import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Css exposing (asPairs)
-import Utility exposing (styles)
 import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Document exposing (updateDocuments, updateContent)
@@ -18,6 +17,7 @@ import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
+import Task exposing (succeed, andThen)
 
 
 -- import JSInterface exposing (toJs)
@@ -119,6 +119,15 @@ update msg model =
 
 
 port render : String -> Cmd msg
+
+
+
+--  ( { model | current_document = document }, render model.current_document.rendered_content )
+
+
+renderTwice model =
+    Task.succeed (render model.current_document.rendered_content)
+        |> Task.andThen (\x -> succeed (render model.current_document.rendered_content))
 
 
 subscriptions : Model -> Sub Msg
