@@ -28,17 +28,40 @@ selectedToolClass tool model =
 searchOptionControl : Model -> Html Msg
 searchOptionControl model =
     div []
-        [ fieldset [ HA.id "searchOptionControl" ]
-            [ label []
-                [ input [ type_ "radio", name "searchDomain", onClick (UseSearchDomain Private) ] []
-                , Html.text "Private"
+        [ strong []
+            [ Html.text "Search type" ]
+        , br
+            []
+            []
+        , label [ HA.class "radio_label" ]
+            [ input
+                [ type_ "radio"
+                , name "searchDomain"
+                , onClick (UseSearchDomain Private)
+                , HA.class "my_radio_button"
+                , HA.checked (searchDomainChecked model Private)
                 ]
-            , label []
-                [ input [ type_ "radio", name "searchDomain", onClick (UseSearchDomain Public) ] []
-                , Html.text "Public"
+                []
+            , Html.text "Private"
+            ]
+        , br [] []
+        , label [ HA.class "radio_label" ]
+            [ input
+                [ type_ "radio"
+                , name "searchDomain"
+                , onClick (UseSearchDomain Public)
+                , HA.class "my_radio_button"
+                , HA.checked (searchDomainChecked model Public)
                 ]
+                []
+            , Html.text "Public"
             ]
         ]
+
+
+searchDomainChecked : Model -> SearchDomain -> Bool
+searchDomainChecked model domain =
+    model.searchState.domain == domain
 
 
 readerToolSelectorPanel : Model -> Html Msg

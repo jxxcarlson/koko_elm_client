@@ -46,7 +46,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
 #searchOptionControl { border: none; font-size:0.9em;
-  width: 100px;}      
+  width: 100px;}
 
 #titlePane {position: absolute; top: 44px; left: Calc(20% + 1px);
     background-color: #eee; padding-top: 7px;
@@ -62,7 +62,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 
 #editPane {position: absolute; top: 82px; right: 40%;
    overflow: scroll; margin-left:1em; background-color: #eee;
-   width: Calc(40% - 2em); height: Calc(100% - 147px); border: solid 1px;
+   width: Calc(40% - 34px); height: Calc(100% - 147px); border: solid 1px;
    padding-left: 1em; padding-right: 1em; padding-top: 2em; font-size: 1em;}
 
 #editor_info_pane { position: absolute; top: 43px; right: 0;
@@ -87,5 +87,8 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 .isSelected2 { background-color: #780000; color: white; }
 .isNotSelected2 {}
 .wide_button { width: 140px; height: 30px;}
+.my_radio_button { width: 16px; width: 16px; vertical-align: middle;}
+.radio_label { vertical-align: middle;}
+#searchDomainFieldSet { border: none;}
 ul { list-style-type: none; margin:0; padding:0; font-size:0.95em;}
 li {margin-bottom: 0.3em;}

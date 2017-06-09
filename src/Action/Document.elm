@@ -20,11 +20,15 @@ updateDocuments model documentsRecord =
                 ReaderPage
             else
                 model.page
+
+        tool =
+            TableOfContents
     in
         ( { model
             | documents = documentsRecord.documents
             , current_document = current_document
             , page = page
+            , tool = tool
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.none
