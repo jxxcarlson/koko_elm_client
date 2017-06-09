@@ -5,6 +5,7 @@ import Json.Decode as Decode exposing (..)
 import Request.Api exposing (getDocumentsUrl)
 import Types exposing (..)
 import Data.Document exposing (documentDecoder)
+import Action.Search exposing (parseQuery)
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
@@ -17,7 +18,7 @@ getDocumentsWith searchTerms =
             if searchTerms == "" then
                 getDocumentsUrl
             else
-                getDocumentsUrl ++ "?" ++ searchTerms
+                getDocumentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
 
         request =
             Http.getString url
