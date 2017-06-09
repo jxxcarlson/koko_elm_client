@@ -86,12 +86,6 @@ update msg model =
         ToggleRegister ->
             ( { model | registerUser = not model.registerUser }, Cmd.none )
 
-        SendToJs str ->
-            ( model, toJs str )
-
-        UpdateStr str ->
-            ( { model | info = str }, Cmd.none )
-
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
@@ -115,7 +109,7 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         SelectDocument document ->
-            ( { model | current_document = document }, Cmd.none )
+            ( { model | current_document = document }, render model.current_document.rendered_content )
 
         InputContent content ->
             updateContent model content
@@ -124,23 +118,12 @@ update msg model =
             updateSearchDomain model searchDomain
 
 
-port toJs : String -> Cmd msg
-
-
-port toElm : (String -> msg) -> Sub msg
-
-
 port render : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Window.resizes (\{ width, height } -> Resize width height)
-
-
-subscriptions2 : Model -> Sub Msg
-subscriptions2 model =
-    toElm UpdateStr
 
 
 windowCss model =

@@ -72,8 +72,6 @@ type Msg
     | Password String
     | Name String
     | Username String
-    | SendToJs String
-    | UpdateStr String
     | SelectTool Tool
     | SetSearchTerm String
     | KeyUp Int

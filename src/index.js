@@ -31,16 +31,12 @@ var app = Elm.Main.fullscreen(
   );
 
 
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+  // MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
 
 
   app.ports.render.subscribe(function(rendered_text) {
-        document.getElementById('rendered_text').innerHTML = rendered_text
+        document.getElementById('rendered_text2').innerHTML = rendered_text
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
     });
 
-  app.ports.toJs.subscribe(function (str) {
-    console.log("got from Elm:", str);
-  });
-
-  app.ports.toElm.send("undefined is not a function");
+  
