@@ -25,6 +25,7 @@ onKeyUp tagger =
 
 
 
+-- onKeyUp2 (SomeMessage model.someInfo)
 -- from List.Extra:
 
 
