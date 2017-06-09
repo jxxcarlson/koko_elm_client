@@ -89,12 +89,18 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
-        KeyUp key ->
+        DoSearch key ->
             if key == 13 then
+                -- 13: RETURN/ENTER
                 ( { model | info = "I will search on: " ++ model.searchState.query }
                 , getDocumentsWith model.searchState.query
                 )
-            else if key == 27 then
+            else
+                ( model, Cmd.none )
+
+        DoRender key ->
+            if key == 27 then
+                -- 27: ESCAPE
                 ( { model | info = "ESCAPE pressed" }, render model.current_document.rendered_content )
             else
                 ( model, Cmd.none )

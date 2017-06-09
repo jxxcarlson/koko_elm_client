@@ -75,7 +75,8 @@ type Msg
     | Username String
     | SelectTool Tool
     | SetSearchTerm String
-    | KeyUp Int
+    | DoSearch Int
+    | DoRender Int
     | SelectDocument Document
     | UseSearchDomain SearchDomain
     | Tick Time

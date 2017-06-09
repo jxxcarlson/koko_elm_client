@@ -32,7 +32,7 @@ editor model =
             [ id "editPane"
             , value model.current_document.content
             , HE.onInput InputContent
-            , Utility.onKeyUp KeyUp
+            , Utility.onKeyUp DoRender
             ]
             []
         , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]
