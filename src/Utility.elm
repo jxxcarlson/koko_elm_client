@@ -1,7 +1,10 @@
 module Utility exposing (..)
 
-import Html.Attributes exposing (..)
+import Html exposing (..)
 import Css exposing (asPairs)
+import Json.Decode as Json exposing (int, list, string, float, Decoder)
+import Html.Attributes exposing (..)
+import Html.Events as HE exposing (on, keyCode)
 
 
 --styles :  List Css.Mixin -> Html.Attribute msg
@@ -14,6 +17,11 @@ styles =
 updateListAt : List a -> Int -> a -> List a
 updateListAt list n newElement =
     List.take n list ++ newElement :: List.drop (n + 1) list
+
+
+onKeyUp : (Int -> msg) -> Attribute msg
+onKeyUp tagger =
+    on "keyup" (Json.map tagger HE.keyCode)
 
 
 

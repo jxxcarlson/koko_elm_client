@@ -79,6 +79,7 @@ type Msg
     | SelectDocument Document
     | UseSearchDomain SearchDomain
     | Tick Time
+    | Refresh
 
 
 type Page

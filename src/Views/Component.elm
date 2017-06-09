@@ -85,6 +85,9 @@ toolSelectorPanel model =
         , button
             [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass EditorTools model) ]
             [ Html.text "Tools" ]
+        , button
+            [ onClick Refresh, HA.class "smallButton", HA.style [ ( "background-color", "green" ), ( "color", "white" ) ] ]
+            [ Html.text "Refresh" ]
         ]
 
 

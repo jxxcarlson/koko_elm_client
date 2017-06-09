@@ -2,10 +2,15 @@ module Views.Editor exposing (editor)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events as HE exposing (onClick, onInput)
+import Html.Events as HE exposing (..)
+
+
+--onClick, onInput, on
+
 import Views.Component exposing (toolSelectorPanel, toolSelector)
 import Koko.Mathjax exposing (toHtml)
 import Action.Document exposing (wordCount)
+import Utility exposing (onKeyUp)
 
 
 -- import Css exposing (asPairs)
@@ -27,6 +32,7 @@ editor model =
             [ id "editPane"
             , value model.current_document.content
             , HE.onInput InputContent
+            , Utility.onKeyUp KeyUp
             ]
             []
         , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]

@@ -94,6 +94,8 @@ update msg model =
                 ( { model | info = "I will search on: " ++ model.searchState.query }
                 , getDocumentsWith model.searchState.query
                 )
+            else if key == 27 then
+                ( { model | info = "ESCAPE pressed" }, render model.current_document.rendered_content )
             else
                 ( model, Cmd.none )
 
@@ -114,6 +116,9 @@ update msg model =
         InputContent content ->
             updateContent model content
 
+        Refresh ->
+            ( model, render model.current_document.rendered_content )
+
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
 
@@ -132,7 +137,7 @@ port render : String -> Cmd msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (1 * Time.second) Tick
+    Time.every (30 * Time.second) Tick
 
 
 
