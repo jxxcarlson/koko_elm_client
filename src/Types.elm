@@ -81,6 +81,7 @@ type Msg
     | UseSearchDomain SearchDomain
     | Tick Time
     | Refresh
+    | SendToJS String
 
 
 type Page

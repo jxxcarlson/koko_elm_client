@@ -96,7 +96,7 @@ update msg model =
                 , getDocumentsWith model.searchState.query
                 )
             else
-                ( model, Cmd.none )
+                ( model, toJs "{foo: 1, bar: 2}" )
 
         DoRender key ->
             if key == 27 then
@@ -131,8 +131,18 @@ update msg model =
         Tick time ->
             ( model, render model.current_document.rendered_content )
 
+        SendToJS str ->
+            ( model, toJs str )
+
+
+
+-- PORTS
+
 
 port render : String -> Cmd msg
+
+
+port toJs : String -> Cmd msg
 
 
 
