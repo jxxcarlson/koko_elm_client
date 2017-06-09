@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Http
+import Time exposing (Time)
 
 
 type alias User =
@@ -77,6 +78,7 @@ type Msg
     | KeyUp Int
     | SelectDocument Document
     | UseSearchDomain SearchDomain
+    | Tick Time
 
 
 type Page

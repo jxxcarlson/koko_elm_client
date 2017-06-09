@@ -17,7 +17,7 @@ import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
-import Task exposing (succeed, andThen)
+import Time exposing (Time, second)
 
 
 -- import JSInterface exposing (toJs)
@@ -109,7 +109,7 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         SelectDocument document ->
-            ( { model | current_document = document }, render model.current_document.rendered_content )
+            ( { model | current_document = document }, render document.rendered_content )
 
         InputContent content ->
             updateContent model content
@@ -117,22 +117,26 @@ update msg model =
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
 
+        Tick time ->
+            ( model, render model.current_document.rendered_content )
+
 
 port render : String -> Cmd msg
 
 
 
---  ( { model | current_document = document }, render model.current_document.rendered_content )
-
-
-renderTwice model =
-    Task.succeed (render model.current_document.rendered_content)
-        |> Task.andThen (\x -> succeed (render model.current_document.rendered_content))
+-- subscriptions : Model -> Sub Msg
+-- subscriptions model =
+--     Window.resizes (\{ width, height } -> Resize width height)
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Window.resizes (\{ width, height } -> Resize width height)
+    Time.every (2 * Time.second) Tick
+
+
+
+-- Time.every (50 * Time.millisecond) Tick
 
 
 windowCss model =

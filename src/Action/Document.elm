@@ -50,7 +50,7 @@ updateContent model content =
             model.current_document
 
         new_document =
-            { old_document | content = content }
+            { old_document | content = content, rendered_content = content }
 
         -- (a -> Bool) -> a -> List a -> List a
         old_documents =
