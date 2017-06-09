@@ -55,7 +55,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
            font-size: 1.3em;
   }
 
-#textPane {position: absolute; top: 82px; left: Calc(20% - 1em);
+#rendered_text {position: absolute; top: 82px; left: Calc(20% - 1em);
        overflow: scroll; margin-left:1em; background-color: #eee;
        width: Calc(40% - 2em); height: Calc(100% - 145px); border: solid 1px;
        padding-left: 1em; padding-right: 1em; padding-top: 2em;}

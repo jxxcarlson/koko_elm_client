@@ -5,12 +5,38 @@
     <title>Elm SPA example</title>
 
     <style>
-    
+
     </style>
   </head>
   <body>
     <div id="main"></div>
+    <div id="rendered_text" style="z-index: 100; position:absolute; top:60px; left:850px; width:400px;">
+
+       <h2>Rendered text</h2>
+
+       $\sum_{k=1}^\infty \frac{1}{n} = \infty$
+    </div>
+    <script>
+
+        // var node = document.getElementById('Noteshare');
+
+        app.ports.render.subscribe(function(rendered_text) {
+            document.getElementById('rendered_text').innerHTML = rendered_text
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+        });
+
+
+    </script>
+
+    <script type="text/x-mathjax-config">
+       MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+
+    <script type="text/javascript" async
+       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
     <script src="node_modules/asciidoctor.js/dist/asciidoctor.js"></script>
-    <script src="/app.js"></script>
+    <script src="/app.js"></script
   </body>
 </html>
