@@ -132,7 +132,7 @@ port render : String -> Cmd msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (2 * Time.second) Tick
+    Time.every (1 * Time.second) Tick
 
 
 
