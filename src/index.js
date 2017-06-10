@@ -30,10 +30,7 @@ var app = Elm.Main.fullscreen(
     }
   );
 
-
-// app.ports.render.subscribe(function(rendered_text) {
-//     document.getElementById('rendered_text2').innerHTML = rendered_text
-// });
+document.getElementById("rendered_text2").style.visibility = "hidden";  
 
 app.ports.toJs.subscribe(function (str) {
   console.log("From Elm: " + str);
