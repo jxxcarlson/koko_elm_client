@@ -135,6 +135,9 @@ update msg model =
         SendToJS str ->
             ( model, toJs str )
 
+        SetupPages ->
+            ( model, toJs (Views.External.windowData model model.page) )
+
 
 
 -- PORTS

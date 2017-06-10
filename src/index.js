@@ -46,9 +46,15 @@ app.ports.toJs.subscribe(function (str) {
           break;
       case "ReaderPage":
           document.getElementById("rendered_text2").style.visibility = "visible";
+          document.getElementById("rendered_text2").style.left = "283px";
+          document.getElementById("rendered_text2").style.width = "500px";
+          document.getElementById("rendered_text2").style.height = "540px";
           break;
       case "EditorPage":
           document.getElementById("rendered_text2").style.visibility = "visible";
+          document.getElementById("rendered_text2").style.left = "845px";
+          document.getElementById("rendered_text2").style.width = "500px";
+          document.getElementById("rendered_text2").style.height = "540px";
           break;
       default:
           document.getElementById("rendered_text2").style.visibility = "hidden";

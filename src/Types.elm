@@ -83,6 +83,7 @@ type Msg
     | Tick Time
     | Refresh
     | SendToJS String
+    | SetupPages
 
 
 type Page
