@@ -41,7 +41,7 @@ updateWindow model w h =
         new_window =
             KWindow w h
     in
-        { model | window = new_window }
+        { model | window = new_window, message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height) }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
