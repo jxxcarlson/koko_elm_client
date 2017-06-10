@@ -35,8 +35,11 @@ app.ports.render.subscribe(function(rendered_text) {
     document.getElementById('rendered_text2').innerHTML = rendered_text
 });
 
-app.ports.toJs.subscribe(function (str) {
-  console.log("got from Elm: ", str);});
+  app.ports.toJs.subscribe(function (str) {
+    console.log("From Elm: " + str);
+    var obj = JSON.parse(str)
+    console.log("The value of 'foo' is " + obj.foo)
+  });
 
 
   // MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});

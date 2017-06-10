@@ -16,7 +16,7 @@ getDocumentsWith searchTerms =
     let
         url =
             if searchTerms == "" then
-                getDocumentsUrl
+                getDocumentsUrl ++ "?all"
             else
                 getDocumentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
 

@@ -96,7 +96,7 @@ update msg model =
                 , getDocumentsWith model.searchState.query
                 )
             else
-                ( model, toJs "{foo: 1, bar: 2}" )
+                ( model, toJs "{\"foo\": 1}" )
 
         DoRender key ->
             if key == 27 then
@@ -149,14 +149,26 @@ port toJs : String -> Cmd msg
 -- subscriptions : Model -> Sub Msg
 -- subscriptions model =
 --     Window.resizes (\{ width, height } -> Resize width height)
+-- windowSizes : Model -> Sub Msg
+-- windowSizes model =
+--     Window.resizes (\{ width, height } -> Resize width height)
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every (30 * Time.second) Tick
+    Sub.batch
+        [ Time.every (30 * Time.second) Tick
+        , Window.resizes (\{ width, height } -> Resize width height)
+        ]
 
 
 
+-- subscriptions model =
+--     Time.every (30 * Time.second) Tick
+-- Sub.batch
+-- [ Mouse.clicks MouseMsg
+-- , Keyboard.presses KeyMsg
+-- ]
 -- Time.every (50 * Time.millisecond) Tick
 
 
