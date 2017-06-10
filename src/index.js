@@ -31,22 +31,33 @@ var app = Elm.Main.fullscreen(
   );
 
 
-app.ports.render.subscribe(function(rendered_text) {
-    document.getElementById('rendered_text2').innerHTML = rendered_text
+// app.ports.render.subscribe(function(rendered_text) {
+//     document.getElementById('rendered_text2').innerHTML = rendered_text
+// });
+
+app.ports.toJs.subscribe(function (str) {
+  console.log("From Elm: " + str);
+  var settings = JSON.parse(str)
+  console.log("JSON object = " + JSON.stringify(settings))
+
+   switch(settings.page) {
+      case "HomePage":
+          document.getElementById("rendered_text2").style.visibility = "hidden";
+          break;
+      case "ReaderPage":
+          document.getElementById("rendered_text2").style.visibility = "visible";
+          break;
+      case "EditorPage":
+          document.getElementById("rendered_text2").style.visibility = "visible";
+          break;
+      default:
+          document.getElementById("rendered_text2").style.visibility = "hidden";
+  }
 });
 
-  app.ports.toJs.subscribe(function (str) {
-    console.log("From Elm: " + str);
-    var obj = JSON.parse(str)
-    console.log("JSON object = " + JSON.stringify(obj))
-  });
-
-
-  // MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
-
-/**
+// if (settings.online == true) {
   app.ports.render.subscribe(function(rendered_text) {
         document.getElementById('rendered_text2').innerHTML = rendered_text
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-    });
-**/
+  });
+// }
