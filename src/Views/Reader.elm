@@ -6,7 +6,6 @@ import Html.Events as HE exposing (onClick)
 import Css exposing (asPairs)
 import Types exposing (Model, Msg)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
-import Koko.Mathjax exposing (toHtml)
 
 
 -- import Koko.Mathjax exposing (toHtml)

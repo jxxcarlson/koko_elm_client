@@ -37,10 +37,10 @@ app.ports.toJs.subscribe(function (str) {
   var settings = JSON.parse(str)
   console.log("JSON object = " + JSON.stringify(settings))
 
-  var reader_height = (settings.height - 142)+ "px"
+  var reader_height = (settings.height - 180)+ "px"
   var editor_height = (settings.height - 180)+ "px"
 
-  var reader_width = (0.4*settings.width - 0) + "px"
+  var reader_width = (0.4*settings.width - 65) + "px"
   var reader_left = (0.20*settings.width + 0)+ "px"
 
   var editor_width = (0.4*settings.width - 65) + "px"

@@ -8,7 +8,6 @@ import Html.Events as HE exposing (..)
 --onClick, onInput, on
 
 import Views.Component exposing (toolSelectorPanel, toolSelector)
-import Koko.Mathjax exposing (toHtml)
 import Action.Document exposing (wordCount)
 import Utility exposing (onKeyUp)
 

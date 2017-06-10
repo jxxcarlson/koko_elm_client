@@ -21,12 +21,6 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData)
 
 
--- import JSInterface exposing (toJs)
--- import Koko.Asciidoc exposing (toHtml)
-
-import Koko.Asciidoc exposing (toHtml)
-
-
 main =
     programWithFlags
         { init = init
