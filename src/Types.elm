@@ -157,6 +157,6 @@ init flags =
             doc
             [ doc ]
             searchState
-            False
+            True
         , Cmd.none
         )

@@ -30,12 +30,22 @@ var app = Elm.Main.fullscreen(
     }
   );
 
-document.getElementById("rendered_text2").style.visibility = "hidden";  
+document.getElementById("rendered_text2").style.visibility = "hidden";
 
 app.ports.toJs.subscribe(function (str) {
   console.log("From Elm: " + str);
   var settings = JSON.parse(str)
   console.log("JSON object = " + JSON.stringify(settings))
+
+  var reader_height = (settings.height - 142)+ "px"
+  var editor_height = (settings.height - 180)+ "px"
+
+  var reader_width = (0.4*settings.width - 0) + "px"
+  var reader_left = (0.20*settings.width + 0)+ "px"
+
+  var editor_width = (0.4*settings.width - 65) + "px"
+  var editor_left = (0.6*settings.width + 5)+ "px"
+  console.log("editor_width: " + editor_width)
 
    switch(settings.page) {
       case "HomePage":
@@ -43,24 +53,35 @@ app.ports.toJs.subscribe(function (str) {
           break;
       case "ReaderPage":
           document.getElementById("rendered_text2").style.visibility = "visible";
-          document.getElementById("rendered_text2").style.left = "283px";
-          document.getElementById("rendered_text2").style.width = "500px";
-          document.getElementById("rendered_text2").style.height = "540px";
+          document.getElementById("rendered_text2").style.left = reader_left;
+          document.getElementById("rendered_text2").style.width = reader_width;
+          document.getElementById("rendered_text2").style.height = reader_height;
           break;
       case "EditorPage":
           document.getElementById("rendered_text2").style.visibility = "visible";
-          document.getElementById("rendered_text2").style.left = "845px";
-          document.getElementById("rendered_text2").style.width = "500px";
-          document.getElementById("rendered_text2").style.height = "540px";
+          document.getElementById("rendered_text2").style.left = editor_left;
+          document.getElementById("rendered_text2").style.width = editor_width;
+          document.getElementById("rendered_text2").style.height = editor_height;
           break;
       default:
           document.getElementById("rendered_text2").style.visibility = "hidden";
   }
-});
 
-// if (settings.online == true) {
-  app.ports.render.subscribe(function(rendered_text) {
-        document.getElementById('rendered_text2').innerHTML = rendered_text
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-  });
-// }
+  if (settings.online == true) {
+    app.ports.render.subscribe(function(rendered_text) {
+          document.getElementById('rendered_text2').innerHTML = rendered_text
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+    })
+  } else {
+    app.ports.render.subscribe(function(rendered_text) {
+          document.getElementById('rendered_text2').innerHTML = rendered_text
+    })
+}
+
+})
+
+  // if (settings.online == true) {
+  //  app.ports.render.subscribe(function(rendered_text) {
+  //        document.getElementById('rendered_text2').innerHTML = rendered_text
+  //        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+  //  }

@@ -57,12 +57,12 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 
 #rendered_text {position: absolute; top: 82px; left: Calc(20% - 1em);
        overflow: scroll; margin-left:1em; background-color: #eee;
-       width: Calc(40% - 2em); height: Calc(100% - 145px); border: solid 1px;
+       width: Calc(40% - 20px); height: Calc(100% - 145px); border: solid 1px;
        padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
 #textPane {position: absolute; top: 82px; left: Calc(20% - 1em);
         overflow: scroll; margin-left:1em; background-color: #eee;
-        width: Calc(40% - 2em); height: Calc(100% - 145px); border: solid 1px;
+        width: Calc(40% - 32px); height: Calc(100% - 145px); border: solid 1px;
         padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
 #editPane {position: absolute; top: 82px; right: 40%;
@@ -78,9 +78,9 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
            font-size: 0.9em;
 }
 
-#editPane2 {position: absolute; top: 82px; right: 0px;
+#editPane2 {display: none; position: absolute; top: 82px; right: 0;
       overflow: scroll; background-color: #eee;
-      width: Calc(40% - 2.1em); height: Calc(100% - 152px);
+      width: Calc(40% - 40px); height: Calc(100% - 152px);
       background-color: #ffffee; border:1px; border: solid 1px;
       padding-left: 1em; padding-right: 1em; padding-top: 2em;}
 
