@@ -18,6 +18,7 @@ import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
 import Time exposing (Time, second)
+import Views.External exposing (windowData)
 
 
 -- import JSInterface exposing (toJs)
@@ -51,10 +52,10 @@ update msg model =
             ( model, Cmd.none )
 
         Resize w h ->
-            ( (updateWindow model w h), Cmd.none )
+            ( (updateWindow model w h), toJs (Views.External.windowData model model.page) )
 
         GoTo p ->
-            ( { model | page = p }, Cmd.none )
+            ( { model | page = p }, toJs (Views.External.windowData model p) )
 
         SelectTool t ->
             ( { model | tool = t }, Cmd.none )
@@ -96,7 +97,7 @@ update msg model =
                 , getDocumentsWith model.searchState.query
                 )
             else
-                ( model, toJs "{\"foo\": 1}" )
+                ( model, Cmd.none )
 
         DoRender key ->
             if key == 27 then
