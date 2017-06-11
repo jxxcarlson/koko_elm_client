@@ -7,15 +7,109 @@
     <style>
 
     </style>
+
+
+
+
+
+    <script>
+   ///////
+
+
+   var Elm = require('./Main.elm');
+   var mountNode = document.getElementById('main');
+
+
+
+     var app = Elm.Main.fullscreen(
+         {
+             width:  window.innerWidth,
+             height: window.innerHeight
+         }
+       );
+
+     document.getElementById("rendered_text2").style.visibility = "visible";
+
+     var count = 0;
+
+     app.ports.toJs.subscribe(function (str) {
+       //console.log("From Elm: " + str);
+       var settings = JSON.parse(str)
+       // console.log("JSON object = " + JSON.stringify(settings))
+
+       var reader_height = (settings.height - 180)+ "px"
+       var editor_height = (settings.height - 180)+ "px"
+
+       var reader_width = (0.4*settings.width - 65 ) + "px"
+       var reader_left =  (0.20*settings.width + 0)+ "px"
+
+       var editor_width = (0.4*settings.width - 65) + "px"
+       var editor_left = (0.6*settings.width + 5)+ "px"
+       // console.log("editor_width: " + editor_width)
+
+        switch(settings.page) {
+           case "HomePage":
+               document.getElementById("rendered_text2").style.visibility = "visible";
+               document.getElementById("rendered_text2").style.left = "6000px";
+               console.log("HomePage")
+               break;
+           case "ReaderPage":
+               document.getElementById("rendered_text2").style.visibility = "visible";
+               document.getElementById("rendered_text2").style.left = reader_left;
+               document.getElementById("rendered_text2").style.width = reader_width;
+               document.getElementById("rendered_text2").style.height = reader_height;
+               console.log("ReaderPage")
+               break;
+           case "EditorPage":
+               document.getElementById("rendered_text2").style.visibility = "visible";
+               document.getElementById("rendered_text2").style.left = editor_left;
+               document.getElementById("rendered_text2").style.width = editor_width;
+               document.getElementById("rendered_text2").style.height = editor_height;
+               console.log("EditorPage")
+               break;
+           default:
+               document.getElementById("rendered_text2").style.visibility = "hidden";
+       }
+
+
+   })
+
+
+     app.ports.render.subscribe(function(rendered_text) {
+
+         requestAnimationFrame(function() {
+           document.getElementById('rendered_text2').innerHTML = rendered_text
+           count = count + 1;
+           console.log("(" + count + ") Rendering ...")
+           // MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text"]);
+           MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+         })
+
+         // requestAnimationFrame(function() {
+         //   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+         // })
+
+     })
+
+
+
+
+    ///////
+    </script>
+
+
+
+
   </head>
   <body>
     <div id="main"></div>
 
     <!-- Aligned: left:280px -->
-    <div id="rendered_text2" style="overflow:scroll; background-color: #ffe;
+    <div id="rendered_text2" style="overflow:scroll;
             padding:2em; z-index: 100;
-            position:absolute; top:83px; left:825px;
-            width:470px; height: 550px;">
+            position:absolute; top:0px; left:825px;
+            background-color: #ddffdd;
+            width:300px; height: 300px;">
 
        <h2>Rendered text</h2>
 
@@ -29,7 +123,7 @@
          processSectionDelay: 0
        }});
     </script>
-  
+
 
     <script type="text/javascript" src="node_modules/mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
 

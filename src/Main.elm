@@ -232,10 +232,10 @@ init flags =
             "Test document"
 
         text =
-            "The correct formula is $$\\int_0^1 x^n = \\frac{1}{n}$$"
+            "The correct formula is $$\\int_0^1 x^n dx= \\frac{1}{n+1}$$"
 
         rendered_text =
-            "The *RENDERED formula* is $$\\int_0^1 x^n = \\frac{1}{n}$$ (HA HA HA!)"
+            "The correct formula is $$\\int_0^1 x^n dx= \\frac{1}{n+1}$$"
 
         doc =
             Document 0 0 title text rendered_text

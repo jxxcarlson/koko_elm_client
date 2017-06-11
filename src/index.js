@@ -4,7 +4,7 @@
 require('font-awesome/css/font-awesome.css');
 
 // Require index.html so it gets copied to dist
-require('./index.html');
+// require('./index.html');
 require('./style.css')
 
 var Elm = require('./Main.elm');
@@ -30,7 +30,7 @@ var mountNode = document.getElementById('main');
       }
     );
 
-  document.getElementById("rendered_text2").style.visibility = "hidden";
+  document.getElementById("rendered_text2").style.visibility = "visible";
 
   var count = 0;
 
@@ -42,8 +42,8 @@ var mountNode = document.getElementById('main');
     var reader_height = (settings.height - 180)+ "px"
     var editor_height = (settings.height - 180)+ "px"
 
-    var reader_width = (0.4*settings.width - 65) + "px"
-    var reader_left = (0.20*settings.width + 0)+ "px"
+    var reader_width = (0.4*settings.width - 65 ) + "px"
+    var reader_left =  (0.20*settings.width + 0)+ "px"
 
     var editor_width = (0.4*settings.width - 65) + "px"
     var editor_left = (0.6*settings.width + 5)+ "px"
@@ -59,12 +59,14 @@ var mountNode = document.getElementById('main');
             document.getElementById("rendered_text2").style.left = reader_left;
             document.getElementById("rendered_text2").style.width = reader_width;
             document.getElementById("rendered_text2").style.height = reader_height;
+            //document.getElementById("rendered_text2").style.background_color = pink;
             break;
         case "EditorPage":
             document.getElementById("rendered_text2").style.visibility = "visible";
             document.getElementById("rendered_text2").style.left = editor_left;
             document.getElementById("rendered_text2").style.width = editor_width;
             document.getElementById("rendered_text2").style.height = editor_height;
+            //document.getElementById("rendered_text2").style.background_color = yellow;
             break;
         default:
             document.getElementById("rendered_text2").style.visibility = "hidden";
