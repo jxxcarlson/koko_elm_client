@@ -259,5 +259,5 @@ init flags =
             [ doc ]
             searchState
             True
-        , Cmd.none
+        , render doc.rendered_content
         )

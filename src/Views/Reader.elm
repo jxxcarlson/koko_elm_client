@@ -23,6 +23,5 @@ reader model =
           -- div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
         , div [ id "toolPane" ] [ toolSelector model ]
         , div [ id "titlePane" ] [ text model.current_document.title ]
-        , div [ id "textPane" ] [ text model.current_document.rendered_content ]
-          -- , div [ id "textPane" ] [ toHtml [] model.current_document.rendered_content ]
+          -- HERE use the node with id = rendered_text2 in JS-land.
         ]

@@ -51,7 +51,7 @@ var mountNode = document.getElementById('main');
     var reader_left =  (0.20*settings.width + 2)+ "px"
 
     var editor_width = (0.4*settings.width - 63) + "px"
-    var editor_left = (0.6*settings.width - 1)+ "px"
+    var editor_left = (0.6*settings.width + 1)+ "px"
     // console.log("editor_width: " + editor_width)
 
      switch(settings.page) {
