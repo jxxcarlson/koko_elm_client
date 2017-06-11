@@ -32,8 +32,10 @@ var mountNode = document.getElementById('main');
 
   document.getElementById("rendered_text2").style.visibility = "hidden";
 
+  var count = 0;
+
   app.ports.toJs.subscribe(function (str) {
-    console.log("From Elm: " + str);
+    //console.log("From Elm: " + str);
     var settings = JSON.parse(str)
     // console.log("JSON object = " + JSON.stringify(settings))
 
@@ -49,7 +51,7 @@ var mountNode = document.getElementById('main');
 
      switch(settings.page) {
         case "HomePage":
-            document.getElementById("rendered_text2").style.visibility = "hidden";
+            document.getElementById("rendered_text2").style.visibility = "visible";
             document.getElementById("rendered_text2").style.left = "6000px";
             break;
         case "ReaderPage":
@@ -68,21 +70,26 @@ var mountNode = document.getElementById('main');
             document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
-    if (settings.online == true) {
-      app.ports.render.subscribe(function(rendered_text) {
-            document.getElementById('rendered_text2').innerHTML = rendered_text
-
-            // function updateMathContent(s) {
-            //   var math = MathJax.Hub.getAllJax("mathdiv")[0];
-            //   MathJax.Hub.Queue(["Text", math, s]);
-            // }
-
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-      })
-    } else {
-      app.ports.render.subscribe(function(rendered_text) {
-            document.getElementById('rendered_text2').innerHTML = rendered_text
-      })
-  }
 
 })
+
+
+  app.ports.render.subscribe(function(rendered_text) {
+
+      requestAnimationFrame(function() {
+        document.getElementById('rendered_text2').innerHTML = rendered_text
+        count = count + 1;
+        console.log("(" + count + ") Rendering ...")
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      })
+
+      // requestAnimationFrame(function() {
+      //   MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      // })
+
+  })
+
+  // function updateMathContent(s) {
+  //   var math = MathJax.Hub.getAllJax("mathdiv")[0];
+  //   MathJax.Hub.Queue(["Text", math, s]);
+  // }

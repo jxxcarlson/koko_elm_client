@@ -49,7 +49,7 @@ update msg model =
             ( (updateWindow model w h), toJs (Views.External.windowData model model.page) )
 
         GoTo p ->
-            ( { model | page = p }, toJs (Views.External.windowData model p) )
+            ( { model | page = p }, render model.current_document.rendered_content )
 
         SelectTool t ->
             ( { model | tool = t }, Cmd.none )
@@ -96,7 +96,7 @@ update msg model =
         DoRender key ->
             if key == 27 then
                 -- 27: ESCAPE
-                ( { model | info = "ESCAPE pressed" }, render model.current_document.rendered_content )
+                ( { model | info = "ESCAPE pressed, rendering ..." }, render model.current_document.rendered_content )
             else
                 ( model, Cmd.none )
 
@@ -114,19 +114,19 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         SelectDocument document ->
-            ( { model | current_document = document }, render document.rendered_content )
+            ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
 
         InputContent content ->
             updateContent model content
 
         Refresh ->
-            ( model, render model.current_document.rendered_content )
+            ( { model | message = "Refresh, rendering" }, render model.current_document.rendered_content )
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
 
         Tick time ->
-            ( model, render model.current_document.rendered_content )
+            ( { model | message = "Tick, rendering" }, render model.current_document.rendered_content )
 
         SendToJS str ->
             ( model, toJs str )
@@ -258,8 +258,3 @@ init flags =
             True
         , Cmd.none
         )
-
-
-
--- Views.External.windowSetup 500 500 HomePage True
---render model.current_document.rendered_content

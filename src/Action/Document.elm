@@ -32,6 +32,7 @@ updateDocuments model documentsRecord =
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.none
+          -- render model.current_document.rendered_text2
         )
 
 
