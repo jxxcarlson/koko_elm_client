@@ -1,4 +1,4 @@
-port module Main exposing (..)
+module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -19,6 +19,7 @@ import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
 import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
+import External exposing (render, toJs)
 
 
 main =
@@ -136,16 +137,6 @@ update msg model =
 
         SetupPages ->
             ( model, toJs (Views.External.windowData model model.page) )
-
-
-
--- PORTS
-
-
-port render : String -> Cmd msg
-
-
-port toJs : String -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg

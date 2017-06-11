@@ -8,6 +8,7 @@ import Jwt exposing (decodeToken)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder)
 import Types exposing (..)
+import Utility exposing (gotoPage)
 
 
 loginUserCmd : Model -> String -> Cmd Msg
@@ -56,7 +57,7 @@ getTokenCompleted model result =
                             , message = "Signed in as " ++ value.username
                             , page = ReaderPage
                           }
-                        , Cmd.none
+                        , Utility.gotoPage model ReaderPage
                         )
 
                 Err error ->

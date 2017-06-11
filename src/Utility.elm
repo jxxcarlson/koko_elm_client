@@ -5,6 +5,9 @@ import Css exposing (asPairs)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Html.Attributes exposing (..)
 import Html.Events as HE exposing (on, keyCode)
+import Types exposing (Model, Page)
+import External exposing (toJs)
+import Views.External exposing (windowData)
 
 
 --styles :  List Css.Mixin -> Html.Attribute msg
@@ -22,6 +25,11 @@ updateListAt list n newElement =
 onKeyUp : (Int -> msg) -> Attribute msg
 onKeyUp tagger =
     on "keyup" (Json.map tagger HE.keyCode)
+
+
+gotoPage : Model -> Page -> Cmd msg
+gotoPage model p =
+    toJs (Views.External.windowData model p)
 
 
 
