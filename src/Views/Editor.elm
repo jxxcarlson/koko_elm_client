@@ -36,6 +36,5 @@ editor model =
             ]
             []
         , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]
-        , div [ id "editPane2" ] [ text model.current_document.rendered_content ]
-          --, div [ id "editPane2" ] [ toHtml [] model.current_document.rendered_content ]
+          -- HERE use the node with id = rendered_text2 in JS-land.
         ]
