@@ -29,8 +29,21 @@ var mountNode = document.getElementById('main');
   app.ports.render.subscribe(function(rendered_text) {
 
       requestAnimationFrame(function() {
-        document.getElementById('rendered_text2').innerHTML = rendered_text
+
+        var asciidoctor = Asciidoctor();
+        var content = rendered_text
+        var html = asciidoctor.convert(content);
+
+        document.getElementById('rendered_text2').innerHTML = html
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text2"]);
+
+        // var asciidoctor = Asciidoctor();
+        // var content = "http://asciidoctor.org[*Asciidoctor*] " +
+        //   "running on http://opalrb.org[_Opal_] " +
+        //     "brings AsciiDoc to the browser!";
+        // var html = asciidoctor.convert(content);
+        // console.log(html);
+
       })
 
   })
