@@ -49,7 +49,7 @@ update msg model =
             ( (updateWindow model w h), toJs (Views.External.windowData model model.page) )
 
         GoTo p ->
-            ( { model | page = p }, render model.current_document.rendered_content )
+            ( { model | page = p }, toJs (Views.External.windowData model p) )
 
         SelectTool t ->
             ( { model | tool = t }, Cmd.none )
@@ -126,7 +126,10 @@ update msg model =
             updateSearchDomain model searchDomain
 
         Tick time ->
-            ( { model | message = "Tick, rendering" }, render model.current_document.rendered_content )
+            if model.page == EditorPage then
+                ( { model | message = "Tick, rendering" }, render model.current_document.rendered_content )
+            else
+                ( model, Cmd.none )
 
         SendToJS str ->
             ( model, toJs str )
