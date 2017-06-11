@@ -148,15 +148,6 @@ port render : String -> Cmd msg
 port toJs : String -> Cmd msg
 
 
-
--- subscriptions : Model -> Sub Msg
--- subscriptions model =
---     Window.resizes (\{ width, height } -> Resize width height)
--- windowSizes : Model -> Sub Msg
--- windowSizes model =
---     Window.resizes (\{ width, height } -> Resize width height)
-
-
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
@@ -165,27 +156,10 @@ subscriptions model =
         ]
 
 
-
--- subscriptions model =
---     Time.every (30 * Time.second) Tick
--- Sub.batch
--- [ Mouse.clicks MouseMsg
--- , Keyboard.presses KeyMsg
--- ]
--- Time.every (50 * Time.millisecond) Tick
-
-
 windowCss model =
     [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
     ]
-
-
-
--- windowCss model =
---     [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
---     , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
---     ]
 
 
 page : Model -> Html Msg
