@@ -80,6 +80,7 @@ var mountNode = document.getElementById('main');
         document.getElementById('rendered_text2').innerHTML = rendered_text
         count = count + 1;
         console.log("(" + count + ") Rendering ...")
+        // MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text"]);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
       })
 
