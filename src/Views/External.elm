@@ -18,21 +18,18 @@ windowData model page =
         encode 2 data
 
 
+windowSetup : Int -> Int -> Page -> Bool -> String
+windowSetup width height page online =
+    let
+        data =
+            object
+                [ ( "width", int width )
+                , ( "height", int height )
+                , ( "page", string (toString page) )
+                , ( "online", bool True )
+                ]
 
--- windowSetup : Int -> Int -> Page -> Bool -> String
--- windowSetup width height page online =
---     let
---         data =
---             object
---                 [ ( "width", int width )
---                 , ( "height", int height )
---                 , ( "page", string (toString page) )
---                 , ( "online", bool True )
---                 ]
---         json =  encode 2 data
---     in
---
---
---
--- , ( "page", string (toString page)
--- , ( "online", bool model.online )
+        json =
+            encode 2 data
+    in
+        json

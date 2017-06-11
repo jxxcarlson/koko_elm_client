@@ -18,7 +18,7 @@ import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Views.Search exposing (documentSearchForm)
 import Time exposing (Time, second)
-import Views.External exposing (windowData)
+import Views.External exposing (windowData, windowSetup)
 
 
 main =
@@ -106,7 +106,9 @@ update msg model =
                     updateDocuments model documentsRecord
 
                 Err _ ->
-                    ( { model | info = "Could not decode server reply" }, Cmd.none )
+                    ( { model | info = "Could not decode server reply" }
+                    , Cmd.none
+                    )
 
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
@@ -211,3 +213,53 @@ view model =
             , span [ id "info" ] [ text model.info ]
             ]
         ]
+
+
+
+-- INIT
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    let
+        current_user =
+            User "" "" "" "" ""
+
+        registerUser =
+            False
+
+        title =
+            "Test document"
+
+        text =
+            "The correct formula is $$\\int_0^1 x^n = \\frac{1}{n}$$"
+
+        rendered_text =
+            "The *RENDERED formula* is $$\\int_0^1 x^n = \\frac{1}{n}$$ (HA HA HA!)"
+
+        doc =
+            Document 0 0 title text rendered_text
+
+        searchState =
+            SearchState "" Public
+    in
+        ( Model
+            (KWindow flags.width flags.height)
+            HomePage
+            TableOfContents
+            "Please sign in"
+            current_user
+            registerUser
+            ""
+            ""
+            doc
+            [ doc ]
+            searchState
+            True
+        , Cmd.none
+        )
+
+
+
+-- Views.External.windowSetup 500 500 HomePage True
+--render model.current_document.rendered_content

@@ -78,7 +78,7 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
            font-size: 0.9em;
 }
 
-#editPane2 {display: none; position: absolute; top: 82px; right: 0;
+#editPane2 {position: absolute; top: 82px; right: 0;
       overflow: scroll; background-color: #eee;
       width: Calc(40% - 40px); height: Calc(100% - 152px);
       background-color: #ffffee; border:1px; border: solid 1px;

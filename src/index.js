@@ -35,7 +35,7 @@ var mountNode = document.getElementById('main');
   app.ports.toJs.subscribe(function (str) {
     console.log("From Elm: " + str);
     var settings = JSON.parse(str)
-    console.log("JSON object = " + JSON.stringify(settings))
+    // console.log("JSON object = " + JSON.stringify(settings))
 
     var reader_height = (settings.height - 180)+ "px"
     var editor_height = (settings.height - 180)+ "px"
@@ -45,11 +45,12 @@ var mountNode = document.getElementById('main');
 
     var editor_width = (0.4*settings.width - 65) + "px"
     var editor_left = (0.6*settings.width + 5)+ "px"
-    console.log("editor_width: " + editor_width)
+    // console.log("editor_width: " + editor_width)
 
      switch(settings.page) {
         case "HomePage":
             document.getElementById("rendered_text2").style.visibility = "hidden";
+            document.getElementById("rendered_text2").style.left = "6000px";
             break;
         case "ReaderPage":
             document.getElementById("rendered_text2").style.visibility = "visible";
@@ -70,6 +71,12 @@ var mountNode = document.getElementById('main');
     if (settings.online == true) {
       app.ports.render.subscribe(function(rendered_text) {
             document.getElementById('rendered_text2').innerHTML = rendered_text
+
+            // function updateMathContent(s) {
+            //   var math = MathJax.Hub.getAllJax("mathdiv")[0];
+            //   MathJax.Hub.Queue(["Text", math, s]);
+            // }
+
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
       })
     } else {
