@@ -2,6 +2,7 @@ module Action.Document exposing (..)
 
 import Types exposing (..)
 import Utility exposing (replaceIf)
+import Request.Document exposing (putCurrentDocument)
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -65,7 +66,7 @@ updateContent model content =
             , info = docInfo
             , documents = new_documents
           }
-        , Cmd.none
+        , putCurrentDocument model
         )
 
 

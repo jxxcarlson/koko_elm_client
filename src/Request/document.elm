@@ -1,8 +1,8 @@
-module Request.Document exposing (getDocumentsWith)
+module Request.Document exposing (getDocumentsWith, putCurrentDocument)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
-import Request.Api exposing (documentsUrl)
+import Request.Api exposing (publicDocumentsUrl, documentsUrl)
 import Types exposing (..)
 import Data.Document exposing (documentDecoder)
 import Action.Search exposing (parseQuery)
@@ -17,9 +17,9 @@ getDocumentsWith searchTerms =
     let
         url =
             if searchTerms == "" then
-                documentsUrl ++ "?all"
+                publicDocumentsUrl ++ "?all"
             else
-                documentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
+                publicDocumentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
 
         request =
             Http.getString url
@@ -46,50 +46,19 @@ putDocumentRB document token =
 
 
 
--- putCurrentDocument : Model -> Cmd Msg
--- putCurrentDocument model =
---     let
---         request =
---             putDocumentRB model.current_document model.current_user.token
---                 |> HB.toRequest
---     in
--- Http.send PutDocument request
---
--- saveDocumentRequest : Model -> Http.Request String
--- saveDocumentRequest model =
---     let
---         url =
---             saveDocumentUrl ++ (toString model.selectedDocument.id)
---
---         body =
---             model
---                 |> documentEncoder
---                 |> Http.jsonBody
---     in
---         Http.put saveDocumentUrl body decodeDoc
+--|> withExpect (Http.expectJson documentDecoder)
+
+
+putCurrentDocument : Model -> Cmd Msg
+putCurrentDocument model =
+    let
+        request =
+            putDocumentRB model.current_document model.current_user.token
+                |> HB.toRequest
+    in
+        Http.send PutDocument request
 
 
 decodeDoc : Decoder String
 decodeDoc =
     Decode.field "document" Decode.string
-
-
-
--- saveDocument : Model -> Cmd Msg
--- saveDocument model =
---     let
---         request =
---             saveDocumentRequest model
---     in
---         Http.send SaveDocument request
---
---
---saveDocument2 : Model -> Http.Request String
---saveDocument2 model =
---    let
---        body =
---            model
---                |> documentEncoder
---                |> Http.jsonBody
---    in
---        Http.post saveDocumentUrl body documentDecoder

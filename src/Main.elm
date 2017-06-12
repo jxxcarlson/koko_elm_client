@@ -114,17 +114,14 @@ update msg model =
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
-        -- PutDocument (Ok serverReply) ->
-        --     case (Data.Document.document serverReply) of
-        --         Ok documentRecord ->
-        --             updateDocument model documentsRecord
-        --
-        --         Err _ ->
-        --             ( { model | info = "Could not decode server reply" }
-        --             , Cmd.none
-        --             )
-        -- PutDocument (Err _) ->
-        --     ( { model | info = "Error on PUT: " ++ (toString Err) }, Cmd.none )
+        PutDocument (Ok serverReply) ->
+            case (serverReply) of
+                () ->
+                    ( model, Cmd.none )
+
+        PutDocument (Err _) ->
+            ( { model | info = "Error on PUT: " ++ (toString Err) }, Cmd.none )
+
         SelectDocument document ->
             ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
 

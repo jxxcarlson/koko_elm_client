@@ -6,8 +6,12 @@ api =
     "http://localhost:4000/api/"
 
 
-documentsUrl =
+publicDocumentsUrl =
     api ++ "public/documents"
+
+
+documentsUrl =
+    api ++ "documents"
 
 
 loginUrl =
