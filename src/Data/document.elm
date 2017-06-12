@@ -17,20 +17,21 @@ type alias Documents =
 --- And this: https://github.com/dragonwasrobot/json-schema-to-elm
 -- ARCHITECURE: https://gist.github.com/jah2488/ca3310ad385957e2e616c646de2275fb
 -- FLAGS: https://guide.elm-lang.org/interop/javascript.html#flags
--- documentEncoder : Model -> Encode.Value
--- documentEncoder model =
---     Encode.object
---         [ ( "document"
---           , Encode.object
---                 [ ( "id", Encode.int model.selectedDocument.id )
---                 , ( "author_id", Encode.int model.selectedDocument.id )
---                 , ( "title", Encode.string model.selectedDocument.title )
---                 , ( "content", Encode.string model.selectedDocument.author )
---                 , ( "rendred_content", Encode.string model.selectedDocument.identifier )
---                 ]
---           )
---         ]
---
+
+
+documentEncoder : Document -> Encode.Value
+documentEncoder document =
+    Encode.object
+        [ ( "document"
+          , Encode.object
+                [ ( "id", Encode.int document.id )
+                , ( "author_id", Encode.int document.author_id )
+                , ( "title", Encode.string document.title )
+                , ( "content", Encode.string document.content )
+                , ( "rendered_content", Encode.string document.rendered_content )
+                ]
+          )
+        ]
 
 
 documentDecoder : Decoder Document

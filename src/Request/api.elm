@@ -6,7 +6,7 @@ api =
     "http://localhost:4000/api/"
 
 
-getDocumentsUrl =
+documentsUrl =
     api ++ "public/documents"
 
 

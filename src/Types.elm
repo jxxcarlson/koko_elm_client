@@ -69,6 +69,7 @@ type Msg
     | ToggleRegister
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
+      -- | PutDocument (Result Http.Error String)
     | InputContent String
     | Email String
     | Password String

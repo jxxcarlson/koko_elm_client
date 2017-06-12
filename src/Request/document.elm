@@ -2,10 +2,11 @@ module Request.Document exposing (getDocumentsWith)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
-import Request.Api exposing (getDocumentsUrl)
+import Request.Api exposing (documentsUrl)
 import Types exposing (..)
 import Data.Document exposing (documentDecoder)
 import Action.Search exposing (parseQuery)
+import HttpBuilder as HB exposing (..)
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
@@ -16,9 +17,9 @@ getDocumentsWith searchTerms =
     let
         url =
             if searchTerms == "" then
-                getDocumentsUrl ++ "?all"
+                documentsUrl ++ "?all"
             else
-                getDocumentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
+                documentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
 
         request =
             Http.getString url
@@ -27,6 +28,33 @@ getDocumentsWith searchTerms =
 
 
 
+-- http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/HttpBuilder
+
+
+putDocumentRB : Document -> String -> RequestBuilder ()
+putDocumentRB document token =
+    let
+        params =
+            Data.Document.documentEncoder document
+
+        url =
+            documentsUrl ++ "/" ++ (toString document.id)
+    in
+        HB.put url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withJsonBody params
+
+
+
+-- putCurrentDocument : Model -> Cmd Msg
+-- putCurrentDocument model =
+--     let
+--         request =
+--             putDocumentRB model.current_document model.current_user.token
+--                 |> HB.toRequest
+--     in
+-- Http.send PutDocument request
+--
 -- saveDocumentRequest : Model -> Http.Request String
 -- saveDocumentRequest model =
 --     let

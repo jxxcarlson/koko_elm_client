@@ -10,7 +10,6 @@ import Html.Events as HE exposing (..)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
 import Action.Document exposing (wordCount)
 import Utility exposing (onKeyUp)
-import Html.Keyed as Keyed
 
 
 -- import Css exposing (asPairs)
