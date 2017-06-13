@@ -93,5 +93,9 @@ var mountNode = document.getElementById('main');
             document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
+    if ((settings.signed_in == false) && (settings.page != "ReaderPage")) {
+      document.getElementById("rendered_text2").style.visibility = "hidden";
+    }
+
 
 })

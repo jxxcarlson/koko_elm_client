@@ -97,3 +97,5 @@ smallButton { width: 55px; height: 30px; margin-right: 8px;
 #searchDomainFieldSet { border: none;}
 ul { list-style-type: none; margin:0; padding:0; font-size:0.95em;}
 li {margin-bottom: 0.3em;}
+
+code {color: darkred; font-size:1.1em; font-family: Courier;}

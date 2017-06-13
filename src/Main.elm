@@ -50,7 +50,10 @@ update msg model =
             ( (updateWindow model w h), toJs (Views.External.windowData model model.page) )
 
         GoTo p ->
-            ( { model | page = p }, toJs (Views.External.windowData model p) )
+            if p == EditorPage && model.current_user.token == "" then
+                ( { model | page = HomePage, message = "Please sign in if you wish to edit" }, toJs (Views.External.windowData model p) )
+            else
+                ( { model | page = p }, toJs (Views.External.windowData model p) )
 
         SelectTool t ->
             ( { model | tool = t }, Cmd.none )
@@ -137,6 +140,7 @@ update msg model =
         Tick time ->
             if model.page == EditorPage then
                 ( { model | message = "Tick, rendering" }, render model.current_document.rendered_content )
+                -- ( model, Cmd.none )
             else
                 ( model, Cmd.none )
 
@@ -150,7 +154,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (30 * Time.second) Tick
+        [ Time.every (60 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         ]
 

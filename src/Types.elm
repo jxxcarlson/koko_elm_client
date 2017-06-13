@@ -59,6 +59,10 @@ type alias Model =
     }
 
 
+type alias SystemStatus =
+    { online : Bool }
+
+
 type Msg
     = NoOp
     | Resize Int Int

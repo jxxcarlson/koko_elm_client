@@ -7,12 +7,19 @@ import Json.Encode exposing (encode, object, int, string, bool)
 windowData : Model -> Page -> String
 windowData model page =
     let
+        signedIn =
+            if model.current_user.token == "" then
+                False
+            else
+                True
+
         data =
             object
                 [ ( "width", int model.window.width )
                 , ( "height", int model.window.height )
                 , ( "page", string (toString page) )
                 , ( "online", bool model.online )
+                , ( "signed_in", bool signedIn )
                 ]
     in
         encode 2 data

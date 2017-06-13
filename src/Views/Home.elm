@@ -16,5 +16,5 @@ home : Model -> Html Msg
 home model =
     div []
         [ signin model
-        , Utility.youtube "https://www.youtube.com/embed/EsTgr-n53Ow"
+          --, Utility.youtube "https://www.youtube.com/embed/EsTgr-n53Ow"
         ]

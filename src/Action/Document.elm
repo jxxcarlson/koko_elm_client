@@ -43,7 +43,7 @@ updateContent model content =
         docInfo =
             case (getDocumentById model model.current_document.id) of
                 Just theDoc ->
-                    "Doc id = " ++ (toString theDoc.id)
+                    "Updating doc, id = " ++ (toString theDoc.id)
 
                 Nothing ->
                     "Cannot get doc_info"
@@ -58,13 +58,14 @@ updateContent model content =
         old_documents =
             model.documents
 
-        new_documents =
-            replaceIf (hasId new_document.id) new_document old_documents
+        -- new_documents =
+        --     replaceIf (hasId new_document.id) new_document old_documents
     in
         ( { model
             | current_document = new_document
-            , info = docInfo
-            , documents = new_documents
+            , info =
+                docInfo
+                -- , documents = new_documents
           }
         , putCurrentDocument model
         )

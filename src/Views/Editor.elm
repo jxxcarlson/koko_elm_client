@@ -29,7 +29,7 @@ editor model =
           --, pre [ id "editPane" ] [ text model.current_document.content ]
         , textarea
             [ id "editPane"
-            , value model.current_document.content
+            , defaultValue model.current_document.content
             , HE.onInput InputContent
             , Utility.onKeyUp DoRender
             ]
