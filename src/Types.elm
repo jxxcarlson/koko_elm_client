@@ -1,5 +1,6 @@
 module Types exposing (..)
 
+import HttpBuilder
 import Http
 import Time exposing (Time)
 
@@ -21,6 +22,10 @@ type alias Document =
     , content : String
     , rendered_content : String
     }
+
+
+type alias DocumentRecord =
+    { document : Document }
 
 
 type alias Documents =
@@ -73,7 +78,11 @@ type Msg
     | ToggleRegister
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
+    | GetUserDocuments (Result Http.Error Documents)
     | PutDocument (Result Http.Error ())
+    | CreateDocument (Result Http.Error DocumentRecord)
+    | NewDocument
+    | Title String
     | InputContent String
     | Email String
     | Password String

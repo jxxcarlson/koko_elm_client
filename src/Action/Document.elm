@@ -3,6 +3,7 @@ module Action.Document exposing (..)
 import Types exposing (..)
 import Utility exposing (replaceIf)
 import Request.Document exposing (putCurrentDocument)
+import External exposing (render)
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -91,3 +92,25 @@ getDocumentsById model k =
 getDocumentById : Model -> Int -> Maybe Document
 getDocumentById model k =
     List.head (getDocumentsById model k)
+
+
+createDocument : Model -> Document -> ( Model, Cmd Msg )
+createDocument model document =
+    ( model, Request.Document.createDocument document model.current_user.token )
+
+
+selectDocument : Model -> Document -> ( Model, Cmd Msg )
+selectDocument model document =
+    ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
+
+
+selectNewDocument : Model -> Document -> ( Model, Cmd Msg )
+selectNewDocument model document =
+    ( { model
+        | current_document = document
+        , documents = [ document ] ++ model.documents
+        , message = "New document added: " ++ document.title
+        , info = "New document added: " ++ document.title
+      }
+    , render document.rendered_content
+    )

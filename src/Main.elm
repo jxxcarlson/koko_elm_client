@@ -11,7 +11,7 @@ import Views.Editor exposing (editor)
 import Css exposing (asPairs)
 import Action.User exposing (..)
 import Action.Search exposing (..)
-import Action.Document exposing (updateDocuments, updateContent)
+import Action.Document exposing (createDocument, updateDocuments, updateContent, selectDocument, selectNewDocument)
 import Data.Document exposing (documents)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
@@ -20,6 +20,7 @@ import Views.Search exposing (documentSearchForm)
 import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
+import Request.Document
 
 
 main =
@@ -92,7 +93,7 @@ update msg model =
             if key == 13 then
                 -- 13: RETURN/ENTER
                 ( { model | info = "I will search on: " ++ model.searchState.query }
-                , getDocumentsWith model.searchState.query
+                , getDocumentsWith model.searchState
                 )
             else
                 ( model, Cmd.none )
@@ -117,6 +118,12 @@ update msg model =
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
+        GetUserDocuments (Ok documents) ->
+            ( { model | documents = documents }, Cmd.none )
+
+        GetUserDocuments (Err _) ->
+            ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+
         PutDocument (Ok serverReply) ->
             case (serverReply) of
                 () ->
@@ -125,9 +132,34 @@ update msg model =
         PutDocument (Err _) ->
             ( { model | info = "Error on PUT: " ++ (toString Err) }, Cmd.none )
 
-        SelectDocument document ->
-            ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
+        NewDocument ->
+            let
+                newDocument =
+                    Document 0 0 "New Document" "New Content" "New Content"
+            in
+                createDocument model newDocument
 
+        --( model , Request.Document.createDocument newDocument model.current_user.token )
+        CreateDocument (Ok documentRecord) ->
+            selectNewDocument model documentRecord.document
+
+        CreateDocument (Err errorMessage) ->
+            ( { model | info = (toString errorMessage) }, Cmd.none )
+
+        Title title ->
+            let
+                doc =
+                    model.current_document
+
+                new_document =
+                    { doc | title = title }
+            in
+                ( { model | current_document = new_document }, Cmd.none )
+
+        SelectDocument document ->
+            selectDocument model document
+
+        -- ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
         InputContent content ->
             updateContent model content
 

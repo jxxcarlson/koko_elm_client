@@ -1,10 +1,10 @@
-module Request.Document exposing (getDocumentsWith, putCurrentDocument)
+module Request.Document exposing (getDocumentsWith, putCurrentDocument, createDocument)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
 import Request.Api exposing (publicDocumentsUrl, documentsUrl)
 import Types exposing (..)
-import Data.Document exposing (documentDecoder)
+import Data.Document exposing (documentDecoder, documentsDecoder, documentRecordDecoder)
 import Action.Search exposing (parseQuery)
 import HttpBuilder as HB exposing (..)
 
@@ -12,14 +12,23 @@ import HttpBuilder as HB exposing (..)
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
 
 
-getDocumentsWith : String -> Cmd Msg
-getDocumentsWith searchTerms =
+getDocumentsWith : SearchState -> Cmd Msg
+getDocumentsWith searchState =
     let
-        url =
-            if searchTerms == "" then
-                publicDocumentsUrl ++ "?all"
+        query =
+            searchState.query
+
+        searchUrl =
+            if searchState.domain == Public then
+                publicDocumentsUrl
             else
-                publicDocumentsUrl ++ "?" ++ Action.Search.parseQuery (searchTerms)
+                documentsUrl
+
+        url =
+            if query == "" then
+                searchUrl ++ "?all"
+            else
+                searchUrl ++ "?" ++ Action.Search.parseQuery (query)
 
         request =
             Http.getString url
@@ -28,6 +37,16 @@ getDocumentsWith searchTerms =
 
 
 
+-- getUserDocumentsWith : SearchState -> String -> Cmd Msg
+-- getUserDocumentsWith searchState token =
+--     let
+--         url =
+--             documentsUrl
+--     in
+--         HB.post url
+--             |> HB.withHeader "Authorization" ("Bearer " ++ token)
+--             |> withExpect (Http.expectJson documentsDecoder)
+--             |> HB.send GetUserDocuments
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/HttpBuilder
 
 
@@ -57,6 +76,38 @@ putCurrentDocument model =
                 |> HB.toRequest
     in
         Http.send PutDocument request
+
+
+
+--- aaa
+-- Create New Document
+
+
+createDocument : Document -> String -> Cmd Msg
+createDocument document token =
+    let
+        params =
+            Data.Document.documentEncoder document
+
+        url =
+            documentsUrl
+    in
+        HB.post url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withJsonBody params
+            |> withExpect (Http.expectJson documentRecordDecoder)
+            |> HB.send CreateDocument
+
+
+
+-- createDocument : Model -> Cmd Msg
+-- createDocument model =
+--     let
+--         request =
+--             createDocumentRB model.current_document model.current_user.token
+--                 |> HB.toRequest
+--     in
+--         HB.send CreateDocument request
 
 
 decodeDoc : Decoder String

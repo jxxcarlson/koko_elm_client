@@ -37,3 +37,15 @@ editor model =
         , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]
           -- HERE use the node with id = rendered_text2 in JS-land.
         ]
+
+
+newDocumentForm model =
+    div [ id "newDocumentForm" ]
+        [ input [ id "title", type_ "text", placeholder "title", onInput Title ] []
+        , br [] []
+        , br [] []
+        , button [ id "newDocumentBttton", onClick NewDocument ] [ text "Create" ]
+        , br [] []
+        , br [] []
+        , p [] [ text model.info ]
+        ]

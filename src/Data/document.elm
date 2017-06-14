@@ -6,6 +6,9 @@ import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, h
 import Types exposing (..)
 
 
+-- http://eeue56.github.io/json-to-elm/
+
+
 type alias Documents =
     { documents : List Document }
 
@@ -42,6 +45,19 @@ documentDecoder =
         |> JPipeline.required "title" Decode.string
         |> JPipeline.required "content" Decode.string
         |> JPipeline.required "rendered_content" Decode.string
+
+
+documentRecordDecoder : Decoder DocumentRecord
+documentRecordDecoder =
+    JPipeline.decode DocumentRecord
+        |> JPipeline.required "document" (documentDecoder)
+
+
+
+-- documentDecoder2 : Decoder Document
+-- documentDecoder2 =
+--     decode Document
+--         |> required "document" documentDecoder
 
 
 documentsDecoder : Decoder Documents

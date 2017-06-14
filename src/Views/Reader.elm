@@ -2,7 +2,10 @@ module Views.Reader exposing (reader)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events as HE exposing (onClick)
+
+
+-- import Html.Events as HE exposing (onClick)
+
 import Css exposing (asPairs)
 import Types exposing (Model, Msg)
 import Views.Component exposing (toolSelectorPanel, toolSelector)
