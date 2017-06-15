@@ -36,7 +36,10 @@ updateDocuments model documentsRecord =
             , tool = tool
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
-        , render model.current_document.rendered_content
+        , Cmd.batch
+            [ toJs (windowData model model.page)
+            , render current_document.rendered_content
+            ]
           -- render model.current_document.rendered_text2
         )
 
