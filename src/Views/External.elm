@@ -25,15 +25,16 @@ windowData model page =
         encode 2 data
 
 
-windowSetup : Int -> Int -> Page -> Bool -> String
-windowSetup width height page online =
+windowSetup : Int -> Int -> Page -> Bool -> Bool -> String
+windowSetup width height page online signed_in =
     let
         data =
             object
                 [ ( "width", int width )
                 , ( "height", int height )
                 , ( "page", string (toString page) )
-                , ( "online", bool True )
+                , ( "online", bool online )
+                , ( "signed_in", bool signed_in )
                 ]
 
         json =

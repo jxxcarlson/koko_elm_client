@@ -50,12 +50,12 @@ var mountNode = document.getElementById('main');
 
   })
 
-  document.getElementById("rendered_text2").style.visibility = "hide";
+  document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var count = 0;
 
   app.ports.toJs.subscribe(function (str) {
-    //console.log("From Elm: " + str);
+    console.log("app.ports.toJs: " + str);
     var settings = JSON.parse(str)
     console.log("JSON object = " + JSON.stringify(settings))
 
@@ -71,23 +71,25 @@ var mountNode = document.getElementById('main');
 
      switch(settings.page) {
         case "HomePage":
-            document.getElementById("rendered_text2").style.visibility = "visible";
-            document.getElementById("rendered_text2").style.left = "6000px";
-            console.log("HomePage")
+            document.getElementById("rendered_text2").style.visibility = "hidden";
+            document.getElementById("rendered_text2").style.left = reader_left;
+            document.getElementById("rendered_text2").style.width = "100px";
+            document.getElementById("rendered_text2").style.height = "100px";
+            console.log(":HomePage")
             break;
         case "ReaderPage":
             document.getElementById("rendered_text2").style.visibility = "visible";
             document.getElementById("rendered_text2").style.left = reader_left;
             document.getElementById("rendered_text2").style.width = reader_width;
             document.getElementById("rendered_text2").style.height = reader_height;
-            console.log("ReaderPage")
+            console.log(":ReaderPage")
             break;
         case "EditorPage":
             document.getElementById("rendered_text2").style.visibility = "visible";
             document.getElementById("rendered_text2").style.left = editor_left;
             document.getElementById("rendered_text2").style.width = editor_width;
             document.getElementById("rendered_text2").style.height = editor_height;
-            console.log("EditorPage")
+            console.log(":EditorPage")
             break;
         default:
             document.getElementById("rendered_text2").style.visibility = "hidden";
