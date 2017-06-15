@@ -93,7 +93,7 @@ update msg model =
             if key == 13 then
                 -- 13: RETURN/ENTER
                 ( { model | info = "I will search on: " ++ model.searchState.query }
-                , getDocumentsWith model.searchState
+                , getDocumentsWith model.searchState model.current_user.token
                 )
             else
                 ( model, Cmd.none )
@@ -118,11 +118,11 @@ update msg model =
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
-        GetUserDocuments (Ok documents) ->
-            ( { model | documents = documents }, Cmd.none )
+        GetUserDocuments (Ok documentsRecord) ->
+            ( { model | documents = documentsRecord.documents }, Cmd.none )
 
-        GetUserDocuments (Err _) ->
-            ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+        GetUserDocuments (Err error) ->
+            ( { model | info = (toString error) }, Cmd.none )
 
         PutDocument (Ok serverReply) ->
             case (serverReply) of

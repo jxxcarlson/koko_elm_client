@@ -78,7 +78,7 @@ type Msg
     | ToggleRegister
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
-    | GetUserDocuments (Result Http.Error Documents)
+    | GetUserDocuments (Result Http.Error DocumentsRecord)
     | PutDocument (Result Http.Error ())
     | CreateDocument (Result Http.Error DocumentRecord)
     | NewDocument
