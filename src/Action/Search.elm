@@ -41,7 +41,21 @@ updateSearchDomain model searchDomain =
         searchState =
             model.searchState
 
+        newSearchDomain =
+            if searchDomain == Private && model.current_user.token /= "" then
+                Private
+            else if searchDomain == Public then
+                Public
+            else
+                Public
+
+        newMessage =
+            if searchDomain == Private && model.current_user.token /= "" then
+                "Sorry, you must sign in to search for private documents"
+            else
+                model.message
+
         new_searchState =
-            { searchState | domain = searchDomain }
+            { searchState | domain = newSearchDomain }
     in
-        ( { model | searchState = new_searchState }, Cmd.none )
+        ( { model | searchState = new_searchState, message = newMessage }, Cmd.none )

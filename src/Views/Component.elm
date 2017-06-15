@@ -39,6 +39,7 @@ searchOptionControl model =
                 , name "searchDomain"
                 , onClick (UseSearchDomain Private)
                 , HA.class "my_radio_button"
+                , HA.disabled (privateSearchDisabled model)
                 , HA.checked (searchDomainChecked model Private)
                 ]
                 []
@@ -62,6 +63,14 @@ searchOptionControl model =
 searchDomainChecked : Model -> SearchDomain -> Bool
 searchDomainChecked model domain =
     model.searchState.domain == domain
+
+
+privateSearchDisabled : Model -> Bool
+privateSearchDisabled model =
+    if model.current_user.token == "" then
+        True
+    else
+        False
 
 
 toolSelectorPanel : Model -> Html Msg
