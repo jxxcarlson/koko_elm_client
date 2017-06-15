@@ -92,7 +92,10 @@ update msg model =
         DoSearch key ->
             if key == 13 then
                 -- 13: RETURN/ENTER
-                ( { model | info = "I will search on: " ++ model.searchState.query }
+                ( { model
+                    | message = "search: " ++ model.searchState.query
+                    , tool = TableOfContents
+                  }
                 , getDocumentsWith model.searchState model.current_user.token
                 )
             else
@@ -110,8 +113,8 @@ update msg model =
                 Ok documentsRecord ->
                     updateDocuments model documentsRecord
 
-                Err _ ->
-                    ( { model | info = "Could not decode server reply" }
+                Err error ->
+                    ( { model | info = (toString error) }
                     , Cmd.none
                     )
 
@@ -119,7 +122,7 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         GetUserDocuments (Ok documentsRecord) ->
-            ( { model | documents = documentsRecord.documents }, Cmd.none )
+            ( { model | documents = documentsRecord.documents }, render model.current_document.rendered_content )
 
         GetUserDocuments (Err error) ->
             ( { model | info = (toString error) }, Cmd.none )

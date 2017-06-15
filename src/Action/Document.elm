@@ -33,7 +33,7 @@ updateDocuments model documentsRecord =
             , tool = tool
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
-        , Cmd.none
+        , render model.current_document.rendered_content
           -- render model.current_document.rendered_text2
         )
 
@@ -101,7 +101,7 @@ createDocument model document =
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
-    ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
+    ( { model | current_document = document, message = "Selected: " ++ document.title }, render document.rendered_content )
 
 
 selectNewDocument : Model -> Document -> ( Model, Cmd Msg )

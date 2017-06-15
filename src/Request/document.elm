@@ -20,10 +20,10 @@ import HttpBuilder as HB exposing (..)
 
 getDocumentsWith : SearchState -> String -> Cmd Msg
 getDocumentsWith searchState token =
-    if searchState.domain == Public then
-        getPublicDocumentsWith searchState
-    else
+    if searchState.domain == Private && token /= "" then
         getUserDocumentsWith searchState token
+    else
+        getPublicDocumentsWith searchState
 
 
 getPublicDocumentsWith : SearchState -> Cmd Msg
