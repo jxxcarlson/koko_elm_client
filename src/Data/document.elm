@@ -37,6 +37,10 @@ documentEncoder document =
         ]
 
 
+
+-- DOCUMENT DECODERS
+
+
 documentDecoder : Decoder Document
 documentDecoder =
     decode Document
@@ -53,11 +57,19 @@ documentRecordDecoder =
         |> JPipeline.required "document" (documentDecoder)
 
 
+document : String -> Result String Document
+document jsonString =
+    decodeString documentDecoder jsonString
 
--- documentDecoder2 : Decoder Document
--- documentDecoder2 =
---     decode Document
---         |> required "document" documentDecoder
+
+
+-- DOCUMENTS DECODERS
+
+
+decodeDocumentsRecord : Decoder Documents
+decodeDocumentsRecord =
+    JPipeline.decode Documents
+        |> JPipeline.required "documents" (Decode.list documentDecoder)
 
 
 documentsDecoder : Decoder Documents
@@ -65,11 +77,6 @@ documentsDecoder =
     decode
         Documents
         |> required "documents" (Decode.list documentDecoder)
-
-
-document : String -> Result String Document
-document jsonString =
-    decodeString documentDecoder jsonString
 
 
 documents : String -> Result String Documents
