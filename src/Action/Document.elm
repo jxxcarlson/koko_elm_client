@@ -4,6 +4,9 @@ import Types exposing (..)
 import Utility exposing (replaceIf)
 import Request.Document exposing (putCurrentDocument)
 import External exposing (render)
+import Action.UI exposing (displayPage)
+import Views.External exposing (windowData)
+import External exposing (toJs)
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -101,7 +104,15 @@ createDocument model document =
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
-    ( { model | current_document = document, message = "Selected: " ++ document.title }, render document.rendered_content )
+    ( { model
+        | current_document = document
+        , message = "Selected: " ++ document.title
+      }
+    , Cmd.batch
+        [ toJs (windowData model (displayPage model))
+        , render document.rendered_content
+        ]
+    )
 
 
 selectNewDocument : Model -> Document -> ( Model, Cmd Msg )

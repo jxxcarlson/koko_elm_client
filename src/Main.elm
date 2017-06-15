@@ -21,6 +21,7 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
+import Action.UI exposing (displayPage)
 
 
 main =
@@ -95,8 +96,12 @@ update msg model =
                 ( { model
                     | message = "search: " ++ model.searchState.query
                     , tool = TableOfContents
+                    , page = displayPage model
                   }
-                , getDocumentsWith model.searchState model.current_user.token
+                , Cmd.batch
+                    [ getDocumentsWith model.searchState model.current_user.token
+                    , render model.current_document.rendered_content
+                    ]
                 )
             else
                 ( model, Cmd.none )
@@ -246,17 +251,20 @@ init flags =
         title =
             "Test document"
 
-        text =
-            "The correct formula is $$\\int_0^1 x^n dx= \\frac{1}{n+1}$$"
+        content =
+            "Welcome"
 
-        rendered_text =
-            "The correct formula is $$\\int_0^1 x^n dx= \\frac{1}{n+1}$$"
+        rendered_content =
+            "Welcome"
 
         doc =
-            Document 0 0 title text rendered_text
+            Document 0 0 title content rendered_content
 
         searchState =
             SearchState "" Public
+
+        ws =
+            windowSetup 150 50 HomePage False False
     in
         ( Model
             (KWindow flags.width flags.height)
@@ -271,5 +279,9 @@ init flags =
             [ doc ]
             searchState
             True
-        , render doc.rendered_content
+        , Cmd.batch [ toJs ws, render doc.rendered_content ]
         )
+
+
+
+--  {"width":1218,"height":686,"page":"HomePage","online":true,"signed_in":false}
