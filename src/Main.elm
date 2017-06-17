@@ -162,7 +162,7 @@ update msg model =
                 new_document =
                     { doc | title = title }
             in
-                ( { model | current_document = new_document }, Cmd.none )
+                ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
 
         SelectDocument document ->
             selectDocument model document
