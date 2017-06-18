@@ -2,9 +2,28 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+
+
+-- begin style
+
+import Style exposing (..)
+import StyleSheet exposing (..)
+import Color
+import Element exposing (..)
+import Element.Attributes as EA exposing (..)
+import Style exposing (..)
+import Style.Border as Border
+import Style.Color as Color
+import Style.Font as Font
+import Style.Transition as Transition
+
+
+-- end style
+
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
+import Views.Component2 as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
@@ -100,7 +119,7 @@ update msg model =
                   }
                 , Cmd.batch
                     [ getDocumentsWith model.searchState model.current_user.token
-                    , render model.current_document.rendered_content
+                    , External.render model.current_document.rendered_content
                     ]
                 )
             else
@@ -109,7 +128,7 @@ update msg model =
         DoRender key ->
             if key == 27 then
                 -- 27: ESCAPE
-                ( { model | info = "ESCAPE pressed, rendering ..." }, render model.current_document.rendered_content )
+                ( { model | info = "ESCAPE pressed, rendering ..." }, External.render model.current_document.rendered_content )
             else
                 ( model, Cmd.none )
 
@@ -127,7 +146,7 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         GetUserDocuments (Ok documentsRecord) ->
-            ( { model | documents = documentsRecord.documents }, render model.current_document.rendered_content )
+            ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
 
         GetUserDocuments (Err error) ->
             ( { model | info = (toString error) }, Cmd.none )
@@ -172,14 +191,14 @@ update msg model =
             updateContent model content
 
         Refresh ->
-            ( { model | message = "Refresh, rendering" }, render model.current_document.rendered_content )
+            ( { model | message = "Refresh, rendering" }, External.render model.current_document.rendered_content )
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
 
         Tick time ->
             if model.page == EditorPage then
-                ( { model | message = "Tick, rendering" }, render model.current_document.rendered_content )
+                ( { model | message = "Tick, rendering" }, External.render model.current_document.rendered_content )
                 -- ( model, Cmd.none )
             else
                 ( model, Cmd.none )
@@ -220,22 +239,55 @@ page model =
 
 view : Model -> Html Msg
 view model =
-    --
-    div []
-        [ div [ id "header" ]
-            [ span [] [ text "Noteshare" ]
-            , Views.Component.pageSelector model
-            , Views.Search.documentSearchForm model
+    Element.root StyleSheet.stylesheet <|
+        column None
+            []
+            [ Component.navigation model
+            , el None [ center, EA.width (percent 90) ] <|
+                column Main
+                    [ spacing 50, paddingTop 50, paddingBottom 50 ]
+                    (List.concat
+                        [ viewTextLayout2
+                        ]
+                    )
+            , Component.footer model
             ]
-        , (page model)
-        , div [ id "footer" ]
-            [ span [ id "message" ] [ text model.message ]
-            , span [ id "info" ] [ text model.info ]
-            ]
-        ]
 
 
 
+{-
+   div []
+       [ div [ id "header" ]
+           [ span [] [ text "Noteshare" ]
+           , Views.Component.pageSelector model
+           , Views.Search.documentSearchForm model
+           ]
+       , (page model)
+       , div [ id "footer" ]
+           [ span [ id "message" ] [ text model.message ]
+           , span [ id "info" ] [ text model.info ]
+           ]
+       ]
+
+-}
+{-
+   Element.root StyleSheet.stylesheet <|
+       column None
+           []
+           [ navigation
+           , el None [ center, EA.width (px 800) ] <|
+               column Main
+                   [ spacing 50, paddingTop 50, paddingBottom 50 ]
+                   (List.concat
+                       [ viewTextLayout
+                       , viewRowLayouts
+                       , viewGridLayout
+                       , viewNamedGridLayout
+                       ]
+                   )
+           ]
+
+-}
 -- INIT
 
 
@@ -279,7 +331,7 @@ init flags =
             [ doc ]
             searchState
             True
-        , Cmd.batch [ toJs ws, render doc.rendered_content ]
+        , Cmd.batch [ toJs ws, External.render doc.rendered_content ]
         )
 
 
