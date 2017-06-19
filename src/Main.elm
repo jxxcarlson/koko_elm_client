@@ -243,14 +243,7 @@ view model =
         column None
             []
             [ Component.navigation model
-            , el None [ center, EA.width (percent 90) ] <|
-                column Main
-                    [ spacing 50, paddingTop 50, paddingBottom 50 ]
-                    (List.concat
-                        [ viewTextLayout2
-                        ]
-                    )
-            , Component.footer model
+            , (Component.footer model)
             ]
 
 
