@@ -44,7 +44,7 @@ import Json.Decode as Json exposing (int, list, string, float, Decoder)
 
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =
-    if currentPage == model.page then
+    if currentPage == model.appState.page then
         ActiveButton
     else
         Button

@@ -4,7 +4,7 @@ import Types exposing (..)
 import Utility exposing (replaceIf)
 import Request.Document exposing (putCurrentDocument)
 import External exposing (render)
-import Action.UI exposing (displayPage, updateToolStatus)
+import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
 import External exposing (toJs)
 
@@ -21,10 +21,10 @@ updateDocuments model documentsRecord =
                     defaultDocument
 
         page =
-            if model.page == HomePage then
+            if model.appState.page == HomePage then
                 ReaderPage
             else
-                model.page
+                model.appState.page
 
         tool =
             TableOfContents
@@ -32,12 +32,12 @@ updateDocuments model documentsRecord =
         ( { model
             | documents = documentsRecord.documents
             , current_document = current_document
-            , page = page
+            , appState = appStateWithPage model page
             , appState = updateToolStatus model TableOfContents
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.batch
-            [ toJs (windowData model model.page)
+            [ toJs (windowData model model.appState.page)
             , render current_document.rendered_content
             ]
           -- render model.current_document.rendered_text2

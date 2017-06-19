@@ -11,7 +11,7 @@ import Views.Search exposing (documentListView)
 
 selectedClass : Page -> Model -> String
 selectedClass page model =
-    if page == model.page then
+    if page == model.appState.page then
         "isSelected"
     else
         "isNotSelected"

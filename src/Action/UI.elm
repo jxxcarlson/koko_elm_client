@@ -5,10 +5,10 @@ import Types exposing (Model, Msg, Page, AppState, Tool)
 
 displayPage : Model -> Page
 displayPage model =
-    if model.page == Types.HomePage then
+    if model.appState.page == Types.HomePage then
         Types.ReaderPage
     else
-        model.page
+        model.appState.page
 
 
 toggleMenu model =
@@ -40,3 +40,12 @@ updateToolStatus model tool =
             model.appState
     in
         { appState | tool = tool }
+
+
+appStateWithPage : Model -> Page -> AppState
+appStateWithPage model page =
+    let
+        appState =
+            model.appState
+    in
+        { appState | page = page }

@@ -39,7 +39,7 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
-import Action.UI exposing (displayPage, toggleMenu, toggleRegister, updateToolStatus)
+import Action.UI exposing (displayPage, toggleMenu, toggleRegister, updateToolStatus, appStateWithPage)
 
 
 -- new style
@@ -73,13 +73,18 @@ update msg model =
             ( model, Cmd.none )
 
         Resize w h ->
-            ( (updateWindow model w h), toJs (Views.External.windowData model model.page) )
+            ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
 
         GoTo p ->
             if p == EditorPage && model.current_user.token == "" then
-                ( { model | page = HomePage, message = "Please sign in if you wish to edit" }, toJs (Views.External.windowData model p) )
+                ( { model
+                    | appState = appStateWithPage model HomePage
+                    , message = "Please sign in if you wish to edit"
+                  }
+                , toJs (Views.External.windowData model p)
+                )
             else
-                ( { model | page = p }, toJs (Views.External.windowData model p) )
+                ( { model | appState = appStateWithPage model p }, toJs (Views.External.windowData model p) )
 
         SelectTool t ->
             ( { model | appState = (updateToolStatus model t) }, Cmd.none )
@@ -126,7 +131,7 @@ update msg model =
                 ( { model
                     | message = "search: " ++ model.searchState.query
                     , appState = updateToolStatus model TableOfContents
-                    , page = displayPage model
+                    , appState = appStateWithPage model (displayPage model)
                   }
                 , Cmd.batch
                     [ getDocumentsWith model.searchState model.current_user.token
@@ -208,7 +213,7 @@ update msg model =
             updateSearchDomain model searchDomain
 
         Tick time ->
-            if model.page == EditorPage then
+            if model.appState.page == EditorPage then
                 ( { model | message = "Tick, rendering" }, External.render model.current_document.rendered_content )
                 -- ( model, Cmd.none )
             else
@@ -218,7 +223,7 @@ update msg model =
             ( model, toJs str )
 
         SetupPages ->
-            ( model, toJs (Views.External.windowData model model.page) )
+            ( model, toJs (Views.External.windowData model model.appState.page) )
 
 
 subscriptions : Model -> Sub Msg
@@ -237,7 +242,7 @@ windowCss model =
 
 page : Model -> Html Msg
 page model =
-    case model.page of
+    case model.appState.page of
         ReaderPage ->
             reader model
 
@@ -326,7 +331,6 @@ init flags =
         ( Model
             (KWindow flags.width flags.height)
             appState
-            HomePage
             "Please sign in"
             current_user
             ""

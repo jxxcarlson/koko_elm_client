@@ -61,7 +61,6 @@ type alias AppState =
 type alias Model =
     { window : KWindow
     , appState : AppState
-    , page : Page
     , message : String
     , current_user : User
     , errorMsg : String
