@@ -335,7 +335,6 @@ init flags =
             doc
             [ doc ]
             searchState
-            True
         , Cmd.batch [ toJs ws, External.render doc.rendered_content ]
         )
 

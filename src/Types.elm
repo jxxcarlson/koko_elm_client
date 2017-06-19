@@ -70,7 +70,6 @@ type alias Model =
     , current_document : Document
     , documents : Documents
     , searchState : SearchState
-    , online : Bool
     }
 
 

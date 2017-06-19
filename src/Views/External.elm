@@ -18,7 +18,6 @@ windowData model page =
                 [ ( "width", int model.window.width )
                 , ( "height", int model.window.height )
                 , ( "page", string (toString page) )
-                , ( "online", bool model.online )
                 , ( "signed_in", bool signedIn )
                 ]
     in
