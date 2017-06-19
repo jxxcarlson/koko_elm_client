@@ -23,7 +23,7 @@ import Style.Transition as Transition
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
-import Views.Component2 as Component
+import Views2.Component as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)

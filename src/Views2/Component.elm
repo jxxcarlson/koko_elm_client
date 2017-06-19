@@ -1,8 +1,9 @@
-module Views.Component2 exposing (..)
+module Views2.Component exposing (..)
 
 import Style exposing (..)
 import StyleSheet exposing (..)
 import Color
+import Html as Html
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
@@ -55,6 +56,7 @@ activeButton currentPage model =
 --     on "keyup" (Json.map tagger EE.keycode)
 
 
+navigation : Model -> Element Styles variation Msg
 navigation model =
     row NavBar
         [ justify, paddingXY 30 4 ]
@@ -71,6 +73,7 @@ navigation model =
 --     ]
 
 
+pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row None
         [ spacing 20 ]
@@ -80,6 +83,7 @@ pageSelector model =
         ]
 
 
+footer : Model -> Element Styles variation msg
 footer model =
     screen
         (row Footer
