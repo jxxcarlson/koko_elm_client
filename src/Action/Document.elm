@@ -4,7 +4,7 @@ import Types exposing (..)
 import Utility exposing (replaceIf)
 import Request.Document exposing (putCurrentDocument)
 import External exposing (render)
-import Action.UI exposing (displayPage)
+import Action.UI exposing (displayPage, updateToolStatus)
 import Views.External exposing (windowData)
 import External exposing (toJs)
 
@@ -33,7 +33,7 @@ updateDocuments model documentsRecord =
             | documents = documentsRecord.documents
             , current_document = current_document
             , page = page
-            , tool = tool
+            , appState = updateToolStatus model TableOfContents
             , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.batch

@@ -1,6 +1,6 @@
 module Action.UI exposing (..)
 
-import Types exposing (Model, Msg, Page)
+import Types exposing (Model, Msg, Page, AppState, Tool)
 
 
 displayPage : Model -> Page
@@ -31,3 +31,12 @@ toggleRegister model =
             { appState | registerUser = (not appState.registerUser) }
     in
         ( { model | appState = newAppState }, Cmd.none )
+
+
+updateToolStatus : Model -> Tool -> AppState
+updateToolStatus model tool =
+    let
+        appState =
+            model.appState
+    in
+        { appState | tool = tool }

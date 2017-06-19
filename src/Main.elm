@@ -39,7 +39,7 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
-import Action.UI exposing (displayPage, toggleMenu, toggleRegister)
+import Action.UI exposing (displayPage, toggleMenu, toggleRegister, updateToolStatus)
 
 
 -- new style
@@ -82,7 +82,7 @@ update msg model =
                 ( { model | page = p }, toJs (Views.External.windowData model p) )
 
         SelectTool t ->
-            ( { model | tool = t }, Cmd.none )
+            ( { model | appState = (updateToolStatus model t) }, Cmd.none )
 
         Name name ->
             updateName model name
@@ -125,7 +125,7 @@ update msg model =
                 -- 13: RETURN/ENTER
                 ( { model
                     | message = "search: " ++ model.searchState.query
-                    , tool = TableOfContents
+                    , appState = updateToolStatus model TableOfContents
                     , page = displayPage model
                   }
                 , Cmd.batch
@@ -327,7 +327,6 @@ init flags =
             (KWindow flags.width flags.height)
             appState
             HomePage
-            TableOfContents
             "Please sign in"
             current_user
             ""

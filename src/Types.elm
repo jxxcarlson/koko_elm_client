@@ -62,7 +62,6 @@ type alias Model =
     { window : KWindow
     , appState : AppState
     , page : Page
-    , tool : Tool
     , message : String
     , current_user : User
     , errorMsg : String

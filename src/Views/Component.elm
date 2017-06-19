@@ -19,7 +19,7 @@ selectedClass page model =
 
 selectedToolClass : Tool -> Model -> String
 selectedToolClass tool model =
-    if tool == model.tool then
+    if tool == model.appState.tool then
         "isSelected"
     else
         "isNotSelected"
@@ -90,7 +90,7 @@ toolSelectorPanel model =
 
 toolSelector : Model -> Html Msg
 toolSelector model =
-    case model.tool of
+    case model.appState.tool of
         TableOfContents ->
             tableOfContents model
 
