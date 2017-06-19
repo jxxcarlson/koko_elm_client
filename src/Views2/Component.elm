@@ -64,7 +64,12 @@ navigation model =
         , inputText SearchField [ EE.onInput SetSearchTerm, placeholder "Search" ] ("")
         , menu model
         , pageSelector model
+        , loginButton model
         ]
+
+
+loginButton model =
+    el Button [ EA.width (px 85), EA.center, EE.onClick AuthenticationAction ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Sign in" ])
 
 
 menu model =

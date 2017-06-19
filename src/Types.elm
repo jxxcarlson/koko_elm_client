@@ -85,6 +85,7 @@ type Msg
     | Login
     | Register
     | Signout
+    | AuthenticationAction
     | ToggleRegister
     | ToggleMenu
     | GetTokenCompleted (Result Http.Error String)

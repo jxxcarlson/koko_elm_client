@@ -96,6 +96,9 @@ update msg model =
         Password password ->
             updatePassword model password
 
+        AuthenticationAction ->
+            ( { model | message = "Auth action" }, Cmd.none )
+
         Login ->
             ( model, loginUserCmd model loginUrl )
 
