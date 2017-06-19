@@ -26,6 +26,8 @@ type Styles
     | Button
     | ActiveButton
     | SearchField
+    | Field
+    | Form
     | Footer
     | Main
     | Page
@@ -121,6 +123,10 @@ stylesheet =
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
         , style SearchField
+            [ Color.text Color.black ]
+        , style Form
+            [ Color.background Color.darkGrey ]
+        , style Field
             [ Color.text Color.black ]
         ]
 

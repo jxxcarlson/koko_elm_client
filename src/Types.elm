@@ -48,8 +48,16 @@ type alias SearchState =
     }
 
 
+type alias AppState =
+    { page : Page
+    , tool : Tool
+    , menuDropped : Bool
+    }
+
+
 type alias Model =
     { window : KWindow
+    , appState : AppState
     , page : Page
     , tool : Tool
     , message : String
@@ -76,6 +84,7 @@ type Msg
     | Register
     | Signout
     | ToggleRegister
+    | ToggleMenu
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
     | GetUserDocuments (Result Http.Error DocumentsRecord)

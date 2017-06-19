@@ -9,3 +9,14 @@ displayPage model =
         Types.ReaderPage
     else
         model.page
+
+
+toggleMenu model =
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | menuDropped = (not appState.menuDropped) }
+    in
+        ( { model | appState = newAppState }, Cmd.none )

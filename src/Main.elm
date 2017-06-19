@@ -9,7 +9,7 @@ import Html.Attributes exposing (..)
 import Style exposing (..)
 import StyleSheet exposing (..)
 import Color
-import Element exposing (..)
+import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Style exposing (..)
 import Style.Border as Border
@@ -23,7 +23,6 @@ import Style.Transition as Transition
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
-import Views2.Component as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
@@ -40,7 +39,13 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
-import Action.UI exposing (displayPage)
+import Action.UI exposing (displayPage, toggleMenu)
+
+
+-- new style
+
+import Views2.Component as Component
+import Views2.Signin as Signin
 
 
 main =
@@ -105,6 +110,9 @@ update msg model =
 
         ToggleRegister ->
             ( { model | registerUser = not model.registerUser }, Cmd.none )
+
+        ToggleMenu ->
+            toggleMenu model
 
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
@@ -239,10 +247,11 @@ page model =
 
 view : Model -> Html Msg
 view model =
-    Element.root StyleSheet.stylesheet <|
+    EL.root StyleSheet.stylesheet <|
         column None
             []
             [ Component.navigation model
+            , Signin.registerUserForm model
             , (Component.footer model)
             ]
 
@@ -310,9 +319,13 @@ init flags =
 
         ws =
             windowSetup 150 50 HomePage False False
+
+        appState =
+            AppState HomePage TableOfContents False
     in
         ( Model
             (KWindow flags.width flags.height)
+            appState
             HomePage
             TableOfContents
             "Please sign in"
