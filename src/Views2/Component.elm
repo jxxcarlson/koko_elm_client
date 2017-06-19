@@ -69,7 +69,25 @@ navigation model =
 
 
 loginButton model =
-    el Button [ EA.width (px 85), EA.center, EE.onClick AuthenticationAction ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Sign in" ])
+    el Button
+        [ EA.width (px 85)
+        , EA.center
+        , EE.onClick AuthenticationAction
+        ]
+        (paragraph None
+            [ EA.height (px 30)
+            , padding 8
+            ]
+            [ EL.text (authenticationButtonText model) ]
+        )
+
+
+authenticationButtonText : Model -> String
+authenticationButtonText model =
+    if model.appState.signedIn then
+        "Sign out"
+    else
+        "Sign in"
 
 
 menu model =

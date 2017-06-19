@@ -51,6 +51,7 @@ type alias SearchState =
 type alias AppState =
     { online : Bool
     , signedIn : Bool
+    , authorizing : Bool
     , registerUser : Bool
     , menuDropped : Bool
     , page : Page

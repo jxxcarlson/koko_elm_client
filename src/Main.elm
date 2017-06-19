@@ -39,7 +39,15 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
-import Action.UI exposing (displayPage, toggleMenu, toggleRegister, updateToolStatus, appStateWithPage)
+import Action.UI
+    exposing
+        ( displayPage
+        , toggleMenu
+        , toggleRegister
+        , updateToolStatus
+        , appStateWithPage
+        , toggleAuthorizing
+        )
 
 
 -- new style
@@ -102,7 +110,7 @@ update msg model =
             updatePassword model password
 
         AuthenticationAction ->
-            ( { model | message = "Auth action" }, Cmd.none )
+            toggleAuthorizing model
 
         Login ->
             ( model, loginUserCmd model loginUrl )
@@ -260,6 +268,7 @@ view model =
             []
             [ Component.navigation model
             , Signin.registerUserForm model
+            , Signin.signinForm model
             , (Component.footer model)
             ]
 
@@ -326,7 +335,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False HomePage TableOfContents
+            AppState False False False False False HomePage TableOfContents
     in
         ( Model
             (KWindow flags.width flags.height)

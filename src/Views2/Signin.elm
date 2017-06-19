@@ -12,10 +12,21 @@ import Style.Color as Color
 import Style.Font as Font
 import Style.Transition as Transition
 import Types exposing (..)
+import Action.UI exposing (appStateWithPage)
 
 
 registerUserForm : Model -> Element Styles variation Msg
 registerUserForm model =
+    visibleIf
+        (not model.appState.signedIn
+            && model.appState.authorizing
+            && model.appState.registerUser
+        )
+        (registerUserForm1 model)
+
+
+registerUserForm1 : Model -> Element Styles variation Msg
+registerUserForm1 model =
     column Form
         [ padding 20, spacing 10.0, width (px 320) ]
         [ inputText Field [ EE.onInput Name, placeholder "Name" ] ("")
@@ -28,24 +39,38 @@ registerUserForm model =
         ]
 
 
+signinForm : Model -> Element Styles variation Msg
+signinForm model =
+    visibleIf
+        (not model.appState.signedIn
+            && model.appState.authorizing
+            && not model.appState.registerUser
+        )
+        (signinForm1 model)
 
--- registerUserForm : Model -> Html Msg
--- registerUserForm model =
---     div [ id "loginForm" ]
---         [ input [ id "name", type_ "text", placeholder "Your name", onInput Name ] []
---         , br [] []
---         , br [] []
---         , input [ id "username", type_ "text", placeholder "Username", onInput Username ] []
---         , br [] []
---         , br [] []
---         , input [ id "email", type_ "text", placeholder "Email", onInput Email ] []
---         , br [] []
---         , br [] []
---         , input [ id "password", type_ "text", placeholder "Password", onInput Password ] []
---         , br [] []
---         , br [] []
---         , button [ id "loginButton", onClick Register ] [ text "Sign up" ]
---         , br [] []
---         , br [] []
---         , p [] [ text model.info ]
---         ]
+
+signinForm1 : Model -> Element Styles variation Msg
+signinForm1 model =
+    column Form
+        [ padding 20, spacing 10.0, width (px 320) ]
+        [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
+        , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
+        , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
+        , el None [] (text model.message)
+        , el None [] (text model.info)
+        ]
+
+
+visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+visibleIf condition body =
+    if condition then
+        body
+    else
+        el None [] (text "")
+
+
+handleAuthentication model =
+    if model.appState.signedIn then
+        ( { model | appState = appStateWithPage model HomePage }, Cmd.none )
+    else
+        ( { model | appState = appStateWithPage model HomePage }, Cmd.none )

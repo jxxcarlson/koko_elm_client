@@ -33,6 +33,17 @@ toggleRegister model =
         ( { model | appState = newAppState }, Cmd.none )
 
 
+toggleAuthorizing model =
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | authorizing = (not appState.authorizing) }
+    in
+        ( { model | appState = newAppState }, Cmd.none )
+
+
 updateToolStatus : Model -> Tool -> AppState
 updateToolStatus model tool =
     let
