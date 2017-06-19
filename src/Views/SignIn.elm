@@ -10,7 +10,7 @@ import Json.Decode exposing (int, list, string, float, Decoder)
 signin : Model -> Html Msg
 signin model =
     if model.current_user.token == "" then
-        if model.registerUser == True then
+        if model.appState.registerUser == True then
             registerUserView model
         else
             signinView model

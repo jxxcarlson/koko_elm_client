@@ -49,9 +49,12 @@ type alias SearchState =
 
 
 type alias AppState =
-    { page : Page
-    , tool : Tool
+    { online : Bool
+    , signedIn : Bool
+    , registerUser : Bool
     , menuDropped : Bool
+    , page : Page
+    , tool : Tool
     }
 
 
@@ -62,7 +65,6 @@ type alias Model =
     , tool : Tool
     , message : String
     , current_user : User
-    , registerUser : Bool
     , errorMsg : String
     , info : String
     , current_document : Document

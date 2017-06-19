@@ -39,7 +39,7 @@ import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs)
 import Request.Document
-import Action.UI exposing (displayPage, toggleMenu)
+import Action.UI exposing (displayPage, toggleMenu, toggleRegister)
 
 
 -- new style
@@ -109,7 +109,7 @@ update msg model =
             signout model
 
         ToggleRegister ->
-            ( { model | registerUser = not model.registerUser }, Cmd.none )
+            toggleRegister model
 
         ToggleMenu ->
             toggleMenu model
@@ -299,9 +299,6 @@ init flags =
         current_user =
             User "" "" "" "" ""
 
-        registerUser =
-            False
-
         title =
             "Test document"
 
@@ -321,7 +318,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState HomePage TableOfContents False
+            AppState False False False False HomePage TableOfContents
     in
         ( Model
             (KWindow flags.width flags.height)
@@ -330,7 +327,6 @@ init flags =
             TableOfContents
             "Please sign in"
             current_user
-            registerUser
             ""
             ""
             doc

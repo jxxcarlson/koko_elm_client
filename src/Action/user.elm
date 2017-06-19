@@ -59,10 +59,16 @@ signout model =
 
         updated_user =
             User "" "" "" "" ""
+
+        oldAppState =
+            model.appState
+
+        newAppState =
+            { oldAppState | registerUser = False }
     in
         ( { model
             | current_user = updated_user
-            , registerUser = False
+            , appState = newAppState
             , info = ""
             , message = "Please sign in"
           }

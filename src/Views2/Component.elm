@@ -68,18 +68,16 @@ navigation model =
 
 
 menu model =
-    if model.appState.menuDropped then
-        el Button [ EA.width (px 85), EA.center, EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
-            |> below
-                [ column None
+    el Button [ EA.width (px 85), EA.center, EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
+        |> below
+            [ when model.appState.menuDropped <|
+                column None
                     [ padding 8, spacing 8 ]
-                    [ link "#1" (EL.text "Action 1")
-                    , link "#2" (EL.text "Action 2")
-                    , link "#3" (EL.text "Action 3")
+                    [ link "#1" (text "Action 1")
+                    , link "#2" (text "Action 2")
+                    , link "#3" (text "Action 3")
                     ]
-                ]
-    else
-        el Button [ EA.width (px 85), EA.center, EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
+            ]
 
 
 

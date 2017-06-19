@@ -20,3 +20,14 @@ toggleMenu model =
             { appState | menuDropped = (not appState.menuDropped) }
     in
         ( { model | appState = newAppState }, Cmd.none )
+
+
+toggleRegister model =
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | registerUser = (not appState.registerUser) }
+    in
+        ( { model | appState = newAppState }, Cmd.none )
