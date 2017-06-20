@@ -61,18 +61,27 @@ navigation model =
     row NavBar
         [ justify, paddingXY 30 4 ]
         [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
-        , inputText SearchField
+        , searchForm model
+        , menu model
+        , pageSelector model
+        , loginButton model
+        ]
+
+
+searchForm model =
+    row None
+        [ spacing 15 ]
+        [ inputText SearchField
             [ EE.onInput SetSearchTerm, placeholder "Search" ]
             (model.searchState.query)
         , el Button
             [ EA.width (px 85)
             , EA.center
             , EE.onClick (DoSearch 13)
+            , EA.height (px 30)
+            , padding 8
             ]
             (text "Search")
-        , menu model
-        , pageSelector model
-        , loginButton model
         ]
 
 

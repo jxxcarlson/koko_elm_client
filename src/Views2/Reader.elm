@@ -26,6 +26,6 @@ viewTitle selectedDocument document =
 
 
 documentListView model =
-    column None
-        []
+    column TOC
+        [ padding 10, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 79.0)) ]
         (List.map (viewTitle model.current_document) model.documents)
