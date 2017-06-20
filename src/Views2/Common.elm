@@ -33,7 +33,7 @@ documentListView model =
 
 toolSelectorPanel model =
     row None
-        [ spacing 8, height (px 50), paddingXY 10 10 ]
+        [ spacing 8, height (px 44), paddingXY 10 7 ]
         [ el FlatButton [ onClick (SelectTool TableOfContents), alignBottom, height (px 30), padding 8 ] (text "TOC")
         , el FlatButton [ onClick (SelectTool EditorTools), alignBottom, height (px 30), padding 8 ] (text "Tools")
         , el FlatButton [ onClick Refresh, alignBottom, height (px 30), padding 8 ] (text "Refresh")

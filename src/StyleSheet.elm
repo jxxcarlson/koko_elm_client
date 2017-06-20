@@ -35,6 +35,7 @@ type Styles
     | TOCItem
     | TOCItemSelected
     | Footer
+    | FooterNote
     | Main
     | Page
     | Logo
@@ -145,13 +146,14 @@ stylesheet =
         , style Field
             [ Color.text Color.black ]
         , style TOC
-            [ Color.background Color.lightCharcoal ]
+            [ Color.background Color.gray ]
         , style TOCItem
-            [ Color.text Color.white ]
+            [ Color.text Color.black ]
         , style TOCItemSelected
             [ Color.text Color.lightRed ]
         , style Menu
             [ Color.background Color.charcoal ]
+        , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
         ]
 
 

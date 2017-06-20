@@ -59,11 +59,11 @@ var mountNode = document.getElementById('main');
     var settings = JSON.parse(str)
     console.log("JSON object = " + JSON.stringify(settings))
 
-    var reader_height = (settings.height - 183)+ "px"
+    var reader_height = (settings.height - 130)+ "px"
     var editor_height = (settings.height - 183)+ "px"
 
-    var reader_width = (0.4*settings.width - 65 ) + "px"
-    var reader_left =  (0.20*settings.width + 2)+ "px"
+    var reader_width = (Math.max(0.5*settings.width, 300)) + "px"
+    var reader_left =  300 + "px"
 
     var editor_width = (0.4*settings.width - 63) + "px"
     var editor_left = (0.6*settings.width + 1)+ "px"
