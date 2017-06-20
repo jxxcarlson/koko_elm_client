@@ -40,17 +40,6 @@ import Json.Decode as Json exposing (int, list, string, float, Decoder)
 
 -}
 -- inputText Style [] "The Value!"
-
-
-activeButton : Page -> Model -> Styles
-activeButton currentPage model =
-    if currentPage == model.appState.page then
-        ActiveButton
-    else
-        Button
-
-
-
 -- onKeyUp : (Int -> msg) -> Attribute msg
 -- onKeyUp tagger =
 --     on "keyup" (Json.map tagger EE.keycode)
@@ -69,12 +58,12 @@ navigation model =
 
 
 searchForm model =
-    row None
+    row NavBar
         [ spacing 15 ]
         [ inputText SearchField
-            [ EE.onInput SetSearchTerm, placeholder "Search" ]
+            [ EE.onInput SetSearchTerm, placeholder "Search", height (px 29) ]
             (model.searchState.query)
-        , el Button
+        , el FlatButton
             [ EA.width (px 85)
             , EA.center
             , EE.onClick (DoSearch 13)
@@ -108,14 +97,14 @@ authenticationButtonText model =
 
 
 menu model =
-    el Button [ EA.width (px 85), EA.center, EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
+    el FlatButton [ EA.width (px 100), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
         |> below
             [ when model.appState.menuDropped <|
-                column None
+                column Menu
                     [ padding 8, spacing 8 ]
-                    [ link "#1" (text "Action 1")
-                    , link "#2" (text "Action 2")
-                    , link "#3" (text "Action 3")
+                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "AAAA" ])
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "BBBB" ])
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "CCCC" ])
                     ]
             ]
 
@@ -129,12 +118,20 @@ menu model =
 
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
-    row None
-        [ spacing 20 ]
+    row NavBar
+        [ spacing 8 ]
         [ el (activeButton HomePage model) [ EE.onClick (GoTo HomePage), alignBottom, height (px 30), padding 8 ] (text "Home")
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor")
         ]
+
+
+activeButton : Page -> Model -> Styles
+activeButton currentPage model =
+    if currentPage == model.appState.page then
+        ActiveFlatButton
+    else
+        FlatButton
 
 
 footer : Model -> Element Styles variation msg

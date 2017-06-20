@@ -60,6 +60,7 @@ import Views2.Signin as Signin
 -- ex
 
 import Views2.Reader exposing (..)
+import Views2.Common as Common
 
 
 main =
@@ -276,7 +277,8 @@ view model =
             , Signin.registerUserForm model
             , Signin.signinForm model
             , Signin.signoutForm model
-            , documentListView model
+            , Common.toolSelectorPanel model
+            , Common.documentListView model
             , (Component.footer model)
             ]
 

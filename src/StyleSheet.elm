@@ -23,8 +23,11 @@ import Style.Transition as Transition
 type Styles
     = None
     | NavBar
+    | Menu
     | Button
     | ActiveButton
+    | FlatButton
+    | ActiveFlatButton
     | SearchField
     | Field
     | Form
@@ -49,7 +52,10 @@ If you want to use something like em
 stylesheet : StyleSheet Styles variation
 stylesheet =
     Style.stylesheet
-        [ style None [ Font.typeface [ "helvetica", "arial", "sans-serif" ] ]
+        [ style None
+            [ Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Color.background Color.lightGray
+            ]
           -- It's handy to have a blank style
         , style Main
             [ Border.all 1
@@ -115,14 +121,21 @@ stylesheet =
             [ Color.text Color.white
             , Color.background Color.charcoal
             , Font.size 14
+            , Font.center
             , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
-        , style ActiveButton
+        , style FlatButton
+            [ Color.text Color.white
+            , Color.background Color.charcoal
+            , Font.size 14
+            , Font.center
+            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            ]
+        , style ActiveFlatButton
             [ Color.text Color.white
             , Color.background Color.darkRed
             , Font.size 14
-            , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
         , style SearchField
@@ -132,11 +145,13 @@ stylesheet =
         , style Field
             [ Color.text Color.black ]
         , style TOC
-            [ Color.background Color.lightBlue ]
+            [ Color.background Color.lightCharcoal ]
         , style TOCItem
             [ Color.text Color.white ]
         , style TOCItemSelected
-            [ Color.text Color.red ]
+            [ Color.text Color.lightRed ]
+        , style Menu
+            [ Color.background Color.charcoal ]
         ]
 
 
