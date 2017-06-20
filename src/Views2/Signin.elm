@@ -18,7 +18,7 @@ import Action.UI exposing (appStateWithPage)
 registerUserForm : Model -> Element Styles variation Msg
 registerUserForm model =
     visibleIf
-        (not model.appState.signedIn
+        ((not model.appState.signedIn)
             && model.appState.authorizing
             && model.appState.registerUser
         )
@@ -29,20 +29,27 @@ registerUserForm1 : Model -> Element Styles variation Msg
 registerUserForm1 model =
     column Form
         [ padding 20, spacing 10.0, width (px 320) ]
-        [ inputText Field [ EE.onInput Name, placeholder "Name" ] ("")
-        , inputText Field [ EE.onInput Username, placeholder "Username" ] ("")
-        , inputText Field [ EE.onInput Email, placeholder "Email" ] ("")
-        , inputText Field [ EE.onInput Password, placeholder "Password" ] ("")
+        [ inputText Field [ EE.onInput Name, placeholder "Name" ] (model.current_user.name)
+        , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
+        , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
+        , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
-        , el None [] (text model.message)
         , el None [] (text model.info)
+        , el Button
+            [ onClick ToggleRegister
+            , alignBottom
+            , height (px 30)
+            , width (px 150)
+            , padding 8
+            ]
+            (text "Need to sign in?")
         ]
 
 
 signinForm : Model -> Element Styles variation Msg
 signinForm model =
     visibleIf
-        (not model.appState.signedIn
+        ((not model.appState.signedIn)
             && model.appState.authorizing
             && not model.appState.registerUser
         )
@@ -56,8 +63,33 @@ signinForm1 model =
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
-        , el None [] (text model.message)
         , el None [] (text model.info)
+        , el Button
+            [ onClick ToggleRegister
+            , alignBottom
+            , height (px 30)
+            , width (px 150)
+            , padding 8
+            ]
+            (text "Need to register?")
+        ]
+
+
+signoutForm : Model -> Element Styles variation Msg
+signoutForm model =
+    visibleIf
+        (model.appState.signedIn
+            && model.appState.authorizing
+        )
+        (signoutForm1 model)
+
+
+signoutForm1 : Model -> Element Styles variation Msg
+signoutForm1 model =
+    column Form
+        [ padding 20, spacing 10.0, width (px 320) ]
+        [ el None [] (text ("You are signed in as " ++ model.current_user.username))
+        , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
 

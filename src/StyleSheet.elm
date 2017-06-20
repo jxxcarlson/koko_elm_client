@@ -28,6 +28,8 @@ type Styles
     | SearchField
     | Field
     | Form
+    | TOCItem
+    | TOCItemSelected
     | Footer
     | Main
     | Page
@@ -128,6 +130,10 @@ stylesheet =
             [ Color.background Color.darkGrey ]
         , style Field
             [ Color.text Color.black ]
+        , style TOCItem
+            [ Color.text Color.white ]
+        , style TOCItemSelected
+            [ Color.text Color.darkRed ]
         ]
 
 

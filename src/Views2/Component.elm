@@ -122,10 +122,9 @@ pageSelector model =
 
 footer : Model -> Element Styles variation msg
 footer model =
-    screen
-        (row Footer
-            [ justify, paddingXY 30 4 ]
-            [ el None [ alignBottom, padding 8 ] (text model.message)
-            , el None [ alignBottom, padding 8 ] (text model.info)
-            ]
-        )
+    (row Footer
+        [ justify, paddingXY 30 4 ]
+        [ el None [ alignBottom, padding 8 ] (text model.message)
+        , el None [ alignBottom, padding 8 ] (text model.info)
+        ]
+    )

@@ -47,6 +47,7 @@ import Action.UI
         , updateToolStatus
         , appStateWithPage
         , toggleAuthorizing
+        , appStateToggleAuthorizing
         )
 
 
@@ -54,6 +55,11 @@ import Action.UI
 
 import Views2.Component as Component
 import Views2.Signin as Signin
+
+
+-- ex
+
+import Views2.Reader exposing (..)
 
 
 main =
@@ -113,7 +119,7 @@ update msg model =
             toggleAuthorizing model
 
         Login ->
-            ( model, loginUserCmd model loginUrl )
+            ( Action.UI.login model, loginUserCmd model loginUrl )
 
         Register ->
             ( model, registerUserCmd model registerUserUrl )
@@ -269,11 +275,43 @@ view model =
             [ Component.navigation model
             , Signin.registerUserForm model
             , Signin.signinForm model
+            , Signin.signoutForm model
             , (Component.footer model)
             ]
 
 
+view1 : Model -> Html Msg
+view1 model =
+    EL.root StyleSheet.stylesheet <|
+        screen
+            (el None
+                [ EA.height (percent 100), EA.width (percent 100) ]
+                empty
+                |> within
+                    [ row Box
+                        [ alignBottom, justify, EA.width (percent 100), paddingXY 30 4 ]
+                        [ el None [ padding 8 ] (EL.text "test")
+                        , el None [ padding 8 ] (EL.text "test")
+                        ]
+                    ]
+            )
 
+
+
+{-
+
+   screen <|
+       (el None [ height (percent 100), width (percent 100) ] empty
+           |> within
+               [ row Box
+                   [ alignBottom, justify, width (percent 100), paddingXY 30 4 ]
+                   [ el None [ padding 8 ] (text "test")
+                   , el None [ padding 8 ] (text "test")
+                   ]
+               ]
+       )
+
+-}
 {-
    div []
        [ div [ id "header" ]
