@@ -25,6 +25,7 @@ viewTitle selectedDocument document =
         (text document.title)
 
 
+documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]

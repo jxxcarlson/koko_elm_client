@@ -268,9 +268,46 @@ page model =
             home model
 
 
-view : Model -> Html Msg
+viewNamedGridLayout model =
+    [ namedGrid Container
+        { columns = [ px 300, fill 1, fill 0.2 ]
+        , rows =
+            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
+            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
+            , px 40 => [ spanAll "footer" ]
+            ]
+        }
+        []
+        [ named "TOCHeader"
+            (el NavBar [] (EL.text "TOCHeader"))
+        , named "contentHeader"
+            (el NavBar [] (EL.text "contentHeader"))
+        , named "content"
+            (el NavBar [] (Signin.signinForm model))
+        , named "TOC" (Common.documentListView model)
+        , named "footer" (el NavBar [] (EL.text "FOOTER"))
+        ]
+    ]
+
+
 view model =
     EL.root StyleSheet.stylesheet <|
+        column None
+            []
+            [ Component.navigation model
+            , el None [ center, EA.width (percent 100) ] <|
+                column Main
+                    [ spacing 50 ]
+                    (List.concat
+                        [ viewNamedGridLayout model
+                        ]
+                    )
+            ]
+
+
+view3 : Model -> Html Msg
+view3 model =
+    EL.layout StyleSheet.stylesheet <|
         column None
             []
             [ Component.navigation model
@@ -283,24 +320,22 @@ view model =
             ]
 
 
-view1 : Model -> Html Msg
-view1 model =
-    EL.root StyleSheet.stylesheet <|
-        screen
-            (el None
-                [ EA.height (percent 100), EA.width (percent 100) ]
-                empty
-                |> within
-                    [ row Box
-                        [ alignBottom, justify, EA.width (percent 100), paddingXY 30 4 ]
-                        [ el None [ padding 8 ] (EL.text "test")
-                        , el None [ padding 8 ] (EL.text "test")
-                        ]
-                    ]
-            )
 
-
-
+-- view1 : Model -> Html Msg
+-- view1 model =
+--     EL.root StyleSheet.stylesheet <|
+--         screen
+--             (el None
+--                 [ EA.height (percent 100), EA.width (percent 100) ]
+--                 empty
+--                 |> within
+--                     [ row Box
+--                         [ alignBottom, justify, EA.width (percent 100), paddingXY 30 4 ]
+--                         [ el None [ padding 8 ] (EL.text "test")
+--                         , el None [ padding 8 ] (EL.text "test")
+--                         ]
+--                     ]
+--             )
 {-
 
    screen <|

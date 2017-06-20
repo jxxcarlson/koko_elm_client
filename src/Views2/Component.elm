@@ -79,8 +79,10 @@ loginButton model =
         [ EA.width (px 85)
         , EA.center
         , EE.onClick AuthenticationAction
+        , EA.height (px 30)
+        , padding 8
         ]
-        (paragraph None
+        (paragraph Button
             [ EA.height (px 30)
             , padding 8
             ]
