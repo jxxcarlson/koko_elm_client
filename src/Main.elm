@@ -276,6 +276,7 @@ view model =
             , Signin.registerUserForm model
             , Signin.signinForm model
             , Signin.signoutForm model
+            , documentListView model
             , (Component.footer model)
             ]
 
