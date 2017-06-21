@@ -11,6 +11,7 @@ import StyleSheet exposing (..)
 import Color
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
+import Element.Events as EE exposing (onInput)
 import Style exposing (..)
 import Style.Border as Border
 import Style.Color as Color
@@ -357,7 +358,7 @@ editor model =
         , named "contentHeader"
             (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
         , named "content"
-            (EL.text "")
+            (EL.textArea None [ padding 8, EE.onInput InputContent ] (model.current_document.content))
         , named "TOC" (Common.documentListView model)
         , named "footer" (Component.footer model)
         ]
@@ -395,68 +396,6 @@ view3 model =
 
 
 
--- view1 : Model -> Html Msg
--- view1 model =
---     EL.root StyleSheet.stylesheet <|
---         screen
---             (el None
---                 [ EA.height (percent 100), EA.width (percent 100) ]
---                 empty
---                 |> within
---                     [ row Box
---                         [ alignBottom, justify, EA.width (percent 100), paddingXY 30 4 ]
---                         [ el None [ padding 8 ] (EL.text "test")
---                         , el None [ padding 8 ] (EL.text "test")
---                         ]
---                     ]
---             )
-{-
-
-   screen <|
-       (el None [ height (percent 100), width (percent 100) ] empty
-           |> within
-               [ row Box
-                   [ alignBottom, justify, width (percent 100), paddingXY 30 4 ]
-                   [ el None [ padding 8 ] (text "test")
-                   , el None [ padding 8 ] (text "test")
-                   ]
-               ]
-       )
-
--}
-{-
-   div []
-       [ div [ id "header" ]
-           [ span [] [ text "Noteshare" ]
-           , Views.Component.pageSelector model
-           , Views.Search.documentSearchForm model
-           ]
-       , (page model)
-       , div [ id "footer" ]
-           [ span [ id "message" ] [ text model.message ]
-           , span [ id "info" ] [ text model.info ]
-           ]
-       ]
-
--}
-{-
-   Element.root StyleSheet.stylesheet <|
-       column None
-           []
-           [ navigation
-           , el None [ center, EA.width (px 800) ] <|
-               column Main
-                   [ spacing 50, paddingTop 50, paddingBottom 50 ]
-                   (List.concat
-                       [ viewTextLayout
-                       , viewRowLayouts
-                       , viewGridLayout
-                       , viewNamedGridLayout
-                       ]
-                   )
-           ]
-
--}
 -- INIT
 
 
