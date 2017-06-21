@@ -64,7 +64,7 @@ signout model =
             model.appState
 
         newAppState =
-            { oldAppState | registerUser = False, signedIn = False, authorizing = False }
+            { oldAppState | page = Types.HomePage, registerUser = False, signedIn = False, authorizing = False }
     in
         ( { model
             | current_user = updated_user

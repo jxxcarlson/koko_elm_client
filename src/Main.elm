@@ -255,7 +255,6 @@ windowCss model =
     ]
 
 
-page : Model -> Html Msg
 page model =
     case model.appState.page of
         ReaderPage ->
@@ -268,7 +267,34 @@ page model =
             home model
 
 
-viewNamedGridLayout model =
+
+-- home1 model =
+--     [ namedGrid Container
+--         { columns = [ px 300, fill 1, fill 0.2 ]
+--         , rows =
+--             [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
+--             , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
+--             , px 40 => [ spanAll "footer" ]
+--             ]
+--         }
+--         []
+--         [ named "TOCHeader"
+--             (el NavBar [] (EL.text "TOCHeader"))
+--         , named "contentHeader"
+--             (el TitleStyle [ paddingXY 10 8 ] (text "Sign in/out or register")
+--         , named "content"
+--             (row
+--                 None
+--                 []
+--                 [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
+--             )
+--         , named "TOC" (text "")
+--         , named "footer" (Component.footer model)
+--         ]
+--     ]
+
+
+home model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 0.2 ]
         , rows =
@@ -281,11 +307,59 @@ viewNamedGridLayout model =
         [ named "TOCHeader"
             (el NavBar [] (EL.text "TOCHeader"))
         , named "contentHeader"
-            (el NavBar [] (EL.text "contentHeader"))
+            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
         , named "content"
-            (el NavBar [] (Signin.signinForm model))
+            (row
+                None
+                []
+                [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
+            )
         , named "TOC" (Common.documentListView model)
-        , named "footer" (el NavBar [] (EL.text "FOOTER"))
+        , named "footer" (Component.footer model)
+        ]
+    ]
+
+
+reader model =
+    [ namedGrid Container
+        { columns = [ px 300, fill 1, fill 0.2 ]
+        , rows =
+            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
+            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
+            , px 40 => [ spanAll "footer" ]
+            ]
+        }
+        []
+        [ named "TOCHeader"
+            (el NavBar [] (EL.text "TOCHeader"))
+        , named "contentHeader"
+            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
+        , named "content"
+            (EL.text "")
+        , named "TOC" (Common.documentListView model)
+        , named "footer" (Component.footer model)
+        ]
+    ]
+
+
+editor model =
+    [ namedGrid Container
+        { columns = [ px 300, fill 1, fill 0.2 ]
+        , rows =
+            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
+            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
+            , px 40 => [ spanAll "footer" ]
+            ]
+        }
+        []
+        [ named "TOCHeader"
+            (el NavBar [] (EL.text "TOCHeader"))
+        , named "contentHeader"
+            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
+        , named "content"
+            (EL.text "")
+        , named "TOC" (Common.documentListView model)
+        , named "footer" (Component.footer model)
         ]
     ]
 
@@ -299,7 +373,7 @@ view model =
                 column Main
                     [ spacing 50 ]
                     (List.concat
-                        [ viewNamedGridLayout model
+                        [ page model
                         ]
                     )
             ]

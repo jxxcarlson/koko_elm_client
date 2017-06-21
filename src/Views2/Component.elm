@@ -82,12 +82,7 @@ loginButton model =
         , EA.height (px 30)
         , padding 8
         ]
-        (paragraph Button
-            [ EA.height (px 30)
-            , padding 8
-            ]
-            [ EL.text (authenticationButtonText model) ]
-        )
+        (EL.text (authenticationButtonText model))
 
 
 authenticationButtonText : Model -> String
@@ -99,7 +94,7 @@ authenticationButtonText model =
 
 
 menu model =
-    el FlatButton [ EA.width (px 100), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "Tools" ])
+    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
         |> below
             [ when model.appState.menuDropped <|
                 column Menu

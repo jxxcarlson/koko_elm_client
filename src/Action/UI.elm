@@ -43,7 +43,14 @@ appStateToggleAuthorizing model =
 
 
 toggleAuthorizing model =
-    ( { model | appState = appStateToggleAuthorizing model }, Cmd.none )
+    let
+        oldAppState =
+            model.appState
+
+        newAppState =
+            { oldAppState | authorizing = (not oldAppState.authorizing), page = Types.HomePage }
+    in
+        ( { model | appState = newAppState }, Cmd.none )
 
 
 login model =
@@ -52,7 +59,7 @@ login model =
             model.appState
 
         newAppState =
-            { appState | signedIn = True, authorizing = False }
+            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
     in
         { model | appState = newAppState }
 

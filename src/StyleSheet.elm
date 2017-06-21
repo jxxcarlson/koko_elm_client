@@ -24,6 +24,7 @@ type Styles
     = None
     | NavBar
     | Menu
+    | TitleStyle
     | Button
     | ActiveButton
     | FlatButton
@@ -113,6 +114,12 @@ stylesheet =
         , style NavBar
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
+            ]
+        , style TitleStyle
+            [ Color.background Color.charcoal
+            , Color.text Color.white
+            , Font.size 20
+            , Font.lineHeight 1.3
             ]
         , style Footer
             [ Color.background Color.charcoal

@@ -60,7 +60,7 @@ var mountNode = document.getElementById('main');
     console.log("JSON object = " + JSON.stringify(settings))
 
     var reader_height = (settings.height - 130)+ "px"
-    var editor_height = (settings.height - 183)+ "px"
+    var editor_height = (settings.height - 130)+ "px"
 
     var reader_width = (Math.max(0.5*settings.width, 300)) + "px"
     var reader_left =  300 + "px"
