@@ -345,7 +345,7 @@ reader model =
 
 editor model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.2 ]
+        { columns = [ px 300, fill 1, fill 1 ]
         , rows =
             [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
             , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
