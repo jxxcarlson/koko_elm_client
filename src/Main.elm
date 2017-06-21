@@ -245,7 +245,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (60 * Time.second) Tick
+        [ Time.every (10 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         ]
 

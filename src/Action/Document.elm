@@ -7,6 +7,7 @@ import External exposing (render)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
 import External exposing (toJs)
+import Utility
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -65,11 +66,12 @@ updateContent model content =
         old_documents =
             model.documents
 
-        -- new_documents =
-        --     replaceIf (hasId new_document.id) new_document old_documents
+        new_documents =
+            Utility.replaceIf (hasId new_document.id) new_document old_documents
     in
         ( { model
             | current_document = new_document
+            , documents = new_documents
             , info =
                 docInfo
                 -- , documents = new_documents

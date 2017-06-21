@@ -60,15 +60,15 @@ stylesheet =
             ]
           -- It's handy to have a blank style
         , style Main
-            [ Border.all 1
-              -- set all border widths to 1 px.
-            , Color.text Color.darkCharcoal
-            , Color.background Color.white
-            , Color.border Color.lightGrey
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , Font.size 16
-            , Font.lineHeight 1.3
-              -- line height, given as a ratio of current font size.
+            [-- Border.all 1
+             --   -- set all border widths to 1 px.
+             -- , Color.text Color.darkCharcoal
+             -- , Color.background Color.white
+             -- , Color.border Color.lightGrey
+             -- , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+             -- , Font.size 16
+             -- , Font.lineHeight 1.3
+             --   -- line height, given as a ratio of current font size.
             ]
         , style Page
             [ Border.all 5

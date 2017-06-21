@@ -1,24 +1,13 @@
 'use strict';
 
-// require('ace-css/css/ace.css');
 require('font-awesome/css/font-awesome.css');
-
-// Require index.html so it gets copied to dist
-
 require('./css/style.css')
 require('./index.html');
-
-
 
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('main');
 
-// .embed() can take an optional second argument. This would be an object describing the data we need to start a program, i.e. a userID or some token
-// var app = Elm.Main.embed(mountNode);
-// receive something from Elm
-
 // https://hackernoon.com/how-elm-ports-work-with-a-picture-just-one-25144ba43cdd
-
 
   var app = Elm.Main.fullscreen(
       {
@@ -38,13 +27,6 @@ var mountNode = document.getElementById('main');
 
         document.getElementById('rendered_text2').innerHTML = html
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text2"]);
-
-        // var asciidoctor = Asciidoctor();
-        // var content = "http://asciidoctor.org[*Asciidoctor*] " +
-        //   "running on http://opalrb.org[_Opal_] " +
-        //     "brings AsciiDoc to the browser!";
-        // var html = asciidoctor.convert(content);
-        // console.log(html);
 
       })
 
@@ -67,7 +49,6 @@ var mountNode = document.getElementById('main');
 
     var editor_width = (0.4*settings.width - 63) + "px"
     var editor_left = (0.6*settings.width + 1)+ "px"
-    // console.log("editor_width: " + editor_width)
 
      switch(settings.page) {
         case "HomePage":

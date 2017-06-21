@@ -93,7 +93,7 @@ authenticationButtonText model =
         "Sign in"
 
 
-menu model =
+menu1 model =
     el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
         |> below
             [ when model.appState.menuDropped <|
@@ -102,6 +102,19 @@ menu model =
                     [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "AAAA" ])
                     , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "BBBB" ])
                     , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "CCCC" ])
+                    ]
+            ]
+
+
+menu model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
+        |> below
+            [ when model.appState.menuDropped <|
+                column Menu
+                    [ padding 8, spacing 8 ]
+                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "AAAA")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "BBBB")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "CCCC")
                     ]
             ]
 
