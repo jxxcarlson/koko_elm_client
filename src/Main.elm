@@ -343,6 +343,10 @@ reader model =
     ]
 
 
+
+-- CURSOR JUMP BUG: https://ellie-app.com/3fPSxX6VHK7a1/0
+
+
 editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
