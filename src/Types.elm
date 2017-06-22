@@ -54,6 +54,7 @@ type alias AppState =
     , authorizing : Bool
     , registerUser : Bool
     , menuDropped : Bool
+    , documentDirty : Bool
     , page : Page
     , tool : Tool
     }

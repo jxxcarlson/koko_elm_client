@@ -306,7 +306,7 @@ home model =
         }
         []
         [ named "TOCHeader"
-            (el NavBar [] (EL.text "TOCHeader"))
+            (Component.toolSelectorPanel model)
         , named "contentHeader"
             (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
         , named "content"
@@ -315,7 +315,7 @@ home model =
                 []
                 [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
             )
-        , named "TOC" (Common.documentListView model)
+        , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
@@ -332,12 +332,12 @@ reader model =
         }
         []
         [ named "TOCHeader"
-            (el NavBar [] (EL.text "TOCHeader"))
+            (Component.toolSelectorPanel model)
         , named "contentHeader"
             (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
         , named "content"
             (EL.text "")
-        , named "TOC" (Common.documentListView model)
+        , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
@@ -354,12 +354,12 @@ editor model =
         }
         []
         [ named "TOCHeader"
-            (el NavBar [] (EL.text "TOCHeader"))
+            (Component.toolSelectorPanel model)
         , named "contentHeader"
             (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
         , named "content"
             (EL.textArea None [ padding 8, EE.onInput InputContent ] (model.current_document.content))
-        , named "TOC" (Common.documentListView model)
+        , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
@@ -424,7 +424,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False HomePage TableOfContents
+            AppState False False False False False False HomePage TableOfContents
     in
         ( Model
             (KWindow flags.width flags.height)

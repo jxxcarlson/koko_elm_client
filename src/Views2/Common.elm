@@ -1,4 +1,4 @@
-module Views2.Common exposing (documentListView, toolSelectorPanel)
+module Views2.Common exposing (documentListView, toolSelectorPanel, tool)
 
 import Style exposing (..)
 import StyleSheet exposing (..)
@@ -30,6 +30,14 @@ documentListView model =
     column TOC
         [ padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         (List.map (viewTitle model.current_document) model.documents)
+
+
+tool : Model -> Element Styles variation Msg
+tool model =
+    if model.appState.tool == TableOfContents then
+        documentListView model
+    else
+        documentListView model
 
 
 toolSelectorPanel model =

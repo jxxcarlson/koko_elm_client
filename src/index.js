@@ -51,7 +51,7 @@ var mountNode = document.getElementById('main');
     // } else {
     //   var reader_width = 700
     // }
-    var reader_width = settings.width - 300
+    var reader_width = settings.width - 360
     console.log ("READER  WIDTH: "  + reader_width)
     var reader_height = (settings.height - 190)
 
