@@ -36,12 +36,7 @@ var mountNode = document.getElementById('main');
 
   var count = 0;
 
-  
-
-  app.ports.toJs.subscribe(function (str) {
-    console.log("app.ports.toJs: " + str);
-    var settings = JSON.parse(str)
-    console.log("JSON object = " + JSON.stringify(settings))
+  function setAppearance(settings) {
 
     var toc_width = 300
     var textarea_width = 0.5*(settings.width - toc_width)
@@ -90,6 +85,22 @@ var mountNode = document.getElementById('main');
     if ((settings.signed_in == false) && (settings.page != "ReaderPage")) {
       document.getElementById("rendered_text2").style.visibility = "hidden";
     }
+  }
+
+  app.ports.toJs.subscribe(function (str) {
+    // console.log("app.ports.toJs: " + str);
+    var settings = JSON.parse(str)
+    // console.log("JSON object = " + JSON.stringify(settings))
+    setAppearance(settings)
+
+})
+
+app.ports.persist.subscribe(function (str) {
+  console.log("app.ports.persist: " + str);
+  var userSettings = JSON.parse(str)
+  console.log("userSettings = " + JSON.stringify(userSettings))
+  localStorage.setItem("username", userSettings.username);
+  localStorage.setItem("token", userSettings.token);
 
 
 })

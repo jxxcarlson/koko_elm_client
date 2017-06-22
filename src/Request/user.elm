@@ -10,6 +10,8 @@ import Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder)
 import Types exposing (..)
 import Utility exposing (gotoPage)
 import Action.UI exposing (appStateWithPage)
+import External
+import Views.External
 
 
 loginUserCmd : Model -> String -> Cmd Msg
@@ -58,7 +60,7 @@ getTokenCompleted model result =
                             , message = "Signed in as " ++ value.username
                             , appState = appStateWithPage model ReaderPage
                           }
-                        , Utility.gotoPage model ReaderPage
+                        , Cmd.batch [ Utility.gotoPage model ReaderPage, External.persist (Views.External.userData value.username newToken) ]
                         )
 
                 Err error ->

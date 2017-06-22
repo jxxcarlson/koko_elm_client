@@ -40,3 +40,15 @@ windowSetup width height page online signed_in =
             encode 2 data
     in
         json
+
+
+userData : String -> String -> String
+userData username token =
+    let
+        data =
+            object
+                [ ( "username", string username )
+                , ( "token", string token )
+                ]
+    in
+        encode 2 data
