@@ -15,6 +15,7 @@ import Style.Transition as Transition
 import Types exposing (..)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
+import Action.Document exposing (wordCount)
 
 
 -- import Utility exposing (onKeyUp)
@@ -121,14 +122,25 @@ menu model =
 
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 10 6, justify ]
+        [ paddingXY 10 6, spacing 15, center ]
         [ el FlatButton [ EA.width (px 85), EE.onClick (SelectTool TableOfContents), EA.height (px 30), padding 8 ] (EL.text "TOC")
         , el FlatButton [ EA.width (px 85), EE.onClick (SelectTool EditorTools), EA.height (px 30), padding 8 ] (EL.text "Tools")
+        ]
+
+
+editorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el FlatButton [ EA.width (px 85), EE.onClick (NewDocument), EA.height (px 30), padding 8 ] (EL.text "New")
         , el FlatButton [ EA.width (px 85), EE.onClick (Refresh), EA.height (px 30), padding 8 ] (EL.text "Refresh")
+        , full PanelInfo [ padding 11 ] (EL.text ("Words: " ++ (toString <| wordCount <| model.current_document)))
         ]
 
 
 
+-- [ el FlatButton [ EA.width (px 85), EE.onClick (EE.onClick NewDocument), EA.height (px 30), padding 8 ] (EL.text "New document")
+-- , text ("Words: " ++ (toString <| wordCount <| model.current_document))
+-- ]
 -- div [ id "footer" ]
 --     [ span [ id "message" ] [ text model.message ]
 --     , span [ id "info" ] [ text model.info ]

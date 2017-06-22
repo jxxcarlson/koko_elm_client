@@ -23,6 +23,7 @@ import Style.Transition as Transition
 type Styles
     = None
     | Panel
+    | PanelInfo
     | NavBar
     | Menu
     | TitleStyle
@@ -119,6 +120,8 @@ stylesheet =
             ]
         , style Panel
             [ Color.background Color.lightBlue ]
+        , style PanelInfo
+            [ Color.background Color.lightBlue, Color.text Color.black, Font.lineHeight 1.3 ]
         , style Radio
             [ Font.size 14, Color.background Color.lightBlue ]
         , style TitleStyle

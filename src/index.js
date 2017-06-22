@@ -36,6 +36,8 @@ var mountNode = document.getElementById('main');
 
   var count = 0;
 
+  
+
   app.ports.toJs.subscribe(function (str) {
     console.log("app.ports.toJs: " + str);
     var settings = JSON.parse(str)

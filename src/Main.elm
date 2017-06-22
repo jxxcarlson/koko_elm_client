@@ -351,7 +351,7 @@ editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
         , rows =
-            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
+            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "editorPanel" ]
             , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
             , px 40 => [ spanAll "footer" ]
             ]
@@ -365,6 +365,7 @@ editor model =
             (EL.textArea None [ padding 8, EE.onInput InputContent ] (model.current_document.content))
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
+        , named "editorPanel" (Component.editorPanel model)
         ]
     ]
 
@@ -381,21 +382,6 @@ view model =
                         [ page model
                         ]
                     )
-            ]
-
-
-view3 : Model -> Html Msg
-view3 model =
-    EL.layout StyleSheet.stylesheet <|
-        column None
-            []
-            [ Component.navigation model
-            , Signin.registerUserForm model
-            , Signin.signinForm model
-            , Signin.signoutForm model
-            , Common.toolSelectorPanel model
-            , Common.documentListView model
-            , (Component.footer model)
             ]
 
 
