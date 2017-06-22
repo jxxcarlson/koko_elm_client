@@ -34,16 +34,63 @@ documentListView model =
 
 tool : Model -> Element Styles variation Msg
 tool model =
-    if model.appState.tool == TableOfContents then
-        documentListView model
-    else
-        documentListView model
+    case model.appState.tool of
+        TableOfContents ->
+            documentListView model
+
+        ReaderTools ->
+            basicTools model
+
+        EditorTools ->
+            basicTools model
 
 
 toolSelectorPanel model =
-    row None
+    row Panel
         [ spacing 8, height (px 44), paddingXY 10 7 ]
         [ el FlatButton [ onClick (SelectTool TableOfContents), alignBottom, height (px 30), padding 8 ] (text "TOC")
         , el FlatButton [ onClick (SelectTool EditorTools), alignBottom, height (px 30), padding 8 ] (text "Tools")
         , el FlatButton [ onClick Refresh, alignBottom, height (px 30), padding 8 ] (text "Refresh")
         ]
+
+
+searchOptionControl model =
+    radio "Search domain"
+        Radio
+        [ alignBottom, padding 20, spacing 20, width (px 300) ]
+        [ option "My documents" (searchDomainChecked model Private) (text "My documents")
+        , option "Public documents" (searchDomainChecked model Public) (text "Public documents")
+        ]
+
+
+searchDomainChecked : Model -> SearchDomain -> Bool
+searchDomainChecked model domain =
+    model.searchState.domain == domain
+
+
+basicTools model =
+    column TOC
+        [ alignLeft, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ searchOptionControl model ]
+
+
+
+-- row None
+--     []
+--
+--     [ input
+--         [ type_ "radio"
+--         , name "searchDomain"
+--         , onClick (UseSearchDomain Private)
+--           -- , disabled (privateSearchDisabled model)
+--           --, checked (searchDomainChecked model Private)
+--         ]
+--     , (text "My documents")
+--     , input
+--         [ type_ "radio"
+--         , name "searchDomain"
+--         , onClick (UseSearchDomain Public)
+--           --, checked (searchDomainChecked model Public)
+--         ]
+--     , (text "Public documents")
+--     ]

@@ -120,8 +120,8 @@ menu model =
 
 
 toolSelectorPanel model =
-    row None
-        [ padding 6, spacing 8 ]
+    row Panel
+        [ paddingXY 10 6, justify ]
         [ el FlatButton [ EA.width (px 85), EE.onClick (SelectTool TableOfContents), EA.height (px 30), padding 8 ] (EL.text "TOC")
         , el FlatButton [ EA.width (px 85), EE.onClick (SelectTool EditorTools), EA.height (px 30), padding 8 ] (EL.text "Tools")
         , el FlatButton [ EA.width (px 85), EE.onClick (Refresh), EA.height (px 30), padding 8 ] (EL.text "Refresh")

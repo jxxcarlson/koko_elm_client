@@ -22,6 +22,7 @@ import Style.Transition as Transition
 -}
 type Styles
     = None
+    | Panel
     | NavBar
     | Menu
     | TitleStyle
@@ -35,6 +36,7 @@ type Styles
     | TOC
     | TOCItem
     | TOCItemSelected
+    | Radio
     | Footer
     | FooterNote
     | Main
@@ -115,6 +117,10 @@ stylesheet =
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
             ]
+        , style Panel
+            [ Color.background Color.lightBlue ]
+        , style Radio
+            [ Font.size 14, Color.background Color.lightBlue ]
         , style TitleStyle
             [ Color.background Color.charcoal
             , Color.text Color.white
