@@ -381,7 +381,7 @@ editor model =
         [ named "TOCHeader"
             (Component.toolSelectorPanel model)
         , named "contentHeader"
-            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
+            (inputText TitleStyle [ paddingXY 10 8, EA.width (percent 100), EA.height (percent 100), EE.onInput Title, EA.placeholder "Title" ] (model.current_document.title))
         , named "content"
             (EL.textArea None [ padding 8, EE.onInput InputContent ] (model.current_document.content))
         , named "TOC" (Common.tool model)
