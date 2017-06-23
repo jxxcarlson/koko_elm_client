@@ -126,7 +126,6 @@ toolSelectorPanel model =
         [ paddingXY 10 6, spacing 15, center ]
         [ el FlatButton [ EA.width (px 85), EE.onClick (SelectTool TableOfContents), EA.height (px 30), padding 8 ] (EL.text "TOC")
         , el FlatButton [ EA.width (px 85), EE.onClick (SelectTool EditorTools), EA.height (px 30), padding 8 ] (EL.text "Tools")
-        , el FlatButton [ EA.width (px 85), EE.onClick (AskToReconnect), EA.height (px 30), padding 8 ] (EL.text "recu")
         ]
 
 

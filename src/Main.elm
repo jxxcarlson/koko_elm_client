@@ -89,9 +89,6 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
-        UpdateStr str ->
-            ( { model | message = str }, Cmd.none )
-
         Resize w h ->
             ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
 
@@ -126,9 +123,6 @@ update msg model =
 
         Login ->
             ( Action.UI.login model, loginUserCmd model loginUrl )
-
-        AskToReconnect ->
-            ( model, External.askToReconnectUser "reconnectUser" )
 
         ReconnectUser jsonString ->
             -- ( { model | message = "RECONNECT", info = "RECONNECT" }, toJs "RECONNECT" )

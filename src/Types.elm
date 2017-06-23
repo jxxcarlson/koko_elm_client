@@ -83,8 +83,6 @@ type alias SystemStatus =
 
 type Msg
     = NoOp
-    | UpdateStr String
-    | AskToReconnect
     | Resize Int Int
     | GoTo Page
     | Login
