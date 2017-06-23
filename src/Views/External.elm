@@ -42,12 +42,14 @@ windowSetup width height page online signed_in =
         json
 
 
-userData : String -> String -> String
-userData username token =
+userData : String -> String -> String -> String -> String
+userData name email username token =
     let
         data =
             object
-                [ ( "username", string username )
+                [ ( "name", string name )
+                , ( "email", string email )
+                , ( "username", string username )
                 , ( "token", string token )
                 ]
     in

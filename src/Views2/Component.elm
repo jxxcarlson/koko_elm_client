@@ -16,6 +16,7 @@ import Types exposing (..)
 import Html.Events as HE exposing (onClick)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Action.Document exposing (wordCount)
+import External
 
 
 -- import Utility exposing (onKeyUp)
@@ -125,7 +126,13 @@ toolSelectorPanel model =
         [ paddingXY 10 6, spacing 15, center ]
         [ el FlatButton [ EA.width (px 85), EE.onClick (SelectTool TableOfContents), EA.height (px 30), padding 8 ] (EL.text "TOC")
         , el FlatButton [ EA.width (px 85), EE.onClick (SelectTool EditorTools), EA.height (px 30), padding 8 ] (EL.text "Tools")
+        , el FlatButton [ EA.width (px 85), EE.onClick (AskToReconnect), EA.height (px 30), padding 8 ] (EL.text "recu")
         ]
+
+
+
+-- External.askToReconnectUser "reconnectUser"
+-- External.askToReconnectUser "reconnectUser"
 
 
 editorPanel model =

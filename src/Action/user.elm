@@ -74,3 +74,23 @@ signout model =
           }
         , Cmd.none
         )
+
+
+reconnectUser : Model -> UserRecord -> ( Model, Cmd Msg )
+reconnectUser model userRecord =
+    let
+        user =
+            model.current_user
+
+        current_user =
+            { user
+                | username = userRecord.username
+                , token = userRecord.token
+            }
+    in
+        ( { model
+            | current_user = current_user
+            , message = "reconnecting user: " ++ userRecord.username
+          }
+        , Cmd.none
+        )

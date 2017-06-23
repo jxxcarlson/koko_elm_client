@@ -60,7 +60,10 @@ getTokenCompleted model result =
                             , message = "Signed in as " ++ value.username
                             , appState = appStateWithPage model ReaderPage
                           }
-                        , Cmd.batch [ Utility.gotoPage model ReaderPage, External.persist (Views.External.userData value.username newToken) ]
+                        , Cmd.batch
+                            [ Utility.gotoPage model ReaderPage
+                            , External.persist (Views.External.userData user.name user.email value.username newToken)
+                            ]
                         )
 
                 Err error ->

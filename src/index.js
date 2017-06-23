@@ -96,11 +96,45 @@ var mountNode = document.getElementById('main');
 })
 
 app.ports.persist.subscribe(function (str) {
-  console.log("app.ports.persist: " + str);
+  console.log("I will put this in local storage: " + str);
   var userSettings = JSON.parse(str)
   console.log("userSettings = " + JSON.stringify(userSettings))
   localStorage.setItem("username", userSettings.username);
   localStorage.setItem("token", userSettings.token);
+  localStorage.setItem("email", userSettings.email);
+  localStorage.setItem("name", userSettings.name);
 
+   prepareLocalStorage();
 
 })
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function reconnect(localStorageAsString) {
+  console.log('Request to reconnect received.');
+  await sleep(300);
+  app.ports.reconnectUser.send(localStorageAsString);
+  console.log('Request to reconnect EXECUTED.');
+}
+
+app.ports.askToReconnectUser.subscribe(function (str) {
+  console.log("app.ports.reconnectUser received: " + str);
+  if (str == "reconnectUser") {
+    var localStorageAsString = JSON.stringify(localStorage)
+    console.log("ask to reconnect user with data: " + localStorageAsString)
+    app.ports.reconnectUser.send(localStorageAsString);
+    
+    // app.ports.reconnectUser.send(localStorageAsString);
+    // reconnect(localStorageAsString)
+    app.ports.toElm.send("Yada yada!");
+  } else {
+    console.log("I dont't unerstand that: " + str)
+  }
+
+})
+
+
+
+// app.ports.localStorageToElm.send(prepareLocalStorage());

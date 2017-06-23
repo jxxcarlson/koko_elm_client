@@ -32,6 +32,7 @@ import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Document exposing (createDocument, updateDocuments, updateContent, selectDocument, selectNewDocument)
 import Data.Document exposing (documents)
+import Data.User exposing (userRecord)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
@@ -88,6 +89,9 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        UpdateStr str ->
+            ( { model | message = str }, Cmd.none )
+
         Resize w h ->
             ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
 
@@ -122,6 +126,22 @@ update msg model =
 
         Login ->
             ( Action.UI.login model, loginUserCmd model loginUrl )
+
+        AskToReconnect ->
+            ( model, External.askToReconnectUser "reconnectUser" )
+
+        ReconnectUser jsonString ->
+            -- ( { model | message = "RECONNECT", info = "RECONNECT" }, toJs "RECONNECT" )
+            let
+                maybeUserRecord =
+                    Data.User.userRecord jsonString
+            in
+                case maybeUserRecord of
+                    Ok userRecord ->
+                        Action.User.reconnectUser model userRecord
+
+                    Err error ->
+                        ( { model | info = "Sorry, I cannot reconnect you" }, Cmd.none )
 
         Register ->
             ( model, registerUserCmd model registerUserUrl )
@@ -247,7 +267,14 @@ subscriptions model =
     Sub.batch
         [ Time.every (10 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
+        , External.reconnectUser ReconnectUser
         ]
+
+
+
+-- reconnectUserSubscription : Model -> Sub Msg
+-- reconnectUserSubscription model =
+--     External.reconnectUser ReconnectUser
 
 
 windowCss model =
@@ -426,7 +453,7 @@ init flags =
             doc
             [ doc ]
             searchState
-        , Cmd.batch [ toJs ws, External.render doc.rendered_content ]
+        , Cmd.batch [ toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
         )
 
 

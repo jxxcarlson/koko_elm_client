@@ -9,6 +9,10 @@ type alias User =
     { name : String, username : String, email : String, password : String, token : String }
 
 
+type alias UserRecord =
+    { name : String, username : String, email : String, token : String }
+
+
 type alias KWindow =
     { width : Int
     , height : Int
@@ -79,9 +83,12 @@ type alias SystemStatus =
 
 type Msg
     = NoOp
+    | UpdateStr String
+    | AskToReconnect
     | Resize Int Int
     | GoTo Page
     | Login
+    | ReconnectUser String
     | Register
     | Signout
     | AuthenticationAction
