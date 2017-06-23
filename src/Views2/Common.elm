@@ -58,9 +58,14 @@ searchOptionControl model =
     radio "Search domain"
         Radio
         [ verticalCenter, padding 20, spacing 20, width (px 300) ]
-        [ option "My documents" (searchDomainChecked model Private) (text "My documents")
-        , option "Public documents" (searchDomainChecked model Public) (text "Public documents")
+        [ option "My documents" (searchDomainChecked model Private) (el None [ onClick (UseSearchDomain Private) ] (text "My documents"))
+        , option "Public documents" (searchDomainChecked model Public) (el None [ onClick (UseSearchDomain Public) ] (text "Public documents"))
         ]
+
+
+
+-- onClick (UseSearchDomain Private)
+-- onClick (UseSearchDomain Public)
 
 
 searchDomainChecked : Model -> SearchDomain -> Bool
