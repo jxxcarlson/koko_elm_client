@@ -245,7 +245,7 @@ update msg model =
 
         Tick time ->
             if model.appState.page == EditorPage then
-                ( { model | message = "Tick, rendering" }, External.render model.current_document.rendered_content )
+                ( { model | message = ("Tick, rendering #" ++ (toString model.current_document.id)) }, External.render model.current_document.rendered_content )
                 -- ( model, Cmd.none )
             else
                 ( model, Cmd.none )
