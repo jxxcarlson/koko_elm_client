@@ -25,8 +25,6 @@ import Style.Transition as Transition
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
-import Views.Home exposing (home)
-import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Css exposing (asPairs)
 import Action.User exposing (..)
@@ -57,7 +55,8 @@ import Action.UI
 -- new style
 
 import Views2.Component as Component
-import Views2.Signin as Signin
+import Views2.Reader exposing (reader)
+import Views2.Home exposing (home)
 
 
 -- ex
@@ -315,57 +314,6 @@ page model =
 --         , named "footer" (Component.footer model)
 --         ]
 --     ]
-
-
-home model =
-    [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.2 ]
-        , rows =
-            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
-            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
-            , px 40 => [ spanAll "footer" ]
-            ]
-        }
-        []
-        [ named "TOCHeader"
-            (Component.toolSelectorPanel model)
-        , named "contentHeader"
-            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
-        , named "content"
-            (row
-                None
-                []
-                [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
-            )
-        , named "TOC" (Common.tool model)
-        , named "footer" (Component.footer model)
-        ]
-    ]
-
-
-reader model =
-    [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.2 ]
-        , rows =
-            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
-            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
-            , px 40 => [ spanAll "footer" ]
-            ]
-        }
-        []
-        [ named "TOCHeader"
-            (Component.toolSelectorPanel model)
-        , named "contentHeader"
-            (el TitleStyle [ paddingXY 10 8 ] (EL.text model.current_document.title))
-        , named "content"
-            (EL.text "")
-        , named "TOC" (Common.tool model)
-        , named "footer" (Component.footer model)
-        ]
-    ]
-
-
-
 -- CURSOR JUMP BUG: https://ellie-app.com/3fPSxX6VHK7a1/0
 
 
