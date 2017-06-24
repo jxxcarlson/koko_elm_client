@@ -226,7 +226,9 @@ update msg model =
 
         Tick time ->
             if model.appState.page == EditorPage then
-                ( { model | message = ("Tick, rendering #" ++ (toString model.current_document.id)) }, External.render model.current_document.rendered_content )
+                ( { model | message = ((toString model.counter) ++ ". Tick, rendering #" ++ (toString model.current_document.id)) }
+                , External.render model.current_document.rendered_content
+                )
                 -- ( model, Cmd.none )
             else
                 ( model, Cmd.none )
@@ -347,6 +349,7 @@ init flags =
     in
         ( Model
             (KWindow flags.width flags.height)
+            0
             appState
             "Please sign in"
             current_user

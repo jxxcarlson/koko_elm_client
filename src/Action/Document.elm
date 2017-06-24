@@ -112,6 +112,7 @@ selectDocument model document =
     ( { model
         | current_document = document
         , message = "Selected: " ++ document.title
+        , counter = model.counter + 1
       }
     , Cmd.batch
         [ toJs (windowData model (displayPage model))
