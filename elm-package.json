@@ -18,7 +18,7 @@
         "evancz/url-parser": "2.0.1 <= v < 3.0.0",
         "krisajenkins/remotedata": "4.3.0 <= v < 5.0.0",
         "lukewestby/elm-http-builder": "5.1.0 <= v < 6.0.0",
-        "mdgriffith/style-elements": "3.1.0 <= v < 4.0.0",
+        "mdgriffith/style-elements": "3.2.0 <= v < 4.0.0",
         "rtfeldman/elm-css": "8.2.0 <= v < 9.0.0",
         "rtfeldman/elm-css-helpers": "2.1.0 <= v < 3.0.0",
         "simonh1000/elm-jwt": "5.0.0 <= v < 6.0.0"
