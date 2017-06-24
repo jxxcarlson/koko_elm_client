@@ -7,25 +7,12 @@ import Html.Keyed as Keyed
 
 -- begin style
 
-import Style exposing (..)
 import StyleSheet exposing (..)
-import Color
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import Element.Events as EE exposing (onInput)
-import Style exposing (..)
-import Style.Border as Border
-import Style.Color as Color
-import Style.Font as Font
-import Style.Transition as Transition
-
-
--- end style
-
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component exposing (pageSelector)
-import Views.Editor exposing (editor)
 import Css exposing (asPairs)
 import Action.User exposing (..)
 import Action.Search exposing (..)
@@ -55,14 +42,9 @@ import Action.UI
 -- new style
 
 import Views2.Component as Component
-import Views2.Reader exposing (reader)
 import Views2.Home exposing (home)
-
-
--- ex
-
-import Views2.Reader exposing (..)
-import Views2.Common as Common
+import Views2.Reader exposing (reader)
+import Views2.Editor exposing (editor)
 
 
 main =
@@ -315,29 +297,6 @@ page model =
 --         ]
 --     ]
 -- CURSOR JUMP BUG: https://ellie-app.com/3fPSxX6VHK7a1/0
-
-
-editor model =
-    [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 1 ]
-        , rows =
-            [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "editorPanel" ]
-            , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
-            , px 40 => [ spanAll "footer" ]
-            ]
-        }
-        []
-        [ named "TOCHeader"
-            (Component.toolSelectorPanel model)
-        , named "contentHeader"
-            (inputText TitleStyle [ paddingXY 10 8, EA.width (percent 100), EA.height (percent 100), EE.onInput Title, EA.placeholder "Title" ] (model.current_document.title))
-        , named "content"
-            (EL.textArea None [ padding 8, EE.onInput InputContent ] (model.current_document.content))
-        , named "TOC" (Common.tool model)
-        , named "footer" (Component.footer model)
-        , named "editorPanel" (Component.editorPanel model)
-        ]
-    ]
 
 
 view model =
