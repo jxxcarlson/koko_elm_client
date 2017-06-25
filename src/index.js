@@ -99,7 +99,7 @@ app.ports.persist.subscribe(function (str) {
   localStorage.setItem("email", userSettings.email);
   localStorage.setItem("name", userSettings.name);
 
-   prepareLocalStorage();
+   // prepareLocalStorage();
 
 })
 

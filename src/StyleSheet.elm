@@ -98,18 +98,14 @@ stylesheet =
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
         , style Box
-            [ Transition.all
-            , Color.text Color.white
-            , Color.background Color.blue
-            , Color.border Color.blue
+            [ Color.text Color.white
+            , Color.background Color.charcoal
+            , Color.border Color.gray
             , Border.rounded 3
               -- round all borders to 3px
             , paddingHint 20
             , hover
-                [ Color.text Color.white
-                , Color.background Color.red
-                , Color.border Color.red
-                , cursor "pointer"
+                [ cursor "pointer"
                 ]
             ]
         , style Container

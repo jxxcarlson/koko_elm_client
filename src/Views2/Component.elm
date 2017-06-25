@@ -156,16 +156,6 @@ editorPanel model =
         ]
 
 
-
--- [ el FlatButton [ EA.width (px 85), EE.onClick (EE.onClick NewDocument), EA.height (px 30), padding 8 ] (EL.text "New document")
--- , text ("Words: " ++ (toString <| wordCount <| model.current_document))
--- ]
--- div [ id "footer" ]
---     [ span [ id "message" ] [ text model.message ]
---     , span [ id "info" ] [ text model.info ]
---     ]
-
-
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar

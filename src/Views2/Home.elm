@@ -24,8 +24,12 @@ home model =
           named "Middle"
             (row
                 None
-                [ padding 40 ]
-                [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
+                [ padding 40, spacing 20 ]
+                [ (Signin.signinForm model)
+                , (Signin.signoutForm model)
+                , (Signin.registerUserForm model)
+                , el Box [ width (px 400), height (px 200) ] (text model.message)
+                ]
             )
         ]
     ]
