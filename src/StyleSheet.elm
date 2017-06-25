@@ -23,6 +23,7 @@ import Style.Transition as Transition
 type Styles
     = None
     | Zero
+    | Hairline
     | Panel
     | PanelInfo
     | NavBar
@@ -63,7 +64,7 @@ stylesheet =
             , Color.background Color.lightGray
             ]
         , style Zero [ Font.lineHeight 0 ]
-          -- It's handy to have a blank style
+        , style Hairline [ Color.background Color.lightGray, Color.text Color.white ]
         , style Main
             [-- Border.all 1
              --   -- set all border widths to 1 px.
@@ -121,13 +122,13 @@ stylesheet =
             , Color.text Color.white
             ]
         , style Panel
-            [ Color.background Color.lightBlue ]
+            [ Color.background Color.lightCharcoal ]
         , style PanelInfo
-            [ Color.background Color.lightBlue, Color.text Color.black, Font.lineHeight 1.3 ]
+            [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
         , style Radio
             [ Font.size 14, Color.background Color.lightBlue ]
         , style TitleStyle
-            [ Color.background Color.charcoal
+            [ Color.background Color.lightCharcoal
             , Color.text Color.white
             , Font.size 20
             , Font.lineHeight 1.3

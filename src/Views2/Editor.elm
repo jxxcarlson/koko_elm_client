@@ -14,13 +14,15 @@ editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
         , rows =
-            [ px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "editorPanel" ]
+            [ px 1 => [ spanAll "separator" ]
+            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "editorPanel" ]
             , px 650 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
             , px 40 => [ spanAll "footer" ]
             ]
         }
         []
-        [ named "TOCHeader"
+        [ named "separator" (hairline Hairline)
+        , named "TOCHeader"
             (Component.toolSelectorPanel model)
         , named "contentHeader"
             (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))

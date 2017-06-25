@@ -43,11 +43,6 @@ var mountNode = document.getElementById('main');
     var fudgeFactor = 70
 
     var reader_left =  toc_width
-    // if (Math.min(settings.width - 300) < 700 {
-    //   var reader_width = Math.min(settings.width - 300
-    // } else {
-    //   var reader_width = 700
-    // }
     var reader_width = settings.width - 360
     console.log ("READER  WIDTH: "  + reader_width)
     var reader_height = (settings.height - 190)
@@ -125,7 +120,7 @@ app.ports.askToReconnectUser.subscribe(function (str) {
     var localStorageAsString = JSON.stringify(localStorage)
     console.log("ask to reconnect user with data: " + localStorageAsString)
     app.ports.reconnectUser.send(localStorageAsString);
-    
+
     // app.ports.reconnectUser.send(localStorageAsString);
     // reconnect(localStorageAsString)
     app.ports.toElm.send("Yada yada!");

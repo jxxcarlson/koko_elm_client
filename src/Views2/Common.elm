@@ -2,12 +2,14 @@ module Views2.Common exposing (documentListView, toolSelectorPanel, tool)
 
 import Style exposing (..)
 import StyleSheet exposing (..)
+import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Style exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
+import FontAwesome
 
 
 tocStyle selectedDocument document =

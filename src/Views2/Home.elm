@@ -10,25 +10,22 @@ import Views2.Signin as Signin
 
 home model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.2 ]
+        { columns = [ fill 1, fill 2, fill 1 ]
         , rows =
-            [ px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
-            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
-            , px 40 => [ spanAll "footer" ]
+            [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
+              px 650 => [ span 1 "LHSidebar", span 1 "Middle", span 1 "RHSidebar" ]
             ]
         }
         []
-        [ named "TOCHeader"
-            (Component.toolSelectorPanel model)
-        , named "contentHeader"
-            (el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title))
-        , named "content"
+        [ -- named "TOCHeader"
+          --     (Component.toolSelectorPanel model)
+          -- , named "contentHeader"
+          --     (el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title))
+          named "Middle"
             (row
                 None
-                []
+                [ padding 40 ]
                 [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
             )
-        , named "TOC" (Common.tool model)
-        , named "footer" (Component.footer model)
         ]
     ]

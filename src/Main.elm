@@ -323,6 +323,7 @@ view model =
         column None
             []
             [ Component.navigation model
+            , hairline Hairline
             , el None [ center, EA.width (percent 100) ] <|
                 column Main
                     [ spacing 50 ]
