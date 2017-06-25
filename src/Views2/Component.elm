@@ -18,6 +18,7 @@ import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Action.Document exposing (wordCount)
 import External
 import Utility
+import FontAwesome
 
 
 navigation : Model -> Element Styles variation Msg
@@ -34,7 +35,7 @@ navigation model =
 
 searchForm model =
     row NavBar
-        [ spacing 15 ]
+        [ spacing 10, verticalCenter ]
         [ inputText SearchField
             [ EE.onInput SetSearchTerm
             , Utility.onKeyUp (DoSearch model.searchState.domain)
@@ -42,23 +43,36 @@ searchForm model =
             , height (px 29)
             ]
             (model.searchState.query)
-        , el FlatButton
-            [ EA.width (px 40)
-            , EA.center
-            , EE.onClick (DoSearch Private 13)
-            , EA.height (px 30)
-            , padding 8
+        , row Zero
+            [ center, spacing 0 ]
+            [ el Zero
+                [ EA.width (px 25)
+                , title "Search for my documents"
+                , EA.alignRight
+                , EE.onClick (DoSearch Private 13)
+                , EA.height (px 30)
+                , paddingXY 0 8
+                ]
+                (searchIcon model Private)
+            , el Zero
+                [ EA.width (px 25)
+                , title "Search for public documents"
+                , EA.alignLeft
+                , EE.onClick (DoSearch Public 13)
+                , EA.height (px 30)
+                , paddingXY 0 8
+                ]
+                (searchIcon model Public)
             ]
-            (text "S1")
-        , el FlatButton
-            [ EA.width (px 40)
-            , EA.center
-            , EE.onClick (DoSearch Public 13)
-            , EA.height (px 30)
-            , padding 8
-            ]
-            (text "S2")
         ]
+
+
+searchIcon : Model -> SearchDomain -> Element style variation msg
+searchIcon model searchDomain =
+    if model.searchState.domain == searchDomain then
+        (EL.html (FontAwesome.search Color.white 20))
+    else
+        (EL.html (FontAwesome.search Color.grey 20))
 
 
 loginButton model =

@@ -22,6 +22,7 @@ import Style.Transition as Transition
 -}
 type Styles
     = None
+    | Zero
     | Panel
     | PanelInfo
     | NavBar
@@ -61,6 +62,7 @@ stylesheet =
             [ Font.typeface [ "helvetica", "arial", "sans-serif" ]
             , Color.background Color.lightGray
             ]
+        , style Zero [ Font.lineHeight 0 ]
           -- It's handy to have a blank style
         , style Main
             [-- Border.all 1
