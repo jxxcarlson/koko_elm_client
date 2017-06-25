@@ -45,41 +45,6 @@ updateDocuments model documentsRecord =
         )
 
 
-updateContent : Model -> String -> ( Model, Cmd Msg )
-updateContent model content =
-    let
-        docInfo =
-            case (getDocumentById model model.current_document.id) of
-                Just theDoc ->
-                    "Updating doc, id = " ++ (toString theDoc.id)
-
-                Nothing ->
-                    "Cannot get doc_info"
-
-        old_document =
-            model.current_document
-
-        new_document =
-            { old_document | content = content, rendered_content = content }
-
-        -- (a -> Bool) -> a -> List a -> List a
-        old_documents =
-            model.documents
-
-        new_documents =
-            Utility.replaceIf (hasId new_document.id) new_document old_documents
-    in
-        ( { model
-            | current_document = new_document
-            , documents = new_documents
-            , info =
-                docInfo
-                -- , documents = new_documents
-          }
-        , putCurrentDocument model
-        )
-
-
 updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
 updateCurrentDocument model document =
     let

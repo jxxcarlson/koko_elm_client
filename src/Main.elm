@@ -20,7 +20,6 @@ import Action.Document
     exposing
         ( createDocument
         , updateDocuments
-        , updateContent
         , selectDocument
         , selectNewDocument
         , updateCurrentDocument
@@ -226,7 +225,15 @@ update msg model =
 
         -- ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
         InputContent content ->
-            updateContent model content
+            -- updateContent model content
+            let
+                oldDocument =
+                    model.current_document
+
+                newDocument =
+                    { oldDocument | content = content, rendered_content = content }
+            in
+                updateCurrentDocument model newDocument
 
         Refresh ->
             ( { model | message = "Refresh, rendering" }, External.render model.current_document.rendered_content )
