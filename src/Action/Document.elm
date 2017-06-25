@@ -2,7 +2,7 @@ module Action.Document exposing (..)
 
 import Types exposing (..)
 import Utility exposing (replaceIf)
-import Request.Document exposing (putCurrentDocument)
+import Request.Document exposing (putDocument)
 import External exposing (render)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
@@ -57,7 +57,7 @@ updateCurrentDocument model document =
             | current_document = document
             , documents = new_documents
           }
-        , Cmd.batch [ putCurrentDocument model, External.render model.current_document.rendered_content ]
+        , Cmd.batch [ putDocument model document, External.render model.current_document.rendered_content ]
         )
 
 

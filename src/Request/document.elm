@@ -1,4 +1,4 @@
-module Request.Document exposing (getDocumentsWith, putCurrentDocument, createDocument)
+module Request.Document exposing (getDocumentsWith, putDocument, createDocument)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
@@ -84,11 +84,11 @@ putDocumentRB document token =
 --|> withExpect (Http.expectJson documentDecoder)
 
 
-putCurrentDocument : Model -> Cmd Msg
-putCurrentDocument model =
+putDocument : Model -> Document -> Cmd Msg
+putDocument model document =
     let
         request =
-            putDocumentRB model.current_document model.current_user.token
+            putDocumentRB document model.current_user.token
                 |> HB.toRequest
     in
         Http.send PutDocument request
