@@ -107,7 +107,7 @@ type Msg
     | Username String
     | SelectTool Tool
     | SetSearchTerm String
-    | DoSearch Int
+    | DoSearch SearchDomain Int
     | DoRender Int
     | SelectDocument Document
     | UseSearchDomain SearchDomain

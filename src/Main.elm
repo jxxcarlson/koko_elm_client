@@ -137,13 +137,15 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
-        DoSearch key ->
+        -- updatedSearchState
+        DoSearch searchDomain key ->
             if key == 13 then
                 -- 13: RETURN/ENTER
                 ( { model
-                    | message = "search: " ++ model.searchState.query
+                    | message = "search " ++ (toString searchDomain) ++ ": " ++ model.searchState.query
                     , appState = updateToolStatus model TableOfContents
                     , appState = appStateWithPage model (displayPage model)
+                    , searchState = updatedSearchState model searchDomain
                   }
                 , Cmd.batch
                     [ getDocumentsWith model.searchState model.current_user.token

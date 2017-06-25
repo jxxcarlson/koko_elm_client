@@ -66,13 +66,21 @@ searchForm model =
             [ EE.onInput SetSearchTerm, placeholder "Search", height (px 29) ]
             (model.searchState.query)
         , el FlatButton
-            [ EA.width (px 85)
+            [ EA.width (px 40)
             , EA.center
-            , EE.onClick (DoSearch 13)
+            , EE.onClick (DoSearch Private 13)
             , EA.height (px 30)
             , padding 8
             ]
-            (text "Search")
+            (text "S1")
+        , el FlatButton
+            [ EA.width (px 40)
+            , EA.center
+            , EE.onClick (DoSearch Public 13)
+            , EA.height (px 30)
+            , padding 8
+            ]
+            (text "S2")
         ]
 
 

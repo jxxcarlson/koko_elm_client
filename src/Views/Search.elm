@@ -20,7 +20,7 @@ documentSearchForm model =
             , placeholder "Search"
               --, Html.Attributes.value model.input_text
             , onInput SetSearchTerm
-            , Utility.onKeyUp DoSearch
+            , Utility.onKeyUp (DoSearch Public)
               -- if keyCode == 13
             ]
             []

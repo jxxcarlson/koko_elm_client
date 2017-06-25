@@ -35,6 +35,22 @@ updateSearch model query =
         ( { model | searchState = new_searchState }, Cmd.none )
 
 
+updatedSearchState model searchDomain =
+    let
+        searchState =
+            model.searchState
+
+        newSearchDomain =
+            if searchDomain == Private && model.current_user.token /= "" then
+                Private
+            else if searchDomain == Public then
+                Public
+            else
+                Public
+    in
+        { searchState | domain = newSearchDomain }
+
+
 updateSearchDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
 updateSearchDomain model searchDomain =
     let
