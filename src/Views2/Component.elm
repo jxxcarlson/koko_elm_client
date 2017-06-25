@@ -130,7 +130,7 @@ toolSelectorPanel model =
             , EA.height (px 30)
             , padding 2
             ]
-            (EL.html (FontAwesome.list Color.white 25))
+            (EL.html (FontAwesome.list (toolSelectorColor model TableOfContents) 25))
         , el Zero
             [ EA.width (px 85)
             , EE.onClick (SelectTool EditorTools)
@@ -138,8 +138,15 @@ toolSelectorPanel model =
             , EA.height (px 30)
             , padding 2
             ]
-            (EL.html (FontAwesome.gear Color.white 25))
+            (EL.html (FontAwesome.gear (toolSelectorColor model EditorTools) 25))
         ]
+
+
+toolSelectorColor model tool =
+    if model.appState.tool == tool then
+        Color.white
+    else
+        Color.gray
 
 
 

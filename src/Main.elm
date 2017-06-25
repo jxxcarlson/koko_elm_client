@@ -108,7 +108,7 @@ update msg model =
             updatePassword model password
 
         AuthenticationAction ->
-            toggleAuthorizing model
+            Action.UI.setAuthorizing model True
 
         Login ->
             ( Action.User.login model, loginUserCmd model loginUrl )

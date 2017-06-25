@@ -1,6 +1,8 @@
 module Action.User exposing (..)
 
 import Types exposing (..)
+import External
+import Views.External
 
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
@@ -90,7 +92,7 @@ signout model =
             , info = ""
             , message = "Please sign in"
           }
-        , Cmd.none
+        , External.toJs (Views.External.windowData model HomePage)
         )
 
 

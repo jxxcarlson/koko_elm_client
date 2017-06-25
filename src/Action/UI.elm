@@ -1,6 +1,8 @@
 module Action.UI exposing (..)
 
 import Types exposing (Model, Msg, Page, AppState, Tool)
+import External
+import Views.External
 
 
 displayPage : Model -> Page
@@ -50,7 +52,18 @@ toggleAuthorizing model =
         newAppState =
             { oldAppState | authorizing = (not oldAppState.authorizing), page = Types.HomePage }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
+
+
+setAuthorizing model value =
+    let
+        oldAppState =
+            model.appState
+
+        newAppState =
+            { oldAppState | authorizing = value, page = Types.HomePage }
+    in
+        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
 
 
 updateToolStatus : Model -> Tool -> AppState
