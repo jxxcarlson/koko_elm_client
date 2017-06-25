@@ -57,7 +57,7 @@ updateCurrentDocument model document =
             | current_document = document
             , documents = new_documents
           }
-        , putCurrentDocument model
+        , Cmd.batch [ putCurrentDocument model, External.render model.current_document.rendered_content ]
         )
 
 

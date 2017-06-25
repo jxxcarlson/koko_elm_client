@@ -164,7 +164,9 @@ update msg model =
         DoRender key ->
             if key == 27 then
                 -- 27: ESCAPE
-                ( { model | info = "ESCAPE pressed, rendering ..." }, External.render model.current_document.rendered_content )
+                ( { model | info = "ESCAPE pressed, rendering ..." }
+                , External.render model.current_document.rendered_content
+                )
             else
                 ( model, Cmd.none )
 
@@ -235,6 +237,9 @@ update msg model =
             in
                 updateCurrentDocument model newDocument
 
+        {-
+           Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
+        -}
         Refresh ->
             ( { model | message = "Refresh, rendering" }, External.render model.current_document.rendered_content )
 
@@ -260,7 +265,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (10 * Time.second) Tick
+        [ Time.every (60 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         ]
@@ -291,30 +296,6 @@ page model =
 
 
 
--- home1 model =
---     [ namedGrid Container
---         { columns = [ px 300, fill 1, fill 0.2 ]
---         , rows =
---             [ px 40 => [ EL.span 1 "TOCHeader", EL.span 1 "contentHeader", EL.span 1 "sideBarHeader" ]
---             , px 650 => [ EL.span 1 "TOC", EL.span 1 "content", EL.span 1 "sidebar" ]
---             , px 40 => [ spanAll "footer" ]
---             ]
---         }
---         []
---         [ named "TOCHeader"
---             (el NavBar [] (EL.text "TOCHeader"))
---         , named "contentHeader"
---             (el TitleStyle [ paddingXY 10 8 ] (text "Sign in/out or register")
---         , named "content"
---             (row
---                 None
---                 []
---                 [ (Signin.signinForm model), (Signin.signoutForm model), (Signin.registerUserForm model) ]
---             )
---         , named "TOC" (text "")
---         , named "footer" (Component.footer model)
---         ]
---     ]
 -- CURSOR JUMP BUG: https://ellie-app.com/3fPSxX6VHK7a1/0
 
 
