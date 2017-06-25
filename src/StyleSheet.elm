@@ -168,7 +168,7 @@ stylesheet =
         , style TOCItem
             [ Color.text Color.black ]
         , style TOCItemSelected
-            [ Color.text Color.lightRed ]
+            [ Color.text Color.white, Color.background Color.charcoal ]
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]

@@ -80,6 +80,23 @@ updateContent model content =
         )
 
 
+updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
+updateCurrentDocument model document =
+    let
+        old_documents =
+            model.documents
+
+        new_documents =
+            Utility.replaceIf (hasId document.id) document old_documents
+    in
+        ( { model
+            | current_document = document
+            , documents = new_documents
+          }
+        , putCurrentDocument model
+        )
+
+
 hasId : Int -> Document -> Bool
 hasId id document =
     document.id == id

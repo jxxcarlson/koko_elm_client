@@ -16,7 +16,15 @@ import Views.Component exposing (pageSelector)
 import Css exposing (asPairs)
 import Action.User exposing (..)
 import Action.Search exposing (..)
-import Action.Document exposing (createDocument, updateDocuments, updateContent, selectDocument, selectNewDocument)
+import Action.Document
+    exposing
+        ( createDocument
+        , updateDocuments
+        , updateContent
+        , selectDocument
+        , selectNewDocument
+        , updateCurrentDocument
+        )
 import Data.Document exposing (documents)
 import Data.User exposing (userRecord)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
@@ -210,8 +218,9 @@ update msg model =
                 new_document =
                     { doc | title = title }
             in
-                ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
+                updateCurrentDocument model new_document
 
+        -- ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
         SelectDocument document ->
             selectDocument model document
 

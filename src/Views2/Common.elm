@@ -21,6 +21,7 @@ viewTitle : Document -> Document -> Element Styles variation Msg
 viewTitle selectedDocument document =
     el (tocStyle selectedDocument document)
         [ onClick (SelectDocument document)
+        , paddingXY 4 4
         ]
         (text document.title)
 
@@ -28,7 +29,7 @@ viewTitle selectedDocument document =
 documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
-        [ padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         ([ (text ("Documents: " ++ (toString (List.length model.documents)))) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
