@@ -44,14 +44,14 @@ searchForm model =
             ]
             (model.searchState.query)
         , row Zero
-            [ center, spacing 0 ]
+            [ center, spacing 5 ]
             [ el Zero
                 [ EA.width (px 25)
                 , title "Search for my documents"
                 , EA.alignRight
                 , EE.onClick (DoSearch Private 13)
                 , EA.height (px 30)
-                , paddingXY 0 8
+                , paddingXY 0 4
                 ]
                 (searchIcon model Private)
             , el Zero
@@ -60,7 +60,7 @@ searchForm model =
                 , EA.alignLeft
                 , EE.onClick (DoSearch Public 13)
                 , EA.height (px 30)
-                , paddingXY 0 8
+                , paddingXY 0 4
                 ]
                 (searchIcon model Public)
             ]
@@ -70,9 +70,9 @@ searchForm model =
 searchIcon : Model -> SearchDomain -> Element style variation msg
 searchIcon model searchDomain =
     if model.searchState.domain == searchDomain then
-        (EL.html (FontAwesome.search Color.white 20))
+        (EL.html (FontAwesome.search Color.white 25))
     else
-        (EL.html (FontAwesome.search Color.grey 20))
+        (EL.html (FontAwesome.search Color.grey 25))
 
 
 loginButton model =
