@@ -9,6 +9,9 @@ type alias User =
     { name : String, username : String, email : String, password : String, token : String }
 
 
+{-|
+  Use to transfer data to JS-world. Does not contani password
+-}
 type alias UserRecord =
     { name : String, username : String, email : String, token : String }
 

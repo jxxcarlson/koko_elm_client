@@ -3,11 +3,14 @@ module Views2.Editor exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onInput)
+import Element.Events exposing (onInput, onClick)
 import Views2.Common as Common
+import Color
+import FontAwesome
 import Views2.Component as Component
 import Types exposing (..)
 import Element.Keyed as Keyed
+import Action.Document exposing (wordCount)
 
 
 editor model =
@@ -30,6 +33,29 @@ editor model =
             (Keyed.row None [] [ ( (toString model.counter), (textArea None [ width (percent 100), padding 8, onInput InputContent ] (model.current_document.content)) ) ])
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
-        , named "editorPanel" (Component.editorPanel model)
+        , named "editorPanel" (editorPanel model)
         ]
     ]
+
+
+editorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el Zero
+            [ width (px 30)
+            , onClick (NewDocument)
+            , height (px 30)
+            , padding 2
+            , title "New document"
+            ]
+            (html (FontAwesome.plus Color.white 25))
+        , el Zero
+            [ width (px 30)
+            , onClick (Refresh)
+            , height (px 30)
+            , padding 2
+            , title "Refresh display & save. Also: press ESC"
+            ]
+            (html (FontAwesome.refresh Color.white 25))
+        , full PanelInfo [ padding 11 ] (text ("Words: " ++ (toString <| wordCount <| model.current_document)))
+        ]

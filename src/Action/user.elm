@@ -51,6 +51,24 @@ updateUsername model username =
         ( { model | current_user = updated_user }, Cmd.none )
 
 
+login : Model -> Model
+login model =
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
+
+        user =
+            model.current_user
+
+        updatedUser =
+            { user | password = "" }
+    in
+        { model | appState = newAppState, current_user = updatedUser }
+
+
 signout : Model -> ( Model, Cmd Msg )
 signout model =
     let
@@ -87,10 +105,17 @@ reconnectUser model userRecord =
                 | username = userRecord.username
                 , token = userRecord.token
             }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
     in
         ( { model
             | current_user = current_user
-            , message = "reconnecting user: " ++ userRecord.username
+            , appState = newAppState
+            , message = "User reconnected: " ++ userRecord.username
           }
         , Cmd.none
         )

@@ -60,8 +60,14 @@ login model =
 
         newAppState =
             { appState | page = Types.HomePage, signedIn = True, authorizing = False }
+
+        user =
+            model.current_user
+
+        updatedUser =
+            { user | password = "" }
     in
-        { model | appState = newAppState }
+        { model | appState = newAppState, currentUser = updatedUser }
 
 
 updateToolStatus : Model -> Tool -> AppState

@@ -133,29 +133,6 @@ toolSelectorPanel model =
 -- External.askToReconnectUser "reconnectUser"
 
 
-editorPanel model =
-    row Panel
-        [ paddingXY 10 6, spacing 15, center ]
-        [ el Zero
-            [ EA.width (px 30)
-            , EE.onClick (NewDocument)
-            , EA.height (px 30)
-            , padding 2
-            , title "New document"
-            ]
-            (EL.html (FontAwesome.plus Color.white 25))
-        , el Zero
-            [ EA.width (px 30)
-            , EE.onClick (Refresh)
-            , EA.height (px 30)
-            , padding 2
-            , title "Refresh display & save. Also: press ESC"
-            ]
-            (EL.html (FontAwesome.refresh Color.white 25))
-        , full PanelInfo [ padding 11 ] (EL.text ("Words: " ++ (toString <| wordCount <| model.current_document)))
-        ]
-
-
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar

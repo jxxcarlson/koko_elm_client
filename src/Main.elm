@@ -111,7 +111,7 @@ update msg model =
             toggleAuthorizing model
 
         Login ->
-            ( Action.UI.login model, loginUserCmd model loginUrl )
+            ( Action.User.login model, loginUserCmd model loginUrl )
 
         ReconnectUser jsonString ->
             -- ( { model | message = "RECONNECT", info = "RECONNECT" }, toJs "RECONNECT" )

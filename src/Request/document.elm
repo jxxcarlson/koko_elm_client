@@ -47,8 +47,14 @@ getPublicDocumentsWith searchState =
 getUserDocumentsWith : SearchState -> String -> Cmd Msg
 getUserDocumentsWith searchState token =
     let
+        query =
+            searchState.query
+
         url =
-            documentsUrl
+            if query == "" then
+                documentsUrl ++ "?all"
+            else
+                documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
