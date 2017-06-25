@@ -35,6 +35,7 @@ updateSearch model query =
         ( { model | searchState = new_searchState }, Cmd.none )
 
 
+updatedSearchState : Model -> SearchDomain -> SearchState
 updatedSearchState model searchDomain =
     let
         searchState =

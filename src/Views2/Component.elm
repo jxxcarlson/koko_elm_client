@@ -17,34 +17,7 @@ import Html.Events as HE exposing (onClick)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Action.Document exposing (wordCount)
 import External
-
-
--- import Utility exposing (onKeyUp)
--- end style --
--- button [ onClick (GoTo HomePage), HA.class (selectedClass HomePage model) ] [ Html.text "Home" ]
-{-
-
-   documentSearchForm : Model -> Html Msg
-   documentSearchForm model =
-       div [ id "SearchForm" ]
-           [ input
-               [ id "searchInputField"
-               , type_ "text"
-               , placeholder "Search"
-                 --, Html.Attributes.value model.input_text
-               , onInput SetSearchTerm
-               , Utility.onKeyUp DoSearch
-                 -- if keyCode == 13
-               ]
-               []
-           ]
-
-
--}
--- inputText Style [] "The Value!"
--- onKeyUp : (Int -> msg) -> Attribute msg
--- onKeyUp tagger =
---     on "keyup" (Json.map tagger EE.keycode)
+import Utility
 
 
 navigation : Model -> Element Styles variation Msg
@@ -63,7 +36,11 @@ searchForm model =
     row NavBar
         [ spacing 15 ]
         [ inputText SearchField
-            [ EE.onInput SetSearchTerm, placeholder "Search", height (px 29) ]
+            [ EE.onInput SetSearchTerm
+            , Utility.onKeyUp (DoSearch model.searchState.domain)
+            , placeholder "Search"
+            , height (px 29)
+            ]
             (model.searchState.query)
         , el FlatButton
             [ EA.width (px 40)

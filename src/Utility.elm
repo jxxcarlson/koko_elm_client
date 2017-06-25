@@ -4,7 +4,9 @@ import Html exposing (..)
 import Css exposing (asPairs)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Html.Attributes exposing (..)
-import Html.Events as HE exposing (on, keyCode)
+import Element.Events as EE exposing (on, keyCode)
+import Element
+import Element.Attributes
 import Types exposing (Model, Page)
 import External exposing (toJs)
 import Views.External exposing (windowData)
@@ -22,9 +24,9 @@ updateListAt list n newElement =
     List.take n list ++ newElement :: List.drop (n + 1) list
 
 
-onKeyUp : (Int -> msg) -> Attribute msg
+onKeyUp : (Int -> msg) -> Element.Attribute variation msg
 onKeyUp tagger =
-    on "keyup" (Json.map tagger HE.keyCode)
+    on "keyup" (Json.map tagger keyCode)
 
 
 gotoPage : Model -> Page -> Cmd msg

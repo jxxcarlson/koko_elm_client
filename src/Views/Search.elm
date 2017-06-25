@@ -1,4 +1,4 @@
-module Views.Search exposing (documentSearchForm, documentListView)
+module Views.Search exposing (documentListView)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -9,22 +9,6 @@ import Utility exposing (onKeyUp)
 -- import Types exposing(Model, Msg)
 
 import Types exposing (..)
-
-
-documentSearchForm : Model -> Html Msg
-documentSearchForm model =
-    div [ id "SearchForm" ]
-        [ input
-            [ id "searchInputField"
-            , type_ "text"
-            , placeholder "Search"
-              --, Html.Attributes.value model.input_text
-            , onInput SetSearchTerm
-            , Utility.onKeyUp (DoSearch Public)
-              -- if keyCode == 13
-            ]
-            []
-        ]
 
 
 documentListView : Model -> Html Msg

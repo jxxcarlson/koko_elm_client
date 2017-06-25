@@ -29,7 +29,9 @@ documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        (List.map (viewTitle model.current_document) model.documents)
+        ([ (text ("Documents: " ++ (toString (List.length model.documents)))) ]
+            ++ (List.map (viewTitle model.current_document) model.documents)
+        )
 
 
 tool : Model -> Element Styles variation Msg
@@ -63,11 +65,6 @@ searchOptionControl model =
         ]
 
 
-
--- onClick (UseSearchDomain Private)
--- onClick (UseSearchDomain Public)
-
-
 searchDomainChecked : Model -> SearchDomain -> Bool
 searchDomainChecked model domain =
     model.searchState.domain == domain
@@ -77,25 +74,3 @@ basicTools model =
     column TOC
         [ alignLeft, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ searchOptionControl model ]
-
-
-
--- row None
---     []
---
---     [ input
---         [ type_ "radio"
---         , name "searchDomain"
---         , onClick (UseSearchDomain Private)
---           -- , disabled (privateSearchDisabled model)
---           --, checked (searchDomainChecked model Private)
---         ]
---     , (text "My documents")
---     , input
---         [ type_ "radio"
---         , name "searchDomain"
---         , onClick (UseSearchDomain Public)
---           --, checked (searchDomainChecked model Public)
---         ]
---     , (text "Public documents")
---     ]
