@@ -44,6 +44,7 @@ import Views2.Component as Component
 import Views2.Home exposing (home)
 import Views2.Reader exposing (reader)
 import Views2.Editor exposing (editor)
+import Utility
 
 
 main =
@@ -139,9 +140,8 @@ update msg model =
         -- updatedSearchState
         DoSearch searchDomain key ->
             if key == 13 then
-                -- 13: RETURN/ENTER
                 ( { model
-                    | message = "search " ++ (toString searchDomain) ++ ": " ++ model.searchState.query
+                    | message = "search " ++ (toString searchDomain) ++ ": " ++ Utility.queryText model.searchState.query
                     , appState = updateToolStatus model TableOfContents
                     , appState = appStateWithPage model (displayPage model)
                     , searchState = updatedSearchState model searchDomain

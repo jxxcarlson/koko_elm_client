@@ -19,6 +19,14 @@ styles =
     Css.asPairs >> Html.Attributes.style
 
 
+queryText : String -> String
+queryText text =
+    if text == "" then
+        "all"
+    else
+        text
+
+
 updateListAt : List a -> Int -> a -> List a
 updateListAt list n newElement =
     List.take n list ++ newElement :: List.drop (n + 1) list
