@@ -53,23 +53,6 @@ toggleAuthorizing model =
         ( { model | appState = newAppState }, Cmd.none )
 
 
-login model =
-    let
-        appState =
-            model.appState
-
-        newAppState =
-            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
-
-        user =
-            model.current_user
-
-        updatedUser =
-            { user | password = "" }
-    in
-        { model | appState = newAppState, currentUser = updatedUser }
-
-
 updateToolStatus : Model -> Tool -> AppState
 updateToolStatus model tool =
     let

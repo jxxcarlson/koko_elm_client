@@ -32,7 +32,7 @@ documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ (text ("Documents: " ++ (toString (List.length model.documents)))) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text ("Documents: " ++ (toString (List.length model.documents)))) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
 

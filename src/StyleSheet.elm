@@ -29,6 +29,7 @@ type Styles
     | NavBar
     | Menu
     | TitleStyle
+    | Heading
     | Button
     | ActiveButton
     | FlatButton
@@ -127,6 +128,12 @@ stylesheet =
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
             , Font.size 20
+            , Font.lineHeight 1.3
+            ]
+        , style Heading
+            [ Color.background Color.lightCharcoal
+            , Color.text Color.white
+            , Font.size 16
             , Font.lineHeight 1.3
             ]
         , style Footer

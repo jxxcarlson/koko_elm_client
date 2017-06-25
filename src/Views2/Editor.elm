@@ -11,6 +11,7 @@ import Views2.Component as Component
 import Types exposing (..)
 import Element.Keyed as Keyed
 import Action.Document exposing (wordCount)
+import Utility
 
 
 editor model =
@@ -30,7 +31,20 @@ editor model =
         , named "contentHeader"
             (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
         , named "content"
-            (Keyed.row None [] [ ( (toString model.counter), (textArea None [ width (percent 100), padding 8, onInput InputContent ] (model.current_document.content)) ) ])
+            (Keyed.row None
+                []
+                [ ( (toString model.counter)
+                  , (textArea None
+                        [ width (percent 100)
+                        , padding 8
+                        , onInput InputContent
+                        , Utility.onKeyUp DoRender
+                        ]
+                        (model.current_document.content)
+                    )
+                  )
+                ]
+            )
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         , named "editorPanel" (editorPanel model)

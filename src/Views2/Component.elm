@@ -123,8 +123,22 @@ menu model =
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
-        [ el FlatButton [ EA.width (px 85), EE.onClick (SelectTool TableOfContents), EA.height (px 30), padding 8 ] (EL.text "TOC")
-        , el FlatButton [ EA.width (px 85), EE.onClick (SelectTool EditorTools), EA.height (px 30), padding 8 ] (EL.text "Tools")
+        [ el Zero
+            [ EA.width (px 85)
+            , EE.onClick (SelectTool TableOfContents)
+            , title "Table of contents"
+            , EA.height (px 30)
+            , padding 2
+            ]
+            (EL.html (FontAwesome.list Color.white 25))
+        , el Zero
+            [ EA.width (px 85)
+            , EE.onClick (SelectTool EditorTools)
+            , title "Tools"
+            , EA.height (px 30)
+            , padding 2
+            ]
+            (EL.html (FontAwesome.gear Color.white 25))
         ]
 
 

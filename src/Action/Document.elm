@@ -35,7 +35,6 @@ updateDocuments model documentsRecord =
             , current_document = current_document
             , appState = appStateWithPage model page
             , appState = updateToolStatus model TableOfContents
-            , info = (toString (List.length documentsRecord.documents)) ++ " documents found"
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
