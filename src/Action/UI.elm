@@ -1,6 +1,8 @@
 module Action.UI exposing (..)
 
-import Types exposing (Model, Msg, Page, AppState, Tool)
+-- import Types exposing (Model, Msg, Page, AppState, Tool)
+
+import Types exposing (..)
 import External
 import Views.External
 
@@ -81,4 +83,30 @@ appStateWithPage model page =
         appState =
             model.appState
     in
-        { appState | page = page }
+        { appState | page = page, tool = updateTool model page }
+
+
+updateTool : Model -> Page -> Tool
+updateTool model page =
+    let
+        currentAppState =
+            model.appState
+
+        newTool =
+            case page of
+                ReaderPage ->
+                    if currentAppState.tool == EditorTools then
+                        ReaderTools
+                    else
+                        currentAppState.tool
+
+                EditorPage ->
+                    if currentAppState.tool == ReaderTools then
+                        EditorTools
+                    else
+                        currentAppState.tool
+
+                _ ->
+                    currentAppState.tool
+    in
+        newTool

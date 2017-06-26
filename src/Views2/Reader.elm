@@ -3,8 +3,12 @@ module Views2.Reader exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Attributes exposing (..)
+import Element.Events exposing (onClick)
 import Views2.Common as Common
 import Views2.Component as Component
+import Types exposing (..)
+import FontAwesome
 
 
 reader model =
@@ -20,7 +24,7 @@ reader model =
         []
         [ named "separator" (hairline Hairline)
         , named "TOCHeader"
-            (Component.toolSelectorPanel model)
+            (toolSelectorPanel model)
         , named "contentHeader"
             (el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title))
         , named "content"
@@ -29,3 +33,25 @@ reader model =
         , named "footer" (Component.footer model)
         ]
     ]
+
+
+toolSelectorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el Zero
+            [ width (px 85)
+            , onClick (SelectTool TableOfContents)
+            , title "Table of contents"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
+        , el Zero
+            [ width (px 85)
+            , onClick (SelectTool ReaderTools)
+            , title "Tools"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.gear (Component.toolSelectorColor model ReaderTools) 25))
+        ]

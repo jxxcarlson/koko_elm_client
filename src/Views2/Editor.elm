@@ -12,6 +12,8 @@ import Types exposing (..)
 import Element.Keyed as Keyed
 import Action.Document exposing (wordCount)
 import Utility
+import Types exposing (..)
+import FontAwesome
 
 
 editor model =
@@ -27,7 +29,7 @@ editor model =
         []
         [ named "separator" (hairline Hairline)
         , named "TOCHeader"
-            (Component.toolSelectorPanel model)
+            (toolSelectorPanel model)
         , named "contentHeader"
             (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
         , named "content"
@@ -72,4 +74,26 @@ editorPanel model =
             ]
             (html (FontAwesome.refresh Color.white 25))
         , full PanelInfo [ padding 11 ] (text ("Words: " ++ (toString <| wordCount <| model.current_document)))
+        ]
+
+
+toolSelectorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el Zero
+            [ width (px 85)
+            , onClick (SelectTool TableOfContents)
+            , title "Table of contents"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
+        , el Zero
+            [ width (px 85)
+            , onClick (SelectTool EditorTools)
+            , title "Tools"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))
         ]

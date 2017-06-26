@@ -120,28 +120,6 @@ menu model =
             ]
 
 
-toolSelectorPanel model =
-    row Panel
-        [ paddingXY 10 6, spacing 15, center ]
-        [ el Zero
-            [ EA.width (px 85)
-            , EE.onClick (SelectTool TableOfContents)
-            , title "Table of contents"
-            , EA.height (px 30)
-            , padding 2
-            ]
-            (EL.html (FontAwesome.list (toolSelectorColor model TableOfContents) 25))
-        , el Zero
-            [ EA.width (px 85)
-            , EE.onClick (SelectTool EditorTools)
-            , title "Tools"
-            , EA.height (px 30)
-            , padding 2
-            ]
-            (EL.html (FontAwesome.gear (toolSelectorColor model EditorTools) 25))
-        ]
-
-
 toolSelectorColor model tool =
     if model.appState.tool == tool then
         Color.white

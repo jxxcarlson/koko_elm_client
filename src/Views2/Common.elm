@@ -1,4 +1,4 @@
-module Views2.Common exposing (documentListView, toolSelectorPanel, tool)
+module Views2.Common exposing (documentListView, tool)
 
 import Style exposing (..)
 import StyleSheet exposing (..)
@@ -44,19 +44,10 @@ tool model =
             documentListView model
 
         ReaderTools ->
-            basicTools model
+            readerTools model
 
         EditorTools ->
-            basicTools model
-
-
-toolSelectorPanel model =
-    row Panel
-        [ spacing 8, height (px 44), paddingXY 10 7 ]
-        [ el FlatButton [ onClick (SelectTool TableOfContents), alignBottom, height (px 30), padding 8 ] (text "TOC")
-        , el FlatButton [ onClick (SelectTool EditorTools), alignBottom, height (px 30), padding 8 ] (text "Tools")
-        , el FlatButton [ onClick Refresh, alignBottom, height (px 30), padding 8 ] (text "Refresh")
-        ]
+            editorTools model
 
 
 searchOptionControl model =
@@ -73,7 +64,13 @@ searchDomainChecked model domain =
     model.searchState.domain == domain
 
 
-basicTools model =
+readerTools model =
     column TOC
-        [ alignLeft, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        [ searchOptionControl model ]
+        [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ el Box [ padding 20, center ] (text "Reader tools") ]
+
+
+editorTools model =
+    column TOC
+        [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ el Box [ padding 20, center ] (text "Editor tools") ]
