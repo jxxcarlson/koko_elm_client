@@ -23,6 +23,7 @@ import Style.Transition as Transition
 type Styles
     = None
     | Zero
+    | XXX
     | Hairline
     | Panel
     | PanelInfo
@@ -65,6 +66,7 @@ stylesheet =
             , Color.background Color.lightGray
             ]
         , style Zero [ Font.lineHeight 0 ]
+        , style XXX [ Color.background Color.lightBlue ]
         , style Hairline [ Color.background Color.lightGray, Color.text Color.white ]
         , style Main
             [-- Border.all 1

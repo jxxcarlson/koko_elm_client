@@ -73,4 +73,6 @@ readerTools model =
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        [ el Box [ padding 20, center ] (text "Editor tools") ]
+        [ el Box [ padding 20, center ] (text "Editor tools")
+        , checkbox True XXX [ height (px 35), width (px 200) ] (text "Public")
+        ]
