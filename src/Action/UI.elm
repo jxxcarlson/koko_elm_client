@@ -110,3 +110,17 @@ updateTool model page =
                     currentAppState.tool
     in
         newTool
+
+
+queryMessage : Model -> String
+queryMessage model =
+    let
+        domain =
+            case model.searchState.domain of
+                Private ->
+                    "my documents"
+
+                Public ->
+                    "public documents"
+    in
+        "search " ++ domain ++ " for "

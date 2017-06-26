@@ -148,7 +148,7 @@ update msg model =
         DoSearch searchDomain key ->
             if key == 13 then
                 ( { model
-                    | message = "search " ++ (toString searchDomain) ++ ": " ++ Utility.queryText model.searchState.query
+                    | message = (Action.UI.queryMessage model) ++ Utility.queryText model.searchState.query
                     , appState = updateToolStatus model TableOfContents
                     , appState = appStateWithPage model (displayPage model)
                     , searchState = updatedSearchState model searchDomain
