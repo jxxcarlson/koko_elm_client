@@ -1,8 +1,6 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Keyed as Keyed
 
 
 -- begin style
@@ -12,7 +10,6 @@ import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Window exposing (..)
 import Types exposing (..)
-import Views.Component exposing (pageSelector)
 import Css exposing (asPairs)
 import Action.User exposing (..)
 import Action.Search exposing (..)
@@ -200,7 +197,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 0 "New Document" "New Content" "New Content"
+                    Document 0 0 "New Document" "New Content" "New Content" defaultAttributes
             in
                 createDocument model newDocument
 
@@ -335,7 +332,7 @@ init flags =
             "Welcome"
 
         doc =
-            Document 0 0 title content rendered_content
+            Document 0 0 title content rendered_content defaultAttributes
 
         searchState =
             SearchState "" Public

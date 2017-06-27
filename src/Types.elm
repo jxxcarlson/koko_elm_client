@@ -22,12 +22,24 @@ type alias KWindow =
     }
 
 
+type alias DocumentAttributes =
+    { public : Bool
+    , textType : String
+    , docType : String
+    }
+
+
+type alias DocumentAttributesRecord =
+    { attributes : DocumentAttributes }
+
+
 type alias Document =
     { id : Int
     , author_id : Int
     , title : String
     , content : String
     , rendered_content : String
+    , attributes : DocumentAttributes
     }
 
 
@@ -151,5 +163,9 @@ type alias Flags =
     }
 
 
+defaultAttributes =
+    DocumentAttributes False "adoc" "standard"
+
+
 defaultDocument =
-    Document 0 0 "Default document" "Yada" "Yada"
+    Document 0 0 "Default document" "Yada" "Yada" defaultAttributes

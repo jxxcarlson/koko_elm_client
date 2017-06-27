@@ -3,7 +3,6 @@ module Views.Search exposing (documentListView)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events as HE exposing (on, onClick, onInput)
-import Utility exposing (onKeyUp)
 
 
 -- import Types exposing(Model, Msg)
