@@ -113,3 +113,24 @@ selectNewDocument model document =
       }
     , render document.rendered_content
     )
+
+
+togglePublic : Model -> ( Model, Cmd Msg )
+togglePublic model =
+    let
+        document =
+            model.current_document
+
+        attributes =
+            document.attributes
+
+        newAttributes =
+            { attributes | public = not attributes.public }
+
+        newDocument =
+            { document | attributes = newAttributes }
+
+        updatedModel =
+            { model | current_document = newDocument }
+    in
+        updateCurrentDocument updatedModel newDocument

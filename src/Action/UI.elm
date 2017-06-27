@@ -112,6 +112,14 @@ updateTool model page =
         newTool
 
 
+
+{-
+
+   STRINGS:
+
+-}
+
+
 queryMessage : Model -> String
 queryMessage model =
     let
@@ -124,3 +132,13 @@ queryMessage model =
                     "public documents"
     in
         "search " ++ domain ++ " for "
+
+
+numberOfDocuments : Model -> String
+numberOfDocuments model =
+    case model.searchState.domain of
+        Private ->
+            "My documents: " ++ (toString (List.length model.documents))
+
+        Public ->
+            "Public documents: " ++ (toString (List.length model.documents))

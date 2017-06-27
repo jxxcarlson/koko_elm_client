@@ -32,7 +32,7 @@ documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text ("Documents: " ++ (toString (List.length model.documents)))) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Action.UI.numberOfDocuments model)) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
 
@@ -74,5 +74,5 @@ editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ width (px 100) ] (text "Editor tools")
-        , checkbox model.current_document.attributes.public XXX [ height (px 15), width (px 15) ] (text "Public")
+        , checkbox model.current_document.attributes.public XXX [ onClick TogglePublic, height (px 15), width (px 15) ] (text "Public")
         ]

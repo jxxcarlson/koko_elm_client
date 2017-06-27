@@ -20,6 +20,7 @@ import Action.Document
         , selectDocument
         , selectNewDocument
         , updateCurrentDocument
+        , togglePublic
         )
 import Data.Document exposing (documents)
 import Data.User exposing (userRecord)
@@ -73,7 +74,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp ->
-            ( model, Cmd.none )
+            ( { model | message = "NoOp" }, Cmd.none )
 
         Resize w h ->
             ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
@@ -242,6 +243,9 @@ update msg model =
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
+
+        TogglePublic ->
+            togglePublic model
 
         Tick time ->
             if model.appState.page == EditorPage then

@@ -108,6 +108,7 @@ type Msg
     | AuthenticationAction
     | ToggleRegister
     | ToggleMenu
+    | TogglePublic
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
