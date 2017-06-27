@@ -85,7 +85,9 @@ getDocumentById model k =
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
-    ( model, Request.Document.createDocument document model.current_user.token )
+    ( { model | appState = updateToolStatus model DocumentParameterTools }
+    , Request.Document.createDocument document model.current_user.token
+    )
 
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )

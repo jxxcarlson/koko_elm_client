@@ -155,6 +155,7 @@ pageName page =
 type Tool
     = TableOfContents
     | EditorTools
+    | DocumentParameterTools
     | ReaderTools
 
 

@@ -49,6 +49,9 @@ tool model =
         EditorTools ->
             editorTools model
 
+        DocumentParameterTools ->
+            documentParameterTools model
+
 
 searchOptionControl model =
     radio "Search domain"
@@ -68,6 +71,12 @@ readerTools model =
     column TOC
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Reader tools") ]
+
+
+documentParameterTools model =
+    column TOC
+        [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ el Box [ padding 20, center ] (text "Document parameter tools") ]
 
 
 editorTools model =

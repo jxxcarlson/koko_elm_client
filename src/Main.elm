@@ -145,17 +145,23 @@ update msg model =
         -- updatedSearchState
         DoSearch searchDomain key ->
             if key == 13 then
-                ( { model
-                    | message = (Action.UI.queryMessage model) ++ Utility.queryText model.searchState.query
-                    , appState = updateToolStatus model TableOfContents
-                    , appState = appStateWithPage model (displayPage model)
-                    , searchState = updatedSearchState model searchDomain
-                  }
-                , Cmd.batch
-                    [ getDocumentsWith model.searchState model.current_user.token
-                    , External.render model.current_document.rendered_content
-                    ]
-                )
+                let
+                    newSearchState =
+                        updatedSearchState model searchDomain
+
+                    updatedModel =
+                        { model
+                            | searchState = newSearchState
+                            , message = (Action.UI.queryMessage model) ++ Utility.queryText model.searchState.query
+                            , appState = updateToolStatus model TableOfContents
+                        }
+                in
+                    ( { updatedModel | appState = appStateWithPage model (displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
+                    , Cmd.batch
+                        [ getDocumentsWith newSearchState model.current_user.token
+                        , External.render model.current_document.rendered_content
+                        ]
+                    )
             else
                 ( model, Cmd.none )
 
