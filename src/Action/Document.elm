@@ -109,6 +109,7 @@ selectNewDocument model document =
         , documents = [ document ] ++ model.documents
         , message = "New document added: " ++ document.title
         , info = "New document added: " ++ document.title
+        , counter = model.counter + 1
       }
     , render document.rendered_content
     )

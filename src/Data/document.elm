@@ -6,8 +6,9 @@ import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, h
 import Types exposing (..)
 
 
--- http://noredink.github.io/json-to-elm/
 -- http://eeue56.github.io/json-to-elm/
+-- https://github.com/eeue56/json-to-elm
+-- https://medium.com/@eeue56/how-i-implemented-json-to-elm-b61081587c3a
 
 
 type alias Documents =
