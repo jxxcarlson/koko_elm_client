@@ -1,7 +1,6 @@
 module Utility exposing (..)
 
 import Html exposing (..)
-import Css exposing (asPairs)
 import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Html.Attributes exposing (..)
 import Element.Events as EE exposing (on, keyCode)
@@ -10,13 +9,6 @@ import Element.Attributes
 import Types exposing (Model, Page)
 import External exposing (toJs)
 import Views.External exposing (windowData)
-
-
---styles :  List Css.Mixin -> Html.Attribute msg
-
-
-styles =
-    Css.asPairs >> Html.Attributes.style
 
 
 queryText : String -> String

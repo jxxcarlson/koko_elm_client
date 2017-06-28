@@ -27,14 +27,20 @@ transformItem item =
 transformQualifiedItem : String -> String
 transformQualifiedItem item =
     case String.split ":" item of
-        [ "ta", stem ] ->
-            "tag=" ++ stem
+        [ "k", stem ] ->
+            "key=" ++ stem
 
         [ "t", stem ] ->
-            "tag=" ++ stem
-
-        [ "te", stem ] ->
             "text=" ++ stem
+
+        [ "ti", stem ] ->
+            "title=" ++ stem
+
+        [ "p", stem ] ->
+            "public=" ++ stem
+
+        [ "a", stem ] ->
+            "author=" ++ stem
 
         _ ->
             ""

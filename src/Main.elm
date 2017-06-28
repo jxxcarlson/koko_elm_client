@@ -10,7 +10,6 @@ import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Window exposing (..)
 import Types exposing (..)
-import Css exposing (asPairs)
 import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Document
@@ -275,18 +274,6 @@ subscriptions model =
         ]
 
 
-
--- reconnectUserSubscription : Model -> Sub Msg
--- reconnectUserSubscription model =
---     External.reconnectUser ReconnectUser
-
-
-windowCss model =
-    [ Css.width (Css.px ((toFloat model.window.width) - 100.0))
-    , Css.height (Css.px (0.9 * (toFloat model.window.height - 575.0)))
-    ]
-
-
 page model =
     case model.appState.page of
         ReaderPage ->
@@ -297,10 +284,6 @@ page model =
 
         HomePage ->
             home model
-
-
-
--- CURSOR JUMP BUG: https://ellie-app.com/3fPSxX6VHK7a1/0
 
 
 view model =

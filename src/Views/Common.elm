@@ -83,5 +83,5 @@ editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ width (px 100) ] (text "Editor tools")
-        , checkbox model.current_document.attributes.public XXX [ onClick TogglePublic, height (px 15), width (px 15) ] (text "Public")
+        , checkbox model.current_document.attributes.public Zero [ onClick TogglePublic, height (px 15), width (px 15) ] (text "Public")
         ]
