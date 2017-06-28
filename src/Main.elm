@@ -232,18 +232,15 @@ update msg model =
 
         -- ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
         InputContent content ->
-            updateCurrentDocumentWithContent content model
+            let
+                appState =
+                    model.appState
 
-        -- let
-        --     oldDocument =
-        --         model.current_document
-        --
-        --     -- TEST: foobar = Debug.log "foo" model.current_document.id
-        --     newDocument =
-        --         { oldDocument | content = content, rendered_content = content }
-        -- in
-        --     updateCurrentDocument model newDocument
-        --
+                newAppState =
+                    { appState | textBuffer = content, textBufferDirty = True }
+            in
+                ( { model | appState = newAppState }, Cmd.none )
+
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
@@ -257,11 +254,8 @@ update msg model =
             togglePublic model
 
         Tick time ->
-            if model.appState.page == EditorPage then
-                ( { model | message = ((toString model.counter) ++ ". Tick, rendering #" ++ (toString model.current_document.id)) }
-                , External.render model.current_document.rendered_content
-                )
-                -- ( model, Cmd.none )
+            if model.appState.page == EditorPage && model.appState.textBufferDirty then
+                updateCurrentDocumentWithContent model.appState.textBuffer model
             else
                 ( model, Cmd.none )
 
@@ -275,7 +269,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (60 * Time.second) Tick
+        [ Time.every (1.5 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         ]

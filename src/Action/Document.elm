@@ -76,6 +76,7 @@ updateCurrentDocument model document =
             | current_document = document
             , documents = new_documents
             , appState = newAppState
+            , message = "!! Rendering #" ++ (toString document.id)
           }
         , Cmd.batch [ putDocument model document, External.render document.rendered_content ]
         )
@@ -112,16 +113,24 @@ createDocument model document =
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
-    ( { model
-        | current_document = document
-        , message = "Selected: " ++ document.title
-        , counter = model.counter + 1
-      }
-    , Cmd.batch
-        [ toJs (windowData model (displayPage model))
-        , render document.rendered_content
-        ]
-    )
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textBuffer = document.content, textBufferDirty = False }
+    in
+        ( { model
+            | current_document = document
+            , appState = newAppState
+            , message = "Selected: " ++ document.title
+            , counter = model.counter + 1
+          }
+        , Cmd.batch
+            [ toJs (windowData model (displayPage model))
+            , render document.rendered_content
+            ]
+        )
 
 
 selectNewDocument : Model -> Document -> ( Model, Cmd Msg )
