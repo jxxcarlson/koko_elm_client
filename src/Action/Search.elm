@@ -1,21 +1,48 @@
 module Action.Search exposing (..)
 
 import Types exposing (..)
+import Regex
 
 
 parseQuery1 : String -> String
 parseQuery1 input =
     input
-        |> String.split (" ")
+        |> Regex.split Regex.All (Regex.regex "[, ]")
         |> List.map String.trim
         |> List.filter (\item -> item /= "")
-        |> List.map (\item -> "title=" ++ item)
+        -- |> List.map (\item -> "title=" ++ item)
+        |>
+            List.map (\item -> transformItem item)
         |> String.join ("&")
+
+
+transformItem : String -> String
+transformItem item =
+    if String.contains ":" item then
+        Debug.log "term" (transformQualifiedItem item)
+    else
+        "title=" ++ item
+
+
+transformQualifiedItem : String -> String
+transformQualifiedItem item =
+    case String.split ":" item of
+        [ "ta", stem ] ->
+            "tag=" ++ stem
+
+        [ "t", stem ] ->
+            "tag=" ++ stem
+
+        [ "te", stem ] ->
+            "text=" ++ stem
+
+        _ ->
+            ""
 
 
 parseQuery : String -> String
 parseQuery input =
-    if String.contains input "=" then
+    if String.contains "=" input then
         input
     else if input == "all" then
         input
