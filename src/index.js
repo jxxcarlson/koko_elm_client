@@ -17,6 +17,9 @@ var mountNode = document.getElementById('main');
     );
 
 
+  var request_in_progress = false;
+  var current_content = '';
+
   app.ports.render.subscribe(function(content) {
 
       requestAnimationFrame(function() {
@@ -26,9 +29,30 @@ var mountNode = document.getElementById('main');
 
         var asciidoctor = Asciidoctor();
 
-        var html = asciidoctor.convert(content);
+       ///
 
-        document.getElementById('rendered_text2').innerHTML = html
+      //  var render_text = function(content) {
+      //     request_in_progress = true;
+      //     console.log("Rendering ... ")
+      //     var millisecondsToWait = 3000;
+      //     setTimeout(function() {
+      //         console.log("Completed! " );
+      //         request_in_progress = false;
+      //         if (content !== current_content) {
+      //           // render_text(current_text);
+      //           document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+      //         }
+      //     }  , millisecondsToWait);
+      //  }
+
+      // render_text(content)
+
+    ///
+
+     document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+
+
+
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text2"]);
 
       })
