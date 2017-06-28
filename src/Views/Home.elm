@@ -1,20 +1,35 @@
-module Views.Home exposing (home)
+module Views.Home exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Css exposing (asPairs)
-import Types exposing (Model, Msg)
-import Views.Signin exposing (..)
-import Utility exposing (youtube)
-
-
-styles =
-    Css.asPairs >> Html.Attributes.style
+import StyleSheet exposing (..)
+import Element exposing (..)
+import Element.Attributes exposing (..)
+import Views.Common as Common
+import Views.Component as Component
+import Views.Signin as Signin
 
 
-home : Model -> Html Msg
 home model =
-    div []
-        [ signin model
-          --, Utility.youtube "https://www.youtube.com/embed/EsTgr-n53Ow"
+    [ namedGrid Container
+        { columns = [ fill 1, fill 2, fill 1 ]
+        , rows =
+            [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
+              px 650 => [ span 1 "LHSidebar", span 1 "Middle", span 1 "RHSidebar" ]
+            ]
+        }
+        []
+        [ -- named "TOCHeader"
+          --     (Component.toolSelectorPanel model)
+          -- , named "contentHeader"
+          --     (el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title))
+          named "Middle"
+            (row
+                None
+                [ padding 40, spacing 20 ]
+                [ (Signin.signinForm model)
+                , (Signin.signoutForm model)
+                , (Signin.registerUserForm model)
+                , el Box [ width (px 400), height (px 200) ] (text model.message)
+                ]
+            )
         ]
+    ]

@@ -1,145 +1,160 @@
 module Views.Component exposing (..)
 
-import Html exposing (..)
-import Html.Attributes as HA exposing (..)
-import Html.Events as HE exposing (onClick)
-import Utility exposing (styles)
+import Style exposing (..)
+import StyleSheet exposing (..)
+import Color
+import Html as Html
+import Element as EL exposing (..)
+import Element.Attributes as EA exposing (..)
+import Element.Events as EE exposing (..)
+import Style exposing (..)
+import Style.Border as Border
+import Style.Color as Color
+import Style.Font as Font
+import Style.Transition as Transition
 import Types exposing (..)
-import Css exposing (..)
-import Views.Search exposing (documentListView)
+import Html.Events as HE exposing (onClick)
+import Json.Decode as Json exposing (int, list, string, float, Decoder)
+import Action.Document exposing (wordCount)
+import External
+import Utility
+import FontAwesome
 
 
-selectedClass : Page -> Model -> String
-selectedClass page model =
-    if page == model.appState.page then
-        "isSelected"
-    else
-        "isNotSelected"
+navigation : Model -> Element Styles variation Msg
+navigation model =
+    row NavBar
+        [ justify, paddingXY 30 4 ]
+        [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
+        , searchForm model
+        , menu model
+        , pageSelector model
+        , loginButton model
+        ]
 
 
-selectedToolClass : Tool -> Model -> String
-selectedToolClass tool model =
-    if tool == model.appState.tool then
-        "isSelected"
-    else
-        "isNotSelected"
-
-
-searchOptionControl : Model -> Html Msg
-searchOptionControl model =
-    div []
-        [ strong []
-            [ Html.text "Search type" ]
-        , br
-            []
-            []
-        , label [ HA.class "radio_label" ]
-            [ input
-                [ type_ "radio"
-                , name "searchDomain"
-                , onClick (UseSearchDomain Private)
-                , HA.class "my_radio_button"
-                , HA.disabled (privateSearchDisabled model)
-                , HA.checked (searchDomainChecked model Private)
-                ]
-                []
-            , Html.text "My Documents"
+searchForm model =
+    row NavBar
+        [ spacing 10, verticalCenter ]
+        [ inputText SearchField
+            [ EE.onInput SetSearchTerm
+            , Utility.onKeyUp (DoSearch model.searchState.domain)
+            , placeholder "Search"
+            , height (px 29)
             ]
-        , br [] []
-        , label [ HA.class "radio_label" ]
-            [ input
-                [ type_ "radio"
-                , name "searchDomain"
-                , onClick (UseSearchDomain Public)
-                , HA.class "my_radio_button"
-                , HA.checked (searchDomainChecked model Public)
+            (model.searchState.query)
+        , row Zero
+            [ center, spacing 5 ]
+            [ el Zero
+                [ EA.width (px 25)
+                , title "Search for my documents"
+                , EA.alignRight
+                , EE.onClick (DoSearch Private 13)
+                , EA.height (px 30)
+                , paddingXY 0 4
                 ]
-                []
-            , Html.text "Public Documents"
+                (searchIcon model Private)
+            , el Zero
+                [ EA.width (px 25)
+                , title "Search for public documents"
+                , EA.alignLeft
+                , EE.onClick (DoSearch Public 13)
+                , EA.height (px 30)
+                , paddingXY 0 4
+                ]
+                (searchIcon model Public)
             ]
         ]
 
 
-searchDomainChecked : Model -> SearchDomain -> Bool
-searchDomainChecked model domain =
-    model.searchState.domain == domain
-
-
-privateSearchDisabled : Model -> Bool
-privateSearchDisabled model =
-    if model.current_user.token == "" then
-        True
+searchIcon : Model -> SearchDomain -> Element style variation msg
+searchIcon model searchDomain =
+    if model.searchState.domain == searchDomain then
+        (EL.html (FontAwesome.search Color.white 25))
     else
-        False
+        (EL.html (FontAwesome.search Color.grey 25))
 
 
-toolSelectorPanel : Model -> Html Msg
-toolSelectorPanel model =
-    span
-        [ styles [ Css.marginLeft (Css.px 8.0) ] ]
-        [ button [ onClick (SelectTool TableOfContents), HA.class "smallButton", HA.class (selectedToolClass TableOfContents model) ]
-            [ Html.text "TOC" ]
-        , button
-            [ onClick (SelectTool EditorTools), HA.class "smallButton", HA.class (selectedToolClass EditorTools model) ]
-            [ Html.text "Tools" ]
-        , button
-            [ onClick Refresh, HA.class "smallButton", HA.style [ ( "background-color", "green" ), ( "color", "white" ) ] ]
-            [ Html.text "Refresh" ]
+loginButton model =
+    el Button
+        [ EA.width (px 85)
+        , EA.center
+        , EE.onClick AuthenticationAction
+        , EA.height (px 30)
+        , padding 8
         ]
+        (EL.text (authenticationButtonText model))
 
 
-toolSelector : Model -> Html Msg
-toolSelector model =
-    case model.appState.tool of
-        TableOfContents ->
-            tableOfContents model
-
-        EditorTools ->
-            editorTools model
-
-        ReaderTools ->
-            readerTools model
+authenticationButtonText : Model -> String
+authenticationButtonText model =
+    if model.appState.signedIn then
+        "Sign out"
+    else
+        "Sign in"
 
 
-editorTools : Model -> Html Msg
-editorTools model =
-    div []
-        [ searchOptionControl model
-        , newDocument model
-        ]
+menu1 model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
+        |> below
+            [ when model.appState.menuDropped <|
+                column Menu
+                    [ padding 8, spacing 8 ]
+                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "AAAA" ])
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "BBBB" ])
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "CCCC" ])
+                    ]
+            ]
 
 
-readerTools : Model -> Html Msg
-readerTools model =
-    div []
-        [ searchOptionControl model
-        , newDocument model
-        ]
+menu model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
+        |> below
+            [ when model.appState.menuDropped <|
+                column Menu
+                    [ padding 8, spacing 8 ]
+                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "AAAA")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "BBBB")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "CCCC")
+                    ]
+            ]
 
 
-newDocument : Model -> Html Msg
-newDocument model =
-    button [ onClick NewDocument, HA.style [ ( "width", "180px" ), ( "margin-left", "10px" ), ( "background-color", "#444" ), ( "color", "white" ) ] ]
-        [ Html.text "New Document" ]
+toolSelectorColor model tool =
+    if model.appState.tool == tool then
+        Color.white
+    else
+        Color.gray
 
 
-tableOfContents : Model -> Html Msg
-tableOfContents model =
-    div []
-        [ h4 [] [ Html.text ("Documents: " ++ (toString (List.length model.documents))) ]
-        , documentListView model
-        ]
+
+-- External.askToReconnectUser "reconnectUser"
+-- External.askToReconnectUser "reconnectUser"
 
 
-pageSelector : Model -> Html Msg
+pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
-    span [ styles [ Css.marginLeft (Css.px 100.0) ] ]
-        [ button [ onClick (GoTo HomePage), HA.class (selectedClass HomePage model) ]
-            [ Html.text "Home" ]
-        , button
-            [ onClick (GoTo ReaderPage), HA.class (selectedClass ReaderPage model) ]
-            [ Html.text "Reader" ]
-        , button
-            [ onClick (GoTo EditorPage), HA.class (selectedClass EditorPage model) ]
-            [ Html.text "Editor" ]
+    row NavBar
+        [ spacing 8 ]
+        [ el (activeButton HomePage model) [ EE.onClick (GoTo HomePage), alignBottom, height (px 30), padding 8 ] (text "Home")
+        , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
+        , el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor")
         ]
+
+
+activeButton : Page -> Model -> Styles
+activeButton currentPage model =
+    if currentPage == model.appState.page then
+        ActiveFlatButton
+    else
+        FlatButton
+
+
+footer : Model -> Element Styles variation msg
+footer model =
+    (row Footer
+        [ justify, paddingXY 30 4 ]
+        [ el FooterNote [ alignBottom, padding 8 ] (text model.message)
+        , el FooterNote [ alignBottom, padding 8 ] (text model.info)
+        ]
+    )

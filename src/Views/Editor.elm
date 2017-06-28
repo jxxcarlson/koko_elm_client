@@ -1,63 +1,100 @@
-module Views.Editor exposing (editor)
+module Views.Editor exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events as HE exposing (..)
-import Html.Keyed as Keyed
-
-
---onClick, onInput, on
-
-import Views.Component exposing (toolSelectorPanel, toolSelector)
-import Action.Document exposing (wordCount)
-import Utility exposing (onKeyUp)
-
-
--- import Css exposing (asPairs)
-
+import StyleSheet exposing (..)
+import Element exposing (..)
+import Element.Attributes exposing (..)
+import Element.Events exposing (onInput, onClick)
+import Views.Common as Common
+import Color
+import FontAwesome
+import Views.Component as Component
 import Types exposing (..)
+import Element.Keyed as Keyed
+import Action.Document exposing (wordCount)
+import Utility
+import Types exposing (..)
+import FontAwesome
 
 
--- import Test exposing (..)
-
-
-editor : Model -> Html Msg
 editor model =
-    div
-        []
-        [ div [ id "toolSelectorPanel" ] [ toolSelectorPanel model ]
-        , div [ id "toolPane" ] [ toolSelector model ]
-        , input [ id "titlePane", type_ "text", placeholder "title", onInput Title, value model.current_document.title ] []
-          -- , div [ id "titlePane" ] [ text model.current_document.title ]
-          --, pre [ id "editPane" ] [ text model.current_document.content ]
-        , Keyed.node "textarea"
-            [ id "editPane"
-            , defaultValue model.current_document.content
-            , HE.onInput InputContent
-            , Utility.onKeyUp DoRender
+    [ namedGrid Container
+        { columns = [ px 300, fill 1, fill 1 ]
+        , rows =
+            [ px 1 => [ spanAll "separator" ]
+            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "editorPanel" ]
+            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
+            , px 40 => [ spanAll "footer" ]
             ]
-            []
-        , div [ id "editor_info_pane" ] [ text ("Words: " ++ (toString <| wordCount <| model.current_document)) ]
-          -- HERE use the node with id = rendered_text2 in JS-land.
+        }
+        []
+        [ named "separator" (hairline Hairline)
+        , named "TOCHeader"
+            (toolSelectorPanel model)
+        , named "contentHeader"
+            (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
+        , named "content"
+            (Keyed.row None
+                []
+                [ ( (toString model.counter)
+                  , (textArea None
+                        [ width (percent 100)
+                        , yScrollbar
+                        , padding 8
+                        , onInput InputContent
+                        , Utility.onKeyUp DoRender
+                        ]
+                        (model.current_document.content)
+                    )
+                  )
+                ]
+            )
+        , named "TOC" (Common.tool model)
+        , named "footer" (Component.footer model)
+        , named "editorPanel" (editorPanel model)
+        ]
+    ]
+
+
+editorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el Zero
+            [ width (px 30)
+            , onClick (NewDocument)
+            , height (px 30)
+            , padding 2
+            , title "New document"
+            ]
+            (html (FontAwesome.plus Color.white 25))
+        , el Zero
+            [ width (px 30)
+            , onClick (Refresh)
+            , height (px 30)
+            , padding 2
+            , title "Refresh display & save. Also: press ESC"
+            ]
+            (html (FontAwesome.refresh Color.white 25))
+        , full PanelInfo [ padding 11 ] (text ("Words: " ++ (toString <| wordCount <| model.current_document)))
         ]
 
 
-
--- redirect location = Cmd.batch [formReset (), Navigation.newUrl <| "#/" ++ location]
--- document.forms[0].reset()
--- https://github.com/etaque/elm-form/issues/54
--- https://github.com/evancz/elm-html/pull/81
--- https://groups.google.com/forum/#!msg/elm-discuss/1QYrEKC2Y2o/PTujCN0NEAAJ
--- ISSUE ABOVE: value versus defaultValue
-
-
-newDocumentForm model =
-    div [ id "newDocumentForm" ]
-        [ input [ id "title", type_ "text", placeholder "title", onInput Title ] []
-        , br [] []
-        , br [] []
-        , button [ id "newDocumentBttton", onClick NewDocument ] [ text "Create" ]
-        , br [] []
-        , br [] []
-        , p [] [ text model.info ]
+toolSelectorPanel model =
+    row Panel
+        [ paddingXY 10 6, spacing 15, center ]
+        [ el Zero
+            [ width (px 85)
+            , onClick (SelectTool TableOfContents)
+            , title "Table of contents"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
+        , el Zero
+            [ width (px 85)
+            , onClick (SelectTool EditorTools)
+            , title "Tools"
+            , height (px 30)
+            , padding 2
+            ]
+            (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))
         ]

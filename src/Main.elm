@@ -46,10 +46,10 @@ import Action.UI
 
 -- new style
 
-import Views2.Component as Component
-import Views2.Home exposing (home)
-import Views2.Reader exposing (reader)
-import Views2.Editor exposing (editor)
+import Views.Component as Component
+import Views.Home exposing (home)
+import Views.Reader exposing (reader)
+import Views.Editor exposing (editor)
 import Utility
 
 
