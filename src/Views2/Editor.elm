@@ -38,6 +38,7 @@ editor model =
                 [ ( (toString model.counter)
                   , (textArea None
                         [ width (percent 100)
+                        , yScrollbar
                         , padding 8
                         , onInput InputContent
                         , Utility.onKeyUp DoRender

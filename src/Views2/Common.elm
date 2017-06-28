@@ -31,7 +31,7 @@ viewTitle selectedDocument document =
 documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
-        [ padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Action.UI.numberOfDocuments model)) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
