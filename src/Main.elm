@@ -236,6 +236,7 @@ update msg model =
                 oldDocument =
                     model.current_document
 
+                -- TEST: foobar = Debug.log "foo" model.current_document.id
                 newDocument =
                     { oldDocument | content = content, rendered_content = content }
             in

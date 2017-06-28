@@ -17,12 +17,15 @@ var mountNode = document.getElementById('main');
     );
 
 
-  app.ports.render.subscribe(function(rendered_text) {
+  app.ports.render.subscribe(function(content) {
 
       requestAnimationFrame(function() {
 
+        count = count + 1
+        console.log("Render count: " + count)
+
         var asciidoctor = Asciidoctor();
-        var content = rendered_text
+
         var html = asciidoctor.convert(content);
 
         document.getElementById('rendered_text2').innerHTML = html
