@@ -17,8 +17,23 @@ var mountNode = document.getElementById('main');
     );
 
 
+  var asciidoctor = Asciidoctor();
+
   var request_in_progress = false;
   var current_content = '';
+  var render_text = function(content) {
+      request_in_progress = true;
+      console.log("Rendering ... ")
+      var millisecondsToWait = 100;
+      setTimeout(function() {
+          console.log("Completed! " );
+          request_in_progress = false;
+          if (content !== current_content) {
+            // render_text(current_text);
+            document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+          }
+      }  , millisecondsToWait);
+   }
 
   app.ports.render.subscribe(function(content) {
 
@@ -27,31 +42,9 @@ var mountNode = document.getElementById('main');
         count = count + 1
         console.log("Render count: " + count)
 
-        var asciidoctor = Asciidoctor();
+        render_text(content)
 
-       ///
-
-      //  var render_text = function(content) {
-      //     request_in_progress = true;
-      //     console.log("Rendering ... ")
-      //     var millisecondsToWait = 3000;
-      //     setTimeout(function() {
-      //         console.log("Completed! " );
-      //         request_in_progress = false;
-      //         if (content !== current_content) {
-      //           // render_text(current_text);
-      //           document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
-      //         }
-      //     }  , millisecondsToWait);
-      //  }
-
-      // render_text(content)
-
-    ///
-
-     document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
-
-
+       // document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
 
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text2"]);
 
