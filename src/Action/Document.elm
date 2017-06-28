@@ -10,6 +10,19 @@ import External exposing (toJs)
 import Utility
 
 
+updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
+updateCurrentDocumentWithContent content model =
+    let
+        oldDocument =
+            model.current_document
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | content = content, rendered_content = content }
+    in
+        updateCurrentDocument model newDocument
+
+
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 updateDocuments model documentsRecord =
     let
@@ -52,10 +65,17 @@ updateCurrentDocument model document =
 
         new_documents =
             Utility.replaceIf (hasId document.id) document old_documents
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textBufferDirty = False }
     in
         ( { model
             | current_document = document
             , documents = new_documents
+            , appState = newAppState
           }
         , Cmd.batch [ putDocument model document, External.render document.rendered_content ]
         )

@@ -73,9 +73,10 @@ type alias AppState =
     , authorizing : Bool
     , registerUser : Bool
     , menuDropped : Bool
-    , documentDirty : Bool
+    , textBufferDirty : Bool
     , page : Page
     , tool : Tool
+    , textBuffer : String
     }
 
 

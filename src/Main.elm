@@ -21,6 +21,7 @@ import Action.Document
         , selectNewDocument
         , updateCurrentDocument
         , togglePublic
+        , updateCurrentDocumentWithContent
         )
 import Data.Document exposing (documents)
 import Data.User exposing (userRecord)
@@ -231,17 +232,18 @@ update msg model =
 
         -- ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
         InputContent content ->
-            -- updateContent model content
-            let
-                oldDocument =
-                    model.current_document
+            updateCurrentDocumentWithContent content model
 
-                -- TEST: foobar = Debug.log "foo" model.current_document.id
-                newDocument =
-                    { oldDocument | content = content, rendered_content = content }
-            in
-                updateCurrentDocument model newDocument
-
+        -- let
+        --     oldDocument =
+        --         model.current_document
+        --
+        --     -- TEST: foobar = Debug.log "foo" model.current_document.id
+        --     newDocument =
+        --         { oldDocument | content = content, rendered_content = content }
+        -- in
+        --     updateCurrentDocument model newDocument
+        --
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
@@ -352,7 +354,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False HomePage TableOfContents
+            AppState False False False False False False HomePage TableOfContents ""
     in
         ( Model
             (KWindow flags.width flags.height)
