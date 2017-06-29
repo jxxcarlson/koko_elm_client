@@ -58,7 +58,8 @@ editor model =
 editorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
-        [ el Zero
+        [ Common.publicCheckbox model
+        , el Zero
             [ width (px 30)
             , onClick (NewDocument)
             , height (px 30)

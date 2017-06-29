@@ -1,4 +1,4 @@
-module Views.Common exposing (documentListView, tool)
+module Views.Common exposing (documentListView, tool, publicCheckbox)
 
 import Style exposing (..)
 import StyleSheet exposing (..)
@@ -83,5 +83,21 @@ editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ width (px 100) ] (text "Editor tools")
-        , checkbox model.current_document.attributes.public Zero [ onClick TogglePublic, height (px 15), width (px 15) ] (text "Public")
+        , publicCheckbox model
+        ]
+
+
+publicCheckbox model =
+    row Box
+        [ paddingXY 10 2, spacing 20, verticalCenter ]
+        [ (node "input" <|
+            el Zero
+                [ onClick TogglePublic
+                , Element.Attributes.checked model.current_document.attributes.public
+                , width (px 18)
+                , type_ "checkbox"
+                ]
+                (text "foo")
+          )
+        , (text "Public")
         ]
