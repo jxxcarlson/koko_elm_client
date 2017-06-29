@@ -204,7 +204,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 0 "New Document" "New Content" "New Content" defaultAttributes
+                    Document 0 0 "New Document" "New Content" "New Content" defaultAttributes []
             in
                 createDocument model newDocument
 
@@ -239,6 +239,9 @@ update msg model =
                     { appState | textBuffer = content, textBufferDirty = True }
             in
                 ( { model | appState = newAppState }, Cmd.none )
+
+        InputTags tagString ->
+            ( model, Cmd.none )
 
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
@@ -322,7 +325,7 @@ init flags =
             "Welcome"
 
         doc =
-            Document 0 0 title content rendered_content defaultAttributes
+            Document 0 0 title content rendered_content defaultAttributes []
 
         searchState =
             SearchState "" Public

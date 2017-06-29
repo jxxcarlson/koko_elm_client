@@ -40,6 +40,7 @@ type alias Document =
     , content : String
     , rendered_content : String
     , attributes : DocumentAttributes
+    , tags : List String
     }
 
 
@@ -117,6 +118,7 @@ type Msg
     | CreateDocument (Result Http.Error DocumentRecord)
     | NewDocument
     | Title String
+    | InputTags String
     | InputContent String
     | Email String
     | Password String
@@ -171,4 +173,4 @@ defaultAttributes =
 
 
 defaultDocument =
-    Document 0 0 "Default document" "Yada" "Yada" defaultAttributes
+    Document 0 0 "Default document" "Yada" "Yada" defaultAttributes []

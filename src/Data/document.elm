@@ -82,6 +82,7 @@ documentDecoder =
         |> JPipeline.required "content" Decode.string
         |> JPipeline.required "rendered_content" Decode.string
         |> JPipeline.required "attributes" (decodeDocumentAttributes)
+        |> JPipeline.required "tags" (Decode.list Decode.string)
 
 
 documentRecordDecoder : Decoder DocumentRecord
