@@ -3,6 +3,9 @@ module Types exposing (..)
 import HttpBuilder
 import Http
 import Time exposing (Time)
+import Phoenix.Socket
+import Phoenix.Channel
+import Phoenix.Push
 
 
 type alias User =
@@ -92,6 +95,7 @@ type alias Model =
     , current_document : Document
     , documents : Documents
     , searchState : SearchState
+    , phxSocket : Phoenix.Socket.Socket Msg
     }
 
 
@@ -135,6 +139,7 @@ type Msg
     | Refresh
     | SendToJS String
     | SetupPages
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
 
 
 type Page

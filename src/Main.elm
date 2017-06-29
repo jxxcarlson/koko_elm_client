@@ -43,6 +43,7 @@ import Action.UI
         , toggleAuthorizing
         , appStateToggleAuthorizing
         )
+import Phoenix.Socket
 
 
 -- new style
@@ -273,6 +274,15 @@ update msg model =
         SetupPages ->
             ( model, toJs (Views.External.windowData model model.appState.page) )
 
+        PhoenixMsg msg ->
+            let
+                ( phxSocket, phxCmd ) =
+                    Phoenix.Socket.update msg model.phxSocket
+            in
+                ( { model | phxSocket = phxSocket }
+                , Cmd.map PhoenixMsg phxCmd
+                )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -280,6 +290,7 @@ subscriptions model =
         [ Time.every (1 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
+        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         ]
 
 
@@ -353,6 +364,7 @@ init flags =
             doc
             [ doc ]
             searchState
+            (Phoenix.Socket.init "ws://localhost:4000/socket/websocket")
         , Cmd.batch [ toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
         )
 
