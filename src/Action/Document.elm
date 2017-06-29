@@ -61,14 +61,17 @@ updateDocuments model documentsRecord =
             else
                 model.appState.page
 
-        tool =
-            TableOfContents
+        appState =
+            model.appState
+
+        updatedAppState =
+            { appState | page = page, tool = TableOfContents }
     in
         ( { model
             | documents = documentsRecord.documents
             , current_document = current_document
-            , appState = appStateWithPage model page
-            , appState = updateToolStatus model TableOfContents
+            , appState = updatedAppState
+            , counter = Debug.log "updateDocuments" (model.counter + 1)
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)

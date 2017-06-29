@@ -146,7 +146,7 @@ update msg model =
 
         -- updatedSearchState
         DoSearch searchDomain key ->
-            if key == 13 then
+            if (Debug.log "key" key) == 13 then
                 let
                     newSearchState =
                         updatedSearchState model searchDomain
@@ -154,7 +154,7 @@ update msg model =
                     updatedModel =
                         { model
                             | searchState = newSearchState
-                            , message = (Action.UI.queryMessage model) ++ Utility.queryText model.searchState.query
+                            , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
                             , appState = updateToolStatus model TableOfContents
                         }
                 in
@@ -190,8 +190,9 @@ update msg model =
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
         GetUserDocuments (Ok documentsRecord) ->
-            ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
+            updateDocuments model documentsRecord
 
+        -- ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
         GetUserDocuments (Err error) ->
             ( { model | info = (toString error) }, Cmd.none )
 

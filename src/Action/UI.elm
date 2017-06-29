@@ -120,18 +120,18 @@ updateTool model page =
 -}
 
 
-queryMessage : Model -> String
-queryMessage model =
+queryMessage : SearchDomain -> String
+queryMessage domain =
     let
-        domain =
-            case model.searchState.domain of
+        domain_ =
+            case domain of
                 Private ->
                     "my documents"
 
                 Public ->
                     "public documents"
     in
-        "search " ++ domain ++ " for "
+        "search " ++ domain_ ++ " for "
 
 
 numberOfDocuments : Model -> String
