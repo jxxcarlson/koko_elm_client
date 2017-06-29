@@ -66,6 +66,7 @@ documentEncoder1 document =
         , ( "content", Encode.string <| document.content )
         , ( "author_id", Encode.int <| document.author_id )
         , ( "attributes", encodeDocumentAttributes <| document.attributes )
+        , ( "tags", Encode.list <| List.map Encode.string <| document.tags )
         ]
 
 

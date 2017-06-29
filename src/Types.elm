@@ -120,6 +120,7 @@ type Msg
     | Title String
     | InputTags String
     | InputContent String
+    | SaveCurrentDocument
     | Email String
     | Password String
     | Name String

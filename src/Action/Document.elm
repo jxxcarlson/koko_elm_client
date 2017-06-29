@@ -23,6 +23,27 @@ updateCurrentDocumentWithContent content model =
         updateCurrentDocument model newDocument
 
 
+parseTagString : String -> List String
+parseTagString str =
+    String.split "," str
+        |> List.map String.trim
+
+
+updateTags : String -> Model -> ( Model, Cmd Msg )
+updateTags tagText model =
+    let
+        updatedTags =
+            parseTagString tagText
+
+        document =
+            model.current_document
+
+        updatedDocument =
+            { document | tags = updatedTags }
+    in
+        ( { model | current_document = updatedDocument }, Cmd.none )
+
+
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 updateDocuments model documentsRecord =
     let
@@ -80,6 +101,11 @@ updateCurrentDocument model document =
           }
         , Cmd.batch [ putDocument model document, External.render document.rendered_content ]
         )
+
+
+saveCurrentDocument : Model -> ( Model, Cmd Msg )
+saveCurrentDocument model =
+    ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument model model.current_document )
 
 
 hasId : Int -> Document -> Bool

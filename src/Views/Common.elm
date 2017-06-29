@@ -81,11 +81,33 @@ documentParameterTools model =
 
 editorTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 20, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
-        , (text "Key words:")
-        , inputText Field [ yScrollbar, alignTop, width (px 250), height (px 100), onInput InputTags, placeholder "Keywords" ] (String.join ", " model.current_document.tags)
+        , column Zero
+            [ spacing 4, height (px 130), alignLeft ]
+            [ textArea Field
+                [ yScrollbar
+                , alignTop
+                , width (px 250)
+                , height (px 100)
+                , onInput InputTags
+                , placeholder "Keywords"
+                ]
+                (String.join ", " model.current_document.tags)
+            , updateTagsButton model
+            ]
         ]
+
+
+updateTagsButton model =
+    el Button
+        [ width (px 250)
+        , alignBottom
+        , onClick SaveCurrentDocument
+        , height (px 25)
+        , paddingXY 10 13
+        ]
+        (text "Update keywords")
 
 
 publicCheckbox model =

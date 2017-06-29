@@ -21,6 +21,8 @@ import Action.Document
         , updateCurrentDocument
         , togglePublic
         , updateCurrentDocumentWithContent
+        , updateTags
+        , saveCurrentDocument
         )
 import Data.Document exposing (documents)
 import Data.User exposing (userRecord)
@@ -225,6 +227,12 @@ update msg model =
             in
                 updateCurrentDocument model new_document
 
+        InputTags tagString ->
+            updateTags tagString model
+
+        SaveCurrentDocument ->
+            saveCurrentDocument model
+
         -- ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
         SelectDocument document ->
             selectDocument model document
@@ -239,9 +247,6 @@ update msg model =
                     { appState | textBuffer = content, textBufferDirty = True }
             in
                 ( { model | appState = newAppState }, Cmd.none )
-
-        InputTags tagString ->
-            ( model, Cmd.none )
 
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
