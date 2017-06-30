@@ -279,7 +279,7 @@ update msg model =
                 ( phxSocket, phxCmd ) =
                     Phoenix.Socket.update msg model.phxSocket
             in
-                ( { model | phxSocket = phxSocket }
+                ( { model | phxSocket = phxSocket, message = "Channel: " ++ (toString msg) }
                 , Cmd.map PhoenixMsg phxCmd
                 )
 
