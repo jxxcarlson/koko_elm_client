@@ -51,6 +51,8 @@ type Styles
     | Box
     | Container
     | Label
+    | StatusSuccess
+    | StatusFailure
 
 
 {-| First, we create a stylesheet.
@@ -178,6 +180,8 @@ stylesheet =
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
+        , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
+        , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         ]
 
 

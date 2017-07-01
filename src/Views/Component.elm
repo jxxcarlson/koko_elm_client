@@ -19,6 +19,7 @@ import Action.Document exposing (wordCount)
 import External
 import Utility
 import FontAwesome
+import StyleSheet exposing (..)
 
 
 navigation : Model -> Element Styles variation Msg
@@ -155,6 +156,21 @@ footer model =
     (row Footer
         [ justify, paddingXY 30 4 ]
         [ el FooterNote [ alignBottom, padding 8 ] (text model.message)
-        , el FooterNote [ alignBottom, padding 8 ] (text model.info)
+        , el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text (onlineStatus model))
         ]
     )
+
+
+onlineStatus : Model -> String
+onlineStatus model =
+    if model.appState.online then
+        "Online"
+    else
+        "Offline"
+
+
+onlineStatusStyle model =
+    if model.appState.online then
+        StatusSuccess
+    else
+        StatusFailure

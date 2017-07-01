@@ -6,6 +6,8 @@ import Time exposing (Time)
 import Phoenix.Socket
 import Phoenix.Channel
 import Phoenix.Push
+import Json.Encode as JsEncode
+import Json.Decode as JsDecode
 
 
 type alias User =
@@ -96,6 +98,8 @@ type alias Model =
     , documents : Documents
     , searchState : SearchState
     , phxSocket : Phoenix.Socket.Socket Msg
+    , messageInProgress : String
+    , messages : List String
     }
 
 
@@ -139,7 +143,12 @@ type Msg
     | Refresh
     | SendToJS String
     | SetupPages
+      -- Phoenix channels
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | SetMessage String
+    | SendMessage
+    | ReceiveChatMessage JsEncode.Value
+    | HandleSendError JsEncode.Value
 
 
 type Page

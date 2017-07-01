@@ -28,7 +28,17 @@ home model =
                 [ (Signin.signinForm model)
                 , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
-                , el Box [ width (px 400), height (px 200) ] (text model.message)
+                , (column Box
+                    [ height (px 200), paddingXY 20 40 ]
+                    [ el Zero [ width (px 400), height (px 40) ] (text model.message)
+                    , el (Component.onlineStatusStyle model)
+                        [ width (px 100)
+                        , height (px 40)
+                        , paddingXY 20 12
+                        ]
+                        (text (Component.onlineStatus model))
+                    ]
+                  )
                 ]
             )
         ]

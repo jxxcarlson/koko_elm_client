@@ -1,6 +1,9 @@
 module Main exposing (..)
 
 import Html exposing (..)
+import Phoenix.Socket
+import Phoenix.Channel
+import Phoenix.Push
 
 
 -- begin style
@@ -44,6 +47,9 @@ import Action.UI
         , appStateToggleAuthorizing
         )
 import Phoenix.Socket
+import Json.Encode as JsEncode
+import Json.Decode as JsDecode
+import Action.Channel
 
 
 -- new style
@@ -266,7 +272,7 @@ update msg model =
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else
-                ( model, Cmd.none )
+                Action.Channel.sendImmediateMessage "hello" model
 
         SendToJS str ->
             ( model, toJs str )
@@ -278,10 +284,53 @@ update msg model =
             let
                 ( phxSocket, phxCmd ) =
                     Phoenix.Socket.update msg model.phxSocket
+
+                appState =
+                    model.appState
+
+                status =
+                    if String.contains "Heartbeat" (toString msg) then
+                        False
+                    else
+                        True
+
+                updatedAppState =
+                    { appState | online = status }
             in
-                ( { model | phxSocket = phxSocket, message = "Channel: " ++ (toString msg) }
+                ( { model
+                    | phxSocket = phxSocket
+                    , message = "Channel msg:: " ++ (toString msg)
+                    , appState = updatedAppState
+                  }
                 , Cmd.map PhoenixMsg phxCmd
                 )
+
+        SetMessage message ->
+            Action.Channel.setMessage message model
+
+        -- ( { model | messageInProgress = message }, Cmd.none )
+        SendMessage ->
+            Action.Channel.sendMessage model
+
+        ReceiveChatMessage raw ->
+            let
+                messageDecoder =
+                    JsDecode.field "message" JsDecode.string
+
+                somePayload =
+                    JsDecode.decodeValue messageDecoder raw
+            in
+                case somePayload of
+                    Ok payload ->
+                        Action.Channel.handlePing True model
+
+                    -- ( { model | messages = payload :: model.messages, info = payload }  Cmd.none )
+                    Err error ->
+                        Action.Channel.handlePing False model
+
+        -- ( { model | messages = "Failed to receive message" :: model.messages }, Cmd.none )
+        HandleSendError err ->
+            Action.Channel.handlePing False model
 
 
 subscriptions : Model -> Sub Msg
@@ -352,6 +401,15 @@ init flags =
 
         appState =
             AppState False False False False False False HomePage TableOfContents ""
+
+        channel =
+            Phoenix.Channel.init "room:lobby"
+
+        ( initSocket, phxCmd ) =
+            Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+                |> Phoenix.Socket.withDebug
+                |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
+                |> Phoenix.Socket.join channel
     in
         ( Model
             (KWindow flags.width flags.height)
@@ -364,8 +422,10 @@ init flags =
             doc
             [ doc ]
             searchState
-            (Phoenix.Socket.init "ws://localhost:4000/socket/websocket")
-        , Cmd.batch [ toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
+            initSocket
+            ""
+            []
+        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
         )
 
 
