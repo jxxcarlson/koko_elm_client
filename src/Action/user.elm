@@ -71,8 +71,8 @@ login model =
         { model | appState = newAppState, current_user = updatedUser }
 
 
-signout : Model -> ( Model, Cmd Msg )
-signout model =
+signout : String -> Model -> ( Model, Cmd Msg )
+signout message model =
     let
         user =
             model.current_user
@@ -90,7 +90,7 @@ signout model =
             | current_user = updated_user
             , appState = newAppState
             , info = ""
-            , message = "Please sign in"
+            , message = message
           }
         , External.toJs (Views.External.windowData model HomePage)
         )

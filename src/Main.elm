@@ -140,7 +140,7 @@ update msg model =
             getTokenCompleted model result
 
         Signout ->
-            signout model
+            signout "Please sign in" model
 
         ToggleRegister ->
             toggleRegister model
@@ -201,8 +201,9 @@ update msg model =
 
         -- ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
         GetUserDocuments (Err error) ->
-            ( { model | info = (toString error) }, Cmd.none )
+            Action.User.signout "Your session has expired. Please sign in again" model
 
+        -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         PutDocument (Ok serverReply) ->
             case (serverReply) of
                 () ->
