@@ -115,7 +115,10 @@ update msg model =
             updatePassword model password
 
         AuthenticationAction ->
-            Action.UI.setAuthorizing model True
+            if model.appState.signedIn then
+                Action.User.signout "Please sign in" model
+            else
+                Action.UI.setAuthorizing model True
 
         Login ->
             ( Action.User.login model, loginUserCmd model loginUrl )
@@ -283,30 +286,6 @@ update msg model =
         SetupPages ->
             ( model, toJs (Views.External.windowData model model.appState.page) )
 
-        PhoenixMsg msg ->
-            let
-                ( phxSocket, phxCmd ) =
-                    Phoenix.Socket.update msg model.phxSocket
-
-                appState =
-                    model.appState
-
-                status =
-                    if String.contains "Heartbeat" (toString msg) then
-                        False
-                    else
-                        True
-
-                updatedAppState =
-                    { appState | online = status }
-            in
-                ( { model
-                    | phxSocket = phxSocket
-                    , appState = updatedAppState
-                  }
-                , Cmd.map PhoenixMsg phxCmd
-                )
-
         SetMessage message ->
             Action.Channel.setMessage message model
 
@@ -333,6 +312,30 @@ update msg model =
         -- ( { model | messages = "Failed to receive message" :: model.messages }, Cmd.none )
         HandleSendError err ->
             Action.Channel.handlePing False model
+
+        PhoenixMsg msg ->
+            let
+                ( phxSocket, phxCmd ) =
+                    Phoenix.Socket.update msg model.phxSocket
+
+                appState =
+                    model.appState
+
+                status =
+                    if String.contains "Heartbeat" (toString msg) then
+                        False
+                    else
+                        True
+
+                updatedAppState =
+                    { appState | online = status }
+            in
+                ( { model
+                    | phxSocket = phxSocket
+                    , appState = updatedAppState
+                  }
+                , Cmd.map PhoenixMsg phxCmd
+                )
 
 
 subscriptions : Model -> Sub Msg
