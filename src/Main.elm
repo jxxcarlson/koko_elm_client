@@ -271,8 +271,10 @@ update msg model =
         Tick time ->
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
-            else
+            else if model.appState.online then
                 Action.Channel.sendImmediateMessage "hello" model
+            else
+                Action.Channel.joinChannel model
 
         SendToJS str ->
             ( model, toJs str )
@@ -299,7 +301,6 @@ update msg model =
             in
                 ( { model
                     | phxSocket = phxSocket
-                    , message = "Channel msg:: " ++ (toString msg)
                     , appState = updatedAppState
                   }
                 , Cmd.map PhoenixMsg phxCmd

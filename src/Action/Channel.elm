@@ -73,3 +73,17 @@ handlePing value model =
             { appState | online = value }
     in
         ( { model | appState = updatedAppState }, Cmd.none )
+
+
+joinChannel model =
+    let
+        channel =
+            Phoenix.Channel.init "room:lobby"
+
+        ( initSocket, phxCmd ) =
+            Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+                |> Phoenix.Socket.withDebug
+                |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
+                |> Phoenix.Socket.join channel
+    in
+        ( { model | phxSocket = initSocket }, Cmd.map PhoenixMsg phxCmd )
