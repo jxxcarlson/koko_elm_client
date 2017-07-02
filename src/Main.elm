@@ -316,7 +316,7 @@ update msg model =
         PhoenixMsg msg ->
             let
                 ( phxSocket, phxCmd ) =
-                    Phoenix.Socket.update msg model.phxSocket
+                    Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
 
                 appState =
                     model.appState
@@ -336,6 +336,18 @@ update msg model =
                   }
                 , Cmd.map PhoenixMsg phxCmd
                 )
+
+
+
+-- app.js:7580 Phoenix message: { event = "phx_reply",
+--   topic = "room:lobby",
+--   payload = { status = "ok",
+--   response = { message = "hello" } },
+--   ref = Just 27
+-- }
+--
+-- app.js:7580 PhoenixMsg: NoOp
+-- https://github.com/fbonetti/elm-phoenix-socket/issues/29
 
 
 subscriptions : Model -> Sub Msg
