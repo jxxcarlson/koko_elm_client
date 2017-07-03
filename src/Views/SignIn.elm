@@ -34,7 +34,6 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
-        , el None [] (text model.info)
         , el Button
             [ onClick ToggleRegister
             , alignBottom
@@ -63,7 +62,6 @@ signinForm1 model =
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
-        , el None [] (text model.info)
         , el Button
             [ onClick ToggleRegister
             , alignBottom
