@@ -1,7 +1,7 @@
 'use strict';
 
 require('font-awesome/css/font-awesome.css');
-require('./css/style.css')
+require('./css/extra.css')
 require('./index.html');
 
 var Elm = require('./Main.elm');
@@ -19,6 +19,11 @@ var mountNode = document.getElementById('main');
 
   var asciidoctor = Asciidoctor();
 
+  function typesetNow(){
+    console.log("calling MathJax.Hub.Queue ... ")
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+  }
+
   var request_in_progress = false;
   var current_content = '';
   var render_text = function(content) {
@@ -29,8 +34,8 @@ var mountNode = document.getElementById('main');
           console.log("Completed! " );
           request_in_progress = false;
           if (content !== current_content) {
-            // render_text(current_text);
             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+            typesetNow()
           }
       }  , millisecondsToWait);
    }
@@ -41,12 +46,7 @@ var mountNode = document.getElementById('main');
 
         count = count + 1
         console.log("Render count: " + count)
-
         render_text(content)
-
-       // document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
-
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "rendered_text2"]);
 
       })
 
