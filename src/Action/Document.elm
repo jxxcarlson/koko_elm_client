@@ -75,9 +75,9 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , render current_document.rendered_content
+            , render (External.encodeDocument current_document)
             ]
-          -- render model.current_document.rendered_text2
+
         )
 
 
@@ -102,7 +102,7 @@ updateCurrentDocument model document =
             , appState = newAppState
             , message = "!! Rendering #" ++ (toString document.id)
           }
-        , Cmd.batch [ putDocument model document, External.render document.rendered_content ]
+        , Cmd.batch [ putDocument model document, External.render (External.encodeDocument document)]
         )
 
 
@@ -157,7 +157,7 @@ selectDocument model document =
           }
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
-            , render document.rendered_content
+            , render (External.encodeDocument document)
             ]
         )
 
@@ -171,7 +171,7 @@ selectNewDocument model document =
         , info = "New document added: " ++ document.title
         , counter = model.counter + 1
       }
-    , render document.rendered_content
+    , render (External.encodeDocument document)
     )
 
 
