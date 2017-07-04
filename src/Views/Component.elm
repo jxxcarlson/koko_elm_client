@@ -85,6 +85,15 @@ loginButton style model =
         ]
         (EL.text (authenticationButtonText model))
 
+cancelAuthentication style model =
+    el style
+        [ EA.width (px 85)
+        , EE.onClick CancelAuthentication
+        , EA.height (px 30)
+        , padding 8
+        ]
+        (EL.text "Cancel")
+
 
 authenticationButtonText : Model -> String
 authenticationButtonText model =

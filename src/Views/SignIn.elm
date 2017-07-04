@@ -43,6 +43,7 @@ registerUserForm1 model =
             , padding 8
             ]
             (text "Need to sign in?")
+        ,    Component.cancelAuthentication ButtonReversed model
         ]
 
 
@@ -71,6 +72,7 @@ signinForm1 model =
             , padding 8
             ]
             (text "Need to register?")
+        , Component.cancelAuthentication ButtonReversed model
         ]
 
 
@@ -81,7 +83,6 @@ signoutForm model =
             && model.appState.authorizing
         )
         (signoutForm1 model)
-
 
 signoutForm1 : Model -> Element Styles variation Msg
 signoutForm1 model =
@@ -98,9 +99,11 @@ signinInfoPanel model =
 
 signinInfoPanel1 model =
   (column Box
-      [ height (px 200), paddingXY 20 40 ]
+      [ height (px 260), paddingXY 20 40 ]
       [ el Zero [ width (px 400), height (px 40) ] (text model.message)
       , Component.loginButton ButtonReversed model
+      , el Zero [height (px 20)] (text "")
+      , Component.cancelAuthentication ButtonReversed model
       , el Zero [height (px 20)] (text "")
       , el (Component.onlineStatusStyle model)
           [ width (px 100)

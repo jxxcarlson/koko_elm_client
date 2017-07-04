@@ -120,6 +120,9 @@ update msg model =
             else
                 Action.UI.setAuthorizing model True
 
+        CancelAuthentication ->
+          Action.UI.toggleAuthorizing model
+
         Login ->
             ( Action.User.login model, loginUserCmd model loginUrl )
 

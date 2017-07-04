@@ -116,6 +116,7 @@ type Msg
     | Register
     | Signout
     | AuthenticationAction
+    | CancelAuthentication
     | ToggleRegister
     | ToggleMenu
     | TogglePublic
