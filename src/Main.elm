@@ -242,6 +242,9 @@ update msg model =
             in
                 updateCurrentDocument model new_document
 
+        SetTextType textType ->
+          Action.Document.setTextType textType model
+
         InputTags tagString ->
             updateTags tagString model
 
@@ -374,7 +377,7 @@ page model =
         HomePage ->
             home model
 
-
+view : Model -> Html Msg
 view model =
     EL.root StyleSheet.stylesheet <|
         column None

@@ -7,6 +7,7 @@ import Element.Events exposing (..)
 import Style exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
+import Views.Component as Component
 
 
 tocStyle selectedDocument document =
@@ -92,6 +93,8 @@ editorTools model =
                 ]
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
+            , el None [height (px 20)] (text "")
+            , Component.textFormatMenu model
             ]
         ]
 

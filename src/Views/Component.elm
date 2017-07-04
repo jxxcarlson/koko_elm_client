@@ -122,11 +122,30 @@ menu model =
             [ when model.appState.menuDropped <|
                 column Menu
                     [ padding 8, spacing 8 ]
-                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "AAAA")
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "BBBB")
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "CCCC")
+                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "Plain")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "Asciidoc")
+                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "LaTeX")
                     ]
             ]
+
+textFormatMenu model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick ToggleMenu ] (EL.text "Format")
+        |> below
+            [ when model.appState.menuDropped <|
+                column Menu
+                    [ padding 8, spacing 2 ]
+                    [ el (textFormatButton "plain" model) [ EA.width (px 85), EE.onClick (SetTextType "plain"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Plain")
+                    , el (textFormatButton "adoc" model) [ EA.width (px 85), EE.onClick (SetTextType "adoc"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Asciidoc")
+                    , el (textFormatButton "latex" model) [ EA.width (px 85), EE.onClick (SetTextType "latex"), EA.height (px 30), paddingXY 8 14 ] (EL.text "LaTeX")
+                    ]
+            ]
+
+
+textFormatButton textFormat model =
+  if textFormat == model.current_document.attributes.textType then
+    ActiveFlatButton
+  else
+    FlatButton
 
 
 toolSelectorColor model tool =

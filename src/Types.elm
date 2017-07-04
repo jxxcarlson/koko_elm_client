@@ -127,6 +127,7 @@ type Msg
     | CreateDocument (Result Http.Error DocumentRecord)
     | NewDocument
     | Title String
+    | SetTextType String
     | InputTags String
     | InputContent String
     | SaveCurrentDocument

@@ -22,6 +22,22 @@ updateCurrentDocumentWithContent content model =
     in
         updateCurrentDocument model newDocument
 
+setTextType : String -> Model -> ( Model, Cmd Msg )
+setTextType textType model =
+    let
+        oldDocument =
+            model.current_document
+
+        attributes = oldDocument.attributes
+
+        newAttributes = {attributes | textType = textType}
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newAttributes }
+    in
+        updateCurrentDocument model newDocument
+
 
 parseTagString : String -> List String
 parseTagString str =
