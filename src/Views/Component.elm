@@ -30,7 +30,7 @@ navigation model =
         , searchForm model
         , menu model
         , pageSelector model
-        , loginButton model
+        , loginButton Button model
         ]
 
 
@@ -76,10 +76,9 @@ searchIcon model searchDomain =
         (EL.html (FontAwesome.search Color.grey 25))
 
 
-loginButton model =
-    el Button
+loginButton style model =
+    el style
         [ EA.width (px 85)
-        , EA.center
         , EE.onClick AuthenticationAction
         , EA.height (px 30)
         , padding 8

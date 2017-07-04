@@ -32,6 +32,7 @@ type Styles
     | TitleStyle
     | Heading
     | Button
+    | ButtonReversed
     | ActiveButton
     | FlatButton
     | ActiveFlatButton
@@ -147,6 +148,14 @@ stylesheet =
         , style Button
             [ Color.text Color.white
             , Color.background Color.charcoal
+            , Font.size 14
+            , Font.center
+            , Border.rounded 6
+            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            ]
+        , style ButtonReversed
+            [ Color.text Color.charcoal
+            , Color.background Color.white
             , Font.size 14
             , Font.center
             , Border.rounded 6

@@ -116,7 +116,7 @@ update msg model =
 
         AuthenticationAction ->
             if model.appState.signedIn then
-                Action.User.signout "Please sign in" model
+                Action.User.signout "You are now signed out." model
             else
                 Action.UI.setAuthorizing model True
 

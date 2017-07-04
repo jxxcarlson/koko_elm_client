@@ -13,6 +13,7 @@ import Style.Font as Font
 import Style.Transition as Transition
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
+import Views.Component as Component
 
 
 registerUserForm : Model -> Element Styles variation Msg
@@ -90,6 +91,25 @@ signoutForm1 model =
         , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
+signinInfoPanel model =
+  notVisibleIf
+      (model.appState.authorizing)
+      (signinInfoPanel1 model)
+
+signinInfoPanel1 model =
+  (column Box
+      [ height (px 200), paddingXY 20 40 ]
+      [ el Zero [ width (px 400), height (px 40) ] (text model.message)
+      , Component.loginButton ButtonReversed model
+      , el Zero [height (px 20)] (text "")
+      , el (Component.onlineStatusStyle model)
+          [ width (px 100)
+          , height (px 40)
+          , paddingXY 20 12
+          ]
+          (text (Component.onlineStatus model))
+      ]
+    )
 
 visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
 visibleIf condition body =
@@ -98,6 +118,12 @@ visibleIf condition body =
     else
         el None [] (text "")
 
+notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+notVisibleIf condition body =
+    if (not condition)then
+        body
+    else
+        el None [] (text "")
 
 handleAuthentication model =
     if model.appState.signedIn then
