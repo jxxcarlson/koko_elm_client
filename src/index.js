@@ -40,13 +40,13 @@ var mountNode = document.getElementById('main');
       }  , millisecondsToWait);
    }
 
-  app.ports.render.subscribe(function(content) {
+  app.ports.render.subscribe(function(data) {
 
       requestAnimationFrame(function() {
 
-        count = count + 1
-        console.log("Render count: " + count)
-        render_text(content)
+          count = count + 1
+          console.log("Render count: " + count)
+          render_text(data.content)
 
       })
 

@@ -1,6 +1,6 @@
 module Views.External exposing (..)
 
-import Types exposing (Model, Page)
+import Types exposing (Model, Page, Document)
 import Json.Encode exposing (encode, object, int, string, bool)
 
 
@@ -51,6 +51,17 @@ userData name email username token =
                 , ( "email", string email )
                 , ( "username", string username )
                 , ( "token", string token )
+                ]
+    in
+        encode 2 data
+
+documentData : Document -> String
+documentData document =
+    let
+        data =
+            object
+                [ ( "content", string document.content )
+                , ( "docType", string document.attributes.docType )
                 ]
     in
         encode 2 data

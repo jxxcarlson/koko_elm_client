@@ -174,7 +174,7 @@ update msg model =
                     ( { updatedModel | appState = appStateWithPage model (displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
                     , Cmd.batch
                         [ getDocumentsWith newSearchState model.current_user.token
-                        , External.render model.current_document.rendered_content
+                        , External.render (External.encodeDocument model.current_document)
                         ]
                     )
             else
@@ -184,7 +184,7 @@ update msg model =
             if key == 27 then
                 -- 27: ESCAPE
                 ( { model | info = "ESCAPE pressed, rendering ..." }
-                , External.render model.current_document.rendered_content
+                , External.render (External.encodeDocument model.current_document)
                 )
             else
                 ( model, Cmd.none )
@@ -267,7 +267,7 @@ update msg model =
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-            ( { model | message = "Refresh, rendering" }, External.render model.current_document.rendered_content )
+            ( { model | message = "Refresh, rendering" }, External.render (External.encodeDocument model.current_document) )
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
@@ -445,7 +445,7 @@ init flags =
             initSocket
             ""
             []
-        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
+        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render (External.encodeDocument doc)]
         )
 
 

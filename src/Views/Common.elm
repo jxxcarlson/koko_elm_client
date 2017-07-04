@@ -1,15 +1,12 @@
 module Views.Common exposing (documentListView, tool, publicCheckbox)
 
-import Style exposing (..)
 import StyleSheet exposing (..)
-import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Style exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
-import FontAwesome
 
 
 tocStyle selectedDocument document =
@@ -109,7 +106,7 @@ updateTagsButton model =
         ]
         (text "Update keywords")
 
-
+publicCheckbox : Model -> Element Styles variation Msg
 publicCheckbox model =
     row Box
         [ paddingXY 10 2, spacing 20, verticalCenter ]
