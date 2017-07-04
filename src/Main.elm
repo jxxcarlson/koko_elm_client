@@ -151,8 +151,8 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
-        ToggleMenu ->
-            toggleMenu model
+        ToggleMenu menu ->
+            toggleMenu menu model
 
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
@@ -244,6 +244,10 @@ update msg model =
 
         SetTextType textType ->
           Action.Document.setTextType textType model
+
+        SetDocType docType ->
+          Action.Document.setDocType docType model
+
 
         InputTags tagString ->
             updateTags tagString model
@@ -423,7 +427,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False HomePage TableOfContents ""
+            AppState False False False False False False False False HomePage TableOfContents ""
 
         channel =
             Phoenix.Channel.init "room:lobby"

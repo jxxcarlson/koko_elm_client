@@ -4,7 +4,6 @@ import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Style exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
 import Views.Component as Component
@@ -76,7 +75,7 @@ documentParameterTools model =
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Document parameter tools") ]
 
-
+-- editorTools : Model -> Model
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
@@ -94,7 +93,7 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [height (px 20)] (text "")
-            , Component.textFormatMenu model
+            , row None [padding 8, spacing 12] [Component.textFormatMenu model, Component.docTypeMenu model]
             ]
         ]
 

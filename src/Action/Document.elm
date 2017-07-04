@@ -28,15 +28,43 @@ setTextType textType model =
         oldDocument =
             model.current_document
 
-        attributes = oldDocument.attributes
+        docAttributes = oldDocument.attributes
 
-        newAttributes = {attributes | textType = textType}
+        newDocumentAttributes = {docAttributes | textType = textType}
+
+        appState = model.appState
+
+        newAppState = { appState | textTypeMenuDropped = False}
+
+        newModel = { model | appState = newAppState}
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | attributes = newAttributes }
+            { oldDocument | attributes = newDocumentAttributes }
     in
-        updateCurrentDocument model newDocument
+        updateCurrentDocument newModel newDocument
+
+setDocType : String -> Model -> ( Model, Cmd Msg )
+setDocType docType model =
+    let
+        oldDocument =
+            model.current_document
+
+        docAttributes = oldDocument.attributes
+
+        newDocAttributes = { docAttributes | docType = docType}
+
+        appState = model.appState
+
+        newAppState = {appState | docTypeMenuDropped = False}
+
+        newModel = { model | appState = newAppState }
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newDocAttributes }
+    in
+        updateCurrentDocument newModel newDocument
 
 
 parseTagString : String -> List String

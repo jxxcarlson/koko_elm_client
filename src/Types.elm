@@ -79,6 +79,8 @@ type alias AppState =
     , authorizing : Bool
     , registerUser : Bool
     , menuDropped : Bool
+    , textTypeMenuDropped : Bool
+    , docTypeMenuDropped : Bool
     , textBufferDirty : Bool
     , page : Page
     , tool : Tool
@@ -118,7 +120,7 @@ type Msg
     | AuthenticationAction
     | CancelAuthentication
     | ToggleRegister
-    | ToggleMenu
+    | ToggleMenu String
     | TogglePublic
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
@@ -128,6 +130,7 @@ type Msg
     | NewDocument
     | Title String
     | SetTextType String
+    | SetDocType String
     | InputTags String
     | InputContent String
     | SaveCurrentDocument

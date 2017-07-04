@@ -15,7 +15,23 @@ displayPage model =
         model.appState.page
 
 
-toggleMenu model =
+toggleMenu menu model =
+    let
+        appState =
+            model.appState
+        newAppState = case menu of
+          "Main" ->
+            { appState | menuDropped = (not appState.menuDropped) }
+          "textType" ->
+            { appState | textTypeMenuDropped = (not appState.textTypeMenuDropped) }
+          "docType" ->
+            { appState | docTypeMenuDropped = (not appState.docTypeMenuDropped) }
+          _ ->
+            appState        
+    in
+        ( { model | appState = newAppState }, Cmd.none )
+
+toggleTextMenu model =
     let
         appState =
             model.appState
