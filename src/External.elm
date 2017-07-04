@@ -16,7 +16,7 @@ port render : Encode.Value -> Cmd msg
 
 encodeDocument : Document -> Encode.Value
 encodeDocument document =
-  [ ("content", Encode.string document.content), ("docType", Encode.string document.attributes.docType) ]
+  [ ("content", Encode.string document.content), ("textType", Encode.string document.attributes.textType) ]
   |> Encode.object
 
 

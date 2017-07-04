@@ -26,7 +26,8 @@ var mountNode = document.getElementById('main');
 
   var request_in_progress = false;
   var current_content = '';
-  var render_text = function(content) {
+
+  var render_asciidoc = function(content) {
       request_in_progress = true;
       console.log("Rendering ... ")
       var millisecondsToWait = 100;
@@ -40,13 +41,56 @@ var mountNode = document.getElementById('main');
       }  , millisecondsToWait);
    }
 
+   var render_latex = function(content) {
+       request_in_progress = true;
+       console.log("Rendering ... ")
+       var millisecondsToWait = 100;
+       setTimeout(function() {
+           console.log("Completed! " );
+           request_in_progress = false;
+           if (content !== current_content) {
+             document.getElementById('rendered_text2').innerHTML = content;
+             typesetNow()
+           }
+       }  , millisecondsToWait);
+    }
+
+   var render_plain = function(content) {
+       request_in_progress = true;
+       console.log("Rendering ... ")
+       var millisecondsToWait = 100;
+       setTimeout(function() {
+           console.log("Completed! " );
+           request_in_progress = false;
+           if (content !== current_content) {
+             document.getElementById('rendered_text2').innerHTML = "<pre>\n" + content + "\n</pre>\n\n";
+           }
+       }  , millisecondsToWait);
+    }
+
   app.ports.render.subscribe(function(data) {
 
       requestAnimationFrame(function() {
 
           count = count + 1
           console.log("Render count: " + count)
-          render_text(data.content)
+          console.log("DocType = " + data.textType)
+          switch (data.textType) {
+
+            case "adoc":
+               render_asciidoc(data.content)
+               break;
+            case "plain":
+               render_plain(data.content)
+               break;
+            case "latex":
+                render_latex(data.content)
+                break;
+            default:
+              console.log("Default rendering ... asciidoc")
+              render_asciidoc(data.content)
+          }
+
 
       })
 
