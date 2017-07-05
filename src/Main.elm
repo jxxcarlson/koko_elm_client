@@ -206,7 +206,8 @@ update msg model =
 
         -- ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
         GetUserDocuments (Err error) ->
-            Action.User.signout "Your session has expired. Please sign in again" model
+          ({model | message = "Error: could not get user documents."}, Cmd.none)
+          -- Action.User.signout "Error: could not get user documents." model
 
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         PutDocument (Ok serverReply) ->
@@ -220,7 +221,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 0 "New Document" "New Content" "New Content" defaultAttributes []
+                    Document 0 "abcd" 0 "New Document" "New Content" "New Content" defaultAttributes []
             in
                 createDocument model newDocument
 
@@ -417,7 +418,7 @@ init flags =
             "Welcome"
 
         doc =
-            Document 0 0 title content rendered_content defaultAttributes []
+            Document 0 "abcd" 0 title content rendered_content defaultAttributes []
 
         searchState =
             SearchState "" Public

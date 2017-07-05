@@ -92,11 +92,13 @@ signoutForm1 model =
         , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
+signinInfoPanel : Model -> Element Styles variation Msg
 signinInfoPanel model =
   notVisibleIf
       (model.appState.authorizing)
       (signinInfoPanel1 model)
 
+signinInfoPanel1 : Model -> Element Styles variation Msg
 signinInfoPanel1 model =
   (column Box
       [ height (px 260), paddingXY 20 40 ]
@@ -128,6 +130,7 @@ notVisibleIf condition body =
     else
         el None [] (text "")
 
+handleAuthentication : Model -> (Model, Cmd Msg) 
 handleAuthentication model =
     if model.appState.signedIn then
         ( { model | appState = appStateWithPage model HomePage }, Cmd.none )

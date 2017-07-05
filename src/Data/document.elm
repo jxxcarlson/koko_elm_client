@@ -78,6 +78,7 @@ documentDecoder : Decoder Document
 documentDecoder =
     decode Document
         |> JPipeline.required "id" Decode.int
+        |> JPipeline.required "identifier" Decode.string
         |> JPipeline.required "author_id" Decode.int
         |> JPipeline.required "title" Decode.string
         |> JPipeline.required "content" Decode.string

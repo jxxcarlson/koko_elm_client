@@ -1,13 +1,11 @@
 module Types exposing (..)
 
-import HttpBuilder
+
 import Http
 import Time exposing (Time)
 import Phoenix.Socket
-import Phoenix.Channel
-import Phoenix.Push
 import Json.Encode as JsEncode
-import Json.Decode as JsDecode
+
 
 
 type alias User =
@@ -40,6 +38,7 @@ type alias DocumentAttributesRecord =
 
 type alias Document =
     { id : Int
+    , identifier : String
     , author_id : Int
     , title : String
     , content : String
@@ -193,4 +192,4 @@ defaultAttributes =
 
 
 defaultDocument =
-    Document 0 0 "Default document" "Yada" "Yada" defaultAttributes []
+    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes []

@@ -15,7 +15,7 @@ import Utility
 import Types exposing (..)
 import FontAwesome
 
-
+editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
