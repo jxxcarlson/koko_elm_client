@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Phoenix.Socket
 import Phoenix.Channel
-import Phoenix.Push
+
 
 
 -- begin style
@@ -47,7 +47,6 @@ import Action.UI
         , appStateToggleAuthorizing
         )
 import Phoenix.Socket
-import Json.Encode as JsEncode
 import Json.Decode as JsDecode
 import Action.Channel
 
@@ -60,7 +59,7 @@ import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Utility
 
-
+main : Program Flags Model Msg
 main =
     programWithFlags
         { init = init
@@ -369,7 +368,7 @@ subscriptions model =
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         ]
 
-
+page : Model -> List (Element Styles variation Msg)
 page model =
     case model.appState.page of
         ReaderPage ->

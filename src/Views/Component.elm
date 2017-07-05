@@ -1,21 +1,11 @@
 module Views.Component exposing (..)
 
-import Style exposing (..)
 import StyleSheet exposing (..)
 import Color
-import Html as Html
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Style exposing (..)
-import Style.Border as Border
-import Style.Color as Color
-import Style.Font as Font
-import Style.Transition as Transition
 import Types exposing (..)
-import Html.Events as HE exposing (onClick)
-import Json.Decode as Json exposing (int, list, string, float, Decoder)
-import Action.Document exposing (wordCount)
 import Utility
 import FontAwesome
 import StyleSheet exposing (..)
@@ -190,7 +180,7 @@ onlineStatus model =
     else
         "Offline"
 
-
+onlineStatusStyle : Model -> Styles
 onlineStatusStyle model =
     if model.appState.online then
         StatusSuccess

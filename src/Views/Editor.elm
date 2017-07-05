@@ -55,6 +55,7 @@ editor model =
     ]
 
 
+editorPanel : Model -> Element Styles variation Msg
 editorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
@@ -79,6 +80,7 @@ editorPanel model =
         ]
 
 
+toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
