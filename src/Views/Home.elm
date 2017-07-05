@@ -3,11 +3,10 @@ module Views.Home exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Views.Common as Common
-import Views.Component as Component
 import Views.Signin as Signin
+import Types exposing(Model, Msg)
 
-
+home : Model -> List (Element Styles variation Msg)
 home model =
     [ namedGrid Container
         { columns = [ fill 1, fill 2, fill 1 ]
