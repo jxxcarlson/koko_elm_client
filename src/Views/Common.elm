@@ -5,8 +5,9 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Types exposing (..)
-import Action.UI exposing (appStateWithPage)
+import Action.UI as UI
 import Views.Component as Component
+
 
 
 tocStyle selectedDocument document =
@@ -29,7 +30,7 @@ documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Action.UI.numberOfDocuments model)) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments model)) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
 
@@ -92,7 +93,9 @@ editorTools model =
                 ]
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
-            , el None [height (px 20)] (text "")
+            , el None [height (px 10)] (text "")
+            , el TOC [height (px 25), width (px 200), paddingXY 8 12] (text ("Identifier: " ++ (UI.displayIdentifier model)))
+            , el None [height (px 0)] (text "")
             , row None [padding 8, spacing 12] [Component.textFormatMenu model, Component.docTypeMenu model]
             ]
         ]
