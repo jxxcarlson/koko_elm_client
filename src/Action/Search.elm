@@ -42,6 +42,9 @@ transformQualifiedItem item =
         [ "a", stem ] ->
             "author=" ++ stem
 
+        [ "id", stem] ->
+          "id=" ++ stem    
+
         [ "sort", "updated" ] ->
             "sort=updated"
 
