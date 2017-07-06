@@ -64,6 +64,9 @@ replaceIf predicate replacement list =
         list
 
 
+removeWhen pred list =
+  List.filter (not << pred) list
+
 
 -- signinButtonText : Model -> String
 -- signinButtonText model =
