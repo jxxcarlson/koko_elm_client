@@ -126,7 +126,9 @@ type Msg
     | GetUserDocuments (Result Http.Error DocumentsRecord)
     | PutDocument (Result Http.Error ())
     | CreateDocument (Result Http.Error DocumentRecord)
+    | DeleteDocument (Result Http.Error ())
     | NewDocument
+    | DeleteCurrentDocument
     | Title String
     | SetTextType String
     | SetDocType String

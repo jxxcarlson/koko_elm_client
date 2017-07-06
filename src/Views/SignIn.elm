@@ -1,16 +1,11 @@
 module Views.Signin exposing (..)
 
-import Style exposing (..)
+
 import StyleSheet exposing (..)
-import Color
+
 import Element exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Style exposing (..)
-import Style.Border as Border
-import Style.Color as Color
-import Style.Font as Font
-import Style.Transition as Transition
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
 import Views.Component as Component
@@ -130,7 +125,7 @@ notVisibleIf condition body =
     else
         el None [] (text "")
 
-handleAuthentication : Model -> (Model, Cmd Msg) 
+handleAuthentication : Model -> (Model, Cmd Msg)
 handleAuthentication model =
     if model.appState.signedIn then
         ( { model | appState = appStateWithPage model HomePage }, Cmd.none )

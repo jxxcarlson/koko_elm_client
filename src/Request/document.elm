@@ -1,4 +1,4 @@
-module Request.Document exposing (getDocumentsWith, putDocument, createDocument)
+module Request.Document exposing (getDocumentsWith, putDocument, createDocument, deleteCurrentDocument)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
@@ -61,6 +61,27 @@ getUserDocumentsWith searchState token =
             |> withExpect (Http.expectJson decodeDocumentsRecord)
             |> HB.send GetUserDocuments
 
+deleteCurrentDocumentRB : Model -> RequestBuilder ()
+deleteCurrentDocumentRB model =
+    let
+        url =
+            documentsUrl ++ "/" ++ (toString model.current_document.id)
+        token =
+          model.current_user.token
+    in
+        HB.delete url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+
+
+
+deleteCurrentDocument : Model -> Cmd Msg
+deleteCurrentDocument model =
+    let
+        request =
+            deleteCurrentDocumentRB model
+                |> HB.toRequest
+    in
+        Http.send DeleteDocument request
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/HttpBuilder

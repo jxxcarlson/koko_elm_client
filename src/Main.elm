@@ -232,6 +232,15 @@ update msg model =
         CreateDocument (Err errorMessage) ->
             ( { model | info = (toString errorMessage) }, Cmd.none )
 
+        DeleteCurrentDocument ->
+          ({model | message = "Delete current document"} , Request.Document.deleteCurrentDocument model)
+
+        DeleteDocument (Ok serverReply) ->
+            ({model | message = "Document deleted"}, Cmd.none)
+
+        DeleteDocument (Err errorMessage) ->
+            ( { model | info = (toString errorMessage) }, Cmd.none )
+
         Title title ->
             let
                 doc =
