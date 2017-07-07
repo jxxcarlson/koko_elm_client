@@ -92,7 +92,7 @@ authenticationButtonText model =
         "Sign in"
 
 
-
+-- https://ellie-app.com/3Gqxw7zLGzTa1/6
 
 textFormatMenu model =
     el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType")] (EL.text "Format")

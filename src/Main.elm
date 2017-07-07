@@ -241,7 +241,7 @@ update msg model =
             updatedDocuments = Utility.removeWhen (\doc -> doc.id == model.current_document.id) documents
             newCurrentDocument = (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
           in
-            ({model | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments)),
+            ({model | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments   )),
                documents = updatedDocuments,
                current_document = newCurrentDocument
              },
