@@ -3,7 +3,32 @@
   <head>
     <meta charset="utf-8" />
     <title>Noteshare</title>
-    <LINK href="src/css/asciidoc2.css" rel="stylesheet" type="text/css">
+    <LINK href="src/css/foundation-potion2.css" rel="stylesheet" type="text/css">
+    <LINK href="src/css/extra.css" rel="stylesheet" type="text/css">
+
+      <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+      </script>
+
+      <script type="text/x-mathjax-config">
+         MathJax.Hub.Config({tex2jax: {
+           inlineMath: [['$','$'], ['\\(','\\)']],
+           processSectionDelay: 0
+         }});
+
+          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+          function typesetNow2(){
+            console.log("II.  calling MathJax.Hub.Queue ... ")
+            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+          }
+
+          typesetNow2()
+      </script>
+
+
+
+    <script src="node_modules/asciidoctor.js/dist/asciidoctor.js"></script>
 
   </head>
   <body>
@@ -23,16 +48,7 @@
     </div>
 
 
-    <script type="text/x-mathjax-config">
-       MathJax.Hub.Config({tex2jax: {
-         inlineMath: [['$','$'], ['\\(','\\)']],
-         processSectionDelay: 0
-       }});
-    </script>
 
-
-    <script type="text/javascript" src="node_modules/mathjax/MathJax.js?config=TeX-AMS_HTML-full"></script>
-    <script src="node_modules/asciidoctor.js/dist/asciidoctor.js"></script>
     <!-- <script src="js/asciidoctor-latex.js"></script>  -->
 
     <script src="/app.js"></script>

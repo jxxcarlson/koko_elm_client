@@ -1,18 +1,14 @@
 module Views.Signin exposing (..)
 
-import Style exposing (..)
+
 import StyleSheet exposing (..)
-import Color
+
 import Element exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Style exposing (..)
-import Style.Border as Border
-import Style.Color as Color
-import Style.Font as Font
-import Style.Transition as Transition
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
+import Views.Component as Component
 
 
 registerUserForm : Model -> Element Styles variation Msg
@@ -34,7 +30,6 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
-        , el None [] (text model.info)
         , el Button
             [ onClick ToggleRegister
             , alignBottom
@@ -43,6 +38,7 @@ registerUserForm1 model =
             , padding 8
             ]
             (text "Need to sign in?")
+        ,    Component.cancelAuthentication ButtonReversed model
         ]
 
 
@@ -63,7 +59,6 @@ signinForm1 model =
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
         , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
-        , el None [] (text model.info)
         , el Button
             [ onClick ToggleRegister
             , alignBottom
@@ -72,6 +67,7 @@ signinForm1 model =
             , padding 8
             ]
             (text "Need to register?")
+        , Component.cancelAuthentication ButtonReversed model
         ]
 
 
@@ -83,7 +79,6 @@ signoutForm model =
         )
         (signoutForm1 model)
 
-
 signoutForm1 : Model -> Element Styles variation Msg
 signoutForm1 model =
     column Form
@@ -92,6 +87,29 @@ signoutForm1 model =
         , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
+signinInfoPanel : Model -> Element Styles variation Msg
+signinInfoPanel model =
+  notVisibleIf
+      (model.appState.authorizing)
+      (signinInfoPanel1 model)
+
+signinInfoPanel1 : Model -> Element Styles variation Msg
+signinInfoPanel1 model =
+  (column Box
+      [ height (px 260), paddingXY 20 40 ]
+      [ el Zero [ width (px 400), height (px 40) ] (text model.message)
+      , Component.loginButton ButtonReversed model
+      , el Zero [height (px 20)] (text "")
+      , Component.cancelAuthentication ButtonReversed model
+      , el Zero [height (px 20)] (text "")
+      , el (Component.onlineStatusStyle model)
+          [ width (px 100)
+          , height (px 40)
+          , paddingXY 20 12
+          ]
+          (text (Component.onlineStatus model))
+      ]
+    )
 
 visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
 visibleIf condition body =
@@ -100,7 +118,14 @@ visibleIf condition body =
     else
         el None [] (text "")
 
+notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+notVisibleIf condition body =
+    if (not condition)then
+        body
+    else
+        el None [] (text "")
 
+handleAuthentication : Model -> (Model, Cmd Msg)
 handleAuthentication model =
     if model.appState.signedIn then
         ( { model | appState = appStateWithPage model HomePage }, Cmd.none )

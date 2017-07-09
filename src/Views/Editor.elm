@@ -15,7 +15,7 @@ import Utility
 import Types exposing (..)
 import FontAwesome
 
-
+editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
@@ -55,30 +55,51 @@ editor model =
     ]
 
 
+editorPanel : Model -> Element Styles variation Msg
 editorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
         [ Common.publicCheckbox model
-        , el Zero
-            [ width (px 30)
-            , onClick (NewDocument)
-            , height (px 30)
-            , padding 2
-            , title "New document"
-            ]
-            (html (FontAwesome.plus Color.white 25))
-        , el Zero
-            [ width (px 30)
-            , onClick (Refresh)
-            , height (px 30)
-            , padding 2
-            , title "Refresh display & save. Also: press ESC"
-            ]
-            (html (FontAwesome.refresh Color.white 25))
+        , newDocumentButton model
+        , refreshButton model
         , full PanelInfo [ padding 11 ] (text ("Words: " ++ (toString <| wordCount <| model.current_document)))
+        , deleteButton model
         ]
 
+newDocumentButton : Model -> Element Styles variation Msg
+newDocumentButton model =
+  el Zero
+      [ width (px 30)
+      , onClick (NewDocument)
+      , height (px 30)
+      , padding 2
+      , title "New document"
+      ]
+      (html (FontAwesome.plus Color.white 25))
 
+refreshButton : Model -> Element Styles variation Msg
+refreshButton model =
+   el Zero
+      [ width (px 30)
+      , onClick (Refresh)
+      , height (px 30)
+      , padding 2
+      , title "Refresh display & save. Also: press ESC"
+      ]
+      (html (FontAwesome.refresh Color.white 25))
+
+deleteButton : Model -> Element Styles variation Msg
+deleteButton model =
+   el Zero
+      [ width (px 30)
+      , onClick (DeleteCurrentDocument)
+      , height (px 30)
+      , padding 2
+      , title "Delete document"
+      ]
+      (html (FontAwesome.trash Color.white 25))
+
+toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]

@@ -1,22 +1,11 @@
 module Views.Component exposing (..)
 
-import Style exposing (..)
 import StyleSheet exposing (..)
 import Color
-import Html as Html
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Style exposing (..)
-import Style.Border as Border
-import Style.Color as Color
-import Style.Font as Font
-import Style.Transition as Transition
 import Types exposing (..)
-import Html.Events as HE exposing (onClick)
-import Json.Decode as Json exposing (int, list, string, float, Decoder)
-import Action.Document exposing (wordCount)
-import External
 import Utility
 import FontAwesome
 import StyleSheet exposing (..)
@@ -28,9 +17,9 @@ navigation model =
         [ justify, paddingXY 30 4 ]
         [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
         , searchForm model
-        , menu model
+        --, menu model
         , pageSelector model
-        , loginButton model
+        , loginButton Button model
         ]
 
 
@@ -76,15 +65,23 @@ searchIcon model searchDomain =
         (EL.html (FontAwesome.search Color.grey 25))
 
 
-loginButton model =
-    el Button
+loginButton style model =
+    el style
         [ EA.width (px 85)
-        , EA.center
         , EE.onClick AuthenticationAction
         , EA.height (px 30)
         , padding 8
         ]
         (EL.text (authenticationButtonText model))
+
+cancelAuthentication style model =
+    el style
+        [ EA.width (px 85)
+        , EE.onClick CancelAuthentication
+        , EA.height (px 30)
+        , padding 8
+        ]
+        (EL.text "Cancel")
 
 
 authenticationButtonText : Model -> String
@@ -95,31 +92,46 @@ authenticationButtonText model =
         "Sign in"
 
 
-menu1 model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
+-- https://ellie-app.com/3Gqxw7zLGzTa1/6
+
+textFormatMenu model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType")] (EL.text "Format")
         |> below
-            [ when model.appState.menuDropped <|
+            [ when model.appState.textTypeMenuDropped <|
                 column Menu
-                    [ padding 8, spacing 8 ]
-                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "AAAA" ])
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "BBBB" ])
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu ] (paragraph None [ EA.height (px 30), padding 8 ] [ EL.text "CCCC" ])
+                    [ padding 8, spacing 2 ]
+                    [ el (textFormatButton "plain" model) [ EA.width (px 85), EE.onClick (SetTextType "plain"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Plain")
+                    , el (textFormatButton "adoc" model) [ EA.width (px 85), EE.onClick (SetTextType "adoc"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Asciidoc")
+                    , el (textFormatButton "latex" model) [ EA.width (px 85), EE.onClick (SetTextType "latex"), EA.height (px 30), paddingXY 8 14 ] (EL.text "LaTeX")
                     ]
             ]
 
 
-menu model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), padding 8, EE.onClick ToggleMenu ] (EL.text "Tools")
+textFormatButton textFormat model =
+  if textFormat == model.current_document.attributes.textType then
+    ActiveFlatButton
+  else
+    FlatButton
+
+
+docTypeMenu model =
+    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType")] (EL.text "Type")
         |> below
-            [ when model.appState.menuDropped <|
+            [ when model.appState.docTypeMenuDropped <|
                 column Menu
-                    [ padding 8, spacing 8 ]
-                    [ el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "AAAA")
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "BBBB")
-                    , el FlatButton [ EA.width (px 85), EE.onClick ToggleMenu, EA.height (px 30), padding 8 ] (EL.text "CCCC")
+                    [ padding 8, spacing 2 ]
+                    [ el (docTypeButton "standard" model) [ EA.width (px 85), EE.onClick (SetDocType "standard"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Standard")
+                    , el (docTypeButton "note" model) [ EA.width (px 85), EE.onClick (SetDocType "note"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Note")
+                    , el (docTypeButton "master" model) [ EA.width (px 85), EE.onClick (SetDocType "master"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Master")
                     ]
             ]
 
+
+docTypeButton docType model =
+  if docType == model.current_document.attributes.docType then
+    ActiveFlatButton
+  else
+    FlatButton
 
 toolSelectorColor model tool =
     if model.appState.tool == tool then
@@ -168,7 +180,7 @@ onlineStatus model =
     else
         "Offline"
 
-
+onlineStatusStyle : Model -> Styles
 onlineStatusStyle model =
     if model.appState.online then
         StatusSuccess

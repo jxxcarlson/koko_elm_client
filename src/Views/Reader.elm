@@ -10,7 +10,7 @@ import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
 
-
+reader : Model -> List (Element Styles variation Msg)
 reader model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 0.2 ]
@@ -34,7 +34,7 @@ reader model =
         ]
     ]
 
-
+toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]

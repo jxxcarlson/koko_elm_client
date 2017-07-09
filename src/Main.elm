@@ -3,7 +3,6 @@ module Main exposing (..)
 import Html exposing (..)
 import Phoenix.Socket
 import Phoenix.Channel
-import Phoenix.Push
 
 
 -- begin style
@@ -47,7 +46,6 @@ import Action.UI
         , appStateToggleAuthorizing
         )
 import Phoenix.Socket
-import Json.Encode as JsEncode
 import Json.Decode as JsDecode
 import Action.Channel
 
@@ -61,6 +59,7 @@ import Views.Editor exposing (editor)
 import Utility
 
 
+main : Program Flags Model Msg
 main =
     programWithFlags
         { init = init
@@ -116,9 +115,12 @@ update msg model =
 
         AuthenticationAction ->
             if model.appState.signedIn then
-                Action.User.signout "Please sign in" model
+                Action.User.signout "You are now signed out." model
             else
                 Action.UI.setAuthorizing model True
+
+        CancelAuthentication ->
+            Action.UI.toggleAuthorizing model
 
         Login ->
             ( Action.User.login model, loginUserCmd model loginUrl )
@@ -148,8 +150,8 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
-        ToggleMenu ->
-            toggleMenu model
+        ToggleMenu menu ->
+            toggleMenu menu model
 
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
@@ -171,7 +173,7 @@ update msg model =
                     ( { updatedModel | appState = appStateWithPage model (displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
                     , Cmd.batch
                         [ getDocumentsWith newSearchState model.current_user.token
-                        , External.render model.current_document.rendered_content
+                        , External.render (External.encodeDocument model.current_document)
                         ]
                     )
             else
@@ -181,7 +183,7 @@ update msg model =
             if key == 27 then
                 -- 27: ESCAPE
                 ( { model | info = "ESCAPE pressed, rendering ..." }
-                , External.render model.current_document.rendered_content
+                , External.render (External.encodeDocument model.current_document)
                 )
             else
                 ( model, Cmd.none )
@@ -204,8 +206,9 @@ update msg model =
 
         -- ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
         GetUserDocuments (Err error) ->
-            Action.User.signout "Your session has expired. Please sign in again" model
+            ( { model | message = "Error: could not get user documents." }, Cmd.none )
 
+        -- Action.User.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         PutDocument (Ok serverReply) ->
             case (serverReply) of
@@ -218,7 +221,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 0 "New Document" "New Content" "New Content" defaultAttributes []
+                    Document 0 "abcd" 0 "New Document" "New Content" "New Content" defaultAttributes []
             in
                 createDocument model newDocument
 
@@ -227,6 +230,32 @@ update msg model =
             selectNewDocument model documentRecord.document
 
         CreateDocument (Err errorMessage) ->
+            ( { model | info = (toString errorMessage) }, Cmd.none )
+
+        DeleteCurrentDocument ->
+            ( { model | message = "Delete current document" }, Request.Document.deleteCurrentDocument model )
+
+        DeleteDocument (Ok serverReply) ->
+            let
+                documents =
+                    model.documents
+
+                updatedDocuments =
+                    Utility.removeWhen (\doc -> doc.id == model.current_document.id) documents
+
+                newCurrentDocument =
+                    (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
+            in
+                ( { model
+                    | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
+                    , documents = updatedDocuments
+                    , current_document = newCurrentDocument
+                  }
+                , Cmd.none
+                )
+
+        -- getDocumentsWith newSearchState model.current_user.token
+        DeleteDocument (Err errorMessage) ->
             ( { model | info = (toString errorMessage) }, Cmd.none )
 
         Title title ->
@@ -238,6 +267,12 @@ update msg model =
                     { doc | title = title }
             in
                 updateCurrentDocument model new_document
+
+        SetTextType textType ->
+            Action.Document.setTextType textType model
+
+        SetDocType docType ->
+            Action.Document.setDocType docType model
 
         InputTags tagString ->
             updateTags tagString model
@@ -264,7 +299,7 @@ update msg model =
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-            ( { model | message = "Refresh, rendering" }, External.render model.current_document.rendered_content )
+            ( { model | message = "Refresh, rendering" }, External.render (External.encodeDocument model.current_document) )
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
@@ -316,7 +351,7 @@ update msg model =
         PhoenixMsg msg ->
             let
                 ( phxSocket, phxCmd ) =
-                    Phoenix.Socket.update msg model.phxSocket
+                    Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
 
                 appState =
                     model.appState
@@ -338,6 +373,18 @@ update msg model =
                 )
 
 
+
+-- app.js:7580 Phoenix message: { event = "phx_reply",
+--   topic = "room:lobby",
+--   payload = { status = "ok",
+--   response = { message = "hello" } },
+--   ref = Just 27
+-- }
+--
+-- app.js:7580 PhoenixMsg: NoOp
+-- https://github.com/fbonetti/elm-phoenix-socket/issues/29
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
@@ -348,6 +395,7 @@ subscriptions model =
         ]
 
 
+page : Model -> List (Element Styles variation Msg)
 page model =
     case model.appState.page of
         ReaderPage ->
@@ -360,6 +408,7 @@ page model =
             home model
 
 
+view : Model -> Html Msg
 view model =
     EL.root StyleSheet.stylesheet <|
         column None
@@ -396,7 +445,7 @@ init flags =
             "Welcome"
 
         doc =
-            Document 0 0 title content rendered_content defaultAttributes []
+            Document 0 "abcd" 0 title content rendered_content defaultAttributes []
 
         searchState =
             SearchState "" Public
@@ -405,7 +454,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False HomePage TableOfContents ""
+            AppState False False False False False False False False HomePage TableOfContents ""
 
         channel =
             Phoenix.Channel.init "room:lobby"
@@ -430,7 +479,7 @@ init flags =
             initSocket
             ""
             []
-        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render doc.rendered_content ]
+        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render (External.encodeDocument doc) ]
         )
 
 

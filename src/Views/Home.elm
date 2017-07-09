@@ -3,11 +3,10 @@ module Views.Home exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Views.Common as Common
-import Views.Component as Component
 import Views.Signin as Signin
+import Types exposing(Model, Msg)
 
-
+home : Model -> List (Element Styles variation Msg)
 home model =
     [ namedGrid Container
         { columns = [ fill 1, fill 2, fill 1 ]
@@ -28,17 +27,7 @@ home model =
                 [ (Signin.signinForm model)
                 , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
-                , (column Box
-                    [ height (px 200), paddingXY 20 40 ]
-                    [ el Zero [ width (px 400), height (px 40) ] (text model.message)
-                    , el (Component.onlineStatusStyle model)
-                        [ width (px 100)
-                        , height (px 40)
-                        , paddingXY 20 12
-                        ]
-                        (text (Component.onlineStatus model))
-                    ]
-                  )
+                , (Signin.signinInfoPanel model)
                 ]
             )
         ]

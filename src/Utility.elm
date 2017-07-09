@@ -5,7 +5,6 @@ import Json.Decode as Json exposing (int, list, string, float, Decoder)
 import Html.Attributes exposing (..)
 import Element.Events as EE exposing (on, keyCode)
 import Element
-import Element.Attributes
 import Types exposing (Model, Page)
 import External exposing (toJs)
 import Views.External exposing (windowData)
@@ -37,7 +36,7 @@ gotoPage model p =
 
 -- youtube : String -> Html
 
-
+youtube : String -> Html msg
 youtube url =
     div [ class "embed-responsive embed-responsive-16by9" ]
         [ iframe
@@ -64,6 +63,9 @@ replaceIf predicate replacement list =
         )
         list
 
+
+removeWhen pred list =
+  List.filter (not << pred) list
 
 
 -- signinButtonText : Model -> String

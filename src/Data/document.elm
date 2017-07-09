@@ -63,6 +63,7 @@ documentEncoder1 document =
         [ ( "title", Encode.string <| document.title )
         , ( "rendered_content", Encode.string <| document.rendered_content )
         , ( "id", Encode.int <| document.id )
+        , ("identifier", Encode.string <| document.identifier)
         , ( "content", Encode.string <| document.content )
         , ( "author_id", Encode.int <| document.author_id )
         , ( "attributes", encodeDocumentAttributes <| document.attributes )
@@ -78,6 +79,7 @@ documentDecoder : Decoder Document
 documentDecoder =
     decode Document
         |> JPipeline.required "id" Decode.int
+        |> JPipeline.required "identifier" Decode.string
         |> JPipeline.required "author_id" Decode.int
         |> JPipeline.required "title" Decode.string
         |> JPipeline.required "content" Decode.string

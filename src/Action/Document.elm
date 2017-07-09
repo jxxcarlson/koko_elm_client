@@ -23,6 +23,62 @@ updateCurrentDocumentWithContent content model =
         updateCurrentDocument model newDocument
 
 
+setTextType : String -> Model -> ( Model, Cmd Msg )
+setTextType textType model =
+    let
+        oldDocument =
+            model.current_document
+
+        docAttributes =
+            oldDocument.attributes
+
+        newDocumentAttributes =
+            { docAttributes | textType = textType }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textTypeMenuDropped = False }
+
+        newModel =
+            { model | appState = newAppState }
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newDocumentAttributes }
+    in
+        updateCurrentDocument newModel newDocument
+
+
+setDocType : String -> Model -> ( Model, Cmd Msg )
+setDocType docType model =
+    let
+        oldDocument =
+            model.current_document
+
+        docAttributes =
+            oldDocument.attributes
+
+        newDocAttributes =
+            { docAttributes | docType = docType }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | docTypeMenuDropped = False }
+
+        newModel =
+            { model | appState = newAppState }
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newDocAttributes }
+    in
+        updateCurrentDocument newModel newDocument
+
+
 parseTagString : String -> List String
 parseTagString str =
     String.split "," str
@@ -75,9 +131,8 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , render current_document.rendered_content
+            , render (External.encodeDocument current_document)
             ]
-          -- render model.current_document.rendered_text2
         )
 
 
@@ -102,7 +157,7 @@ updateCurrentDocument model document =
             , appState = newAppState
             , message = "!! Rendering #" ++ (toString document.id)
           }
-        , Cmd.batch [ putDocument model document, External.render document.rendered_content ]
+        , Cmd.batch [ putDocument model document, External.render (External.encodeDocument document) ]
         )
 
 
@@ -152,12 +207,12 @@ selectDocument model document =
         ( { model
             | current_document = document
             , appState = newAppState
-            , message = "Selected: " ++ document.title
+            , message = "Selected: " ++ (toString document.id) ++ " (" ++ document.title ++ ")"
             , counter = model.counter + 1
           }
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
-            , render document.rendered_content
+            , render (External.encodeDocument document)
             ]
         )
 
@@ -171,7 +226,7 @@ selectNewDocument model document =
         , info = "New document added: " ++ document.title
         , counter = model.counter + 1
       }
-    , render document.rendered_content
+    , render (External.encodeDocument document)
     )
 
 

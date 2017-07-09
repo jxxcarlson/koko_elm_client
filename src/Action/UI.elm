@@ -5,6 +5,7 @@ module Action.UI exposing (..)
 import Types exposing (..)
 import External
 import Views.External
+import Array
 
 
 displayPage : Model -> Page
@@ -15,7 +16,23 @@ displayPage model =
         model.appState.page
 
 
-toggleMenu model =
+toggleMenu menu model =
+    let
+        appState =
+            model.appState
+        newAppState = case menu of
+          "Main" ->
+            { appState | menuDropped = (not appState.menuDropped) }
+          "textType" ->
+            { appState | textTypeMenuDropped = (not appState.textTypeMenuDropped) }
+          "docType" ->
+            { appState | docTypeMenuDropped = (not appState.docTypeMenuDropped) }
+          _ ->
+            appState
+    in
+        ( { model | appState = newAppState }, Cmd.none )
+
+toggleTextMenu model =
     let
         appState =
             model.appState
@@ -142,3 +159,11 @@ numberOfDocuments model =
 
         Public ->
             "Public documents: " ++ (toString (List.length model.documents))
+
+
+displayIdentifier : Model -> String
+displayIdentifier model =
+  let
+    parts = (String.split "." model.current_document.identifier) |> Array.fromList
+  in
+    Array.get 3 parts |> Maybe.withDefault "--"

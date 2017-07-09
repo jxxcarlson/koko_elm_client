@@ -1,15 +1,13 @@
 module Views.Common exposing (documentListView, tool, publicCheckbox)
 
-import Style exposing (..)
 import StyleSheet exposing (..)
-import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Style exposing (..)
 import Types exposing (..)
-import Action.UI exposing (appStateWithPage)
-import FontAwesome
+import Action.UI as UI
+import Views.Component as Component
+
 
 
 tocStyle selectedDocument document =
@@ -32,7 +30,7 @@ documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Action.UI.numberOfDocuments model)) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments model)) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
         )
 
@@ -78,7 +76,7 @@ documentParameterTools model =
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Document parameter tools") ]
 
-
+-- editorTools : Model -> Model
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
@@ -95,6 +93,10 @@ editorTools model =
                 ]
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
+            , el None [height (px 10)] (text "")
+            , el TOC [height (px 25), width (px 200), paddingXY 8 12] (text ("Identifier: " ++ (UI.displayIdentifier model)))
+            , el None [height (px 0)] (text "")
+            , row None [padding 8, spacing 12] [Component.textFormatMenu model, Component.docTypeMenu model]
             ]
         ]
 
@@ -109,7 +111,7 @@ updateTagsButton model =
         ]
         (text "Update keywords")
 
-
+publicCheckbox : Model -> Element Styles variation Msg
 publicCheckbox model =
     row Box
         [ paddingXY 10 2, spacing 20, verticalCenter ]
