@@ -207,7 +207,15 @@ selectDocument model document =
         ( { model
             | current_document = document
             , appState = newAppState
-            , message = "Selected: " ++ (toString document.id) ++ " (" ++ document.title ++ ")"
+            , message =
+                "Selected: "
+                    ++ (toString document.id)
+                    ++ " ("
+                    ++ document.title
+                    ++ ")"
+                    ++ " -- "
+                    ++ (toString (List.length document.children))
+                    ++ " children"
             , counter = model.counter + 1
           }
         , Cmd.batch

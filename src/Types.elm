@@ -34,6 +34,11 @@ type alias DocumentAttributesRecord =
     { attributes : DocumentAttributes }
 
 
+
+----------
+----------
+
+
 type alias Child =
     { title : String
     , level : Int
@@ -51,7 +56,9 @@ type alias Document =
     , content : String
     , rendered_content : String
     , attributes : DocumentAttributes
-    , tags : List String
+    , tags :
+        List String
+    , children : List Child
     }
 
 
@@ -201,4 +208,4 @@ defaultAttributes =
 
 
 defaultDocument =
-    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes []
+    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes [] []

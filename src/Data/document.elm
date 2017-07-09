@@ -11,27 +11,6 @@ import Types exposing (..)
 -- https://medium.com/@eeue56/how-i-implemented-json-to-elm-b61081587c3a
 
 
-decodeChild : Decode.Decoder Child
-decodeChild =
-    Decode.map5 Child
-        (Decode.field "title" Decode.string)
-        (Decode.field "level" Decode.int)
-        (Decode.field "doc_identifier" Decode.string)
-        (Decode.field "doc_id" Decode.int)
-        (Decode.field "comment" Decode.string)
-
-
-encodeChild : Child -> Encode.Value
-encodeChild record =
-    Encode.object
-        [ ( "title", Encode.string <| record.title )
-        , ( "level", Encode.int <| record.level )
-        , ( "doc_identifier", Encode.string <| record.doc_identifier )
-        , ( "doc_id", Encode.int <| record.doc_id )
-        , ( "comment", Encode.string <| record.comment )
-        ]
-
-
 type alias Documents =
     { documents : List Document }
 
@@ -43,21 +22,6 @@ type alias Documents =
 --- And this: https://github.com/dragonwasrobot/json-schema-to-elm
 -- ARCHITECURE: https://gist.github.com/jah2488/ca3310ad385957e2e616c646de2275fb
 -- FLAGS: https://guide.elm-lang.org/interop/javascript.html#flags
-
-
-documentEncoder0 : Document -> Encode.Value
-documentEncoder0 document =
-    Encode.object
-        [ ( "document"
-          , Encode.object
-                [ ( "id", Encode.int document.id )
-                , ( "author_id", Encode.int document.author_id )
-                , ( "title", Encode.string document.title )
-                , ( "content", Encode.string document.content )
-                , ( "rendered_content", Encode.string document.rendered_content )
-                ]
-          )
-        ]
 
 
 documentEncoder : Document -> Encode.Value
@@ -107,6 +71,7 @@ documentDecoder =
         |> JPipeline.required "rendered_content" Decode.string
         |> JPipeline.required "attributes" (decodeDocumentAttributes)
         |> JPipeline.required "tags" (Decode.list Decode.string)
+        |> JPipeline.required "children" (Decode.list decodeChild)
 
 
 documentRecordDecoder : Decoder DocumentRecord
@@ -126,6 +91,27 @@ decodeDocumentAttributes =
         |> JPipeline.required "public" (Decode.bool)
         |> JPipeline.required "text_type" (Decode.string)
         |> JPipeline.required "doc_type" (Decode.string)
+
+
+decodeChild : Decoder Child
+decodeChild =
+    JPipeline.decode Child
+        |> JPipeline.required "title" (Decode.string)
+        |> JPipeline.required "level" (Decode.int)
+        |> JPipeline.required "doc_identifier" (Decode.string)
+        |> JPipeline.required "doc_id" (Decode.int)
+        |> JPipeline.required "comment" (Decode.string)
+
+
+encodeChild : Child -> Encode.Value
+encodeChild record =
+    Encode.object
+        [ ( "title", Encode.string <| record.title )
+        , ( "level", Encode.int <| record.level )
+        , ( "doc_identifier", Encode.string <| record.doc_identifier )
+        , ( "doc_id", Encode.int <| record.doc_id )
+        , ( "comment", Encode.string <| record.comment )
+        ]
 
 
 
