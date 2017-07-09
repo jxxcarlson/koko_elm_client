@@ -1,11 +1,9 @@
 module Types exposing (..)
 
-
 import Http
 import Time exposing (Time)
 import Phoenix.Socket
 import Json.Encode as JsEncode
-
 
 
 type alias User =
@@ -34,6 +32,15 @@ type alias DocumentAttributes =
 
 type alias DocumentAttributesRecord =
     { attributes : DocumentAttributes }
+
+
+type alias Child =
+    { title : String
+    , level : Int
+    , doc_identifier : String
+    , doc_id : Int
+    , comment : String
+    }
 
 
 type alias Document =

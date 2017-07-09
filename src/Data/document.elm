@@ -11,6 +11,27 @@ import Types exposing (..)
 -- https://medium.com/@eeue56/how-i-implemented-json-to-elm-b61081587c3a
 
 
+decodeChild : Decode.Decoder Child
+decodeChild =
+    Decode.map5 Child
+        (Decode.field "title" Decode.string)
+        (Decode.field "level" Decode.int)
+        (Decode.field "doc_identifier" Decode.string)
+        (Decode.field "doc_id" Decode.int)
+        (Decode.field "comment" Decode.string)
+
+
+encodeChild : Child -> Encode.Value
+encodeChild record =
+    Encode.object
+        [ ( "title", Encode.string <| record.title )
+        , ( "level", Encode.int <| record.level )
+        , ( "doc_identifier", Encode.string <| record.doc_identifier )
+        , ( "doc_id", Encode.int <| record.doc_id )
+        , ( "comment", Encode.string <| record.comment )
+        ]
+
+
 type alias Documents =
     { documents : List Document }
 
@@ -63,7 +84,7 @@ documentEncoder1 document =
         [ ( "title", Encode.string <| document.title )
         , ( "rendered_content", Encode.string <| document.rendered_content )
         , ( "id", Encode.int <| document.id )
-        , ("identifier", Encode.string <| document.identifier)
+        , ( "identifier", Encode.string <| document.identifier )
         , ( "content", Encode.string <| document.content )
         , ( "author_id", Encode.int <| document.author_id )
         , ( "attributes", encodeDocumentAttributes <| document.attributes )
