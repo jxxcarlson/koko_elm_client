@@ -61,17 +61,18 @@ getUserDocumentsWith searchState token =
             |> withExpect (Http.expectJson decodeDocumentsRecord)
             |> HB.send GetUserDocuments
 
+
 deleteCurrentDocumentRB : Model -> RequestBuilder ()
 deleteCurrentDocumentRB model =
     let
         url =
             documentsUrl ++ "/" ++ (toString model.current_document.id)
+
         token =
-          model.current_user.token
+            model.current_user.token
     in
         HB.delete url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
-
 
 
 deleteCurrentDocument : Model -> Cmd Msg
@@ -82,6 +83,7 @@ deleteCurrentDocument model =
                 |> HB.toRequest
     in
         Http.send DeleteDocument request
+
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/HttpBuilder
@@ -101,10 +103,6 @@ putDocumentRB document token =
             |> withJsonBody params
 
 
-
---|> withExpect (Http.expectJson documentDecoder)
-
-
 putDocument : Model -> Document -> Cmd Msg
 putDocument model document =
     let
@@ -113,11 +111,6 @@ putDocument model document =
                 |> HB.toRequest
     in
         Http.send PutDocument request
-
-
-
---- aaa
--- Create New Document
 
 
 createDocument : Document -> String -> Cmd Msg
@@ -134,17 +127,6 @@ createDocument document token =
             |> withJsonBody params
             |> withExpect (Http.expectJson documentRecordDecoder)
             |> HB.send CreateDocument
-
-
-
--- createDocument : Model -> Cmd Msg
--- createDocument model =
---     let
---         request =
---             createDocumentRB model.current_document model.current_user.token
---                 |> HB.toRequest
---     in
---         HB.send CreateDocument request
 
 
 decodeDoc : Decoder String
