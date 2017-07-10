@@ -1,23 +1,30 @@
 port module External exposing (..)
 
 import Json.Encode as Encode
-import Types exposing(Document)
+import Types exposing (Document)
 
 
 port render : Encode.Value -> Cmd msg
+
+
 
 -- type alias Value = {
 --   content: String,
 --   docType: String
 -- }
-
 -- encodeDocument { content, docType } =
 --   [ ("content", Encode.string content), ("docType", Encode.string docType) ] |> Encode.object
 
+
+{-|
+encodeDocument is used to send rendered content to JS-world.
+-}
 encodeDocument : Document -> Encode.Value
 encodeDocument document =
-  [ ("content", Encode.string document.content), ("textType", Encode.string document.attributes.textType) ]
-  |> Encode.object
+    [ ( "content", Encode.string (document.rendered_content) )
+    , ( "textType", Encode.string document.attributes.textType )
+    ]
+        |> Encode.object
 
 
 port toJs : String -> Cmd msg
@@ -34,6 +41,7 @@ port askToReconnectUser : String -> Cmd msg
 
 
 port reconnectUser : (String -> msg) -> Sub msg
+
 
 
 -- TEST:
