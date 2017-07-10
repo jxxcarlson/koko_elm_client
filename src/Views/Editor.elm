@@ -14,6 +14,7 @@ import Action.Document exposing (wordCount)
 import Utility
 import Types exposing (..)
 import FontAwesome
+import Views.Common as Common
 
 
 editor : Model -> List (Element Styles variation Msg)
@@ -124,4 +125,5 @@ toolSelectorPanel model =
             , padding 2
             ]
             (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))
+        , Common.recallLastSearchButton model
         ]

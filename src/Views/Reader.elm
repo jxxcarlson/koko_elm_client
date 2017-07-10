@@ -10,6 +10,7 @@ import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
 
+
 reader : Model -> List (Element Styles variation Msg)
 reader model =
     [ namedGrid Container
@@ -34,6 +35,7 @@ reader model =
         ]
     ]
 
+
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
@@ -54,4 +56,5 @@ toolSelectorPanel model =
             , padding 2
             ]
             (html (FontAwesome.gear (Component.toolSelectorColor model ReaderTools) 25))
+        , Common.recallLastSearchButton model
         ]

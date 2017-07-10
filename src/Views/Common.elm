@@ -1,4 +1,4 @@
-module Views.Common exposing (documentListView, tool, publicCheckbox)
+module Views.Common exposing (documentListView, tool, publicCheckbox, recallLastSearchButton)
 
 import StyleSheet exposing (..)
 import Element exposing (..)
@@ -7,12 +7,19 @@ import Element.Events exposing (..)
 import Types exposing (..)
 import Action.UI as UI
 import Views.Component as Component
+import FontAwesome
+import Color
 
 
 tocStyle : Document -> Document -> Styles
 tocStyle selectedDocument document =
     if selectedDocument == document then
-        TOCItemSelected
+        if document.attributes.docType == "master" then
+            TOCItemMasterSelected
+        else
+            TOCItemSelected
+    else if document.attributes.docType == "master" then
+        TOCItemMaster
     else
         TOCItem
 
@@ -36,7 +43,7 @@ documentIndentLevel document model =
             else
                 0
     in
-        4.0 + 15.0 * (toFloat level)
+        8.0 + 15.0 * (toFloat level)
 
 
 viewTocItem : Child -> Element Styles variation Msg
@@ -162,3 +169,15 @@ publicCheckbox model =
           )
         , (text "Public")
         ]
+
+
+recallLastSearchButton : Model -> Element Styles variation Msg
+recallLastSearchButton model =
+    el Zero
+        [ width (px 30)
+        , onClick (RecallLastSearch)
+        , height (px 30)
+        , padding 2
+        , title "Recall last search"
+        ]
+        (html (FontAwesome.rotate_left Color.white 25))

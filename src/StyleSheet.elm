@@ -42,6 +42,8 @@ type Styles
     | TOC
     | TOCItem
     | TOCItemSelected
+    | TOCItemMaster
+    | TOCItemMasterSelected
     | Radio
     | Footer
     | FooterNote
@@ -186,6 +188,10 @@ stylesheet =
             [ Color.text Color.black ]
         , style TOCItemSelected
             [ Color.text Color.white, Color.background Color.charcoal ]
+        , style TOCItemMaster
+            [ Color.text (Color.rgb 125 0 0), Font.weight 600 ]
+        , style TOCItemMasterSelected
+            [ Color.text (Color.rgb 255 130 130), Color.background Color.charcoal, Font.weight 100 ]
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]

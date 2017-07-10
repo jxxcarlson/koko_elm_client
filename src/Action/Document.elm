@@ -278,6 +278,7 @@ doSearch searchDomain key model =
                     | searchState = newSearchState
                     , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
                     , appState = Action.UI.updateToolStatus model TableOfContents
+                    , documents2 = model.documents
                 }
         in
             ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }

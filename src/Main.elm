@@ -160,6 +160,9 @@ update msg model =
         DoSearch searchDomain key ->
             Action.Document.doSearch searchDomain key model
 
+        RecallLastSearch ->
+            ( { model | documents = model.documents2 }, Cmd.none )
+
         DoRender key ->
             if key == 27 then
                 -- 27: ESCAPE

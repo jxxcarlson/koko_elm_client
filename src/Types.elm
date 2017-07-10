@@ -108,7 +108,7 @@ type alias Model =
     , info : String
     , current_document : Document
     , documents : Documents
-    , masterDocumentList : Documents
+    , documents2 : Documents
     , searchState : SearchState
     , phxSocket : Phoenix.Socket.Socket Msg
     , messageInProgress : String
@@ -154,6 +154,7 @@ type Msg
     | SelectTool Tool
     | SetSearchTerm String
     | DoSearch SearchDomain Int
+    | RecallLastSearch
     | DoRender Int
     | SelectDocument Document
     | SelectMaster Document
