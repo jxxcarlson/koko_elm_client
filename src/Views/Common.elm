@@ -9,6 +9,7 @@ import Action.UI as UI
 import Views.Component as Component
 
 
+tocStyle : Document -> Document -> Styles
 tocStyle selectedDocument document =
     if selectedDocument == document then
         TOCItemSelected
@@ -16,13 +17,25 @@ tocStyle selectedDocument document =
         TOCItem
 
 
-viewTitle : Document -> Document -> Element Styles variation Msg
-viewTitle selectedDocument document =
+viewTitle : Model -> Document -> Document -> Element Styles variation Msg
+viewTitle model selectedDocument document =
     el (tocStyle selectedDocument document)
         [ onClick (SelectDocument document)
-        , paddingXY 4 4
+        , paddingXY (documentIndentLevel document model) 4
         ]
         (text document.title)
+
+
+documentIndentLevel : Document -> Model -> Float
+documentIndentLevel document model =
+    let
+        level =
+            if model.appState.masterDocLoaded then
+                document.attributes.level
+            else
+                0
+    in
+        4.0 + 15.0 * (toFloat level)
 
 
 viewTocItem : Child -> Element Styles variation Msg
@@ -38,7 +51,7 @@ documentListView model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments model)) ]
-            ++ (List.map (viewTitle model.current_document) model.documents)
+            ++ (List.map (viewTitle model model.current_document) model.documents)
         )
 
 
@@ -67,6 +80,7 @@ tool model =
             documentParameterTools model
 
 
+searchOptionControl : Model -> Element Styles variation Msg
 searchOptionControl model =
     radio "Search domain"
         Radio
@@ -81,22 +95,21 @@ searchDomainChecked model domain =
     model.searchState.domain == domain
 
 
+readerTools : Model -> Element Styles variation msg
 readerTools model =
     column TOC
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Reader tools") ]
 
 
+documentParameterTools : Model -> Element Styles variation msg
 documentParameterTools model =
     column TOC
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Document parameter tools") ]
 
 
-
--- editorTools : Model -> Model
-
-
+editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
@@ -121,6 +134,7 @@ editorTools model =
         ]
 
 
+updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =
     el Button
         [ width (px 250)

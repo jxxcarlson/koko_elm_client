@@ -454,7 +454,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False False False HomePage TableOfContents ""
+            AppState False False False False False False False False False HomePage TableOfContents ""
 
         channel =
             Phoenix.Channel.init "room:lobby"

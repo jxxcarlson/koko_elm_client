@@ -120,8 +120,14 @@ updateDocuments model documentsRecord =
         appState =
             model.appState
 
+        masterDocLoaded =
+            if current_document.attributes.docType == "master" then
+                True
+            else
+                False
+
         updatedAppState =
-            { appState | page = page, tool = TableOfContents }
+            { appState | page = page, tool = TableOfContents, masterDocLoaded = masterDocLoaded }
     in
         ( { model
             | documents = documentsRecord.documents

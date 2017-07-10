@@ -27,6 +27,7 @@ type alias DocumentAttributes =
     { public : Bool
     , textType : String
     , docType : String
+    , level : Int
     }
 
 
@@ -90,6 +91,7 @@ type alias AppState =
     , textTypeMenuDropped : Bool
     , docTypeMenuDropped : Bool
     , textBufferDirty : Bool
+    , masterDocLoaded : Bool
     , page : Page
     , tool : Tool
     , textBuffer : String
@@ -200,7 +202,7 @@ type alias Flags =
 
 
 defaultAttributes =
-    DocumentAttributes False "adoc" "standard"
+    DocumentAttributes False "adoc" "standard" 0
 
 
 defaultDocument =
