@@ -9,7 +9,6 @@ import Action.UI as UI
 import Views.Component as Component
 
 
-
 tocStyle selectedDocument document =
     if selectedDocument == document then
         TOCItemSelected
@@ -26,12 +25,29 @@ viewTitle selectedDocument document =
         (text document.title)
 
 
+viewTocItem : Child -> Element Styles variation Msg
+viewTocItem child =
+    el (None)
+        [ paddingXY 4 4
+        ]
+        (text child.title)
+
+
 documentListView : Model -> Element Styles variation Msg
 documentListView model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments model)) ]
             ++ (List.map (viewTitle model.current_document) model.documents)
+        )
+
+
+tableOfContents : Model -> Element Styles variation Msg
+tableOfContents model =
+    column TOC
+        [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.tocNumberOfDocuments model)) ]
+            ++ (List.map viewTocItem model.current_document.children)
         )
 
 
@@ -76,7 +92,11 @@ documentParameterTools model =
         [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Document parameter tools") ]
 
+
+
 -- editorTools : Model -> Model
+
+
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
@@ -93,10 +113,10 @@ editorTools model =
                 ]
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
-            , el None [height (px 10)] (text "")
-            , el TOC [height (px 25), width (px 200), paddingXY 8 12] (text ("Identifier: " ++ (UI.displayIdentifier model)))
-            , el None [height (px 0)] (text "")
-            , row None [padding 8, spacing 12] [Component.textFormatMenu model, Component.docTypeMenu model]
+            , el None [ height (px 10) ] (text "")
+            , el TOC [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Identifier: " ++ (UI.displayIdentifier model)))
+            , el None [ height (px 0) ] (text "")
+            , row None [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
 
@@ -110,6 +130,7 @@ updateTagsButton model =
         , paddingXY 10 13
         ]
         (text "Update keywords")
+
 
 publicCheckbox : Model -> Element Styles variation Msg
 publicCheckbox model =

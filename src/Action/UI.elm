@@ -20,17 +20,23 @@ toggleMenu menu model =
     let
         appState =
             model.appState
-        newAppState = case menu of
-          "Main" ->
-            { appState | menuDropped = (not appState.menuDropped) }
-          "textType" ->
-            { appState | textTypeMenuDropped = (not appState.textTypeMenuDropped) }
-          "docType" ->
-            { appState | docTypeMenuDropped = (not appState.docTypeMenuDropped) }
-          _ ->
-            appState
+
+        newAppState =
+            case menu of
+                "Main" ->
+                    { appState | menuDropped = (not appState.menuDropped) }
+
+                "textType" ->
+                    { appState | textTypeMenuDropped = (not appState.textTypeMenuDropped) }
+
+                "docType" ->
+                    { appState | docTypeMenuDropped = (not appState.docTypeMenuDropped) }
+
+                _ ->
+                    appState
     in
         ( { model | appState = newAppState }, Cmd.none )
+
 
 toggleTextMenu model =
     let
@@ -161,9 +167,15 @@ numberOfDocuments model =
             "Public documents: " ++ (toString (List.length model.documents))
 
 
+tocNumberOfDocuments : Model -> String
+tocNumberOfDocuments model =
+    "Contents: " ++ (toString (List.length model.current_document.children)) ++ " documents"
+
+
 displayIdentifier : Model -> String
 displayIdentifier model =
-  let
-    parts = (String.split "." model.current_document.identifier) |> Array.fromList
-  in
-    Array.get 3 parts |> Maybe.withDefault "--"
+    let
+        parts =
+            (String.split "." model.current_document.identifier) |> Array.fromList
+    in
+        Array.get 3 parts |> Maybe.withDefault "--"
