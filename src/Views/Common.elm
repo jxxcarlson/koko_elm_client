@@ -21,6 +21,7 @@ viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
     el (tocStyle selectedDocument document)
         [ onClick (SelectDocument document)
+        , onDoubleClick (SelectMaster document)
         , paddingXY (documentIndentLevel document model) 4
         ]
         (text document.title)

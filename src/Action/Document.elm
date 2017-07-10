@@ -8,6 +8,7 @@ import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
 import External exposing (toJs)
 import Utility
+import Action.Search
 
 
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
@@ -263,3 +264,50 @@ togglePublic model =
             { model | current_document = newDocument }
     in
         updateCurrentDocument updatedModel newDocument
+
+
+doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+doSearch searchDomain key model =
+    if (Debug.log "key" key) == 13 then
+        let
+            newSearchState =
+                Action.Search.updatedSearchState model searchDomain
+
+            updatedModel =
+                { model
+                    | searchState = newSearchState
+                    , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
+                    , appState = Action.UI.updateToolStatus model TableOfContents
+                }
+        in
+            ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
+            , Cmd.batch
+                [ Request.Document.getDocumentsWith newSearchState model.current_user.token
+                , External.render (External.encodeDocument model.current_document)
+                ]
+            )
+    else
+        ( model, Cmd.none )
+
+
+selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
+selectMasterDocument document model =
+    if document.attributes.docType == "master" then
+        selectMasterDocumentAux document model
+    else
+        ( model, Cmd.none )
+
+
+selectMasterDocumentAux : Document -> Model -> ( Model, Cmd Msg )
+selectMasterDocumentAux document model =
+    let
+        searchState =
+            model.searchState
+
+        updatedSearchState =
+            { searchState | query = "master=" ++ (toString document.id) }
+
+        updatedModel =
+            { model | searchState = updatedSearchState }
+    in
+        doSearch model.searchState.domain 13 updatedModel

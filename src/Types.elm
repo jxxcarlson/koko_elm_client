@@ -156,6 +156,7 @@ type Msg
     | DoSearch SearchDomain Int
     | DoRender Int
     | SelectDocument Document
+    | SelectMaster Document
     | UseSearchDomain SearchDomain
     | Tick Time
     | Refresh

@@ -158,26 +158,7 @@ update msg model =
 
         -- updatedSearchState
         DoSearch searchDomain key ->
-            if (Debug.log "key" key) == 13 then
-                let
-                    newSearchState =
-                        updatedSearchState model searchDomain
-
-                    updatedModel =
-                        { model
-                            | searchState = newSearchState
-                            , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
-                            , appState = updateToolStatus model TableOfContents
-                        }
-                in
-                    ( { updatedModel | appState = appStateWithPage model (displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
-                    , Cmd.batch
-                        [ getDocumentsWith newSearchState model.current_user.token
-                        , External.render (External.encodeDocument model.current_document)
-                        ]
-                    )
-            else
-                ( model, Cmd.none )
+            Action.Document.doSearch searchDomain key model
 
         DoRender key ->
             if key == 27 then
@@ -284,7 +265,9 @@ update msg model =
         SelectDocument document ->
             selectDocument model document
 
-        -- ( { model | current_document = document, message = "SelectDocument" }, render document.rendered_content )
+        SelectMaster document ->
+            Action.Document.selectMasterDocument document model
+
         InputContent content ->
             let
                 appState =
