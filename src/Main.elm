@@ -475,6 +475,7 @@ init flags =
             ""
             doc
             [ doc ]
+            []
             searchState
             initSocket
             ""

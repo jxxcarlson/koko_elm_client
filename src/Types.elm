@@ -34,11 +34,6 @@ type alias DocumentAttributesRecord =
     { attributes : DocumentAttributes }
 
 
-
-----------
-----------
-
-
 type alias Child =
     { title : String
     , level : Int
@@ -111,6 +106,7 @@ type alias Model =
     , info : String
     , current_document : Document
     , documents : Documents
+    , masterDocumentList : Documents
     , searchState : SearchState
     , phxSocket : Phoenix.Socket.Socket Msg
     , messageInProgress : String
