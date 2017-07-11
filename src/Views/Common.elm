@@ -43,7 +43,7 @@ documentIndentLevel document model =
             else
                 0
     in
-        8.0 + 15.0 * (toFloat level)
+        8.0 + 15.0 * (toFloat (level - 1))
 
 
 viewTocItem : Child -> Element Styles variation Msg

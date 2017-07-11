@@ -39,6 +39,7 @@ encodeDocumentAttributes record =
         [ ( "text_type", Encode.string <| record.textType )
         , ( "public", Encode.bool <| record.public )
         , ( "doc_type", Encode.string <| record.docType )
+        , ( "level", Encode.int <| record.level )
         ]
 
 
