@@ -24,37 +24,49 @@ reader model =
         }
         []
         [ named "separator" (hairline Hairline)
-        , named "TOCHeader"
-            (toolSelectorPanel model)
-        , named "contentHeader"
-            (el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title))
-        , named "content"
-            (text "")
+        , named "TOCHeader" (toolSelectorPanel model)
+        , named "contentHeader" (contentHeader model)
+        , named "content" (text "")
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
 
 
+contentHeader : Model -> Element Styles variation Msg
+contentHeader model =
+    el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
+
+
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
-        [ el Zero
-            [ width (px 85)
-            , onClick (SelectTool TableOfContents)
-            , title "Table of contents"
-            , height (px 30)
-            , padding 2
-            ]
-            (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
-        , el Zero
-            [ width (px 85)
-            , onClick (SelectTool ReaderTools)
-            , title "Tools"
-            , height (px 30)
-            , padding 2
-            ]
-            (html (FontAwesome.gear (Component.toolSelectorColor model ReaderTools) 25))
+        [ selectTableOfContents model
+        , selectReaderTools model
         , Common.recallLastSearchButton model
         ]
+
+
+selectTableOfContents : Model -> Element Styles variation Msg
+selectTableOfContents model =
+    el Zero
+        [ width (px 85)
+        , onClick (SelectTool TableOfContents)
+        , title "Table of contents"
+        , height (px 30)
+        , padding 2
+        ]
+        (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
+
+
+selectReaderTools : Model -> Element Styles variation Msg
+selectReaderTools model =
+    el Zero
+        [ width (px 85)
+        , onClick (SelectTool ReaderTools)
+        , title "Tools"
+        , height (px 30)
+        , padding 2
+        ]
+        (html (FontAwesome.gear (Component.toolSelectorColor model ReaderTools) 25))

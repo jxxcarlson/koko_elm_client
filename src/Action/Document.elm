@@ -9,6 +9,7 @@ import Views.External exposing (windowData)
 import External exposing (toJs)
 import Utility
 import Action.Search
+import Regex
 
 
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
@@ -19,9 +20,35 @@ updateCurrentDocumentWithContent content model =
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content, rendered_content = content }
+            { oldDocument | content = content, rendered_content = preprocess oldDocument }
     in
         updateCurrentDocument model newDocument
+
+
+preprocess : Document -> String
+preprocess document =
+    if document.attributes.docType == "master" then
+        preprocessMaster document.content
+    else if document.attributes.textType == "latex" then
+        preprocessLatex document.content
+    else
+        document.content
+
+
+preprocessMaster : String -> String
+preprocessMaster content =
+    (String.split "TOC:\n" content) |> List.head |> Maybe.withDefault ""
+
+
+preprocessLatex : String -> String
+preprocessLatex content =
+    content
+        |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
+        |> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
+
+
+
+-- |> Regex.replace Regex.All (Regex.regex "\\emph{(.*)}") (\{match} -> "<it>\\1</it>")
 
 
 setTextType : String -> Model -> ( Model, Cmd Msg )
@@ -138,7 +165,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , render (External.encodeDocument current_document)
+            , renderDocument current_document
             ]
         )
 
@@ -164,7 +191,7 @@ updateCurrentDocument model document =
             , appState = newAppState
             , message = "!! Rendering #" ++ (toString document.id)
           }
-        , Cmd.batch [ putDocument model document, External.render (External.encodeDocument document) ]
+        , Cmd.batch [ putDocument model document, renderDocument document ]
         )
 
 
@@ -227,7 +254,7 @@ selectDocument model document =
           }
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
-            , render (External.encodeDocument document)
+            , renderDocument document
             ]
         )
 
@@ -241,7 +268,7 @@ selectNewDocument model document =
         , info = "New document added: " ++ document.title
         , counter = model.counter + 1
       }
-    , render (External.encodeDocument document)
+    , renderDocument document
     )
 
 
@@ -284,7 +311,7 @@ doSearch searchDomain key model =
             ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
             , Cmd.batch
                 [ Request.Document.getDocumentsWith newSearchState model.current_user.token
-                , External.render (External.encodeDocument model.current_document)
+                , renderDocument model.current_document
                 ]
             )
     else
@@ -312,3 +339,7 @@ selectMasterDocumentAux document model =
             { model | searchState = updatedSearchState }
     in
         doSearch model.searchState.domain 13 updatedModel
+
+
+renderDocument document =
+    External.render (External.encodeDocument document)

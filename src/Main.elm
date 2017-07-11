@@ -126,7 +126,6 @@ update msg model =
             ( Action.User.login model, loginUserCmd model loginUrl )
 
         ReconnectUser jsonString ->
-            -- ( { model | message = "RECONNECT", info = "RECONNECT" }, toJs "RECONNECT" )
             let
                 maybeUserRecord =
                     Data.User.userRecord jsonString
@@ -167,7 +166,7 @@ update msg model =
             if key == 27 then
                 -- 27: ESCAPE
                 ( { model | info = "ESCAPE pressed, rendering ..." }
-                , External.render (External.encodeDocument model.current_document)
+                , Action.Document.renderDocument model.current_document
                 )
             else
                 ( model, Cmd.none )
@@ -188,7 +187,6 @@ update msg model =
         GetUserDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
 
-        -- ( { model | documents = documentsRecord.documents }, External.render model.current_document.rendered_content )
         GetUserDocuments (Err error) ->
             ( { model | message = "Error: could not get user documents." }, Cmd.none )
 
@@ -285,7 +283,7 @@ update msg model =
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-            ( { model | message = "Refresh, rendering" }, External.render (External.encodeDocument model.current_document) )
+            ( { model | message = "Refresh, rendering" }, Action.Document.renderDocument model.current_document )
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
@@ -466,7 +464,7 @@ init flags =
             initSocket
             ""
             []
-        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", External.render (External.encodeDocument doc) ]
+        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument doc ]
         )
 
 

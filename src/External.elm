@@ -4,6 +4,12 @@ import Json.Encode as Encode
 import Types exposing (Document)
 
 
+{- }
+   Use render (encodeDocument document) to send
+   rendered_content to JS-world.
+-}
+
+
 port render : Encode.Value -> Cmd msg
 
 

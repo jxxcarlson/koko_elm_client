@@ -17,7 +17,7 @@ navigation model =
         [ justify, paddingXY 30 4 ]
         [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
         , searchForm model
-        --, menu model
+          --, menu model
         , pageSelector model
         , loginButton Button model
         ]
@@ -35,34 +35,52 @@ searchForm model =
             (model.searchState.query)
         , row Zero
             [ center, spacing 5 ]
-            [ el Zero
-                [ EA.width (px 25)
-                , title "Search for my documents"
-                , EA.alignRight
-                , EE.onClick (DoSearch Private 13)
-                , EA.height (px 30)
-                , paddingXY 0 4
-                ]
-                (searchIcon model Private)
-            , el Zero
-                [ EA.width (px 25)
-                , title "Search for public documents"
-                , EA.alignLeft
-                , EE.onClick (DoSearch Public 13)
-                , EA.height (px 30)
-                , paddingXY 0 4
-                ]
-                (searchIcon model Public)
+            [ privateSearchButton model
+            , publicSearchButton model
             ]
         ]
 
 
-searchIcon : Model -> SearchDomain -> Element style variation msg
-searchIcon model searchDomain =
+privateSearchButton : Model -> Element Styles variation Msg
+privateSearchButton model =
+    el Zero
+        [ EA.width (px 25)
+        , title "Search for my documents"
+        , EA.alignRight
+        , EE.onClick (DoSearch Private 13)
+        , EA.height (px 30)
+        , paddingXY 0 4
+        ]
+        (privateSearchIcon model Private)
+
+
+publicSearchButton : Model -> Element Styles variation Msg
+publicSearchButton model =
+    el Zero
+        [ EA.width (px 25)
+        , title "Search for public documents"
+        , EA.alignLeft
+        , EE.onClick (DoSearch Public 13)
+        , EA.height (px 30)
+        , paddingXY 0 4
+        ]
+        (publicSearchIcon model Public)
+
+
+privateSearchIcon : Model -> SearchDomain -> Element style variation msg
+privateSearchIcon model searchDomain =
     if model.searchState.domain == searchDomain then
-        (EL.html (FontAwesome.search Color.white 25))
+        (EL.html (FontAwesome.search (Color.rgb 255 125 0) 25))
     else
-        (EL.html (FontAwesome.search Color.grey 25))
+        (EL.html (FontAwesome.search (Color.rgb 150 75 0) 25))
+
+
+publicSearchIcon : Model -> SearchDomain -> Element style variation msg
+publicSearchIcon model searchDomain =
+    if model.searchState.domain == searchDomain then
+        (EL.html (FontAwesome.search (Color.rgb 0 255 0) 25))
+    else
+        (EL.html (FontAwesome.search (Color.rgb 0 200 0) 25))
 
 
 loginButton style model =
@@ -73,6 +91,7 @@ loginButton style model =
         , padding 8
         ]
         (EL.text (authenticationButtonText model))
+
 
 cancelAuthentication style model =
     el style
@@ -92,10 +111,12 @@ authenticationButtonText model =
         "Sign in"
 
 
+
 -- https://ellie-app.com/3Gqxw7zLGzTa1/6
 
+
 textFormatMenu model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType")] (EL.text "Format")
+    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType") ] (EL.text "Format")
         |> below
             [ when model.appState.textTypeMenuDropped <|
                 column Menu
@@ -108,14 +129,14 @@ textFormatMenu model =
 
 
 textFormatButton textFormat model =
-  if textFormat == model.current_document.attributes.textType then
-    ActiveFlatButton
-  else
-    FlatButton
+    if textFormat == model.current_document.attributes.textType then
+        ActiveFlatButton
+    else
+        FlatButton
 
 
 docTypeMenu model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType")] (EL.text "Type")
+    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType") ] (EL.text "Type")
         |> below
             [ when model.appState.docTypeMenuDropped <|
                 column Menu
@@ -128,10 +149,11 @@ docTypeMenu model =
 
 
 docTypeButton docType model =
-  if docType == model.current_document.attributes.docType then
-    ActiveFlatButton
-  else
-    FlatButton
+    if docType == model.current_document.attributes.docType then
+        ActiveFlatButton
+    else
+        FlatButton
+
 
 toolSelectorColor model tool =
     if model.appState.tool == tool then
@@ -179,6 +201,7 @@ onlineStatus model =
         "Online"
     else
         "Offline"
+
 
 onlineStatusStyle : Model -> Styles
 onlineStatusStyle model =

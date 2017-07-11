@@ -30,31 +30,38 @@ editor model =
         }
         []
         [ named "separator" (hairline Hairline)
-        , named "TOCHeader"
-            (toolSelectorPanel model)
-        , named "contentHeader"
-            (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
-        , named "content"
-            (Keyed.row None
-                []
-                [ ( (toString model.counter)
-                  , (textArea None
-                        [ width (percent 100)
-                        , yScrollbar
-                        , padding 8
-                        , onInput InputContent
-                        , Utility.onKeyUp DoRender
-                        ]
-                        (model.current_document.content)
-                    )
-                  )
-                ]
-            )
+        , named "TOCHeader" (toolSelectorPanel model)
+        , named "contentHeader" (titlePanel model)
+        , named "content" (contentPanel model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         , named "editorPanel" (editorPanel model)
         ]
     ]
+
+
+titlePanel : Model -> Element Styles variation Msg
+titlePanel model =
+    (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
+
+
+contentPanel : Model -> Element Styles variation Msg
+contentPanel model =
+    (Keyed.row None
+        []
+        [ ( (toString model.counter)
+          , (textArea None
+                [ width (percent 100)
+                , yScrollbar
+                , padding 8
+                , onInput InputContent
+                , Utility.onKeyUp DoRender
+                ]
+                (model.current_document.content)
+            )
+          )
+        ]
+    )
 
 
 editorPanel : Model -> Element Styles variation Msg

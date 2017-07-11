@@ -75,6 +75,7 @@ var mountNode = document.getElementById('main');
           count = count + 1
           console.log("Render count: " + count)
           console.log("DocType = " + data.textType)
+          console.log("content: " + data.content)
           switch (data.textType) {
 
             case "adoc":
@@ -107,7 +108,7 @@ var mountNode = document.getElementById('main');
     var fudgeFactor = 70
 
     var reader_left =  toc_width
-    var reader_width = settings.width - 360
+    var reader_width = Math.min(600, (settings.width -360)) // settings.width - 360
     console.log ("READER  WIDTH: "  + reader_width)
     var reader_height = (settings.height - 190)
 
