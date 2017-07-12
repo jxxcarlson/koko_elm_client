@@ -14,14 +14,12 @@ import LatexParser.Latex
 
 type Latex
     = Macro1 M1
-    | Macro2 M2
     | Environment Env
 
 
 latex : Parser Latex
 latex =
     oneOf
-        [ map Macro1 macro1
-        , map Macro2 macro2
-        , map Environment environment
+        [ map Environment environment
+        , map Macro1 macro1
         ]

@@ -54,19 +54,19 @@ type alias Env =
 -}
 environment : Parser Env
 environment =
-    succeed Env
-        |. symbol "\\"
-        |. (keyword "begin")
-        |. symbol "{"
-        |= keep zeroOrMore (\c -> c /= '}')
-        |. symbol "}"
-        |= keep zeroOrMore (\c -> c /= '\\')
-        |. symbol "\\"
-        |. (keyword "end")
-        |. symbol "{"
-        |. keep zeroOrMore (\c -> c /= '}')
-        |. symbol "}"
-        |. ignore (Exactly 1) (\c -> c == ' ')
+    inContext "environment" <|
+        delayedCommit (keyword "\\begin") <|
+            succeed Env
+                |. symbol "{"
+                |= keep zeroOrMore (\c -> c /= '}')
+                |. symbol "}"
+                |= keep zeroOrMore (\c -> c /= '\\')
+                |. symbol "\\"
+                |. (keyword "end")
+                |. symbol "{"
+                |. keep zeroOrMore (\c -> c /= '}')
+                |. symbol "}"
+                |. ignore (Exactly 1) (\c -> c == ' ')
 
 
 type alias M1 =
@@ -80,13 +80,14 @@ type alias M1 =
 -}
 macro1 : Parser M1
 macro1 =
-    succeed M1
-        |. symbol "\\"
-        |= keep zeroOrMore (\c -> c /= '{')
-        |. symbol "{"
-        |= keep zeroOrMore (\c -> c /= '}')
-        |. symbol "}"
-        |. ignore (Exactly 1) (\c -> c == ' ')
+    inContext "macro1" <|
+        succeed M1
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> c /= '{')
+            |. symbol "{"
+            |= keep zeroOrMore (\c -> c /= '}')
+            |. symbol "}"
+            |. ignore (Exactly 1) (\c -> c == ' ')
 
 
 type alias M2 =
@@ -101,16 +102,17 @@ type alias M2 =
 -}
 macro2 : Parser M2
 macro2 =
-    succeed M2
-        |. symbol "\\"
-        |= keep zeroOrMore (\c -> c /= '{')
-        |. symbol "{"
-        |= keep zeroOrMore (\c -> c /= '}')
-        |. symbol "}"
-        |. symbol "{"
-        |= keep zeroOrMore (\c -> c /= '}')
-        |. symbol "}"
-        |. ignore (Exactly 1) (\c -> c == ' ')
+    inContext "macro2" <|
+        succeed M2
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> c /= '{')
+            |. symbol "{"
+            |= keep zeroOrMore (\c -> c /= '}')
+            |. symbol "}"
+            |. symbol "{"
+            |= keep zeroOrMore (\c -> c /= '}')
+            |. symbol "}"
+            |. ignore (Exactly 1) (\c -> c == ' ')
 
 
 
