@@ -1,8 +1,8 @@
 module LatexParser.Latex
     exposing
-        ( Macro1
-        , Macro2
-        , Environment
+        ( M1
+        , M2
+        , Env
         , macro1
         , macro2
         , environment
@@ -43,7 +43,7 @@ import Parser.LanguageKit exposing (variable)
 import Set
 
 
-type alias Environment =
+type alias Env =
     { env : String
     , body : String
     }
@@ -52,9 +52,9 @@ type alias Environment =
 {-|
    run environment "\\begin{foo}Blah, blah ...\\end{foo} "
 -}
-environment : Parser Environment
+environment : Parser Env
 environment =
-    succeed Environment
+    succeed Env
         |. symbol "\\"
         |. (keyword "begin")
         |. symbol "{"
@@ -69,7 +69,7 @@ environment =
         |. ignore (Exactly 1) (\c -> c == ' ')
 
 
-type alias Macro1 =
+type alias M1 =
     { name : String
     , arg : String
     }
@@ -78,9 +78,9 @@ type alias Macro1 =
 {-|
    run macro1 "\\foo{bar} "
 -}
-macro1 : Parser Macro1
+macro1 : Parser M1
 macro1 =
-    succeed Macro1
+    succeed M1
         |. symbol "\\"
         |= keep zeroOrMore (\c -> c /= '{')
         |. symbol "{"
@@ -89,7 +89,7 @@ macro1 =
         |. ignore (Exactly 1) (\c -> c == ' ')
 
 
-type alias Macro2 =
+type alias M2 =
     { name : String
     , arg1 : String
     , arg2 : String
@@ -99,9 +99,9 @@ type alias Macro2 =
 {-|
    run macro2 "\\foo{bar}{baz} "
 -}
-macro2 : Parser Macro2
+macro2 : Parser M2
 macro2 =
-    succeed Macro2
+    succeed M2
         |. symbol "\\"
         |= keep zeroOrMore (\c -> c /= '{')
         |. symbol "{"

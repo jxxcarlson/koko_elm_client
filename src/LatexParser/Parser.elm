@@ -3,9 +3,9 @@ module LatexParser.Parser exposing (..)
 import Parser exposing (..)
 import LatexParser.Latex
     exposing
-        ( Macro1
-        , Macro2
-        , Environment
+        ( M1
+        , M2
+        , Env
         , macro1
         , macro2
         , environment
@@ -13,15 +13,15 @@ import LatexParser.Latex
 
 
 type Latex
-    = M1 Macro1
-    | M2 Macro2
-    | Env Environment
+    = Macro1 M1
+    | Macro2 M2
+    | Environment Env
 
 
 latex : Parser Latex
 latex =
     oneOf
-        [ map M1 macro1
-        , map M2 macro2
-        , map Env environment
+        [ map Macro1 macro1
+        , map Macro2 macro2
+        , map Environment environment
         ]
