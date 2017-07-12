@@ -2,7 +2,6 @@ module LatexParser.Latex
     exposing
         ( Env
         , MA
-        , ARG
         , macro
         , environment
         )
@@ -65,22 +64,18 @@ environment =
                 |. symbol "{"
                 |. keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"
-                |. ignore (Exactly 1) (\c -> c == ' ')
+                |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
 
 
 type alias MA =
     { name : String
-    , args : List ARG
+    , args : List String
     }
 
 
-type alias ARG =
-    { value : String }
-
-
-arg : Parser ARG
+arg : Parser String
 arg =
-    succeed ARG
+    succeed identity
         |. symbol "{"
         |= keep zeroOrMore (\c -> c /= '}')
         |. symbol "}"
@@ -97,10 +92,17 @@ macro =
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
-            |. ignore (Exactly 1) (\c -> c == ' ')
+            |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+
+
+type alias InlineMath =
+    { value : String }
 
 
 
+-- inlineMath : Parser InlineMath
+-- inlineMath =
+--   inContext "inline math"
 {- Below this line: stuff I might use -}
 
 

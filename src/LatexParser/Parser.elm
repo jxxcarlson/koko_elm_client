@@ -4,7 +4,6 @@ import Parser exposing (..)
 import LatexParser.Latex
     exposing
         ( MA
-        , ARG
         , Env
         , macro
         , environment
