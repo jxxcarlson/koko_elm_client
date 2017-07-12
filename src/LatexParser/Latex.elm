@@ -1,10 +1,9 @@
 module LatexParser.Latex
     exposing
-        ( M1
-        , M2
-        , Env
-        , macro1
-        , macro2
+        ( Env
+        , MA
+        , ARG
+        , macro
         , environment
         )
 
@@ -69,49 +68,35 @@ environment =
                 |. ignore (Exactly 1) (\c -> c == ' ')
 
 
-type alias M1 =
+type alias MA =
     { name : String
-    , arg : String
+    , args : List ARG
     }
 
 
-{-|
-   run macro1 "\\foo{bar} "
--}
-macro1 : Parser M1
-macro1 =
-    inContext "macro1" <|
-        succeed M1
-            |. symbol "\\"
-            |= keep zeroOrMore (\c -> c /= '{')
-            |. symbol "{"
-            |= keep zeroOrMore (\c -> c /= '}')
-            |. symbol "}"
-            |. ignore (Exactly 1) (\c -> c == ' ')
+type alias ARG =
+    { value : String }
 
 
-type alias M2 =
-    { name : String
-    , arg1 : String
-    , arg2 : String
-    }
+arg : Parser ARG
+arg =
+    succeed ARG
+        |. symbol "{"
+        |= keep zeroOrMore (\c -> c /= '}')
+        |. symbol "}"
 
 
 {-|
-   run macro2 "\\foo{bar}{baz} "
+   run macro "\\foo{bar} "
+   run macro "\\foo{bar}{baz} "
 -}
-macro2 : Parser M2
-macro2 =
-    inContext "macro2" <|
-        succeed M2
+macro : Parser MA
+macro =
+    inContext "macro" <|
+        succeed MA
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
-            |. symbol "{"
-            |= keep zeroOrMore (\c -> c /= '}')
-            |. symbol "}"
-            |. symbol "{"
-            |= keep zeroOrMore (\c -> c /= '}')
-            |. symbol "}"
+            |= repeat zeroOrMore arg
             |. ignore (Exactly 1) (\c -> c == ' ')
 
 
