@@ -1,9 +1,16 @@
 module LatexParser.Latex
     exposing
-        ( Env
-        , MA
+        ( Environment_
+        , Macro_
+        , InlineMath_
+        , DisplayMath_
+        , BareMacro_
+        , Words_
         , macro
         , environment
+        , inlineMath
+        , displayMath
+        , words
         )
 
 {-|
@@ -41,7 +48,43 @@ import Parser.LanguageKit exposing (variable)
 import Set
 
 
-type alias Env =
+spaces : Parser ()
+spaces =
+    ignore zeroOrMore (\c -> c == ' ')
+
+
+ws : Parser ()
+ws =
+    ignore zeroOrMore (\c -> c == ' ' || c == '\n')
+
+
+word : Parser String
+word =
+    inContext "word" <|
+        succeed identity
+            |. spaces
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
+            |. spaces
+
+
+
+--  |= keep oneOrMore (\c -> c /= ' ')
+
+
+type alias Words_ =
+    { value : List String
+    }
+
+
+words : Parser Words_
+words =
+    inContext "words" <|
+        succeed Words_
+            |= repeat zeroOrMore word
+            |. symbol "\n"
+
+
+type alias Environment_ =
     { env : String
     , body : String
     }
@@ -50,11 +93,11 @@ type alias Env =
 {-|
    run environment "\\begin{foo}Blah, blah ...\\end{foo} "
 -}
-environment : Parser Env
+environment : Parser Environment_
 environment =
     inContext "environment" <|
         delayedCommit (keyword "\\begin") <|
-            succeed Env
+            succeed Environment_
                 |. symbol "{"
                 |= keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"
@@ -67,10 +110,35 @@ environment =
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
 
 
-type alias MA =
-    { name : String
-    , args : List String
+type alias InlineMath_ =
+    { value : String
     }
+
+
+inlineMath : Parser InlineMath_
+inlineMath =
+    inContext "inline math" <|
+        succeed InlineMath_
+            |. symbol "$"
+            |= keep zeroOrMore (\c -> c /= '$')
+            |. symbol "$"
+            |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+
+
+type alias DisplayMath_ =
+    { value : String
+    }
+
+
+displayMath : Parser DisplayMath_
+displayMath =
+    inContext "display math" <|
+        delayedCommit (symbol "$$") <|
+            succeed
+                DisplayMath_
+                |= keep zeroOrMore (\c -> c /= '$')
+                |. symbol "$$"
+                |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
 
 
 arg : Parser String
@@ -81,22 +149,40 @@ arg =
         |. symbol "}"
 
 
+type alias Macro_ =
+    { name : String
+    , args : List String
+    }
+
+
 {-|
    run macro "\\foo{bar} "
    run macro "\\foo{bar}{baz} "
 -}
-macro : Parser MA
+macro : Parser Macro_
 macro =
     inContext "macro" <|
-        succeed MA
+        succeed Macro_
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
             |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
 
 
-type alias InlineMath =
-    { value : String }
+type alias BareMacro_ =
+    { name : String
+    }
+
+
+{-|
+  Not used yet
+-}
+bareMacro : Parser BareMacro_
+bareMacro =
+    inContext "bare macro" <|
+        succeed BareMacro_
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> (c /= ' ' || c /= '\n') && (c /= '{'))
 
 
 
@@ -128,8 +214,3 @@ isVarChar char =
 keywords : Set.Set String
 keywords =
     Set.fromList [ "begin", "end" ]
-
-
-spaces : Parser ()
-spaces =
-    ignore zeroOrMore (\c -> c == ' ')
