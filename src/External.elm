@@ -4,22 +4,11 @@ import Json.Encode as Encode
 import Types exposing (Document)
 
 
-{- }
+{-| }
    Use render (encodeDocument document) to send
    rendered_content to JS-world.
 -}
-
-
 port render : Encode.Value -> Cmd msg
-
-
-
--- type alias Value = {
---   content: String,
---   docType: String
--- }
--- encodeDocument { content, docType } =
---   [ ("content", Encode.string content), ("docType", Encode.string docType) ] |> Encode.object
 
 
 {-|
