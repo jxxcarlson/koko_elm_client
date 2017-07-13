@@ -118,6 +118,6 @@ type alias LatexList =
 
 latexList : Parser LatexList
 latexList =
-    inContext "words" <|
+    inContext "latexList" <|
         succeed LatexList
             |= repeat zeroOrMore latex

@@ -10,6 +10,7 @@ module LatexParser.Latex
         , environment
         , inlineMath
         , displayMath
+        , word
         , words
         )
 
@@ -64,7 +65,7 @@ word =
         succeed identity
             |. spaces
             |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
-            |. spaces
+            |. ignore zeroOrMore (\c -> c == ' ')
 
 
 
@@ -81,8 +82,13 @@ words : Parser Words_
 words =
     inContext "words" <|
         succeed Words_
+            |. spaces
             |= repeat zeroOrMore word
-            |. symbol "\n"
+
+
+
+--|. oneOf [ symbol "\\", symbol "\n", Parser.end ]
+--|. symbol "\n"
 
 
 type alias Environment_ =
@@ -164,6 +170,7 @@ macro : Parser Macro_
 macro =
     inContext "macro" <|
         succeed Macro_
+            |. spaces
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
