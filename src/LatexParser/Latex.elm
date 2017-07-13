@@ -68,6 +68,7 @@ word =
 
 
 
+-- |. spaces
 --  |= keep oneOrMore (\c -> c /= ' ')
 
 
@@ -166,7 +167,7 @@ macro =
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
-            |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+            |. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n'), Parser.end ]
 
 
 type alias BareMacro_ =
