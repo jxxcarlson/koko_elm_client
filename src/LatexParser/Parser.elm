@@ -121,3 +121,17 @@ latexList =
     inContext "latexList" <|
         succeed LatexList
             |= repeat zeroOrMore latex
+
+
+latexList1 : Parser LatexList
+latexList1 =
+    inContext "latexList" <|
+        succeed LatexList
+            |= repeat (Exactly 1) latex
+
+
+latexList2 : Parser LatexList
+latexList2 =
+    inContext "latexList" <|
+        succeed LatexList
+            |= repeat (Exactly 2) latex
