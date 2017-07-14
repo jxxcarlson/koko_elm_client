@@ -53,7 +53,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(M4) parses macros with one argument" <|
+            , test "(M4) parses macros with one argument (2)" <|
                 \_ ->
                     let
                         result =
@@ -89,7 +89,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(E1) parses environments with trailing \n" <|
+            , test "(E1) parses environments with trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -101,7 +101,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(IM1) parses inlineMath with trailing space" <|
+            , test "(IM) parses inlineMath with trailing space" <|
                 \_ ->
                     let
                         result =
@@ -113,7 +113,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(DM1) parses displayMath with trailing \n" <|
+            , test "(DM) parses displayMath with trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -129,7 +129,7 @@ suite =
         , describe
             "LatexList"
             -- Nest as many descriptions as you like.
-            [ test "(LL.M 1) parses one macro with no trailing space" <|
+            [ test "(LL M1) parses one macro with no trailing space" <|
                 \_ ->
                     let
                         result =
@@ -141,7 +141,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(LL.M 2) parses two macros with no trailing space" <|
+            , test "(LL M2) parses two macros with no trailing space" <|
                 \_ ->
                     let
                         result =
@@ -153,7 +153,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(LL.WM 1) parses text with words and macros" <|
+            , test "(LL WM) parses text with words and macros" <|
                 \_ ->
                     let
                         result =

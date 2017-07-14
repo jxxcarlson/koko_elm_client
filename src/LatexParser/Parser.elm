@@ -58,6 +58,7 @@ import LatexParser.Latex
         , inlineMath
         , displayMath
         , words
+        , word
         )
 
 
@@ -67,6 +68,7 @@ type Latex
     | InlineMath InlineMath_
     | DisplayMath DisplayMath_
     | Words Words_
+    | Word String
 
 
 defaultLatex : Latex
@@ -107,7 +109,7 @@ latex =
             , map Macro macro
             , map DisplayMath displayMath
             , map InlineMath inlineMath
-            , map Words words
+            , map Word word
             ]
 
 

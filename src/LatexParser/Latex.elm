@@ -84,11 +84,7 @@ words =
         succeed Words_
             |. spaces
             |= repeat zeroOrMore word
-
-
-
---|. oneOf [ symbol "\\", symbol "\n", Parser.end ]
---|. symbol "\n"
+            |. oneOf [ symbol "\n", symbol "\\" ]
 
 
 type alias Environment_ =
