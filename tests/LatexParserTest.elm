@@ -65,30 +65,6 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "(W1) parses words with trailing space and EOL" <|
-                \_ ->
-                    let
-                        result =
-                            run latex "a b c \n" |> latexGet
-                    in
-                        case (result) of
-                            Words _ ->
-                                Expect.equal result (Words { value = [ "a", "b", "c" ] })
-
-                            _ ->
-                                Expect.fail "Wrong type"
-            , test "(W2) parses words with trailing EOL" <|
-                \_ ->
-                    let
-                        result =
-                            run latex "a b c\n" |> latexGet
-                    in
-                        case (result) of
-                            Words _ ->
-                                Expect.equal result (Words { value = [ "a", "b", "c" ] })
-
-                            _ ->
-                                Expect.fail "Wrong type"
             , test "(E1) parses environments with trailing EOL" <|
                 \_ ->
                     let
@@ -161,7 +137,7 @@ suite =
                     in
                         case (result) of
                             Ok v ->
-                                Expect.equal v { value = [ Words { value = [ "ho", "ho", "ho" ] }, Macro { name = "emph", args = [ "foo" ] }, Words { value = [ "ha", "ha", "ha" ] }, Macro { name = "foo", args = [ "1", "2" ] } ] }
+                                Expect.equal v { value = [ Word "ho", Word "ho", Word "ho", Macro { name = "emph", args = [ "foo" ] }, Word "ha", Word "ha", Word "ha", Macro { name = "yada", args = [ "1", "2" ] } ] }
 
                             _ ->
                                 Expect.fail "Wrong type"

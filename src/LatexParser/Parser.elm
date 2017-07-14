@@ -88,19 +88,6 @@ latexListGet r =
     r |> Result.withDefault defaultLatexList
 
 
-{-|
-  See also (per @jessta): Result.map
-
-  Sample test:
--}
-rr =
-    run latexList "a b c\n d e f\n"
-
-
-vv =
-    .value (latexListGet rr)
-
-
 latex : Parser Latex
 latex =
     inContext "latex" <|
@@ -123,17 +110,3 @@ latexList =
     inContext "latexList" <|
         succeed LatexList
             |= repeat zeroOrMore latex
-
-
-latexList1 : Parser LatexList
-latexList1 =
-    inContext "latexList" <|
-        succeed LatexList
-            |= repeat (Exactly 1) latex
-
-
-latexList2 : Parser LatexList
-latexList2 =
-    inContext "latexList" <|
-        succeed LatexList
-            |= repeat (Exactly 2) latex
