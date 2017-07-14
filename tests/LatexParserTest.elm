@@ -2,6 +2,7 @@ module LatexParserTest exposing (..)
 
 import LatexParser.Parser exposing (..)
 import LatexParser.Latex exposing (..)
+import LatexParser.Render exposing (transform)
 import Parser exposing (run)
 
 
@@ -141,5 +142,14 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
+            ]
+        , describe "Render"
+            [ test "(R W) renders a sequence of words" <|
+                \_ ->
+                    let
+                        result =
+                            run latexList "ho ho ho " |> latexListGet |> List.map LatexParser.Render.transform
+                    in
+                        Expect.equal result [ "ho", "ho", "ho" ]
             ]
         ]

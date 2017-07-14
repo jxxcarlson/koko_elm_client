@@ -44,8 +44,9 @@ latexGet r =
     r |> Result.withDefault defaultLatex
 
 
+latexListGet : Result.Result Parser.Error LatexList -> List Latex
 latexListGet r =
-    r |> Result.withDefault defaultLatexList
+    r |> Result.withDefault defaultLatexList |> .value
 
 
 latex : Parser Latex
