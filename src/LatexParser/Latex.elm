@@ -73,11 +73,17 @@ word =
 --  |= keep oneOrMore (\c -> c /= ' ')
 
 
+{-|
+  Not currently used
+-}
 type alias Words_ =
     { value : List String
     }
 
 
+{-|
+  Not currently used
+-}
 words : Parser Words_
 words =
     inContext "words" <|
@@ -111,6 +117,7 @@ environment =
                 |. keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+                |. spaces
 
 
 type alias InlineMath_ =
@@ -126,6 +133,7 @@ inlineMath =
             |= keep zeroOrMore (\c -> c /= '$')
             |. symbol "$"
             |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+            |. spaces
 
 
 type alias DisplayMath_ =
@@ -142,6 +150,7 @@ displayMath =
                 |= keep zeroOrMore (\c -> c /= '$')
                 |. symbol "$$"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+                |. spaces
 
 
 arg : Parser String
@@ -171,6 +180,7 @@ macro =
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
             |. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n'), Parser.end ]
+            |. spaces
 
 
 type alias BareMacro_ =
@@ -190,9 +200,6 @@ bareMacro =
 
 
 
--- inlineMath : Parser InlineMath
--- inlineMath =
---   inContext "inline math"
 {- Below this line: stuff I might use -}
 
 
