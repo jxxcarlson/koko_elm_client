@@ -10,8 +10,10 @@ module LatexParser.Latex
         , environment
         , inlineMath
         , displayMath
+        , displayMath2
         , word
         , words
+        , texComment
         )
 
 {-|
@@ -153,6 +155,22 @@ displayMath =
                 |. spaces
 
 
+
+-- \[ \int_0^1 x^n dx = \frac{1}{n+1} \]
+
+
+displayMath2 : Parser DisplayMath_
+displayMath2 =
+    inContext "display math" <|
+        delayedCommit (symbol "\\[") <|
+            succeed
+                DisplayMath_
+                |= keep zeroOrMore (\c -> c /= '\\')
+                |. symbol "\\]"
+                |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+                |. spaces
+
+
 arg : Parser String
 arg =
     succeed identity
@@ -197,6 +215,12 @@ bareMacro =
         succeed BareMacro_
             |. symbol "\\"
             |= keep zeroOrMore (\c -> (c /= ' ' || c /= '\n') && (c /= '{'))
+
+
+texComment : Parser ()
+texComment =
+    symbol "%"
+        |. ignoreUntil "\n"
 
 
 

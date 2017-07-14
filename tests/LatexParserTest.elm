@@ -1,8 +1,8 @@
 module LatexParserTest exposing (..)
 
-import LatexParser.Parser exposing (..)
 import LatexParser.Latex exposing (..)
-import LatexParser.Render exposing (transform)
+import LatexParser.Parser exposing (..)
+import LatexParser.Render exposing (transformText)
 import Parser exposing (run)
 
 
@@ -148,8 +148,18 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "ho ho ho " |> latexListGet |> List.map LatexParser.Render.transform
+                            run latexList "ho ho ho " |> latexListGet |> List.map LatexParser.Render.transformLatex
                     in
                         Expect.equal result [ "ho", "ho", "ho" ]
+            , test "(R C) renders commments -- i.e., doesn't show them." <|
+                \_ ->
+                    let
+                        input =
+                            "\\emph{foo} bar: $a^2 + b^2 = c^2$ \\begin{theorem} There are infinitely many primes.\\end{theorem} % This is a test.\n"
+
+                        expectedOutput =
+                            "<it>foo</it> bar:  $a^2 + b^2 = c^2$  \n<strong>Theorem</strong>\n<it>\n There are infinitely many primes.\n</it>\n "
+                    in
+                        Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
         ]

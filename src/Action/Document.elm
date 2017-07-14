@@ -10,6 +10,7 @@ import External exposing (toJs)
 import Utility
 import Action.Search
 import Regex
+import LatexParser.Render
 
 
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
@@ -20,19 +21,25 @@ updateCurrentDocumentWithContent content model =
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content, rendered_content = preprocess oldDocument }
+            { oldDocument
+                | content = content
+                , rendered_content = preprocess content oldDocument
+            }
+
+        newModel =
+            { model | message = preprocess content oldDocument }
     in
-        updateCurrentDocument model newDocument
+        updateCurrentDocument newModel newDocument
 
 
-preprocess : Document -> String
-preprocess document =
+preprocess : String -> Document -> String
+preprocess content document =
     if document.attributes.docType == "master" then
-        preprocessMaster document.content
+        preprocessMaster content
     else if document.attributes.textType == "latex" then
-        preprocessLatex document.content
+        preprocessLatex content
     else
-        document.content
+        content
 
 
 preprocessMaster : String -> String
@@ -44,10 +51,12 @@ preprocessLatex : String -> String
 preprocessLatex content =
     content
         |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
-        |> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
+        |> LatexParser.Render.transformText
 
 
 
+-- |> LatexParser.Render.transformText.identity
+--|> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
 -- |> Regex.replace Regex.All (Regex.regex "\\emph{(.*)}") (\{match} -> "<it>\\1</it>")
 
 

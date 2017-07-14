@@ -13,10 +13,12 @@ import LatexParser.Latex
         , InlineMath_
         , DisplayMath_
         , Words_
+        , texComment
         , macro
         , environment
         , inlineMath
         , displayMath
+        , displayMath2
         , words
         , word
         )
@@ -29,6 +31,7 @@ type Latex
     | DisplayMath DisplayMath_
     | Words Words_
     | Word String
+    | Comment ()
 
 
 defaultLatex : Latex
@@ -53,7 +56,9 @@ latex : Parser Latex
 latex =
     inContext "latex" <|
         oneOf
-            [ map Environment environment
+            [ map Comment texComment
+            , map Environment environment
+            , map DisplayMath displayMath2
             , map Macro macro
             , map DisplayMath displayMath
             , map InlineMath inlineMath

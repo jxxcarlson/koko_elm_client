@@ -2,11 +2,16 @@ module LatexParser.Render exposing (..)
 
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import List.Extra
+import String.Extra
 import Parser
 
 
+identity text =
+    text
+
+
 transformText text =
-    Parser.run latexList (text ++ " ")
+    Parser.run latexList text
         |> latexListGet
         |> List.map transformLatex
         |> String.join (" ")
@@ -20,6 +25,9 @@ getAt k list_ =
 transformLatex : Latex -> String
 transformLatex latex =
     case latex of
+        Comment () ->
+            ""
+
         Word str ->
             str
 
@@ -57,7 +65,7 @@ handleEnvironment v =
 
 
 handleDefaultEnvironment env body =
-    "<h4>" ++ env ++ "</h4>\n" ++ body ++ "\n"
+    "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<it>\n" ++ body ++ "\n</it>\n"
 
 
 
