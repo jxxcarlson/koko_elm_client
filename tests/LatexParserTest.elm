@@ -17,7 +17,7 @@ suite =
     describe "The Latex Parser"
         [ describe "latex"
             -- Nest as many descriptions as you like.
-            [ test "parses macros with one argument and trailing space" <|
+            [ test "(M1) parses macros with one argument and trailing space" <|
                 \_ ->
                     let
                         result =
@@ -29,7 +29,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses macros with one argument and trailing \n" <|
+            , test "(M2) parses macros with one argument and trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -41,7 +41,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses macros with one argument and no trailing character" <|
+            , test "(M3) parses macros with one argument and no trailing character" <|
                 \_ ->
                     let
                         result =
@@ -53,7 +53,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses macros with one argument (2)" <|
+            , test "(M4) parses macros with one argument (2)" <|
                 \_ ->
                     let
                         result =
@@ -65,7 +65,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses words with trailing space and \n" <|
+            , test "(W1) parses words with trailing space and EOL" <|
                 \_ ->
                     let
                         result =
@@ -77,7 +77,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses words with trailing \n" <|
+            , test "(W2) parses words with trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -89,7 +89,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses environments with trailing \n" <|
+            , test "(E1) parses environments with trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -101,7 +101,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses inlineMath with trailing space" <|
+            , test "(IM) parses inlineMath with trailing space" <|
                 \_ ->
                     let
                         result =
@@ -113,7 +113,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses displayMath with trailing \n" <|
+            , test "(DM) parses displayMath with trailing EOL" <|
                 \_ ->
                     let
                         result =
@@ -129,7 +129,7 @@ suite =
         , describe
             "LatexList"
             -- Nest as many descriptions as you like.
-            [ test "parses one macro with no trailing space" <|
+            [ test "(LL M1) parses one macro with no trailing space" <|
                 \_ ->
                     let
                         result =
@@ -141,7 +141,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses two macros with no trailing space" <|
+            , test "(LL M2) parses two macros with no trailing space" <|
                 \_ ->
                     let
                         result =
@@ -153,7 +153,7 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
-            , test "parses text with words and macros" <|
+            , test "(LL WM) parses text with words and macros" <|
                 \_ ->
                     let
                         result =

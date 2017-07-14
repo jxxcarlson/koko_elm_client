@@ -11,6 +11,7 @@ module LatexParser.Latex
         , inlineMath
         , displayMath
         , words
+        , word
         )
 
 {-|
@@ -82,7 +83,7 @@ words =
     inContext "words" <|
         succeed Words_
             |= repeat zeroOrMore word
-            |. symbol "\n"
+            |. oneOf [ symbol "\n", symbol "\\" ]
 
 
 type alias Environment_ =
