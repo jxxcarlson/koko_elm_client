@@ -161,5 +161,21 @@ suite =
                             "<it>foo</it> bar:  $a^2 + b^2 = c^2$  \n<strong>Theorem</strong>\n<it>\n There are infinitely many primes.\n</it>\n "
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
+            , test "(R Simple) render simple example" <|
+                \_ ->
+                    let
+                        input =
+                            """% Test file
+\\emph{Pythagoras} said: \\[ a^2 + b^2 = c^2 \\] % basic geometry
+Some physics: \\begin{equation}
+   E = mc^2
+\\end{equation}
+
+"""
+
+                        expectedOutput =
+                            " <it>Pythagoras</it> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n<strong>Equation</strong>\n<it>\n\n   E = mc^2\n\n</it>\n"
+                    in
+                        Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
         ]

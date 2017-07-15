@@ -47,16 +47,23 @@ preprocessMaster content =
     (String.split "TOC:\n" content) |> List.head |> Maybe.withDefault ""
 
 
+replace : String -> String -> String -> String
+replace search substitution string =
+    string
+        |> Regex.replace Regex.All (Regex.regex (Regex.escape search)) (\_ -> substitution)
+
+
 preprocessLatex : String -> String
 preprocessLatex content =
     content
-        |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
+        |> replace "\\" "\\\\"
         |> LatexParser.Render.transformText
 
 
 
+-- |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
 -- |> LatexParser.Render.transformText.identity
---|> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
+-- |> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
 -- |> Regex.replace Regex.All (Regex.regex "\\emph{(.*)}") (\{match} -> "<it>\\1</it>")
 
 

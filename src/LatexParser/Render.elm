@@ -4,14 +4,34 @@ import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import List.Extra
 import String.Extra
 import Parser
+import Regex
+
+
+identityy text =
+    text
+
+
+transformText2 text =
+    Parser.run latexList text
+        |> latexListGet
+        |> List.map transformLatex
+        |> String.join (" ")
 
 
 identity text =
     text
 
 
+remapBackslash =
+    String.Extra.replace "\\" "X"
+
+
+
+-- String.Extra.replace "\\" "\\\\"
+
+
 transformText text =
-    Parser.run latexList text
+    Parser.run latexList (text |> remapBackslash)
         |> latexListGet
         |> List.map transformLatex
         |> String.join (" ")
@@ -78,7 +98,7 @@ handleMacro v =
             handleEmph v.args
 
         _ ->
-            "Macro <strong>" ++ v.name ++ ":</strong> not recognized"
+            "Macro <strong>" ++ v.name ++ ":</strong>      "
 
 
 handleEmph args =
