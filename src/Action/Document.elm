@@ -232,7 +232,7 @@ getDocumentById model k =
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
-    ( { model | appState = updateToolStatus model DocumentParameterTools }
+    ( { model | appState = updateToolStatus model EditorTools }
     , Request.Document.createDocument document model.current_user.token
     )
 
