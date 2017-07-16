@@ -116,9 +116,9 @@ authenticationButtonText model =
 
 
 textFormatMenu model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType") ] (EL.text "Format")
+    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType") ] (EL.text "Format")
         |> below
-            [ when model.appState.textTypeMenuDropped <|
+            [ --when model.appState.textTypeMenuDropped <|
                 column Menu
                     [ padding 8, spacing 2 ]
                     [ el (textFormatButton "plain" model) [ EA.width (px 85), EE.onClick (SetTextType "plain"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Plain")
@@ -126,6 +126,7 @@ textFormatMenu model =
                     , el (textFormatButton "latex" model) [ EA.width (px 85), EE.onClick (SetTextType "latex"), EA.height (px 30), paddingXY 8 14 ] (EL.text "LaTeX")
                     ]
             ]
+
 
 
 textFormatButton textFormat model =
@@ -136,9 +137,9 @@ textFormatButton textFormat model =
 
 
 docTypeMenu model =
-    el FlatButton [ EA.width (px 100), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType") ] (EL.text "Type")
+    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType") ] (EL.text "Type")
         |> below
-            [ when model.appState.docTypeMenuDropped <|
+            [ -- when model.appState.docTypeMenuDropped <|
                 column Menu
                     [ padding 8, spacing 2 ]
                     [ el (docTypeButton "standard" model) [ EA.width (px 85), EE.onClick (SetDocType "standard"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Standard")

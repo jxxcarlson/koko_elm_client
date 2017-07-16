@@ -36,6 +36,7 @@ type Styles
     | ActiveButton
     | FlatButton
     | ActiveFlatButton
+    | HeaderLabel
     | SearchField
     | Field
     | Form
@@ -166,6 +167,13 @@ stylesheet =
         , style FlatButton
             [ Color.text Color.white
             , Color.background Color.charcoal
+            , Font.size 14
+            , Font.center
+            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            ]
+        , style HeaderLabel
+            [ Color.text Color.white
+            , Color.background Color.lightCharcoal
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
