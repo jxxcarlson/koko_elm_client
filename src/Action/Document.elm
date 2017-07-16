@@ -50,7 +50,6 @@ preprocessMaster content =
 preprocessLatex : String -> String
 preprocessLatex content =
     content
-        |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
         |> LatexParser.Render.transformText
 
 
