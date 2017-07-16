@@ -78,7 +78,7 @@ handleMacro v =
             handleEmph v.args
 
         _ ->
-            "Macro <strong>" ++ v.name ++ ":</strong> not recognized"
+            "Macro <b>" ++ v.name ++ ":</b> not recognized"
 
 
 handleEmph args =
@@ -86,4 +86,4 @@ handleEmph args =
         arg =
             getAt 0 args
     in
-        "<it>" ++ arg ++ "</it>"
+        "<b>" ++ arg ++ "</b>"
