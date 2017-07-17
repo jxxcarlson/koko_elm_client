@@ -56,6 +56,7 @@ import Views.Component as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
+import Views.Image exposing (imageEditor)
 import Utility
 
 
@@ -292,17 +293,17 @@ update msg model =
             togglePublic model
 
         ImageSelected ->
-            ( model
+            ( {model | message = "Image selected"}
             , External.fileSelected model.imageRecord.id
             )
 
         ImageRead data ->
             let
                 newImage =
-                    { contents = data.contents
+                    { contents = Debug.log "IMAGE CONTENTS" data.contents
                     , filename = data.filename
                     }
-                newImageRecord = { id = "-", mImage = Just newImage }
+                newImageRecord = {id = "ImageInputId", mImage = Just newImage }
             in
                 ( { model | imageRecord = newImageRecord }
                 , Cmd.none
@@ -405,6 +406,9 @@ page model =
 
         EditorPage ->
             editor model
+
+        ImagePage ->
+            imageEditor model
 
         HomePage ->
             home model

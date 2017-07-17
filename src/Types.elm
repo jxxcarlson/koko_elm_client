@@ -28,21 +28,22 @@ type alias ImagePortData =
     { contents : String
     , filename : String
     }
-    
+
 type alias Image =
     { contents : String
     , filename : String
     }
 
 -- defaultImage :: Image
-defaultImage = Image "000" "foo"
+defaultImage = Image "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" "fileName"
 
 type alias ImageRecord =
-    {id : String
-    , mImage : Maybe Image}
+    { id : String
+    , mImage : Maybe Image
+  }
 
 -- defaultImageRecord :: ImageRecord
-defaultImageRecord = ImageRecord "0" (Just defaultImage)
+defaultImageRecord = ImageRecord "ImageInputId" Nothing
 
 
 type alias DocumentAttributes =
@@ -200,6 +201,7 @@ type Page
     = HomePage
     | ReaderPage
     | EditorPage
+    | ImagePage
 
 
 pageName : Page -> String
@@ -213,6 +215,9 @@ pageName page =
 
         EditorPage ->
             "Editor"
+
+        ImagePage ->
+          "Image"
 
 
 type Tool
