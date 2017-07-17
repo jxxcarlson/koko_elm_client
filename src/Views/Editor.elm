@@ -71,7 +71,8 @@ editorPanel model =
         [ Common.publicCheckbox model
         , newDocumentButton model
         , refreshButton model
-        , full PanelInfo [ padding 11 ] (text ("Words: " ++ (toString <| wordCount <| model.current_document)))
+        , full PanelInfo [] ( el Zero [verticalCenter] (text ("ID: " ++ (toString model.current_document.id))))
+        , full PanelInfo [] (el Zero [verticalCenter] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
         , deleteButton model
         ]
 

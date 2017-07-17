@@ -40,10 +40,13 @@ transformQualifiedItem item =
             "public=" ++ stem
 
         [ "a", stem ] ->
-            "author=" ++ stem
+            "authorname=" ++ stem
 
         [ "id", stem ] ->
             "id=" ++ stem
+
+        [ "ident", stem ] ->
+            "ident=" ++ stem
 
         [ "sort", "updated" ] ->
             "sort=updated"
