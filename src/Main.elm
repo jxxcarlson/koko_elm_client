@@ -291,6 +291,23 @@ update msg model =
         TogglePublic ->
             togglePublic model
 
+        ImageSelected ->
+            ( model
+            , External.fileSelected model.imageRecord.id
+            )
+
+        ImageRead data ->
+            let
+                newImage =
+                    { contents = data.contents
+                    , filename = data.filename
+                    }
+                newImageRecord = { id = "-", mImage = Just newImage }
+            in
+                ( { model | imageRecord = newImageRecord }
+                , Cmd.none
+                )
+
         Tick time ->
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
@@ -376,6 +393,7 @@ subscriptions model =
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , External.fileContentRead ImageRead
         ]
 
 
@@ -464,6 +482,7 @@ init flags =
             initSocket
             ""
             []
+            defaultImageRecord
         , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument doc ]
         )
 

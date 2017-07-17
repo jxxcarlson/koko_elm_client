@@ -1,7 +1,7 @@
 port module External exposing (..)
 
 import Json.Encode as Encode
-import Types exposing (Document)
+import Types exposing (Document, ImagePortData)
 
 
 {-| }
@@ -43,3 +43,13 @@ port reconnectUser : (String -> msg) -> Sub msg
 
 
 port toElm : (String -> msg) -> Sub msg
+
+-- IMAGE
+
+
+
+
+port fileSelected : String -> Cmd msg
+
+
+port fileContentRead : (ImagePortData -> msg) -> Sub msg
