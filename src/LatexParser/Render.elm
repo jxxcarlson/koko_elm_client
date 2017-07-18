@@ -98,11 +98,7 @@ handleMacro v =
             handleEmph v.args
 
         _ ->
-<<<<<<< HEAD
-            "Macro <strong>" ++ v.name ++ ":</strong>      "
-=======
             "Macro <b>" ++ v.name ++ ":</b> not recognized"
->>>>>>> 2f80e5e163d525c1b6771a5a0dbeb94c5787dbe8
 
 
 handleEmph args =

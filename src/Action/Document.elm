@@ -56,10 +56,6 @@ replace search substitution string =
 preprocessLatex : String -> String
 preprocessLatex content =
     content
-<<<<<<< HEAD
-        |> replace "\\" "\\\\"
-=======
->>>>>>> 2f80e5e163d525c1b6771a5a0dbeb94c5787dbe8
         |> LatexParser.Render.transformText
 
 
