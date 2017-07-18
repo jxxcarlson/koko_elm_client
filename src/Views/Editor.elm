@@ -117,21 +117,19 @@ toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
-        [ el Zero
-            [ width (px 85)
-            , onClick (SelectTool TableOfContents)
-            , title "Table of contents"
-            , height (px 30)
-            , padding 2
-            ]
-            (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
-        , el Zero
-            [ width (px 85)
-            , onClick (SelectTool EditorTools)
-            , title "Tools"
-            , height (px 30)
-            , padding 2
-            ]
-            (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))
+        [ Common.selectTableOfContents model
+        , Common.printButton model.current_document
+        , selectEditTools model
         , Common.recallLastSearchButton model
         ]
+
+selectEditTools : Model -> Element Styles variation Msg
+selectEditTools model =
+  el Zero
+      [ width (px 85)
+      , onClick (SelectTool EditorTools)
+      , title "Tools"
+      , height (px 30)
+      , padding 2
+      ]
+      (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))

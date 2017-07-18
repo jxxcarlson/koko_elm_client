@@ -2,6 +2,8 @@ module Views.Common
     exposing
         ( documentListView
         , tool
+        , selectTableOfContents
+        , tableOfContents
         , publicCheckbox
         , recallLastSearchButton
         , printButton
@@ -70,6 +72,16 @@ documentListView model =
             ++ (List.map (viewTitle model model.current_document) model.documents)
         )
 
+selectTableOfContents : Model -> Element Styles variation Msg
+selectTableOfContents model =
+    el Zero
+        [ width (px 85)
+        , onClick (SelectTool TableOfContents)
+        , title "Table of contents"
+        , height (px 30)
+        , padding 2
+        ]
+        (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
 
 tableOfContents : Model -> Element Styles variation Msg
 tableOfContents model =
