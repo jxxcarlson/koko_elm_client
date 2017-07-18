@@ -43,7 +43,7 @@ toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
         [ selectTableOfContents model
-        , Common.printButton model
+        , Common.printButton model.current_document
         , selectReaderTools model
         , Common.recallLastSearchButton model
         ]

@@ -16,6 +16,7 @@ import Action.UI as UI
 import Views.Component as Component
 import FontAwesome
 import Color
+import Request.Api
 
 
 tocStyle : Document -> Document -> Styles
@@ -178,10 +179,24 @@ publicCheckbox model =
         ]
 
 
-printButton : Model -> Element Styles variation Msg
-printButton model =
-    link ("http://localhost:4000/print/documents/" ++ (toString model.current_document.id)) <|
-        el Zero [ verticalCenter ] (html (FontAwesome.print Color.white 25))
+printButton : Document -> Element Styles variation Msg
+printButton document =
+    link (printUrl document) <|
+        el Zero [ verticalCenter, target "_blank"] (html (FontAwesome.print Color.white 25))
+
+printUrl : Document -> String
+printUrl document =
+    Request.Api.printUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+
+printTypeString : Document -> String
+printTypeString document =
+  case document.attributes.textType of
+    "plain" -> "text=plain"
+    "adoc" -> "text=adoc"
+    "adoc:latex" -> "text=adoc:latex"
+    "latex" -> "text=latex"
+    "markdown" -> "text=markdown"
+    _ -> "text=plain"
 
 
 recallLastSearchButton : Model -> Element Styles variation Msg
