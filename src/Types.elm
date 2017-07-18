@@ -6,6 +6,8 @@ import Phoenix.Socket
 import Json.Encode as JsEncode
 
 
+
+
 type alias User =
     { name : String, username : String, email : String, password : String, token : String }
 
@@ -21,6 +23,27 @@ type alias KWindow =
     { width : Int
     , height : Int
     }
+
+type alias ImagePortData =
+    { contents : String
+    , filename : String
+    }
+
+type alias Image =
+    { contents : String
+    , filename : String
+    }
+
+-- defaultImage :: Image
+defaultImage = Image "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" "fileName"
+
+type alias ImageRecord =
+    { id : String
+    , mImage : Maybe Image
+  }
+
+-- defaultImageRecord :: ImageRecord
+defaultImageRecord = ImageRecord "ImageInputId" Nothing
 
 
 type alias DocumentAttributes =
@@ -113,6 +136,7 @@ type alias Model =
     , phxSocket : Phoenix.Socket.Socket Msg
     , messageInProgress : String
     , messages : List String
+    , imageRecord : ImageRecord
     }
 
 
@@ -169,12 +193,15 @@ type Msg
     | SendMessage
     | ReceiveChatMessage JsEncode.Value
     | HandleSendError JsEncode.Value
+    | ImageSelected
+    | ImageRead ImagePortData
 
 
 type Page
     = HomePage
     | ReaderPage
     | EditorPage
+    | ImagePage
 
 
 pageName : Page -> String
@@ -188,6 +215,9 @@ pageName page =
 
         EditorPage ->
             "Editor"
+
+        ImagePage ->
+          "Image"
 
 
 type Tool

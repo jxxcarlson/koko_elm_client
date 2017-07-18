@@ -56,6 +56,7 @@ import Views.Component as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
+import Views.Image exposing (imageEditor)
 import Utility
 
 
@@ -291,6 +292,23 @@ update msg model =
         TogglePublic ->
             togglePublic model
 
+        ImageSelected ->
+            ( {model | message = "Image selected"}
+            , External.fileSelected model.imageRecord.id
+            )
+
+        ImageRead data ->
+            let
+                newImage =
+                    { contents = Debug.log "IMAGE CONTENTS" data.contents
+                    , filename = data.filename
+                    }
+                newImageRecord = {id = "ImageInputId", mImage = Just newImage }
+            in
+                ( { model | imageRecord = newImageRecord }
+                , Cmd.none
+                )
+
         Tick time ->
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
@@ -376,6 +394,7 @@ subscriptions model =
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , External.fileContentRead ImageRead
         ]
 
 
@@ -387,6 +406,9 @@ page model =
 
         EditorPage ->
             editor model
+
+        ImagePage ->
+            imageEditor model
 
         HomePage ->
             home model
@@ -464,6 +486,7 @@ init flags =
             initSocket
             ""
             []
+            defaultImageRecord
         , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument doc ]
         )
 
