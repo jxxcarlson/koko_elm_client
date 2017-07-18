@@ -1,4 +1,11 @@
-module Views.Common exposing (documentListView, tool, publicCheckbox, recallLastSearchButton)
+module Views.Common
+    exposing
+        ( documentListView
+        , tool
+        , publicCheckbox
+        , recallLastSearchButton
+        , printButton
+        )
 
 import StyleSheet exposing (..)
 import Element exposing (..)
@@ -169,6 +176,12 @@ publicCheckbox model =
           )
         , (text "Public")
         ]
+
+
+printButton : Model -> Element Styles variation Msg
+printButton model =
+    link ("http://localhost:4000/print/documents/" ++ (toString model.current_document.id)) <|
+        el Zero [ verticalCenter ] (html (FontAwesome.print Color.white 25))
 
 
 recallLastSearchButton : Model -> Element Styles variation Msg
