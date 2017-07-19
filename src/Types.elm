@@ -172,6 +172,7 @@ type Msg
     | SetDocType String
     | InputTags String
     | InputContent String
+    | SetParentId String
     | SaveCurrentDocument
     | Email String
     | Password String

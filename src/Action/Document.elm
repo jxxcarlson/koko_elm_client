@@ -376,7 +376,7 @@ selectMasterDocumentAux document model =
     in
         doSearch model.searchState.domain 13 updatedModel
 
-
+renderDocument : Document -> Cmd msg
 renderDocument document =
     External.render (External.encodeDocument document)
 
@@ -442,3 +442,11 @@ recallLastSearch model =
     newAppState = { appState | masterDocLoaded = False}
   in
     ( { model | documents = model.documents2, appState = newAppState, message = "Set masterDocLoaded: False" }, Cmd.none )
+
+setParentId : String -> Model -> (Model, Cmd Msg)
+setParentId parentIdString model =
+  let
+    document = model.current_document
+    newDocument = {document | parent_id = String.toInt parentIdString |> Result.withDefault 0 }
+  in
+  ({model | current_document = newDocument, message = "parent = " ++ parentIdString}, Cmd.none)

@@ -209,6 +209,9 @@ update msg model =
         SetDocType docType ->
             Action.Document.setDocType docType model
 
+        SetParentId parentIdString ->
+            Action.Document.setParentId parentIdString model
+
         InputTags tagString ->
             updateTags tagString model
 
