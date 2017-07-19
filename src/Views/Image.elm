@@ -28,7 +28,7 @@ imageEditor model =
       ]
   ]
 
--- imagePane : Model -> Element Styles variation Msg
+imagePane : Model -> Element Styles variation Msg
 imagePane model =
     let
         imagePreview =
@@ -43,6 +43,7 @@ imagePane model =
               html (fileUploadPanel model)
             ]
 
+-- uploadButton1 : Model -> Image -> Html.Html Msg
 uploadButton1 model imagePreview =
   Html.div [ HA.class "imageWrapper" ]
             [ Html.input

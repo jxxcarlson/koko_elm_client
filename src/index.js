@@ -16,9 +16,6 @@ var mountNode = document.getElementById('main');
       }
     );
 
-
-  var asciidoctor = Asciidoctor();
-
   function typesetNow(){
     console.log("calling MathJax.Hub.Queue ... ")
     MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
@@ -27,12 +24,15 @@ var mountNode = document.getElementById('main');
   var request_in_progress = false;
   var current_content = '';
 
+  var asciidoctor = Asciidoctor();
+  // var asciidoctorLatex = AsciidoctorLatex();
+
   var render_asciidoc = function(content) {
       request_in_progress = true;
       console.log("Rendering ... ")
       var millisecondsToWait = 100;
       setTimeout(function() {
-          console.log("Completed! " );
+          console.log("RENDER AS ASCIIDOC " );
           request_in_progress = false;
           if (content !== current_content) {
             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
@@ -40,6 +40,20 @@ var mountNode = document.getElementById('main');
           }
       }  , millisecondsToWait);
    }
+
+   var render_asciidoc_latex = function(content) {
+       request_in_progress = true;
+       console.log("Rendering ... ")
+       var millisecondsToWait = 100;
+       setTimeout(function() {
+           console.log("RENDER AS A/LATEX " );
+           request_in_progress = false;
+           if (content !== current_content) {
+             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+             typesetNow()
+           }
+       }  , millisecondsToWait);
+    }
 
    var render_latex = function(content) {
        request_in_progress = true;
@@ -74,12 +88,15 @@ var mountNode = document.getElementById('main');
 
           count = count + 1
           console.log("Render count: " + count)
-          console.log("DocType = " + data.textType)
+          console.log("textType = " + data.textType)
           console.log("content: " + data.content)
           switch (data.textType) {
 
             case "adoc":
                render_asciidoc(data.content)
+               break;
+            case "adoc_latex":
+               render_asciidoc_latex(data.content)
                break;
             case "plain":
                render_plain(data.content)
@@ -91,10 +108,7 @@ var mountNode = document.getElementById('main');
               console.log("Default rendering ... asciidoc")
               render_asciidoc(data.content)
           }
-
-
       })
-
   })
 
   document.getElementById("rendered_text2").style.visibility = "hidden";
@@ -155,6 +169,14 @@ var mountNode = document.getElementById('main');
 
 })
 
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+// PERSIST AND RECONNECT USER
+
 app.ports.persist.subscribe(function (str) {
   console.log("I will put this in local storage: " + str);
   var userSettings = JSON.parse(str)
@@ -167,10 +189,6 @@ app.ports.persist.subscribe(function (str) {
    // prepareLocalStorage();
 
 })
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 async function reconnect(localStorageAsString) {
   console.log('Request to reconnect received.');

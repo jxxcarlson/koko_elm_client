@@ -44,17 +44,14 @@ port reconnectUser : (String -> msg) -> Sub msg
 
 port toElm : (String -> msg) -> Sub msg
 
--- IMAGE
-
-
-
+-- IMAGE UPLOAD
 
 port fileSelected : String -> Cmd msg
 
 
 port fileContentRead : (ImagePortData -> msg) -> Sub msg
 
--- @zghor:
+-- @zghor: FILE UPLOAD
 
 port fileUpload : String -> Cmd msg
 

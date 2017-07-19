@@ -121,12 +121,16 @@ textFormatMenu model =
             [ --when model.appState.textTypeMenuDropped <|
                 column Menu
                     [ padding 8, spacing 2 ]
-                    [ el (textFormatButton "plain" model) [ EA.width (px 85), EE.onClick (SetTextType "plain"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Plain")
-                    , el (textFormatButton "adoc" model) [ EA.width (px 85), EE.onClick (SetTextType "adoc"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Asciidoc")
-                    , el (textFormatButton "latex" model) [ EA.width (px 85), EE.onClick (SetTextType "latex"), EA.height (px 30), paddingXY 8 14 ] (EL.text "LaTeX")
+                    [ setTextTypeButton "plain" "Plain" model
+                    , setTextTypeButton "adoc" "Asciidoc" model
+                    , setTextTypeButton "adoc_latex" "Ascii/Latex" model
+                    , setTextTypeButton "latex" "Latex" model
                     ]
             ]
 
+
+setTextTypeButton textType label model =
+  el (textFormatButton textType model) [ EA.width (px 85), EE.onClick (SetTextType textType), EA.height (px 30), paddingXY 8 14 ] (EL.text label)
 
 
 textFormatButton textFormat model =

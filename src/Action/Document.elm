@@ -416,8 +416,8 @@ setTitle title model =
   in
       updateCurrentDocument model new_document
 
-inputComent : String -> Model -> (Model, Cmd Msg)
-inputComent content model =
+inputContent : String -> Model -> (Model, Cmd Msg)
+inputContent content model =
   let
       appState =
           model.appState

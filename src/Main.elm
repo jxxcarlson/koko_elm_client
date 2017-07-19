@@ -28,7 +28,6 @@ import Action.Document
         , deleteDocument
         )
 import Data.Document exposing (documents)
-import Data.User exposing (userRecord)
 import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
@@ -47,7 +46,6 @@ import Action.UI
         , appStateToggleAuthorizing
         )
 import Phoenix.Socket
-import Json.Decode as JsDecode
 import Action.Channel
 
 
@@ -58,7 +56,6 @@ import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Views.Image exposing (imageEditor)
-import Utility
 
 
 main : Program Flags Model Msg
@@ -226,8 +223,7 @@ update msg model =
             Action.Document.selectMasterDocument document model
 
         InputContent content ->
-            inputComent content model
-
+            Action.Document.inputContent content model
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
