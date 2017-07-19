@@ -87,3 +87,43 @@ joinChannel model =
                 |> Phoenix.Socket.join channel
     in
         ( { model | phxSocket = initSocket }, Cmd.map PhoenixMsg phxCmd )
+
+handleMsg msg model =
+  let
+      ( phxSocket, phxCmd ) =
+          Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
+
+      appState =
+          model.appState
+
+      status =
+          if String.contains "Heartbeat" (toString msg) then
+              False
+          else
+              True
+
+      updatedAppState =
+          { appState | online = status }
+  in
+      ( { model
+          | phxSocket = phxSocket
+          , appState = updatedAppState
+        }
+      , Cmd.map PhoenixMsg phxCmd
+      )
+
+receiveRaw raw model =
+  let
+      messageDecoder =
+          JsDecode.field "message" JsDecode.string
+
+      somePayload =
+          JsDecode.decodeValue messageDecoder raw
+  in
+      case somePayload of
+          Ok payload ->
+              handlePing True model
+
+          -- ( { model | messages = payload :: model.messages, info = payload }  Cmd.none )
+          Err error ->
+              handlePing False model              

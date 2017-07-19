@@ -195,6 +195,9 @@ app.ports.askToReconnectUser.subscribe(function (str) {
 
 })
 
+
+// FILE UPLOAD I
+
 app.ports.fileSelected.subscribe(function (id) {
   var node = document.getElementById(id);
   if (node === null) {
@@ -226,6 +229,35 @@ app.ports.fileSelected.subscribe(function (id) {
   // Connect our FileReader with the file that was selected in our `input` node.
   reader.readAsDataURL(file);
 });
+
+// FILE UPLOAD II (@zghor)
+
+   app.ports.fileUpload.subscribe(function(id) {
+     var node = document.getElementById(id);
+     if (node === null) {
+       return;
+     }
+     var file = node.files[0];
+     var reader = new FileReader();
+     reader.onload = (function(event) {
+       var xhr = new XMLHttpRequest();
+       xhr.open("POST", "/upload/endpoint");
+
+       var formData = new FormData();
+       formData.append("file", file);
+       xhr.send(formData);
+       xhr.onload = function(e) {
+         if (xhr.readyState === 4) {
+           if (xhr.status === 200) {
+             app.ports.fileUploaded.send(true);
+           } else {
+             app.ports.fileUploaded.send(false);
+           }
+         }
+       }
+     });
+     reader.readAsArrayBuffer(file);
+   });
 
 
 

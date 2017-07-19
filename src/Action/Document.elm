@@ -11,6 +11,7 @@ import Utility
 import Action.Search
 import Regex
 import LatexParser.Render
+import Data.Document
 
 
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
@@ -236,6 +237,17 @@ getDocumentById : Model -> Int -> Maybe Document
 getDocumentById model k =
     List.head (getDocumentsById model k)
 
+-- getDocument (Ok serverReply) model =
+--   case (Data.Document.documents serverReply) of
+--       Ok documentsRecord ->
+--           updateDocuments model documentsRecord
+--
+--       Err error ->
+--           ( { model | info = (toString error) }
+--           , Cmd.none
+--           )
+
+
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
@@ -358,3 +370,13 @@ selectMasterDocumentAux document model =
 
 renderDocument document =
     External.render (External.encodeDocument document)
+
+renderDocumentWithKey : Int -> Model -> (Model, Cmd Msg)
+renderDocumentWithKey key model =
+  if key == 27 then
+      -- 27: ESCAPE
+      ( { model | info = "ESCAPE pressed, rendering ..." }
+      , renderDocument model.current_document
+      )
+  else
+      ( model, Cmd.none )

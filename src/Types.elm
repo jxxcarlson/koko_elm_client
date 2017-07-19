@@ -137,6 +137,7 @@ type alias Model =
     , messageInProgress : String
     , messages : List String
     , imageRecord : ImageRecord
+    , fileInputId : String
     }
 
 
@@ -195,6 +196,8 @@ type Msg
     | HandleSendError JsEncode.Value
     | ImageSelected
     | ImageRead ImagePortData
+    | FileSelected
+    | FileUploaded Bool
 
 
 type Page

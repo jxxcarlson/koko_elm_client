@@ -3,6 +3,7 @@ module Action.User exposing (..)
 import Types exposing (..)
 import External
 import Views.External
+import Data.User
 
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
@@ -95,6 +96,18 @@ signout message model =
         , External.toJs (Views.External.windowData model HomePage)
         )
 
+doReconnectUser : String -> Model -> (Model, Cmd Msg)
+doReconnectUser jsonString model =
+  let
+      maybeUserRecord =
+          Data.User.userRecord jsonString
+  in
+      case maybeUserRecord of
+          Ok userRecord ->
+              reconnectUser model userRecord
+
+          Err error ->
+              ( { model | info = "Sorry, I cannot reconnect you" }, Cmd.none )
 
 reconnectUser : Model -> UserRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =

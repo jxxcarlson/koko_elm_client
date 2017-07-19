@@ -39,7 +39,8 @@ imagePane model =
                     viewImagePreview defaultImage
     in
         row None [padding 30, height (px 350), width (px 450)]
-            [ html (uploadButton1 model imagePreview)
+            [ html (uploadButton1 model imagePreview),
+              html (fileUploadPanel model)
             ]
 
 uploadButton1 model imagePreview =
@@ -67,3 +68,18 @@ viewImagePreview img =
           ]
         ]
         []
+
+fileUploadPanel : Model -> Html.Html Msg
+fileUploadPanel model =
+    Html.div []
+        [ Html.label [ HA.class "btn btn-primary" ]
+            [ Html.input
+                [ HA.type_ "file"
+                , HA.id model.fileInputId
+                , HA.style [ ( "display", "none" ) ]
+                , HE.on "change" (Json.Decode.succeed FileSelected)
+                ]
+                []
+            , Html.text "Upload"
+            ]
+        ]

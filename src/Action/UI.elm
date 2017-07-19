@@ -99,6 +99,18 @@ updateToolStatus model tool =
     in
         { appState | tool = tool }
 
+goToPage : Page -> Model -> (Model, Cmd Msg)
+goToPage p model =
+  if p == EditorPage && model.current_user.token == "" then
+      ( { model
+          | appState = appStateWithPage model HomePage
+          , message = "Please sign in if you wish to edit"
+        }
+      , External.toJs (Views.External.windowData model p)
+      )
+  else
+      ( { model | appState = appStateWithPage model p }, External.toJs (Views.External.windowData model p) )
+
 
 appStateWithPage : Model -> Page -> AppState
 appStateWithPage model page =

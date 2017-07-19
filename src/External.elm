@@ -53,3 +53,10 @@ port fileSelected : String -> Cmd msg
 
 
 port fileContentRead : (ImagePortData -> msg) -> Sub msg
+
+-- @zghor:
+
+port fileUpload : String -> Cmd msg
+
+
+port fileUploaded : (Bool -> msg) -> Sub msg

@@ -33,7 +33,7 @@ import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
-import External exposing (render, toJs)
+import External exposing (render, toJs, fileUpload, fileUploaded)
 import Request.Document
 import Action.UI
     exposing
@@ -89,15 +89,7 @@ update msg model =
             ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
 
         GoTo p ->
-            if p == EditorPage && model.current_user.token == "" then
-                ( { model
-                    | appState = appStateWithPage model HomePage
-                    , message = "Please sign in if you wish to edit"
-                  }
-                , toJs (Views.External.windowData model p)
-                )
-            else
-                ( { model | appState = appStateWithPage model p }, toJs (Views.External.windowData model p) )
+            Action.UI.goToPage p model
 
         SelectTool t ->
             ( { model | appState = (updateToolStatus model t) }, Cmd.none )
@@ -127,16 +119,7 @@ update msg model =
             ( Action.User.login model, loginUserCmd model loginUrl )
 
         ReconnectUser jsonString ->
-            let
-                maybeUserRecord =
-                    Data.User.userRecord jsonString
-            in
-                case maybeUserRecord of
-                    Ok userRecord ->
-                        Action.User.reconnectUser model userRecord
-
-                    Err error ->
-                        ( { model | info = "Sorry, I cannot reconnect you" }, Cmd.none )
+            doReconnectUser jsonString model
 
         Register ->
             ( model, registerUserCmd model registerUserUrl )
@@ -164,13 +147,7 @@ update msg model =
             ( { model | documents = model.documents2 }, Cmd.none )
 
         DoRender key ->
-            if key == 27 then
-                -- 27: ESCAPE
-                ( { model | info = "ESCAPE pressed, rendering ..." }
-                , Action.Document.renderDocument model.current_document
-                )
-            else
-                ( model, Cmd.none )
+            Action.Document.renderDocumentWithKey key model
 
         GetDocuments (Ok serverReply) ->
             case (Data.Document.documents serverReply) of
@@ -308,6 +285,16 @@ update msg model =
                 ( { model | imageRecord = newImageRecord }
                 , Cmd.none
                 )
+        FileSelected ->
+            ( model, fileUpload model.fileInputId )
+
+        FileUploaded True ->
+            -- obviously, set some state notifying success
+            ( model, Cmd.none )
+
+        FileUploaded False ->
+            -- obviously, set some state notifying failure
+            ( model, Cmd.none )
 
         Tick time ->
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
@@ -331,48 +318,14 @@ update msg model =
             Action.Channel.sendMessage model
 
         ReceiveChatMessage raw ->
-            let
-                messageDecoder =
-                    JsDecode.field "message" JsDecode.string
-
-                somePayload =
-                    JsDecode.decodeValue messageDecoder raw
-            in
-                case somePayload of
-                    Ok payload ->
-                        Action.Channel.handlePing True model
-
-                    -- ( { model | messages = payload :: model.messages, info = payload }  Cmd.none )
-                    Err error ->
-                        Action.Channel.handlePing False model
+            Action.Channel.receiveRaw raw model
 
         -- ( { model | messages = "Failed to receive message" :: model.messages }, Cmd.none )
         HandleSendError err ->
             Action.Channel.handlePing False model
 
         PhoenixMsg msg ->
-            let
-                ( phxSocket, phxCmd ) =
-                    Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
-
-                appState =
-                    model.appState
-
-                status =
-                    if String.contains "Heartbeat" (toString msg) then
-                        False
-                    else
-                        True
-
-                updatedAppState =
-                    { appState | online = status }
-            in
-                ( { model
-                    | phxSocket = phxSocket
-                    , appState = updatedAppState
-                  }
-                , Cmd.map PhoenixMsg phxCmd
-                )
+            Action.Channel.handleMsg msg model
 
 
 
@@ -395,6 +348,7 @@ subscriptions model =
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         , External.fileContentRead ImageRead
+        , fileUploaded FileUploaded
         ]
 
 
@@ -487,6 +441,7 @@ init flags =
             ""
             []
             defaultImageRecord
+            ""
         , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument doc ]
         )
 
