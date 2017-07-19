@@ -179,7 +179,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 "abcd" 0 "New Document" "New Content" "New Content" defaultAttributes [] []
+                    Document 0 "abcd" 0 "New Document" "New Content" "New Content" defaultAttributes [] [] 0
             in
                 createDocument model newDocument
 
@@ -372,7 +372,7 @@ init flags =
             "Welcome"
 
         doc =
-            Document 0 "abcd" 0 title content rendered_content defaultAttributes [] []
+            Document 0 "abcd" 0 title content rendered_content defaultAttributes [] [] 0
 
         searchState =
             SearchState "" Public

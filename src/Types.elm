@@ -78,6 +78,7 @@ type alias Document =
     , tags :
         List String
     , children : List Child
+    , parent_id : Int
     }
 
 
@@ -241,4 +242,4 @@ defaultAttributes =
 
 
 defaultDocument =
-    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes [] []
+    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes [] [] 0

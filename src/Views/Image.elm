@@ -42,8 +42,8 @@ imagePane model =
             [ html (uploadButton1 model imagePreview),
               html (fileUploadPanel model)
             ]
-
--- uploadButton1 : Model -> Image -> Html.Html Msg
+            
+uploadButton1 : Model -> Html.Html Msg -> Html.Html Msg
 uploadButton1 model imagePreview =
   Html.div [ HA.class "imageWrapper" ]
             [ Html.input
