@@ -22,7 +22,7 @@ navigation model =
         , loginButton Button model
         ]
 
-
+searchForm : Model -> Element Styles variation Msg
 searchForm model =
     row NavBar
         [ spacing 10, verticalCenter ]
@@ -82,7 +82,7 @@ publicSearchIcon model searchDomain =
     else
         (EL.html (FontAwesome.search (Color.rgb 0 200 0) 25))
 
-
+loginButton : style -> Model -> Element style variation Msg
 loginButton style model =
     el style
         [ EA.width (px 85)

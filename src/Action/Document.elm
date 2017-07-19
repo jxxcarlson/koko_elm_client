@@ -357,19 +357,21 @@ doSearch searchDomain key model =
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
 selectMasterDocument document model =
     if document.attributes.docType == "master" then
-        selectMasterDocumentAux document model
+      selectMasterDocumentAux document.id model
+    else if document.parent_id /= 0 then
+      selectMasterDocumentAux document.parent_id model
     else
-        ( model, Cmd.none )
+      ( model, Cmd.none )
 
 
-selectMasterDocumentAux : Document -> Model -> ( Model, Cmd Msg )
-selectMasterDocumentAux document model =
+selectMasterDocumentAux : Int -> Model -> ( Model, Cmd Msg )
+selectMasterDocumentAux document_id model =
     let
         searchState =
             model.searchState
 
         updatedSearchState =
-            { searchState | query = "master=" ++ (toString document.id) }
+            { searchState | query = "master=" ++ (toString document_id) }
 
         updatedModel =
             { model | searchState = updatedSearchState }

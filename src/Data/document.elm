@@ -55,6 +55,7 @@ documentEncoder1 document =
         , ( "attributes", encodeDocumentAttributes <| document.attributes )
         , ( "tags", Encode.list <| List.map Encode.string <| document.tags )
         , ( "parent_id", Encode.int <| document.parent_id)
+        , ( "parent_title", Encode.string <| document.parent_title)
         ]
 
 
@@ -75,6 +76,7 @@ documentDecoder =
         |> JPipeline.required "tags" (Decode.list Decode.string)
         |> JPipeline.required "children" (Decode.list decodeChild)
         |> JPipeline.required "parent_id" Decode.int
+        |> JPipeline.required "parent_title" Decode.string
 
 
 documentRecordDecoder : Decoder DocumentRecord

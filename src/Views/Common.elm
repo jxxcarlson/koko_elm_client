@@ -156,27 +156,31 @@ editorTools model =
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
             , parentIdPanel model
+            , el None [ height (px 10) ] (text "")
             , el TOC [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Identifier: " ++ (UI.displayIdentifier model)))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
 
+parentIdPanel : Model -> Element Styles variation Msg
 parentIdPanel model =
-  column TOC [ height (px 80)] [
-    row TOC [paddingXY 8 12 ] [
-      el TOC [verticalCenter] (text "Parent: ")
+  column Panel [ height (px 80) ,width (px 250)] [
+    row Panel [paddingXY 8 12 ] [
+      el Panel [verticalCenter, paddingXY 8 0] (text "Parent: ")
       , parentIdPane model
     ]
-    , el TOC [verticalCenter, paddingXY 8 12] (text "Yada: ") -- model.current_document.parent_name
+    , el Panel [verticalCenter, paddingXY 16 12] (text model.current_document.parent_title) -- model.current_document.parent_name
   ]
 
 
-
+parentIdPane : Model -> Element Styles variation Msg
 parentIdPane model =
   inputText Field [
      onInput SetParentId,
      placeholder "parent_id" ,
+     paddingXY 5 0,
+     height (px 25),
      width (px 50)]
   (toString model.current_document.parent_id)
 
