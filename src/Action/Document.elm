@@ -380,3 +380,49 @@ renderDocumentWithKey key model =
       )
   else
       ( model, Cmd.none )
+
+
+deleteDocument serverReply model =
+    case serverReply of
+      (Ok serverReply) ->
+        let
+            documents =
+                model.documents
+
+            updatedDocuments =
+                Utility.removeWhen (\doc -> doc.id == model.current_document.id) documents
+
+            newCurrentDocument =
+                (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
+        in
+            ( { model
+                | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
+                , documents = updatedDocuments
+                , current_document = newCurrentDocument
+              }
+            , Cmd.none
+            )
+      (Err errorMessage) ->
+            ( { model | info = (toString errorMessage) }, Cmd.none )
+
+setTitle : String -> Model -> (Model, Cmd Msg)
+setTitle title model =
+  let
+      doc =
+          model.current_document
+
+      new_document =
+          { doc | title = title }
+  in
+      updateCurrentDocument model new_document
+
+inputComent : String -> Model -> (Model, Cmd Msg)
+inputComent content model =
+  let
+      appState =
+          model.appState
+
+      newAppState =
+          { appState | textBuffer = content, textBufferDirty = True }
+  in
+      ( { model | appState = newAppState }, Cmd.none )

@@ -25,6 +25,7 @@ import Action.Document
         , updateCurrentDocumentWithContent
         , updateTags
         , saveCurrentDocument
+        , deleteDocument
         )
 import Data.Document exposing (documents)
 import Data.User exposing (userRecord)
@@ -195,38 +196,15 @@ update msg model =
         DeleteCurrentDocument ->
             ( { model | message = "Delete current document" }, Request.Document.deleteCurrentDocument model )
 
-        DeleteDocument (Ok serverReply) ->
-            let
-                documents =
-                    model.documents
-
-                updatedDocuments =
-                    Utility.removeWhen (\doc -> doc.id == model.current_document.id) documents
-
-                newCurrentDocument =
-                    (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
-            in
-                ( { model
-                    | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
-                    , documents = updatedDocuments
-                    , current_document = newCurrentDocument
-                  }
-                , Cmd.none
-                )
+        DeleteDocument serverReply ->
+          Action.Document.deleteDocument serverReply model
 
         -- getDocumentsWith newSearchState model.current_user.token
-        DeleteDocument (Err errorMessage) ->
-            ( { model | info = (toString errorMessage) }, Cmd.none )
+        -- DeleteDocument (Err errorMessage) ->
+        --     ( { model | info = (toString errorMessage) }, Cmd.none )
 
         Title title ->
-            let
-                doc =
-                    model.current_document
-
-                new_document =
-                    { doc | title = title }
-            in
-                updateCurrentDocument model new_document
+            Action.Document.setTitle title model
 
         SetTextType textType ->
             Action.Document.setTextType textType model
@@ -248,14 +226,7 @@ update msg model =
             Action.Document.selectMasterDocument document model
 
         InputContent content ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | textBuffer = content, textBufferDirty = True }
-            in
-                ( { model | appState = newAppState }, Cmd.none )
+            inputComent content model
 
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
