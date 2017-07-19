@@ -142,7 +142,7 @@ update msg model =
             Action.Document.doSearch searchDomain key model
 
         RecallLastSearch ->
-            ( { model | documents = model.documents2 }, Cmd.none )
+           Action.Document.recallLastSearch model
 
         DoRender key ->
             Action.Document.renderDocumentWithKey key model

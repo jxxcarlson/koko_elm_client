@@ -262,8 +262,14 @@ selectDocument model document =
         appState =
             model.appState
 
+        -- masterDocLoaded = if document.attributes.docType /= "master" then
+        --     False
+        --   else
+        --     True
+
         newAppState =
-            { appState | textBuffer = document.content, textBufferDirty = False }
+            { appState | textBuffer = document.content,
+            textBufferDirty = False }
     in
         ( { model
             | current_document = document
@@ -324,6 +330,9 @@ doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
 doSearch searchDomain key model =
     if (Debug.log "key" key) == 13 then
         let
+            appState = model.appState
+            newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
+
             newSearchState =
                 Action.Search.updatedSearchState model searchDomain
 
@@ -331,7 +340,7 @@ doSearch searchDomain key model =
                 { model
                     | searchState = newSearchState
                     , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
-                    , appState = Action.UI.updateToolStatus model TableOfContents
+                    , appState = newAppState
                     , documents2 = model.documents
                 }
         in
@@ -426,3 +435,10 @@ inputContent content model =
           { appState | textBuffer = content, textBufferDirty = True }
   in
       ( { model | appState = newAppState }, Cmd.none )
+
+recallLastSearch model =
+  let
+    appState = model.appState
+    newAppState = { appState | masterDocLoaded = False}
+  in
+    ( { model | documents = model.documents2, appState = newAppState, message = "Set masterDocLoaded: False" }, Cmd.none )

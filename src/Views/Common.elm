@@ -49,9 +49,9 @@ documentIndentLevel document model =
     let
         level =
             if model.appState.masterDocLoaded then
-                document.attributes.level
+                Debug.log "level" document.attributes.level
             else
-                0
+                Debug.log "level" 1
     in
         8.0 + 15.0 * (toFloat (level - 1))
 
