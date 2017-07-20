@@ -441,7 +441,7 @@ inputContent content model =
 recallLastSearch model =
   let
     appState = model.appState
-    newAppState = { appState | masterDocLoaded = False}
+    newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
   in
     ( { model | documents = model.documents2, appState = newAppState, message = "Set masterDocLoaded: False" }, Cmd.none )
 
