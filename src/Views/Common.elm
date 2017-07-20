@@ -159,13 +159,20 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
-            , parentIdPanel model
+            , parentalControls model
             , el None [ height (px 10) ] (text "")
             , el TOC [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Identifier: " ++ (UI.displayIdentifier model)))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
+
+parentalControls : Model -> Element Styles variation Msg
+parentalControls model =
+  if model.current_document.attributes.docType == "master" then
+    adoptChildrenButton model
+  else
+    parentIdPanel model
 
 parentIdPanel : Model -> Element Styles variation Msg
 parentIdPanel model =
@@ -177,7 +184,6 @@ parentIdPanel model =
     , el Panel [verticalCenter, paddingXY 16 12] (text model.current_document.parent_title) -- model.current_document.parent_name
   ]
 
-
 parentIdPane : Model -> Element Styles variation Msg
 parentIdPane model =
   inputText Field [
@@ -187,6 +193,18 @@ parentIdPane model =
      height (px 25),
      width (px 50)]
   (toString model.current_document.parent_id)
+
+adoptChildrenButton : Model -> Element Styles variation Msg
+adoptChildrenButton model =
+    el Button
+        [ width (px 250)
+        , alignBottom
+        , onClick AdoptChildren
+        , height (px 25)
+        , paddingXY 10 13
+        ]
+        (text "Adopt children")
+
 
 updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =

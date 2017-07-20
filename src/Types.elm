@@ -171,6 +171,7 @@ type Msg
     | Title String
     | SetTextType String
     | SetDocType String
+    | AdoptChildren
     | InputTags String
     | InputContent String
     | SetParentId String

@@ -89,25 +89,27 @@ deleteCurrentDocument model =
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-builder/latest/HttpBuilder
 
 
-putDocumentRB : Document -> String -> RequestBuilder ()
-putDocumentRB document token =
+putDocumentRB : String -> String -> Document ->  RequestBuilder ()
+putDocumentRB queryString token document =
     let
         params =
             Data.Document.documentEncoder document
 
-        url =
-            documentsUrl ++ "/" ++ (toString document.id)
+        url = if queryString == "" then
+                documentsUrl ++ "/" ++ (toString document.id)
+              else
+                documentsUrl ++ "/" ++ (toString document.id) ++ "?" ++ queryString
     in
         HB.put url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withJsonBody params
 
 
-putDocument : Model -> Document -> Cmd Msg
-putDocument model document =
+putDocument : String -> Model -> Document -> Cmd Msg
+putDocument queryString model document =
     let
         request =
-            putDocumentRB document model.current_user.token
+            putDocumentRB queryString model.current_user.token document
                 |> HB.toRequest
     in
         Http.send PutDocument request

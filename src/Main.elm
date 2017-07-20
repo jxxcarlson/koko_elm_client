@@ -216,7 +216,10 @@ update msg model =
             updateTags tagString model
 
         SaveCurrentDocument ->
-            saveCurrentDocument model
+            saveCurrentDocument "" model
+
+        AdoptChildren ->
+            saveCurrentDocument "adopt_children=yes" model
 
         -- ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
         SelectDocument document ->

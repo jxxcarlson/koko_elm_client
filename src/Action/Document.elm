@@ -207,13 +207,13 @@ updateCurrentDocument model document =
             , appState = newAppState
             , message = "!! Rendering #" ++ (toString document.id)
           }
-        , Cmd.batch [ putDocument model document, renderDocument document ]
+        , Cmd.batch [ putDocument "" model document, renderDocument document ]
         )
 
 
-saveCurrentDocument : Model -> ( Model, Cmd Msg )
-saveCurrentDocument model =
-    ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument model model.current_document )
+saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
+saveCurrentDocument queryString model =
+    ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
 
 
 hasId : Int -> Document -> Bool
