@@ -38,6 +38,7 @@ type Styles
     | ActiveFlatButton
     | HeaderLabel
     | SearchField
+    | ClearButton
     | Field
     | Form
     | TOC
@@ -108,6 +109,11 @@ stylesheet =
             [ Font.size 16
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
+        , style ClearButton
+            [ Font.size 14,
+              Color.background Color.charcoal
+            ]
+
         , style Box
             [ Color.text Color.white
             , Color.background Color.charcoal

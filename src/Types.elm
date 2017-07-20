@@ -183,6 +183,7 @@ type Msg
     | SelectTool Tool
     | SetSearchTerm String
     | DoSearch SearchDomain Int
+    | ClearSearch
     | RecallLastSearch
     | DoRender Int
     | SelectDocument Document

@@ -33,6 +33,7 @@ searchForm model =
             , height (px 29)
             ]
             (model.searchState.query)
+        , circle 10 ClearButton [verticalCenter, paddingXY 6.0 2, onClick ClearSearch] (text "x")    
         , row Zero
             [ center, spacing 5 ]
             [ privateSearchButton model

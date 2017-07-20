@@ -137,6 +137,9 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
+        ClearSearch ->
+            updateSearch model ""
+
         -- updatedSearchState
         DoSearch searchDomain key ->
             Action.Document.doSearch searchDomain key model
