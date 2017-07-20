@@ -116,11 +116,11 @@ deleteButton model =
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 10 6, spacing 15, center ]
-        [ Common.selectTableOfContents model
-        , Common.printButton model.current_document
-        , selectEditTools model
-        , Common.recallLastSearchButton model
+        [ paddingXY 10 6, spacing 0, justify ]
+        [ Common.printButton model.current_document
+          , Common.selectTableOfContents model
+          , Common.recallLastSearchButton model
+          , selectEditTools model
         ]
 
 selectEditTools : Model -> Element Styles variation Msg

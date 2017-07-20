@@ -26,16 +26,19 @@ searchForm : Model -> Element Styles variation Msg
 searchForm model =
     row NavBar
         [ spacing 10, verticalCenter ]
-        [ inputText SearchField
+        [ row Zero [ spacing -30] [
+          inputText SearchField
             [ EE.onInput SetSearchTerm
             , Utility.onKeyUp (DoSearch model.searchState.domain)
             , placeholder "Search"
-            , height (px 29)
+            , height (px 29), width (px 200),
+            paddingXY -20 0
             ]
             (model.searchState.query)
-        , circle 10 ClearButton [verticalCenter, paddingXY 6.0 2, onClick ClearSearch] (text "x")    
+         , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
+        ]
         , row Zero
-            [ center, spacing 5 ]
+            [ center, spacing 5, paddingXY 10 0]
             [ privateSearchButton model
             , publicSearchButton model
             ]

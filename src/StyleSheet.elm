@@ -111,7 +111,7 @@ stylesheet =
             ]
         , style ClearButton
             [ Font.size 14,
-              Color.background Color.charcoal
+              Color.background Color.gray
             ]
 
         , style Box
@@ -141,8 +141,8 @@ stylesheet =
         , style Radio
             [ Font.size 14, Color.background Color.lightBlue ]
         , style TitleStyle
-            [ Color.background Color.lightCharcoal
-            , Color.text Color.white
+            [ Color.background (Color.rgb 210 210 210)
+            , Color.text (Color.rgb 120 0 0)
             , Font.size 20
             , Font.lineHeight 1.3
             ]
