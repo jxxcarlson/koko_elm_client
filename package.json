@@ -23,6 +23,7 @@
     "font-awesome": "4",
     "foreman": "^2.0.0",
     "mathjax": "^2.7.1",
+    "opal": "^0.6.4",
     "style-loader": "^0.18.2",
     "url-loader": "^0.5.8",
     "webpack": "^2.6.1",
