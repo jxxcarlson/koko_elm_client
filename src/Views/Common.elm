@@ -30,7 +30,7 @@ tocStyle selectedDocument document =
             TOCItemChildSelected
         else
             TOCItemSelected
-    else if document.attributes.docType == "master" then
+    else if document.attributes.docType == "mas nter" then
         TOCItemMaster
     else if document.parent_id /= 0 then
         TOCItemChild
