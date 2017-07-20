@@ -31,7 +31,7 @@ searchForm model =
             [ EE.onInput SetSearchTerm
             , Utility.onKeyUp (DoSearch model.searchState.domain)
             , placeholder "Search"
-            , height (px 29), width (px 200),
+            , height (px 29), width (px 300),
             paddingXY -20 0
             ]
             (model.searchState.query)

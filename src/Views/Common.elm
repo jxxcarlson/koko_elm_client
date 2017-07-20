@@ -161,7 +161,7 @@ editorTools model =
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
-            , el TOC [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Identifier: " ++ (UI.displayIdentifier model)))
+            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (UI.displayIdentifier model))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]

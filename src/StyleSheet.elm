@@ -60,6 +60,7 @@ type Styles
     | Label
     | StatusSuccess
     | StatusFailure
+    | Small
 
 
 {-| First, we create a stylesheet.
@@ -217,6 +218,7 @@ stylesheet =
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
+        , style Small [ Font.size 12 ]
         ]
 
 

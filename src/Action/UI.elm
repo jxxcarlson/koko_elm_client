@@ -190,5 +190,8 @@ displayIdentifier model =
     let
         parts =
             (String.split "." model.current_document.identifier) |> Array.fromList
+        datePart = Array.get 2 parts |> Maybe.withDefault "--"
+        hashPart = Array.get 3 parts |> Maybe.withDefault "--"
+
     in
-        Array.get 3 parts |> Maybe.withDefault "--"
+        datePart ++ "." ++ hashPart
