@@ -26,10 +26,14 @@ tocStyle selectedDocument document =
     if selectedDocument == document then
         if document.attributes.docType == "master" then
             TOCItemMasterSelected
+        else if document.parent_id /= 0 then
+            TOCItemChildSelected
         else
             TOCItemSelected
     else if document.attributes.docType == "master" then
         TOCItemMaster
+    else if document.parent_id /= 0 then
+        TOCItemChild
     else
         TOCItem
 

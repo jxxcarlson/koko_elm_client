@@ -42,8 +42,10 @@ type Styles
     | Form
     | TOC
     | TOCItem
-    | TOCItemSelected
+    | TOCItemChild
     | TOCItemMaster
+    | TOCItemSelected
+    | TOCItemChildSelected
     | TOCItemMasterSelected
     | Radio
     | Footer
@@ -194,10 +196,14 @@ stylesheet =
             [ Color.background Color.gray ]
         , style TOCItem
             [ Color.text Color.black ]
-        , style TOCItemSelected
-            [ Color.text Color.white, Color.background Color.charcoal ]
+        , style TOCItemChild
+            [ Color.text Color.blue ]
         , style TOCItemMaster
             [ Color.text (Color.rgb 125 0 0), Font.weight 600 ]
+        , style TOCItemSelected
+            [ Color.text Color.white, Color.background Color.charcoal ]
+        , style TOCItemChildSelected
+            [ Color.text Color.white, Color.background Color.blue ]
         , style TOCItemMasterSelected
             [ Color.text (Color.rgb 255 130 130), Color.background Color.charcoal, Font.weight 100 ]
         , style Menu
