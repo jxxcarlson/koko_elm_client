@@ -11,7 +11,7 @@ import Utility
 import Action.Search
 import Regex
 import LatexParser.Render
-import Data.Document
+-- import Data.Document
 
 
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
@@ -257,7 +257,7 @@ getDocumentById model k =
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
-    ( { model | appState = updateToolStatus model EditorTools }
+    ( { model | appState = updateToolStatus model NewDocumentTools }
     , Request.Document.createDocument document model.current_user.token
     )
 
@@ -274,6 +274,7 @@ selectDocument model document =
     in
         ( { model
             | current_document = document
+            , documentStack = pushDocumentStack document model.documentStack
             , appState = newAppState
             , message =
                 "Selected: "
@@ -457,3 +458,11 @@ setParentId parentIdString model =
     newDocument = {document | parent_id = String.toInt parentIdString |> Result.withDefault 0 }
   in
   ({model | current_document = newDocument, message = "parent = " ++ parentIdString}, Cmd.none)
+
+
+addToMasterDocument model =
+  ({model | message = "Add to master"}, Cmd.none)
+
+pushDocumentStack : Document -> DocumentStack -> DocumentStack
+pushDocumentStack document stack =
+     [document] ++ (List.take 2 stack)

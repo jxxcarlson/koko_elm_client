@@ -30,7 +30,7 @@ tocStyle selectedDocument document =
             TOCItemChildSelected
         else
             TOCItemSelected
-    else if document.attributes.docType == "mas nter" then
+    else if document.attributes.docType == "master" then
         TOCItemMaster
     else if document.parent_id /= 0 then
         TOCItemChild
@@ -108,8 +108,8 @@ tool model =
         EditorTools ->
             editorTools model
 
-        DocumentParameterTools ->
-            documentParameterTools model
+        NewDocumentTools ->
+            newDocumentTools model
 
 
 searchOptionControl : Model -> Element Styles variation Msg
@@ -134,12 +134,32 @@ readerTools model =
         [ el Box [ padding 20, center ] (text "Reader tools") ]
 
 
-documentParameterTools : Model -> Element Styles variation msg
-documentParameterTools model =
+newDocumentTools : Model -> Element Styles variation Msg
+newDocumentTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        [ el Box [ padding 20, center ] (text "Document parameter tools") ]
+        [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "New document tools")
+        , column Zero
+            [ spacing 4, height (px 130), alignLeft ]
+            [
+            el TOC [] (text ("Master: " ++ model.master_document.title))
+            , el None [ height (px 10) ] (text "")
+            , addToMasterDocumentButton model
+            , el None [ height (px 0) ] (text "")
+            , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
+            ]
+        ]
 
+addToMasterDocumentButton : Model -> Element Styles variation Msg
+addToMasterDocumentButton model =
+  el FlatButton
+      [ width (px 200)
+      , onClick AddToMasterDocument
+      , height (px 30)
+      , paddingXY 8 0
+      , verticalCenter
+      ]
+      (el Zero [verticalCenter] (text ("Add to master")))
 
 editorTools : Model -> Element Styles variation Msg
 editorTools model =

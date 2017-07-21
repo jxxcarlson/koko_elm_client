@@ -90,6 +90,8 @@ type alias DocumentRecord =
 type alias Documents =
     List Document
 
+type alias DocumentStack =
+  List Document
 
 type alias DocumentsRecord =
     { documents : Documents
@@ -135,6 +137,7 @@ type alias Model =
     , master_document : Document
     , documents : Documents
     , documents2 : Documents
+    , documentStack : DocumentStack
     , searchState : SearchState
     , phxSocket : Phoenix.Socket.Socket Msg
     , messageInProgress : String
@@ -176,6 +179,7 @@ type Msg
     | InputTags String
     | InputContent String
     | SetParentId String
+    | AddToMasterDocument
     | SaveCurrentDocument
     | Email String
     | Password String
@@ -232,7 +236,7 @@ pageName page =
 type Tool
     = TableOfContents
     | EditorTools
-    | DocumentParameterTools
+    | NewDocumentTools
     | ReaderTools
 
 

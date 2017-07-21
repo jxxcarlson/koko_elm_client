@@ -186,6 +186,8 @@ update msg model =
             in
                 createDocument model newDocument
 
+        AddToMasterDocument ->
+           Action.Document.addToMasterDocument model
         --( model , Request.Document.createDocument newDocument model.current_user.token )
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
@@ -409,6 +411,7 @@ init flags =
             defaultDocument
             defaultMasterDocument
             [ defaultDocument ]
+            []
             []
             searchState
             initSocket
