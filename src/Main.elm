@@ -189,6 +189,10 @@ update msg model =
         AddToMasterDocument ->
            Action.Document.addToMasterDocument model
         --( model , Request.Document.createDocument newDocument model.current_user.token )
+
+        AttachCurrentDocument location ->
+          ({model | message = "Attach " ++ location}, Cmd.none)
+
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
 

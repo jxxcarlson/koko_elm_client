@@ -140,7 +140,7 @@ stylesheet =
         , style PanelInfo
             [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
         , style Radio
-            [ Font.size 14, Color.background Color.lightBlue ]
+            [ Font.size 14, Color.background Color.lightGray]
         , style TitleStyle
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)

@@ -9,6 +9,7 @@ import Element.Events as EE exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
 import Views.Component as Component
+import Views.Common exposing(visibleIf, notVisibleIf)
 
 
 registerUserForm : Model -> Element Styles variation Msg
@@ -111,19 +112,7 @@ signinInfoPanel1 model =
       ]
     )
 
-visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
-visibleIf condition body =
-    if condition then
-        body
-    else
-        el None [] (text "")
 
-notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
-notVisibleIf condition body =
-    if (not condition)then
-        body
-    else
-        el None [] (text "")
 
 handleAuthentication : Model -> (Model, Cmd Msg)
 handleAuthentication model =

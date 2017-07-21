@@ -180,6 +180,7 @@ type Msg
     | InputContent String
     | SetParentId String
     | AddToMasterDocument
+    | AttachCurrentDocument String
     | SaveCurrentDocument
     | Email String
     | Password String

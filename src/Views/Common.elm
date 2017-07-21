@@ -7,6 +7,8 @@ module Views.Common
         , publicCheckbox
         , recallLastSearchButton
         , printButton
+        , visibleIf
+        , notVisibleIf
         )
 
 import StyleSheet exposing (..)
@@ -19,6 +21,8 @@ import Views.Component as Component
 import FontAwesome
 import Color
 import Request.Api
+import Action.Document
+import String.Extra
 
 
 tocStyle : Document -> Document -> Styles
@@ -45,7 +49,7 @@ viewTitle model selectedDocument document =
         , onDoubleClick (SelectMaster document)
         , paddingXY (documentIndentLevel document model) 4
         ]
-        (text document.title)
+        (text (softTruncate 25 document.title))
 
 
 documentIndentLevel : Document -> Model -> Float
@@ -137,18 +141,45 @@ readerTools model =
 newDocumentTools : Model -> Element Styles variation Msg
 newDocumentTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 15, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "New document tools")
         , column Zero
-            [ spacing 4, height (px 130), alignLeft ]
+            [ spacing 15, height (px 130), alignLeft ]
             [
-            el TOC [] (text ("Master: " ++ model.master_document.title))
-            , el None [ height (px 10) ] (text "")
-            , addToMasterDocumentButton model
-            , el None [ height (px 0) ] (text "")
+              visibleIf model.appState.masterDocLoaded (newDocumentTable model)
+            , visibleIf model.appState.masterDocLoaded (addToMasterDocumentButton model)
+            , visibleIf model.appState.masterDocLoaded (selectAttachmentOption model)
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
+
+newDocumentTable : Model -> Element Styles variation Msg
+newDocumentTable model =
+  table TOC [spacing 20, width (px 250)]
+    [
+      [
+        el TOCItemMaster [] (text "Master"),
+        el TOCItemChild [](text "Current"),
+        (text "New")
+
+      ]
+      ,[el TOCItemMaster [] (text (softTruncate 20 model.master_document.title))
+         ,el TOCItemChild [] (text (softTruncate 20 (Action.Document.docStackTop model.documentStack).title))
+         ,(text (softTruncate 20 model.current_document.title))
+      ]
+    ]
+
+selectAttachmentOption model =
+  radio "Attach new document" TOC [spacing 10, width (px 200), paddingXY 20 0]
+    [ option "top" True (el TOC [verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
+    , option "above" False (el TOC [verticalCenter , onClick (AttachCurrentDocument "above") ] (text "Above current"))
+    , option "below" False (el TOC [verticalCenter, onClick (AttachCurrentDocument "below")] (text "Below current"))
+    , option "bottom" False (el TOC [verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))
+    ]
+
+softTruncate : Int -> String -> String
+softTruncate k str =
+  String.Extra.softBreak k str |> List.head |> Maybe.withDefault "--"
 
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
@@ -285,3 +316,17 @@ recallLastSearchButton model =
         , title "Recall last search"
         ]
         (html (FontAwesome.rotate_left Color.white 25))
+
+visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+visibleIf condition body =
+    if condition then
+        body
+    else
+        el None [] (text "")
+
+notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+notVisibleIf condition body =
+    if (not condition)then
+        body
+    else
+        el None [] (text "")

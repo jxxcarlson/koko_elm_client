@@ -466,3 +466,7 @@ addToMasterDocument model =
 pushDocumentStack : Document -> DocumentStack -> DocumentStack
 pushDocumentStack document stack =
      [document] ++ (List.take 2 stack)
+
+docStackTop : DocumentStack -> Document
+docStackTop docstack =
+  List.head docstack |> Maybe.withDefault defaultDocument
