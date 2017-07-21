@@ -380,9 +380,6 @@ init flags =
         rendered_content =
             "Welcome"
 
-        doc =
-            Document 0 "abcd" 0 title content rendered_content defaultAttributes [] [] 0 ""
-
         searchState =
             SearchState "" Public
 
@@ -409,8 +406,9 @@ init flags =
             current_user
             ""
             ""
-            doc
-            [ doc ]
+            defaultDocument
+            defaultMasterDocument
+            [ defaultDocument ]
             []
             searchState
             initSocket
@@ -418,7 +416,7 @@ init flags =
             []
             defaultImageRecord
             ""
-        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument doc ]
+        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument defaultDocument ]
         )
 
 

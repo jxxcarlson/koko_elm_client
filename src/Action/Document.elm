@@ -170,11 +170,17 @@ updateDocuments model documentsRecord =
             else
                 False
 
+        newMasterDocument = if masterDocLoaded then
+          current_document
+        else
+          defaultMasterDocument
+
         updatedAppState =
             { appState | page = page, tool = TableOfContents, masterDocLoaded = masterDocLoaded }
     in
         ( { model
             | documents = documentsRecord.documents
+            , master_document = newMasterDocument
             , current_document = current_document
             , appState = updatedAppState
             , counter = Debug.log "updateDocuments" (model.counter + 1)
@@ -262,11 +268,6 @@ selectDocument model document =
         appState =
             model.appState
 
-        -- masterDocLoaded = if document.attributes.docType /= "master" then
-        --     False
-        --   else
-        --     True
-
         newAppState =
             { appState | textBuffer = document.content,
             textBufferDirty = False }
@@ -341,6 +342,7 @@ doSearch searchDomain key model =
                     | searchState = newSearchState
                     , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
                     , appState = newAppState
+                    , master_document = defaultMasterDocument
                     , documents2 = model.documents
                 }
         in
@@ -443,7 +445,10 @@ recallLastSearch model =
     appState = model.appState
     newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
   in
-    ( { model | documents = model.documents2, appState = newAppState, message = "Set masterDocLoaded: False" }, Cmd.none )
+    ( { model | documents = model.documents2,
+        appState = newAppState,
+        master_document = defaultMasterDocument,
+        message = "Set masterDocLoaded: False" }, Cmd.none )
 
 setParentId : String -> Model -> (Model, Cmd Msg)
 setParentId parentIdString model =

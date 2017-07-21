@@ -132,6 +132,7 @@ type alias Model =
     , errorMsg : String
     , info : String
     , current_document : Document
+    , master_document : Document
     , documents : Documents
     , documents2 : Documents
     , searchState : SearchState
@@ -246,4 +247,7 @@ defaultAttributes =
 
 
 defaultDocument =
-    Document 0 "abcd" 0 "Default document" "Yada" "Yada" defaultAttributes [] [] 0 ""
+    Document 0 "nullDocument" 0 "Default document" "nothing" "nothing" defaultAttributes [] [] 0 ""
+
+defaultMasterDocument =
+    Document 0 "nullMasterDocument" 0 "Null master document" "nothing" "nothing" defaultAttributes [] [] 0 ""
