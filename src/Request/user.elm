@@ -58,10 +58,10 @@ getTokenCompleted model result =
                         ( { model
                             | current_user = updated_user
                             , message = "Signed in as " ++ value.username
-                            , appState = appStateWithPage model ReaderPage
+                            , appState = appStateWithPage model HomePage
                           }
                         , Cmd.batch
-                            [ Utility.gotoPage model ReaderPage
+                            [ Utility.gotoPage model HomePage
                             , External.persist (Views.External.userData user.name user.email value.username newToken)
                             ]
                         )

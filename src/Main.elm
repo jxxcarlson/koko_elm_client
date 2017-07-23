@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Phoenix.Socket
 import Phoenix.Channel
+import Task
 
 
 -- begin style
@@ -14,6 +15,7 @@ import Window exposing (..)
 import Types exposing (..)
 import Action.User exposing (..)
 import Action.Search exposing (..)
+import Action.Page
 import Action.Document
     exposing
         ( createDocument
@@ -87,7 +89,7 @@ update msg model =
             ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
 
         GoTo p ->
-            Action.UI.goToPage p model
+            Action.Page.goToPage p model
 
         SelectTool t ->
             ( { model | appState = (updateToolStatus model t) }, Cmd.none )
@@ -114,7 +116,11 @@ update msg model =
             Action.UI.toggleAuthorizing model
 
         Login ->
-            ( Action.User.login model, loginUserCmd model loginUrl )
+          let
+            (model1, cmds1) = Action.User.login2 model
+            (model2, cmds2) = Action.Document.search Private "sort=updated" ReaderPage model1
+          in
+            (model2, Cmd.batch [cmds1, cmds2])
 
         ReconnectUser jsonString ->
             doReconnectUser jsonString model
@@ -148,8 +154,10 @@ update msg model =
            Action.Document.recallLastSearch model
 
         UserHomePage ->
-          Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) model
+          Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) ReaderPage model
 
+        InitHomePage ->
+          Action.Document.search Private "sort=updated" HomePage model
 
         DoRender key ->
             Action.Document.renderDocumentWithKey key model
@@ -290,9 +298,9 @@ update msg model =
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
-                Action.Channel.sendImmediateMessage "hello" model
+                (model, Cmd.none) -- Action.Channel.sendImmediateMessage "hello" model
             else
-                Action.Channel.joinChannel model
+                (model, Cmd.none) -- Action.Channel.joinChannel model
 
         SendToJS str ->
             ( model, toJs str )
@@ -333,7 +341,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (1 * Time.second) Tick
+        [ Time.every (10 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
@@ -431,7 +439,10 @@ init flags =
             []
             defaultImageRecord
             ""
-        , Cmd.batch [ Cmd.map PhoenixMsg phxCmd, toJs ws, External.askToReconnectUser "reconnectUser", Action.Document.renderDocument defaultDocument ]
+        , Cmd.batch [
+                  Cmd.map PhoenixMsg phxCmd, toJs ws,
+                  External.askToReconnectUser "reconnectUser",
+                  Action.Document.renderDocument defaultDocument ]
         )
 
 

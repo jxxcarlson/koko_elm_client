@@ -211,6 +211,7 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | UserHomePage
+    | InitHomePage
 
 
 type Page

@@ -155,11 +155,6 @@ updateDocuments model documentsRecord =
                 Nothing ->
                     defaultDocument
 
-        page =
-            if model.appState.page == HomePage then
-                ReaderPage
-            else
-                model.appState.page
 
         appState =
             model.appState
@@ -176,7 +171,7 @@ updateDocuments model documentsRecord =
           defaultMasterDocument
 
         updatedAppState =
-            { appState | page = page, tool = TableOfContents, masterDocLoaded = masterDocLoaded }
+            { appState | tool = TableOfContents, masterDocLoaded = masterDocLoaded }
     in
         ( { model
             | documents = documentsRecord.documents
@@ -336,17 +331,17 @@ searchOnEnter searchDomain key model =
           searchState =
             Action.Search.updatedSearchState model searchDomain
         in
-            search searchState.domain searchState.query model
+            search searchState.domain searchState.query (displayPage model) model
     else
         ( model, Cmd.none )
 
-search : SearchDomain -> String -> Model -> ( Model, Cmd Msg )
-search searchDomain query model =
+search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
+search searchDomain query page model =
           let
               appState = model.appState
               newAppState = { appState | masterDocLoaded = False,
                  tool = TableOfContents,
-                 page = displayPage model }
+                 page = page }
               newSearchState = SearchState query searchDomain
               updatedModel =
                   { model
@@ -363,6 +358,10 @@ search searchDomain query model =
                   , renderDocument model.current_document
                   ]
               )
+
+search2 : SearchDomain -> String -> Page -> Model -> Msg -> ( Model, Cmd Msg )
+search2 searchDomain query page model msg =
+    search searchDomain query page model
 
 
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )

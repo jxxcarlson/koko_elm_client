@@ -4,6 +4,8 @@ import Types exposing (..)
 import External
 import Views.External
 import Data.User
+import Request.Api
+import Request.User
 
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
@@ -70,6 +72,12 @@ login model =
             { user | password = "" }
     in
         { model | message = "LOGGING IN", appState = newAppState, current_user = updatedUser }
+
+login2 : Model -> (Model, Cmd Msg)
+login2 model =
+  ( login model,  Request.User.loginUserCmd model Request.Api.loginUrl)
+    --, Action.Document.search Private "sort=updated" HomePage model
+
 
 
 signout : String -> Model -> ( Model, Cmd Msg )

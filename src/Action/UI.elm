@@ -91,26 +91,6 @@ setAuthorizing model value =
     in
         ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
 
-goToPage : Page -> Model -> (Model, Cmd Msg)
-goToPage p model =
-  if p == EditorPage && model.current_user.token == "" then
-      ( { model
-          | appState = appStateWithPage model HomePage
-          , message = "Please sign in if you wish to edit"
-        }
-      , External.toJs (Views.External.windowData model p)
-      )
-  else if p == HomePage && model.current_user.token /= "" then
-     ( { model
-         | appState = appStateWithPage model HomePage
-       }
-     , Cmd.batch [
-       -- Action.Document.search Private "sort=updated" model
-        External.toJs (Views.External.windowData model p)
-       ]
-     )
-  else
-      ( { model | appState = appStateWithPage model p }, External.toJs (Views.External.windowData model p) )
 
 
 appStateWithPage : Model -> Page -> AppState
