@@ -11,6 +11,7 @@ import Style.Font as Font
 import Style.Transition as Transition
 
 
+
 {-| A synonym for creating tuples. This will be included in the standard library soon.
 1 => 2 == (1, 2)
 -}
@@ -201,7 +202,7 @@ stylesheet =
         , style Field
             [ Color.text Color.black ]
         , style TOC
-            [ Color.background Color.gray ]
+            [ Color.background Color.gray, Border.none ]
         , style TOCItem
             [ Color.text Color.black ]
         , style TOCItemChild

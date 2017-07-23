@@ -142,7 +142,7 @@ update msg model =
 
         -- updatedSearchState
         DoSearch searchDomain key ->
-            Action.Document.doSearch searchDomain key model
+            Action.Document.searchOnEnter searchDomain key model
 
         RecallLastSearch ->
            Action.Document.recallLastSearch model

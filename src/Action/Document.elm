@@ -328,33 +328,38 @@ togglePublic model =
         updateCurrentDocument updatedModel newDocument
 
 
-doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-doSearch searchDomain key model =
+searchOnEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+searchOnEnter searchDomain key model =
     if (Debug.log "key" key) == 13 then
         let
-            appState = model.appState
-            newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
-
-            newSearchState =
-                Action.Search.updatedSearchState model searchDomain
-
-            updatedModel =
-                { model
-                    | searchState = newSearchState
-                    , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText model.searchState.query
-                    , appState = newAppState
-                    , master_document = defaultMasterDocument
-                    , documents2 = model.documents
-                }
+          searchState =
+            Action.Search.updatedSearchState model searchDomain
         in
-            ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
-            , Cmd.batch
-                [ Request.Document.getDocumentsWith newSearchState model.current_user.token
-                , renderDocument model.current_document
-                ]
-            )
+            search searchState.domain searchState.query model
     else
         ( model, Cmd.none )
+
+search : SearchDomain -> String -> Model -> ( Model, Cmd Msg )
+search searchDomain query model =
+          let
+              appState = model.appState
+              newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
+              newSearchState = SearchState query searchDomain
+              updatedModel =
+                  { model
+                      | searchState = newSearchState
+                      , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
+                      , appState = newAppState
+                      , master_document = defaultMasterDocument
+                      , documents2 = model.documents
+                  }
+          in
+              ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
+              , Cmd.batch
+                  [ Request.Document.getDocumentsWith newSearchState model.current_user.token
+                  , renderDocument model.current_document
+                  ]
+              )
 
 
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
@@ -379,7 +384,7 @@ selectMasterDocumentAux document_id model =
         updatedModel =
             { model | searchState = updatedSearchState }
     in
-        doSearch model.searchState.domain 13 updatedModel
+        searchOnEnter model.searchState.domain 13 updatedModel
 
 renderDocument : Document -> Cmd msg
 renderDocument document =
@@ -395,7 +400,7 @@ renderDocumentWithKey key model =
   else
       ( model, Cmd.none )
 
-
+deleteDocument : Result a value -> Model -> (Model, Cmd Msg)
 deleteDocument serverReply model =
     case serverReply of
       (Ok serverReply) ->
