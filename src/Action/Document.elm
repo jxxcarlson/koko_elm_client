@@ -461,7 +461,7 @@ setParentId parentIdString model =
 
 
 addToMasterDocument model =
-  ({model | message = "Add to master"}, Cmd.none)
+  ({model | message = model.appState.command}, putDocument model.appState.command model model.master_document)
 
 pushDocumentStack : Document -> DocumentStack -> DocumentStack
 pushDocumentStack document stack =
@@ -470,3 +470,13 @@ pushDocumentStack document stack =
 docStackTop : DocumentStack -> Document
 docStackTop docstack =
   List.head docstack |> Maybe.withDefault defaultDocument
+
+
+attachDocumentCommand : String -> Model -> String
+attachDocumentCommand location model =
+  "attach="
+      ++ location
+      ++ "&child="
+      ++ (toString model.current_document.id)
+      ++ "&current="
+      ++ (toString (docStackTop model.documentStack).id)

@@ -169,9 +169,10 @@ newDocumentTable model =
       ]
     ]
 
+
 selectAttachmentOption model =
   radio "Attach new document" TOC [spacing 10, width (px 200), paddingXY 20 0]
-    [ option "top" True (el TOC [verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
+    [ option "top" False (el TOC [verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
     , option "above" False (el TOC [verticalCenter , onClick (AttachCurrentDocument "above") ] (text "Above current"))
     , option "below" False (el TOC [verticalCenter, onClick (AttachCurrentDocument "below")] (text "Below current"))
     , option "bottom" False (el TOC [verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))

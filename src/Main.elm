@@ -191,7 +191,11 @@ update msg model =
         --( model , Request.Document.createDocument newDocument model.current_user.token )
 
         AttachCurrentDocument location ->
-          ({model | message = "Attach " ++ location}, Cmd.none)
+          let
+            appState = model.appState
+            newAppState = { appState | command = (Action.Document.attachDocumentCommand location model)}
+          in
+          ({model | appState = newAppState}, Cmd.none)
 
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
@@ -393,7 +397,7 @@ init flags =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False False False False HomePage TableOfContents ""
+            AppState False False False False False False False False False HomePage TableOfContents "" ""
 
         channel =
             Phoenix.Channel.init "room:lobby"

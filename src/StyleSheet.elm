@@ -61,6 +61,7 @@ type Styles
     | StatusSuccess
     | StatusFailure
     | Small
+    | Mono
 
 
 {-| First, we create a stylesheet.
@@ -219,6 +220,7 @@ stylesheet =
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
+        , style Mono [Font.typeface [ "Lucida Sans Unicode" ]]
         ]
 
 

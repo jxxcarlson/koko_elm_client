@@ -122,6 +122,7 @@ type alias AppState =
     , page : Page
     , tool : Tool
     , textBuffer : String
+    , command : String
     }
 
 

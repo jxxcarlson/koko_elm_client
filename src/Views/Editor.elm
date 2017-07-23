@@ -50,7 +50,7 @@ contentPanel model =
     (Keyed.row None
         []
         [ ( (toString model.counter)
-          , (textArea None
+          , (textArea Mono
                 [ width (percent 100)
                 , yScrollbar
                 , padding 8
