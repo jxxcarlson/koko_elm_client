@@ -55,3 +55,5 @@ userRecordDecoder =
 userRecord : String -> Result String UserRecord
 userRecord jsonString =
     decodeString userRecordDecoder jsonString
+
+  

@@ -147,6 +147,10 @@ update msg model =
         RecallLastSearch ->
            Action.Document.recallLastSearch model
 
+        UserHomePage ->
+          Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) model
+
+
         DoRender key ->
             Action.Document.renderDocumentWithKey key model
 

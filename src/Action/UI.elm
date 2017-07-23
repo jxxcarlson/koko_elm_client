@@ -8,9 +8,10 @@ import Views.External
 import Array
 
 
+
 displayPage : Model -> Page
 displayPage model =
-    if model.appState.page == Types.HomePage then
+    if model.appState.page == Types.HomePage || model.appState.page == Types.ImagePage then
         Types.ReaderPage
     else
         model.appState.page

@@ -91,7 +91,7 @@ signoutForm1 model =
 signinInfoPanel : Model -> Element Styles variation Msg
 signinInfoPanel model =
   notVisibleIf
-      (model.appState.authorizing)
+      (model.appState.authorizing || model.appState.signedIn)
       (signinInfoPanel1 model)
 
 signinInfoPanel1 : Model -> Element Styles variation Msg

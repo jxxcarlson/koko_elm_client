@@ -9,6 +9,7 @@ module Views.Common
         , printButton
         , visibleIf
         , notVisibleIf
+        , homepage
         )
 
 import StyleSheet exposing (..)
@@ -192,6 +193,16 @@ addToMasterDocumentButton model =
       , verticalCenter
       ]
       (el Zero [verticalCenter] (text ("Add to master")))
+
+homepage model =
+  el FlatButton
+      [ width (px 200)
+      , onClick Types.UserHomePage
+      , height (px 30)
+      , paddingXY 8 0
+      , verticalCenter
+      ]
+      (el Zero [verticalCenter] (text ("Home page")))
 
 editorTools : Model -> Element Styles variation Msg
 editorTools model =

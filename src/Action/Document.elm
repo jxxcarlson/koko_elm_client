@@ -270,6 +270,7 @@ selectDocument model document =
 
         newAppState =
             { appState | textBuffer = document.content,
+            page = displayPage model,
             textBufferDirty = False }
     in
         ( { model
@@ -343,7 +344,9 @@ search : SearchDomain -> String -> Model -> ( Model, Cmd Msg )
 search searchDomain query model =
           let
               appState = model.appState
-              newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
+              newAppState = { appState | masterDocLoaded = False,
+                 tool = TableOfContents,
+                 page = displayPage model }
               newSearchState = SearchState query searchDomain
               updatedModel =
                   { model
@@ -354,7 +357,7 @@ search searchDomain query model =
                       , documents2 = model.documents
                   }
           in
-              ( { updatedModel | appState = Action.UI.appStateWithPage model (Action.UI.displayPage model), info = "tool: " ++ (toString updatedModel.appState.tool) }
+              ( { updatedModel | appState = newAppState }
               , Cmd.batch
                   [ Request.Document.getDocumentsWith newSearchState model.current_user.token
                   , renderDocument model.current_document

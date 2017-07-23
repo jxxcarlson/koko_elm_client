@@ -69,7 +69,7 @@ login model =
         updatedUser =
             { user | password = "" }
     in
-        { model | appState = newAppState, current_user = updatedUser }
+        { model | message = "LOGGING IN", appState = newAppState, current_user = updatedUser }
 
 
 signout : String -> Model -> ( Model, Cmd Msg )
@@ -134,3 +134,13 @@ reconnectUser model userRecord =
           }
         , Cmd.none
         )
+
+shortUsername : Model -> String
+shortUsername model =
+  let
+    shortName = model.current_user.username
+        |> String.split("@")
+        |> List.head
+        |> Maybe.withDefault "---"
+   in
+    shortName

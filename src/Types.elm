@@ -210,6 +210,7 @@ type Msg
     | ImageRead ImagePortData
     | FileSelected
     | FileUploaded Bool
+    | UserHomePage
 
 
 type Page
