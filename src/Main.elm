@@ -118,7 +118,7 @@ update msg model =
         Login ->
           let
             (model1, cmds1) = Action.User.login2 model
-            (model2, cmds2) = Action.Document.search Private "sort=updated" ReaderPage model1
+            (model2, cmds2) = Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
           in
             (model2, Cmd.batch [cmds1, cmds2])
 
@@ -157,7 +157,7 @@ update msg model =
           Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) ReaderPage model
 
         InitHomePage ->
-          Action.Document.search Private "sort=updated" HomePage model
+          Action.Document.search Private "sort=updated&limit=12" HomePage model
 
         DoRender key ->
             Action.Document.renderDocumentWithKey key model
@@ -248,7 +248,13 @@ update msg model =
 
         -- ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
         SelectDocument document ->
-            selectDocument model document
+          -- selectDocument model document
+          let
+            (model1, cmd1) = Action.Document.saveDocument "viewed_at=now" document model
+            (model2, cmd2) = selectDocument model document
+          in
+            (model2, Cmd.batch[cmd1, cmd2])
+
 
         SelectMaster document ->
             Action.Document.selectMasterDocument document model

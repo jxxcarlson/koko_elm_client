@@ -216,6 +216,10 @@ saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
 saveCurrentDocument queryString model =
     ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
 
+saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
+saveDocument queryString document model =
+    ( { model | message = ("Saved document " ++ (toString document.id)) }, putDocument queryString model document )
+
 
 hasId : Int -> Document -> Bool
 hasId id document =

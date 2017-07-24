@@ -65,7 +65,16 @@ transformQualifiedItem item =
 
         [ "sort", "t" ] ->
             "sort=title"
-            
+
+        [ "sort", "viewed"] ->
+          "sort=viewed"
+
+        [ "sort", "v"] ->
+          "sort=viewed"
+
+        [ "limit", stem] ->
+          "limit=" ++ stem
+
 
         _ ->
             ""

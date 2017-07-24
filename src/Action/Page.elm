@@ -16,6 +16,6 @@ goToPage p model =
       , External.toJs (Views.External.windowData model p)
       )
   else if p == HomePage && model.current_user.token /= "" then
-        Action.Document.search Private "sort=updated" HomePage model
+        Action.Document.search Private "sort=updated&limit=12" HomePage model
   else
       ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )
