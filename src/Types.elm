@@ -212,10 +212,14 @@ type Msg
     | FileUploaded Bool
     | UserHomePage
     | InitHomePage
+    | GoToPage (Maybe Page)
+    | LinkTo String
 
 
 type Page
     = HomePage
+    | PublicPage Int
+    | PrivatePage Int
     | ReaderPage
     | EditorPage
     | ImagePage
@@ -229,6 +233,12 @@ pageName page =
 
         ReaderPage ->
             "Reader"
+
+        PublicPage _ ->
+           "Reader"
+
+        PrivatePage _ ->
+           "Reader"   
 
         EditorPage ->
             "Editor"

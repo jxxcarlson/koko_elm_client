@@ -1,9 +1,12 @@
 module Main exposing (..)
 
+import Navigation
 import Html exposing (..)
 import Phoenix.Socket
 import Phoenix.Channel
 import Task
+import Nav.Parser exposing (..)
+import Nav.Navigation
 
 
 -- begin style
@@ -62,7 +65,7 @@ import Views.Image exposing (imageEditor)
 
 main : Program Flags Model Msg
 main =
-    programWithFlags
+    Navigation.programWithFlags urlParser
         { init = init
         , view = view
         , update = update
@@ -304,9 +307,9 @@ update msg model =
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
-                (model, Cmd.none) -- Action.Channel.sendImmediateMessage "hello" model
+                Action.Channel.sendImmediateMessage "hello" model  -- (model, Cmd.none) -- 
             else
-                (model, Cmd.none) -- Action.Channel.joinChannel model
+                Action.Channel.joinChannel model  -- (model, Cmd.none) --
 
         SendToJS str ->
             ( model, toJs str )
@@ -331,7 +334,15 @@ update msg model =
         PhoenixMsg msg ->
             Action.Channel.handleMsg msg model
 
+        GoToPage maybepage ->
+           Nav.Navigation.navigateTo maybepage  model
 
+        LinkTo path ->
+            ( model, Navigation.newUrl path )
+
+
+          -- LinkTo path ->
+          --   ( model, newUrl path )
 
 -- app.js:7580 Phoenix message: { event = "phx_reply",
 --   topic = "room:lobby",
@@ -347,7 +358,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (10 * Time.second) Tick
+        [ Time.every (1 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
@@ -360,6 +371,12 @@ page : Model -> List (Element Styles variation Msg)
 page model =
     case model.appState.page of
         ReaderPage ->
+            reader model
+
+        PublicPage _ ->
+            reader model
+
+        PrivatePage _ ->
             reader model
 
         EditorPage ->
@@ -393,8 +410,8 @@ view model =
 -- INIT
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
     let
         current_user =
             User "" "" "" "" ""
