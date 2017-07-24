@@ -36,7 +36,7 @@ home model =
                 -- , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Common.visibleIf model.appState.signedIn (Common.documentListView model))
+                , (Common.visibleIf model.appState.signedIn (Common.documentListView "Recent" model))
                 ]
             )
         ]

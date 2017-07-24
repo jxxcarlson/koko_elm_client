@@ -73,11 +73,11 @@ viewTocItem child =
         (text child.title)
 
 
-documentListView : Model -> Element Styles variation Msg
-documentListView model =
+documentListView : String -> Model -> Element Styles variation Msg
+documentListView title model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments model)) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model)) ]
             ++ (List.map (viewTitle model model.current_document) model.documents)
         )
 
@@ -105,7 +105,7 @@ tool : Model -> Element Styles variation Msg
 tool model =
     case model.appState.tool of
         TableOfContents ->
-            documentListView model
+            documentListView "Documents" model
 
         ReaderTools ->
             readerTools model

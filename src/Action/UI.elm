@@ -162,14 +162,9 @@ queryMessage domain =
         "search " ++ domain_ ++ " for "
 
 
-numberOfDocuments : Model -> String
-numberOfDocuments model =
-    case model.searchState.domain of
-        Private ->
-            "My documents: " ++ (toString (List.length model.documents))
-
-        Public ->
-            "Public documents: " ++ (toString (List.length model.documents))
+numberOfDocuments : String -> Model -> String
+numberOfDocuments title model =
+    title ++ ": " ++ (toString (List.length model.documents))
 
 
 tocNumberOfDocuments : Model -> String
