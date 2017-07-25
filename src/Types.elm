@@ -34,7 +34,8 @@ type alias Image =
     , filename : String
     }
 
--- defaultImage :: Image
+
+defaultImage : Image
 defaultImage = Image "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" "fileName"
 
 type alias ImageRecord =
@@ -42,9 +43,21 @@ type alias ImageRecord =
     , mImage : Maybe Image
   }
 
--- defaultImageRecord :: ImageRecord
+defaultImageRecord : ImageRecord
 defaultImageRecord = ImageRecord "ImageInputId" Nothing
 
+type alias Credentials = {
+  signature: String,
+  policy: String,
+  key: String,
+  acl: String,
+  awsAccessKeyId: String
+}
+
+type alias CredentialsWrapper = {
+  credentials: Credentials,
+  url: String
+}
 
 type alias DocumentAttributes =
     { public : Bool
@@ -209,6 +222,7 @@ type Msg
     | ImageSelected
     | ImageRead ImagePortData
     | GetUploadCredentials
+    | CredentialsResult (Result Http.Error CredentialsWrapper)
     | FileSelected
     | FileUploaded Bool
     | UserHomePage
@@ -260,13 +274,14 @@ type alias Flags =
     , height : Int
     }
 
-
+defaultAttributes : DocumentAttributes
 defaultAttributes =
     DocumentAttributes False "adoc" "standard" 0
 
-
+defaultDocument : Document
 defaultDocument =
     Document 0 "nullDocument" 0 "Default document" "nothing" "nothing" defaultAttributes [] [] 0 ""
 
+defaultMasterDocument : Document
 defaultMasterDocument =
     Document 0 "nullMasterDocument" 0 "Null master document" "nothing" "nothing" defaultAttributes [] [] 0 ""

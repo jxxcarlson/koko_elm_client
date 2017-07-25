@@ -296,6 +296,18 @@ update msg model =
         GetUploadCredentials ->
           Action.Image.getUploadCredentials model
 
+        CredentialsResult (Ok result) ->
+          let
+            _ = Debug.log "ok" result
+          in
+            (model, Cmd.none)
+
+        CredentialsResult (Err error) ->
+          let
+            _ = Debug.log "error" error
+          in
+            (model, Cmd.none)
+
         FileSelected ->
             ( model, fileUpload model.fileInputId )
 
@@ -362,7 +374,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (1 * Time.second) Tick
+        [ Time.every (100 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg

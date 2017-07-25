@@ -1,8 +1,10 @@
 module Nav.Navigation exposing(..)
 
-import Types exposing(Page(..), Model, SearchDomain(..))
+import Types exposing(Page(..), Model, SearchDomain(..), Msg(..))
 import Action.Document
 
+
+navigateTo : Maybe Page -> Model -> (Model, Cmd Msg)
 navigateTo maybepage model =
   case maybepage of
       Nothing ->

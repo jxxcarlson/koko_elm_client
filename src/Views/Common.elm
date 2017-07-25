@@ -194,6 +194,7 @@ addToMasterDocumentButton model =
       ]
       (el Zero [verticalCenter] (text ("Add to master")))
 
+homepage : Model -> Element Styles variation Msg
 homepage model =
   el FlatButton
       [ width (px 200)
