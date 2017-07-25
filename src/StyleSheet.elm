@@ -63,6 +63,10 @@ type Styles
     | StatusFailure
     | Small
     | Mono
+    | PaleBlue
+    | PaleGreen
+    | PaleYellow
+    | PaleRed
 
 
 {-| First, we create a stylesheet.
@@ -222,6 +226,10 @@ stylesheet =
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
         , style Mono [Font.typeface [ "Lucida Sans Unicode" ]]
+        , style PaleBlue [ Color.background (Color.rgb 200 200 255) ]
+        , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]
+        , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
+        , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
         ]
 
 

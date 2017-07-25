@@ -4,6 +4,7 @@ import Json.Decode
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Events exposing (..)
 import Views.Component as Component
 import Types exposing (..)
 import Html
@@ -24,8 +25,16 @@ imageEditor model =
       []
       [ named "separator" (hairline Hairline)
       , named "footer" (Component.footer model)
-      , named "Content2" (imagePane model)
+      , named "Content2" (imageUploadPane model)
       ]
+  ]
+
+
+imageUploadPane : Model -> Element Styles variation Msg
+imageUploadPane model =
+  column None [spacing 20] [
+    imagePane model
+    , uploadImageButton model
   ]
 
 imagePane : Model -> Element Styles variation Msg
@@ -38,13 +47,12 @@ imagePane model =
                 Nothing ->
                     viewImagePreview defaultImage
     in
-        row None [padding 30, height (px 350), width (px 450)]
-            [ html (uploadButton1 model imagePreview),
-              html (fileUploadPanel model)
-            ]
-            
-uploadButton1 : Model -> Html.Html Msg -> Html.Html Msg
-uploadButton1 model imagePreview =
+        row None [ width (px 450)]
+          [ html (chooseImageButton model imagePreview)
+          ]
+
+chooseImageButton : Model -> Html.Html Msg -> Html.Html Msg
+chooseImageButton model imagePreview =
   Html.div [ HA.class "imageWrapper" ]
             [ Html.input
                 [ HA.type_ "file"
@@ -56,6 +64,15 @@ uploadButton1 model imagePreview =
             , imagePreview
             ]
 
+uploadImageButton : Model -> Element Styles variation Msg
+uploadImageButton model =
+  el FlatButton
+      [ width (px 200)
+      , onClick NoOp
+      , height (px 30)
+      , verticalCenter
+      ]
+      (el Zero [center, verticalCenter] (text ("Upload image")))
 
 viewImagePreview : Image -> Html.Html Msg
 viewImagePreview img =
@@ -70,17 +87,17 @@ viewImagePreview img =
         ]
         []
 
-fileUploadPanel : Model -> Html.Html Msg
-fileUploadPanel model =
-    Html.div []
-        [ Html.label [ HA.class "btn btn-primary" ]
-            [ Html.input
-                [ HA.type_ "file"
-                , HA.id model.fileInputId
-                , HA.style [ ( "display", "none" ) ]
-                , HE.on "change" (Json.Decode.succeed FileSelected)
-                ]
-                []
-            , Html.text "Upload"
-            ]
-        ]
+-- fileUploadPanel : Model -> Html.Html Msg
+-- fileUploadPanel model =
+--     Html.div []
+--         [ Html.label [ HA.class "btn btn-primary" ]
+--             [ Html.input
+--                 [ HA.type_ "file"
+--                 , HA.id model.fileInputId
+--                 , HA.style [ ( "display", "none" ) ]
+--                 , HE.on "change" (Json.Decode.succeed FileSelected)
+--                 ]
+--                 []
+--             , Html.text "Upload"
+--             ]
+--         ]
