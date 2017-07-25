@@ -307,7 +307,7 @@ update msg model =
             if model.appState.page == EditorPage && model.appState.textBufferDirty then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
-                Action.Channel.sendImmediateMessage "hello" model  -- (model, Cmd.none) -- 
+                Action.Channel.sendImmediateMessage "hello" model  -- (model, Cmd.none) --
             else
                 Action.Channel.joinChannel model  -- (model, Cmd.none) --
 

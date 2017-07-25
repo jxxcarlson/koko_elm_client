@@ -6,11 +6,7 @@ import Action.Document
 navigateTo maybepage model =
   case maybepage of
       Nothing ->
-        let
-            appState = model.appState
-            newAppState = { appState | page = HomePage }
-        in
-            ( { model | appState = newAppState }, Cmd.none )
+            (model, Cmd.none)
 
       Just page ->
         case page of

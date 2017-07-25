@@ -1,12 +1,15 @@
 module Nav.Parser exposing (urlParser)
 
 import Navigation exposing (..)
-import UrlParser exposing (..)
+import Nav.UrlParser as UrlParser exposing(..)
 import Types exposing (Page(..), Msg(..))
 
 
 
 -- ROUTING
+
+
+
 
 
 route : Parser (Page -> a) a
@@ -19,5 +22,5 @@ route =
 
 urlParser : Location -> Msg
 urlParser location =
-    parseHash route location
+    parseHash2 route location
         |> GoToPage
