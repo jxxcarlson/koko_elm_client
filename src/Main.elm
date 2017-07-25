@@ -19,6 +19,7 @@ import Types exposing (..)
 import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Page
+import Action.Image
 import Action.Document
     exposing
         ( createDocument
@@ -292,6 +293,9 @@ update msg model =
                 ( { model | imageRecord = newImageRecord }
                 , Cmd.none
                 )
+        GetUploadCredentials ->
+          Action.Image.getUploadCredentials model
+
         FileSelected ->
             ( model, fileUpload model.fileInputId )
 

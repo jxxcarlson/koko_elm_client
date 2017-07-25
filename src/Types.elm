@@ -208,6 +208,7 @@ type Msg
     | HandleSendError JsEncode.Value
     | ImageSelected
     | ImageRead ImagePortData
+    | GetUploadCredentials
     | FileSelected
     | FileUploaded Bool
     | UserHomePage
@@ -238,7 +239,7 @@ pageName page =
            "Reader"
 
         PrivatePage _ ->
-           "Reader"   
+           "Reader"
 
         EditorPage ->
             "Editor"

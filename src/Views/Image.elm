@@ -68,7 +68,7 @@ uploadImageButton : Model -> Element Styles variation Msg
 uploadImageButton model =
   el FlatButton
       [ width (px 200)
-      , onClick NoOp
+      , onClick GetUploadCredentials
       , height (px 30)
       , verticalCenter
       ]
