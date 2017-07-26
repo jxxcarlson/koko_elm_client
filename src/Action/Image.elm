@@ -3,6 +3,8 @@ module Action.Image exposing(..)
 -- import Types exposing(Model, Image, defaultImage, Credentials, CredentialsResult)
 import Types exposing(..)
 import Json.Decode exposing(field)
+import Date.Extra
+import Date exposing(Date)
 
 import Http
 
@@ -15,12 +17,25 @@ getUploadCredentials model =
   in
      ( { model | message = "image: " ++ image.filename }, cmd)
 
--- app.js:20576 XMLHttpRequest cannot load localhost:4000/api/file_upload_presigned?chem_lab.jpg&mimetype=image/jpeg.
--- Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https.
 
-    -- documentRecordDecoder =
-    --     JPipeline.decode DocumentRecord
-    --         |> JPipeline.required "document" (documentDecoder)
+dateString : Date -> String
+dateString date =
+  let
+    y = Date.year date |> toString
+    m = Date.Extra.monthNumber date |> toString
+    d = Date.day date |> toString
+    md = List.map (String.padLeft 2 '0') [m,d] |> String.join ""
+  in
+    y ++ md
+
+
+awzCrendential : CredentialsWrapper -> String
+awzCrendential credentialsWrapper =
+  let
+    accessKeyId = credentialsWrapper.credentials.awsAccessKeyId
+    date = "xxx"
+  in
+    accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
 
 decodeCredentials : Json.Decode.Decoder Credentials
 decodeCredentials =

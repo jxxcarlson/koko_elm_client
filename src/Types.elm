@@ -4,6 +4,7 @@ import Http
 import Time exposing (Time)
 import Phoenix.Socket
 import Json.Encode as JsEncode
+import Date exposing(Date)
 
 
 
@@ -158,6 +159,7 @@ type alias Model =
     , messages : List String
     , imageRecord : ImageRecord
     , fileInputId : String
+    , date : Maybe Date
     }
 
 
@@ -223,12 +225,15 @@ type Msg
     | ImageRead ImagePortData
     | GetUploadCredentials
     | CredentialsResult (Result Http.Error CredentialsWrapper)
+    | UploadComplete (Result Http.Error String)
     | FileSelected
     | FileUploaded Bool
     | UserHomePage
     | InitHomePage
     | GoToPage (Maybe Page)
     | LinkTo String
+    | RequestDate
+    | ReceiveDate Date
 
 
 type Page

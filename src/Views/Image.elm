@@ -10,6 +10,7 @@ import Types exposing (..)
 import Html
 import Html.Attributes as HA
 import Html.Events as HE
+import Date.Extra
 
 imageEditor : Model -> List (Element Styles variation Msg)
 imageEditor model =

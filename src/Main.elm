@@ -7,6 +7,7 @@ import Phoenix.Channel
 import Task
 import Nav.Parser exposing (..)
 import Nav.Navigation
+import Date exposing(Date)
 
 
 -- begin style
@@ -308,6 +309,18 @@ update msg model =
           in
             (model, Cmd.none)
 
+        UploadComplete (Ok result) ->
+          let
+            _ = Debug.log "ok" result
+          in
+            (model, Cmd.none)
+
+        UploadComplete (Err error) ->
+          let
+            _ = Debug.log "error" error
+          in
+            (model, Cmd.none)
+
         FileSelected ->
             ( model, fileUpload model.fileInputId )
 
@@ -356,6 +369,18 @@ update msg model =
         LinkTo path ->
             ( model, Navigation.newUrl path )
 
+        RequestDate ->
+            ( model, Task.perform ReceiveDate Date.now )
+
+        ReceiveDate date ->
+            let
+                nextModel =
+                    { model | date = Just date }
+            in
+                ( nextModel, Cmd.none )
+
+
+
 
           -- LinkTo path ->
           --   ( model, newUrl path )
@@ -374,7 +399,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (100 * Time.second) Tick
+        [ Time.every (1 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
@@ -478,10 +503,12 @@ init flags location =
             []
             defaultImageRecord
             ""
+            Nothing
         , Cmd.batch [
                   Cmd.map PhoenixMsg phxCmd, toJs ws,
                   External.askToReconnectUser "reconnectUser",
-                  Action.Document.renderDocument defaultDocument ]
+                  Action.Document.renderDocument defaultDocument,
+                  Task.perform ReceiveDate Date.now ]
         )
 
 
