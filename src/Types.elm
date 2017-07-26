@@ -52,7 +52,8 @@ type alias Credentials = {
   policy: String,
   key: String,
   acl: String,
-  awsAccessKeyId: String
+  awsAccessKeyId: String,
+  date: String
 }
 
 type alias CredentialsWrapper = {

@@ -11,7 +11,7 @@ import Http
 getUploadCredentials model =
   let
     image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-    url = "http://localhost:4000/api/file_upload_presigned?filename=" ++ image.filename ++ "&mimetype=image/jpeg"
+    url = "http://localhost:4000/api/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=yada"
     cmd = Http.get url decodeCredentialsWrapper
       |> Http.send CredentialsResult
   in
@@ -42,18 +42,19 @@ awzCredential : Model -> CredentialsWrapper -> String
 awzCredential model credentialsWrapper  =
   let
     accessKeyId = credentialsWrapper.credentials.awsAccessKeyId
-    date = getFormattedDate model.date
+    date = credentialsWrapper.credentials.date
   in
     accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
 
 decodeCredentials : Json.Decode.Decoder Credentials
 decodeCredentials =
-    Json.Decode.map5 Credentials
+    Json.Decode.map6 Credentials
         (field "signature" Json.Decode.string)
         (field "policy" Json.Decode.string)
         (field "key" Json.Decode.string)
         (field "acl" Json.Decode.string)
         (field "AWSAccessKeyId" Json.Decode.string)
+        (field "date" Json.Decode.string)
 
 decodeCredentialsWrapper : Json.Decode.Decoder CredentialsWrapper
 decodeCredentialsWrapper =
