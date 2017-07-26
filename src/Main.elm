@@ -299,7 +299,7 @@ update msg model =
 
         CredentialsResult (Ok result) ->
           let
-            _ = Debug.log "ok" result
+            _ = Debug.log "ok!!" (Action.Image.awzCredential model result)
           in
             (model, Cmd.none)
 
@@ -399,7 +399,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (1 * Time.second) Tick
+        [ Time.every (100 * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg

@@ -28,12 +28,21 @@ dateString date =
   in
     y ++ md
 
+getFormattedDate : Maybe Date -> String
+getFormattedDate date =
+    case date of
+        Just d ->
+            dateString d
 
-awzCrendential : CredentialsWrapper -> String
-awzCrendential credentialsWrapper =
+        Nothing ->
+            "19010101"
+
+
+awzCredential : Model -> CredentialsWrapper -> String
+awzCredential model credentialsWrapper  =
   let
     accessKeyId = credentialsWrapper.credentials.awsAccessKeyId
-    date = "xxx"
+    date = getFormattedDate model.date
   in
     accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
 
