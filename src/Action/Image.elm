@@ -11,7 +11,7 @@ import Http
 getUploadCredentials model =
   let
     image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-    url = "http://localhost:4000/api/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=yada"
+    url = "http://localhost:4000/api/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
     cmd = Http.get url decodeCredentialsWrapper
       |> Http.send CredentialsResult
   in
