@@ -130,7 +130,7 @@ var mountNode = document.getElementById('main');
     console.log ("READER  WIDTH: "  + reader_width)
     var reader_height = (settings.height - 190)
 
-    var editor_left = toc_width + textarea_width
+    var editor_left = toc_width + textarea_width + 9000
     var editor_width = (settings.width - (toc_width + textarea_width)) - fudgeFactor
     var editor_height = (settings.height - 190)
 

@@ -9,7 +9,6 @@ import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
-import Json.Encode
 import Html
 
 
@@ -28,20 +27,11 @@ reader model =
         [ named "separator" (hairline Hairline)
         , named "TOCHeader" (toolSelectorPanel model)
         , named "contentHeader" (contentHeader model)
-        , named "content" (renderedContent model)
+        , named "content" (Common.renderedContent 650 model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
-
-renderedContent model =
-  let
-    w = toFloat (Basics.min model.window.width 650)
-    h = (toFloat model.window.height) - 150
-  in
-    (el Zero [yScrollbar, id "rendered_text2", padding 20, width (px w), height (px h), property "innerHTML"
-       (Json.Encode.string model.current_document.rendered_content)] (text ""))
-
 
 
 contentHeader : Model -> Element Styles variation Msg

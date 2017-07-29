@@ -24,7 +24,7 @@ editor model =
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "editorPanel" ]
-            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
+            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "renderedContent" ]
             , px 40 => [ spanAll "footer" ]
             ]
         }
@@ -33,6 +33,7 @@ editor model =
         , named "TOCHeader" (toolSelectorPanel model)
         , named "contentHeader" (titlePanel model)
         , named "content" (contentPanel model)
+        , named "renderedContent" (Common.renderedContent 650 model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         , named "editorPanel" (editorPanel model)
