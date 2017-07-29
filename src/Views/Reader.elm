@@ -3,12 +3,14 @@ module Views.Reader exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Attributes exposing (..)
+import Html.Attributes as HA
 import Element.Events exposing (onClick)
 import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
+import Json.Encode
+import Html
 
 
 reader : Model -> List (Element Styles variation Msg)
@@ -26,11 +28,20 @@ reader model =
         [ named "separator" (hairline Hairline)
         , named "TOCHeader" (toolSelectorPanel model)
         , named "contentHeader" (contentHeader model)
-        , named "content" (text "")
+        , named "content" (renderedContent model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
     ]
+
+renderedContent model =
+  let
+    w = toFloat (Basics.min model.window.width 650)
+    h = (toFloat model.window.height) - 150
+  in
+    (el Zero [yScrollbar, id "rendered_text2", padding 20, width (px w), height (px h), property "innerHTML"
+       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+
 
 
 contentHeader : Model -> Element Styles variation Msg

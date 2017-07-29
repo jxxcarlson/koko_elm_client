@@ -11,11 +11,32 @@ import Utility
 import Action.Search
 import Regex
 import LatexParser.Render
+
+-- getRenderedText : Model -> (Model, Cmd Msg)
+-- getRenderedText str model =
+--   let
+--     document = model.current_document
+--     newDocument = { document | rendered_content = Debug.log "abab" str }
+--    in
+--     ({model | message = "Get rendered text (from JS-world)", current_document = newDocument}, Cmd.none)
+
 -- import Data.Document
-
-
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
+    let
+        oldDocument =
+            model.current_document
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | content = content   }
+
+    in
+        updateCurrentDocument model newDocument
+
+
+updateCurrentDocumentWithContent1 : String -> Model -> ( Model, Cmd Msg )
+updateCurrentDocumentWithContent1 content model =
     let
         oldDocument =
             model.current_document

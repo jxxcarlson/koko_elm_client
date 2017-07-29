@@ -36,7 +36,10 @@ var mountNode = document.getElementById('main');
           console.log("RENDER AS ASCIIDOC " );
           request_in_progress = false;
           if (content !== current_content) {
-            document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+            var rt = asciidoctor.convert(content)
+            document.getElementById('rendered_text2').innerHTML = rt;
+            console.log("xyxxyxy, rt = " + rt)
+            app.ports.getRenderedText.send(rt);
             typesetNow()
           }
       }  , millisecondsToWait);
@@ -130,6 +133,8 @@ var mountNode = document.getElementById('main');
     var editor_left = toc_width + textarea_width
     var editor_width = (settings.width - (toc_width + textarea_width)) - fudgeFactor
     var editor_height = (settings.height - 190)
+
+    reader_left = 9000
 
      switch(settings.page) {
         case "HomePage":

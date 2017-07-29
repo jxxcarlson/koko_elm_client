@@ -177,6 +177,14 @@ update msg model =
                     , Cmd.none
                     )
 
+        GetRenderedText str ->
+          let
+            document = model.current_document
+            newDocument = { document | rendered_content = Debug.log "abab" str }
+           in
+            ({model | message = "Get rendered text (from JS-world)", current_document = newDocument}, Cmd.none)
+
+
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
 
@@ -404,6 +412,7 @@ subscriptions model =
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , External.getRenderedText GetRenderedText
         , External.fileContentRead ImageRead
         , fileUploaded FileUploaded
         ]

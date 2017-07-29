@@ -16,7 +16,7 @@ encodeDocument is used to send rendered content to JS-world.
 -}
 encodeDocument : Document -> Encode.Value
 encodeDocument document =
-    [ ( "content", Encode.string (document.rendered_content) )
+    [ ( "content", Encode.string (document.content) )
     , ( "textType", Encode.string document.attributes.textType )
     ]
         |> Encode.object
@@ -37,7 +37,7 @@ port askToReconnectUser : String -> Cmd msg
 
 port reconnectUser : (String -> msg) -> Sub msg
 
-
+port getRenderedText : (String -> msg) -> Sub msg
 
 -- TEST:
 

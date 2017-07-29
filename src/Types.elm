@@ -209,6 +209,7 @@ type Msg
     | ClearSearch
     | RecallLastSearch
     | DoRender Int
+    | GetRenderedText String
     | SelectDocument Document
     | SelectMaster Document
     | UseSearchDomain SearchDomain
