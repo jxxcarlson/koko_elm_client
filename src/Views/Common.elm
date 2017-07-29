@@ -89,7 +89,7 @@ documentListView : String -> Model -> Element Styles variation Msg
 documentListView title model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model)) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Debug.log "NNN, " (UI.numberOfDocuments title model))) ]
             ++ (List.map (viewTitle model model.current_document) model.documents)
         )
 
