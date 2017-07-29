@@ -38,7 +38,7 @@ var mountNode = document.getElementById('main');
           if (content !== current_content) {
             var rt = asciidoctor.convert(content)
             document.getElementById('rendered_text2').innerHTML = rt;
-            console.log("xyxxyxy, rt = " + rt)
+            // console.log("xyxxyxy, rt = " + rt)
             app.ports.getRenderedText.send(rt);
             typesetNow()
           }
@@ -47,10 +47,8 @@ var mountNode = document.getElementById('main');
 
    var render_asciidoc_latex = function(content) {
        request_in_progress = true;
-       console.log("Rendering ... ")
        var millisecondsToWait = 100;
        setTimeout(function() {
-           console.log("RENDER AS A/LATEX " );
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
@@ -61,10 +59,8 @@ var mountNode = document.getElementById('main');
 
    var render_latex = function(content) {
        request_in_progress = true;
-       console.log("Rendering ... ")
        var millisecondsToWait = 100;
        setTimeout(function() {
-           console.log("Completed! " );
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = content;
@@ -75,10 +71,8 @@ var mountNode = document.getElementById('main');
 
    var render_plain = function(content) {
        request_in_progress = true;
-       console.log("Rendering ... ")
        var millisecondsToWait = 100;
        setTimeout(function() {
-           console.log("Completed! " );
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = "<pre>\n" + content + "\n</pre>\n\n";
@@ -91,9 +85,6 @@ var mountNode = document.getElementById('main');
       requestAnimationFrame(function() {
 
           count = count + 1
-          console.log("Render count: " + count)
-          console.log("textType = " + data.textType)
-          console.log("content: " + data.content)
           switch (data.textType) {
 
             case "adoc":

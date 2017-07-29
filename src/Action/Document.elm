@@ -29,7 +29,7 @@ updateCurrentDocumentWithContent content model =
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content   }
+            { oldDocument | content = content, rendered_content = oldDocument.rendered_content   }
 
     in
         updateCurrentDocument model newDocument

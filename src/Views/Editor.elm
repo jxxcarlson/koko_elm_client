@@ -33,7 +33,7 @@ editor model =
         , named "TOCHeader" (toolSelectorPanel model)
         , named "contentHeader" (titlePanel model)
         , named "content" (contentPanel model)
-        , named "renderedContent" (Common.renderedContent 650 model)
+        , named "renderedContent" (Common.renderedContent 550 model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         , named "editorPanel" (editorPanel model)

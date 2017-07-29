@@ -180,7 +180,7 @@ update msg model =
         GetRenderedText str ->
           let
             document = model.current_document
-            newDocument = { document | rendered_content = Debug.log "abab" str }
+            newDocument = { document | rendered_content = str }
            in
             ({model | message = "Get rendered text (from JS-world)", current_document = newDocument}, Cmd.none)
 
