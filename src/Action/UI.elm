@@ -122,11 +122,8 @@ updateTool model page =
         newTool =
             case page of
                 ReaderPage ->
-                    if currentAppState.tool == EditorTools then
-                        ReaderTools
-                    else
-                        currentAppState.tool
-
+                  TableOfContents
+            
                 EditorPage ->
                   EditorTools
                     -- if currentAppState.tool == ReaderTools then
