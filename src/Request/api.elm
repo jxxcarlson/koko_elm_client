@@ -2,6 +2,7 @@ module Request.Api exposing (..)
 
 host : String
 host = "http://localhost:4000"
+-- host = "https://mysterious-forest-36511.herokuapp.com"
 
 api : String
 api = host ++ "/api/"
@@ -23,4 +24,4 @@ registerUserUrl =
     api ++ "users"
 
 printUrl : String
-printUrl = host ++ "/print/documents"   
+printUrl = host ++ "/print/documents"
