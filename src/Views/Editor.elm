@@ -22,21 +22,21 @@ editor model =
     [ namedGrid Container
         { columns = [ px 300, fill 1, fill 1 ]
         , rows =
-            [ px 1 => [ spanAll "separator" ]
-            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "editorPanel" ]
-            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "renderedContent" ]
-            , px 40 => [ spanAll "footer" ]
+            [ px 1 => [ spanAll "e_separator" ]
+            , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
+            , px 650 => [ span 1 "e_TOC", span 1 "e_content", span 1 "e_renderedContent" ]
+            , px 40 => [ spanAll "e_footer" ]
             ]
         }
         []
-        [ named "separator" (hairline Hairline)
-        , named "TOCHeader" (toolSelectorPanel model)
-        , named "contentHeader" (titlePanel model)
-        , named "content" (contentPanel model)
-        , named "renderedContent" (Common.renderedContent 650 model)
-        , named "TOC" (Common.tool model)
-        , named "footer" (Component.footer model)
-        , named "editorPanel" (editorPanel model)
+        [ --named "e_separator" (hairline Hairline)
+         named "e_TOCHeader" (toolSelectorPanel model)
+        , named "e_contentHeader" (titlePanel model)
+        , named "e_content" (contentPanel model)
+        , named "e_renderedContent" (Common.renderedContent 650 model)
+        , named "e_TOC" (Common.tool model)
+        , named "e_footer" (Component.footer model)
+        , named "e_editorPanel" (editorPanel model)
         ]
     ]
 
