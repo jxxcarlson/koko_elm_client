@@ -44,7 +44,7 @@ loginUser model loginUrl =
 
 getTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
 getTokenCompleted model result =
-    case result of
+    case (Debug.log "Result-getTokenCompleted" result) of
         Ok newToken ->
             case Jwt.decodeToken jwtDecoder newToken of
                 Ok value ->
@@ -52,13 +52,17 @@ getTokenCompleted model result =
                         user =
                             model.current_user
 
+                        appState = model.appState
+
+                        updatedAppState  = {appState | page = HomePage, signedIn = Debug.log "signedIn" True}
+
                         updated_user =
                             { user | username = value.username, token = newToken }
                     in
                         ( { model
                             | current_user = updated_user
                             , message = "Signed in as " ++ value.username
-                            , appState = appStateWithPage model HomePage
+                            , appState = updatedAppState -- appStateWithPage model HomePage
                           }
                         , Cmd.batch
                             [ Utility.gotoPage model HomePage

@@ -22,7 +22,8 @@ home model =
              None
              [padding 40, spacing 20]
              [
-              (Common.visibleIf model.appState.signedIn (Common.homepage model))
+              (Common.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
+              ,(Common.visibleIf model.appState.signedIn (Common.homepage model))
              ]
            )
           --     (Component.toolSelectorPanel model)
