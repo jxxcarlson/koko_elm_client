@@ -33,7 +33,7 @@ editor model =
          named "e_TOCHeader" (toolSelectorPanel model)
         , named "e_contentHeader" (titlePanel model)
         , named "e_content" (contentPanel model)
-        , named "e_renderedContent" (Common.renderedContent 550 model)
+        , named "e_renderedContent" (Common.renderedContent model)
         , named "e_TOC" (Common.tool model)
         , named "e_footer" (Component.footer model)
         , named "e_editorPanel" (editorPanel model)

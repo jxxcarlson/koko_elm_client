@@ -27,7 +27,7 @@ reader model =
         [ named "separator" (hairline Hairline)
         , named "TOCHeader" (toolSelectorPanel model)
         , named "contentHeader" (contentHeader model)
-        , named "content" (Common.renderedContent 650 model)
+        , named "content" (Common.renderedContent model)
         , named "TOC" (Common.tool model)
         , named "footer" (Component.footer model)
         ]
