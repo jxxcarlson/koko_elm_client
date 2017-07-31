@@ -21,7 +21,7 @@ loginUserCmd model loginUrl =
 
 registerUserCmd : Model -> String -> Cmd Msg
 registerUserCmd model registerUserUrl =
-    Http.send GetTokenCompleted (registerUser model registerUserUrl)
+    Http.send CompleteRegistration (registerUser model registerUserUrl)
 
 
 
@@ -87,7 +87,7 @@ getTokenCompleted model result =
 -- |> Debug.log "error in getTokenCompleted"
 
 
-registerUser : Model -> String -> Http.Request String
+registerUser : Model -> String -> Http.Request UserRecord
 registerUser model c =
     let
         body =
@@ -95,7 +95,7 @@ registerUser model c =
                 |> registerUserEncoder
                 |> Http.jsonBody
     in
-        Http.post registerUserUrl body tokenDecoder
+        Http.post registerUserUrl body Data.User.userRecordDecoder
 
 
 tokenDecoder : Decoder String

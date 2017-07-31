@@ -175,6 +175,7 @@ type Msg
     | Login
     | ReconnectUser String
     | Register
+    | CompleteRegistration (Result Http.Error UserRecord)
     | Signout
     | AuthenticationAction
     | CancelAuthentication

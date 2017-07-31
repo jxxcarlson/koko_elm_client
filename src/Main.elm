@@ -136,6 +136,19 @@ update msg model =
           in
             ( model, Request.User.registerUserCmd model Request.Api.registerUserUrl )
 
+        CompleteRegistration result ->
+          case (Debug.log "CompleteRegistration" result) of
+            Ok result ->
+              let
+                newUser = User result.name result.username result.email "" result.token
+                oldAppState = model.appState
+                newAppState = {oldAppState | signedIn = True, authorizing = False}
+              in
+                ({ model | current_user = newUser, appState = newAppState}, Cmd.none)
+            Err err ->
+              (model, Cmd.none)
+
+
         GetTokenCompleted result ->
             Request.User.getTokenCompleted model result
 

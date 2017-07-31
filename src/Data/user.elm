@@ -1,4 +1,4 @@
-module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userRecord)
+module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userRecord, userRecordDecoder)
 
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
@@ -55,5 +55,3 @@ userRecordDecoder =
 userRecord : String -> Result String UserRecord
 userRecord jsonString =
     decodeString userRecordDecoder jsonString
-
-  
