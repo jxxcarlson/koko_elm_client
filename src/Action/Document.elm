@@ -35,51 +35,6 @@ updateCurrentDocumentWithContent content model =
         updateCurrentDocument model newDocument
 
 
-updateCurrentDocumentWithContent1 : String -> Model -> ( Model, Cmd Msg )
-updateCurrentDocumentWithContent1 content model =
-    let
-        oldDocument =
-            model.current_document
-
-        -- TEST: foobar = Debug.log "foo" model.current_document.id
-        newDocument =
-            { oldDocument
-                | content = content
-                , rendered_content = preprocess content oldDocument
-            }
-
-        newModel =
-            { model | message = preprocess content oldDocument }
-    in
-        updateCurrentDocument newModel newDocument
-
-
-preprocess : String -> Document -> String
-preprocess content document =
-    if document.attributes.docType == "master" then
-        preprocessMaster content
-    else if document.attributes.textType == "latex" then
-        preprocessLatex content
-    else
-        content
-
-
-preprocessMaster : String -> String
-preprocessMaster content =
-    (String.split "TOC:\n" content) |> List.head |> Maybe.withDefault ""
-
-
-replace : String -> String -> String -> String
-replace search substitution string =
-    string
-        |> Regex.replace Regex.All (Regex.regex (Regex.escape search)) (\_ -> substitution)
-
-
-preprocessLatex : String -> String
-preprocessLatex content =
-    content
-        |> LatexParser.Render.transformText
-
 
 
 -- |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
