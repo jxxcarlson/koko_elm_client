@@ -9,6 +9,8 @@ import Types exposing (..)
 import Utility
 import FontAwesome
 import StyleSheet exposing (..)
+import Request.Api as Api
+import List.Extra
 
 
 navigation : Model -> Element Styles variation Msg
@@ -180,7 +182,7 @@ pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
         [ spacing 8 ]
-        [ el (activeButton HomePage model) [ EE.onClick (GoTo HomePage), alignBottom, height (px 30), padding 8 ] (text "Home")
+        [ el (activeButton HomePage model) [ EE.onClick (GoTo HomePage), alignBottom, height (px 30), padding 8 ] (text "Start")
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor")
         , el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image")
@@ -204,6 +206,12 @@ footer model =
         ]
     )
 
+hostString =
+  Api.host |> String.split("//") |> List.Extra.last |> Maybe.withDefault ""
+
+onlineStatusIndicator : Model -> Element Styles variation msg
+onlineStatusIndicator model =
+  el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text ((onlineStatus model) ++ " at " ++ hostString ))
 
 onlineStatus : Model -> String
 onlineStatus model =

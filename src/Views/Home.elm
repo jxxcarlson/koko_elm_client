@@ -6,6 +6,7 @@ import Element.Attributes exposing (..)
 import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
+import Views.Component as Component
 
 home : Model -> List (Element Styles variation Msg)
 home model =
@@ -24,6 +25,7 @@ home model =
              [
               (Common.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
               ,(Common.visibleIf model.appState.signedIn (Common.homepage model))
+              , (Component.onlineStatusIndicator model)
              ]
            )
           --     (Component.toolSelectorPanel model)
