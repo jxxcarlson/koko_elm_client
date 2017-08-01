@@ -1,7 +1,9 @@
 module Request.Api exposing (..)
 
+import Configuration
+
 host : String
-host = "http://localhost:4000"
+host = Configuration.host
 -- host = "https://mysterious-forest-36511.herokuapp.com"
 
 api : String
