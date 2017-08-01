@@ -4,7 +4,6 @@ import Configuration
 
 host : String
 host = Configuration.host
--- host = "https://mysterious-forest-36511.herokuapp.com"
 
 api : String
 api = host ++ "/api/"

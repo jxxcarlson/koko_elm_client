@@ -286,9 +286,15 @@ defaultAttributes : DocumentAttributes
 defaultAttributes =
     DocumentAttributes False "adoc" "standard" 0
 
+startDocument : Document
+startDocument =
+    Document 0 "nullDocument" 0 "Welcome" "Welcome to noteshare" "Welcome to noteshare" defaultAttributes [] [] 0 ""
+
+
+
 defaultDocument : Document
 defaultDocument =
-    Document 0 "nullDocument" 0 "Default document" "nothing" "nothing" defaultAttributes [] [] 0 ""
+    Document 0 "nullDocument" 0 "Oops!" "Page not found" "Page not found" defaultAttributes [] [] 0 ""
 
 defaultMasterDocument : Document
 defaultMasterDocument =

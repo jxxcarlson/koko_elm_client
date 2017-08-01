@@ -510,8 +510,8 @@ init flags location =
                 |> Phoenix.Socket.withDebug
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
-    in
-        ( Model
+
+        model = Model
             (KWindow flags.width flags.height)
             0
             appState
@@ -519,7 +519,7 @@ init flags location =
             current_user
             ""
             ""
-            defaultDocument
+            startDocument
             defaultMasterDocument
             [ defaultDocument ]
             []
@@ -531,11 +531,14 @@ init flags location =
             defaultImageRecord
             ""
             Nothing
+    in
+        ( model
         , Cmd.batch [
                   Cmd.map PhoenixMsg phxCmd, toJs ws,
                   External.askToReconnectUser "reconnectUser",
-                  Action.Document.renderDocument defaultDocument,
-                  Task.perform ReceiveDate Date.now ]
+                  Task.perform ReceiveDate Date.now,
+                  (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
+            ]
         )
 
 
