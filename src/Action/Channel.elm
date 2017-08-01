@@ -79,9 +79,10 @@ joinChannel model =
     let
         channel =
             Phoenix.Channel.init "room:lobby"
+--             Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
 
         ( initSocket, phxCmd ) =
-            Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+            Phoenix.Socket.init "wss://mysterious-forest-36511.herokuapp.com/socket/websocket"
                 |> Phoenix.Socket.withDebug
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
@@ -126,4 +127,4 @@ receiveRaw raw model =
 
           -- ( { model | messages = payload :: model.messages, info = payload }  Cmd.none )
           Err error ->
-              handlePing False model              
+              handlePing False model

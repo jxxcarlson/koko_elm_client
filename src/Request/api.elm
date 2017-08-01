@@ -1,8 +1,8 @@
 module Request.Api exposing (..)
 
 host : String
-host = "http://localhost:4000"
--- host = "https://mysterious-forest-36511.herokuapp.com"
+-- host = "http://localhost:4000"
+host = "https://mysterious-forest-36511.herokuapp.com"
 
 api : String
 api = host ++ "/api/"
