@@ -18,8 +18,13 @@ var mountNode = document.getElementById('main');
     );
 
   function typesetNow(){
-    console.log("calling MathJax.Hub.Queue ... ")
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    console.log("** calling MathJax.Hub.Queue ... ")
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+  }
+
+  function typesetNow2(){
+    console.log("** calling MathJax.Hub.Queue ... ")
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
   }
 
   var request_in_progress = false;
@@ -29,6 +34,7 @@ var mountNode = document.getElementById('main');
   // var asciidoctorLatex = AsciidoctorLatex();
 
   var render_asciidoc = function(content) {
+      console.log("content length = " + content.length)
       request_in_progress = true;
       console.log("Rendering ... ")
       var millisecondsToWait = 100;
@@ -37,45 +43,49 @@ var mountNode = document.getElementById('main');
           request_in_progress = false;
           if (content !== current_content) {
             var rt = asciidoctor.convert(content)
-            document.getElementById('rendered_text2').innerHTML = rt;
-            // console.log("xyxxyxy, rt = " + rt)
             app.ports.getRenderedText.send(rt);
-            typesetNow()
+            current_content = content
           }
       }  , millisecondsToWait);
    }
 
    var render_asciidoc_latex = function(content) {
+       console.log("content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
-             typesetNow()
+             typesetNow2()
+             current_content = content
            }
        }  , millisecondsToWait);
     }
 
    var render_latex = function(content) {
+       console.log("content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = content;
-             typesetNow()
+             typesetNow2()
+             current_content = content
            }
        }  , millisecondsToWait);
     }
 
    var render_plain = function(content) {
+       console.log("plain content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
-             document.getElementById('rendered_text2').innerHTML = "<pre>\n" + content + "\n</pre>\n\n";
+             app.ports.getRenderedText.send("<pre>\n" + content + "\n</pre>\n\n");
+             current_content = content
            }
        }  , millisecondsToWait);
     }
@@ -109,62 +119,6 @@ var mountNode = document.getElementById('main');
   document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var count = 0;
-
-  function setAppearance(settings) {
-
-    var toc_width = 300
-    var textarea_width = 0.5*(settings.width - toc_width)
-    var fudgeFactor = 70
-
-    var reader_left =  toc_width
-    var reader_width = Math.min(600, (settings.width -360)) // settings.width - 360
-    console.log ("READER  WIDTH: "  + reader_width)
-    var reader_height = (settings.height - 190)
-
-    var editor_left = toc_width + textarea_width + 9000
-    var editor_width = (settings.width - (toc_width + textarea_width)) - fudgeFactor
-    var editor_height = (settings.height - 190)
-
-    reader_left = 9000
-
-     switch(settings.page) {
-        case "HomePage":
-            document.getElementById("rendered_text2").style.visibility = "hidden";
-            document.getElementById("rendered_text2").style.left = reader_left + "px";
-            document.getElementById("rendered_text2").style.width = "100px";
-            document.getElementById("rendered_text2").style.height = "100px";
-            console.log(":HomePage")
-            break;
-        case "ReaderPage":
-            document.getElementById("rendered_text2").style.visibility = "visible";
-            document.getElementById("rendered_text2").style.left = reader_left + "px";
-            document.getElementById("rendered_text2").style.width = reader_width + "px";
-            document.getElementById("rendered_text2").style.height = reader_height + "px";
-            console.log(":ReaderPage")
-            break;
-        case "EditorPage":
-            document.getElementById("rendered_text2").style.visibility = "visible";
-            document.getElementById("rendered_text2").style.left = editor_left + "px";
-            document.getElementById("rendered_text2").style.width = editor_width + "px";
-            document.getElementById("rendered_text2").style.height = editor_height + "px";
-            console.log(":EditorPage")
-            break;
-        default:
-            document.getElementById("rendered_text2").style.visibility = "hidden";
-    }
-
-    if ((settings.signed_in == false) && (settings.page != "ReaderPage")) {
-      document.getElementById("rendered_text2").style.visibility = "hidden";
-    }
-  }
-
-  app.ports.toJs.subscribe(function (str) {
-    // console.log("app.ports.toJs: " + str);
-    var settings = JSON.parse(str)
-    // console.log("JSON object = " + JSON.stringify(settings))
-    setAppearance(settings)
-
-})
 
 
 function sleep(ms) {

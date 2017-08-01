@@ -27,5 +27,9 @@ replace search substitution string =
 
 preprocessLatex : String -> String
 preprocessLatex content =
-    content
-        |> LatexParser.Render.transformText
+        let
+          _ = Debug.log "content" content
+          content2 = content |> LatexParser.Render.transformText
+          _ = Debug.log "content2" content2
+        in
+          content2

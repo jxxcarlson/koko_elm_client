@@ -31,7 +31,8 @@ remapBackslash =
 
 
 transformText text =
-    Parser.run latexList (text |> remapBackslash)
+    -- Parser.run latexList (text |> remapBackslash)
+    Parser.run latexList text
         |> latexListGet
         |> List.map transformLatex
         |> String.join (" ")

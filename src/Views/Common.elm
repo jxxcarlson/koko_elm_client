@@ -39,7 +39,7 @@ renderedContent model =
 
 tocStyle : Document -> Document -> Styles
 tocStyle selectedDocument document =
-    if selectedDocument == document then
+    if selectedDocument.id == document.id then
         if document.attributes.docType == "master" then
             TOCItemMasterSelected
         else if document.parent_id /= 0 then
@@ -69,9 +69,9 @@ documentIndentLevel document model =
     let
         level =
             if model.appState.masterDocLoaded then
-                Debug.log "level" document.attributes.level
+                document.attributes.level
             else
-                Debug.log "level" 1
+                1
     in
         8.0 + 15.0 * (toFloat (level - 1))
 
@@ -88,7 +88,7 @@ documentListView : String -> Model -> Element Styles variation Msg
 documentListView title model =
     column TOC
         [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (Debug.log "NNN, " (UI.numberOfDocuments title model))) ]
+        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model)) ]
             ++ (List.map (viewTitle model model.current_document) model.documents)
         )
 

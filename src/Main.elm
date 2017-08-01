@@ -198,7 +198,8 @@ update msg model =
             document = model.current_document
             newDocument = { document | rendered_content = str }
            in
-            ({model | message = "Get rendered text (from JS-world)", current_document = newDocument}, Cmd.none)
+            ({model | message = "Get rendered text (from JS-world)",
+                current_document = newDocument}, Cmd.none)
 
 
         GetDocuments (Err _) ->
