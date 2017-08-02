@@ -10,6 +10,7 @@ module Views.Common
         , visibleIf
         , notVisibleIf
         , homepage
+        , getDocument
         , renderedContent
         )
 
@@ -215,6 +216,17 @@ homepage model =
       , verticalCenter
       ]
       (el Zero [verticalCenter] (text ("Home page")))
+
+getDocument : String -> String -> Model -> Element Styles variation Msg
+getDocument searchTerm label model =
+  el FlatButton
+      [ width (px 200)
+      , onClick (Types.GetPublicPage searchTerm)
+      , height (px 30)
+      , paddingXY 8 0
+      , verticalCenter
+      ]
+      (el Zero [verticalCenter] (text label))
 
 editorTools : Model -> Element Styles variation Msg
 editorTools model =

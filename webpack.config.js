@@ -1,4 +1,5 @@
 var path = require("path");
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
@@ -11,6 +12,15 @@ module.exports = {
     path: path.resolve(__dirname + '/dist'),
     filename: '[name].js',
   },
+
+  plugins: [
+       new CopyWebpackPlugin([
+           { from: './js/asciidoctor.js', to: 'js/asciidoctor.js'},
+           { from: './js/FileReader.js', to: '/js/FileReader.js'},
+           { from: './js/main.js', to: '/js/main.js'},
+           { from: './js/MathJax.js', to: '/js/MathJax.js'}
+        ])
+    ],
 
   module: {
     rules: [

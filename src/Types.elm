@@ -209,6 +209,7 @@ type Msg
     | DoSearch SearchDomain Int
     | ClearSearch
     | RecallLastSearch
+    | GetPublicPage String
     | DoRender Int
     | GetRenderedText String
     | SelectDocument Document

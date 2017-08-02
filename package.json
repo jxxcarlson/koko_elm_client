@@ -45,5 +45,8 @@
     "url": "https://github.com/heroku/node-js-getting-started/issues"
   },
   "homepage": "https://github.com/heroku/node-js-getting-started#readme",
-  "author": "J. Carlson"
+  "author": "J. Carlson",
+  "devDependencies": {
+    "copy-webpack-plugin": "^4.0.1"
+  }
 }

@@ -177,6 +177,10 @@ update msg model =
         UserHomePage ->
           Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) ReaderPage model
 
+        GetPublicPage searchTerm ->
+            Action.Document.search Public searchTerm ReaderPage model
+
+
         InitHomePage ->
           Action.Document.search Private "sort=updated&limit=12" HomePage model
 
