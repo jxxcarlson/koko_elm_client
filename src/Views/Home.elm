@@ -25,6 +25,7 @@ home model =
              [
               (Common.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
               ,(Common.visibleIf model.appState.signedIn (Common.homepage model))
+              , (Common.getDocument "key=home" "Other home pages" model)
               , (Common.getDocument "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
               , (Component.onlineStatusIndicator model)
              ]

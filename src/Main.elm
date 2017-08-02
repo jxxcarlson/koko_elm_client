@@ -175,7 +175,7 @@ update msg model =
            Action.Document.recallLastSearch model
 
         UserHomePage ->
-          Action.Document.search Public ("key=home&username=" ++ (Action.User.shortUsername model)) ReaderPage model
+          Action.Document.search Public ("key=home&authorname=" ++ (Action.User.shortUsername model)) ReaderPage model
 
         GetPublicPage searchTerm ->
             Action.Document.search Public searchTerm ReaderPage model
