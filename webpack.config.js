@@ -16,9 +16,9 @@ module.exports = {
   plugins: [
        new CopyWebpackPlugin([
            { from: './js/asciidoctor.js', to: 'js/asciidoctor.js'},
-           { from: './js/FileReader.js', to: '/js/FileReader.js'},
-           { from: './js/main.js', to: '/js/main.js'},
-           { from: './js/MathJax.js', to: '/js/MathJax.js'}
+           { from: './js/FileReader.js', to: 'js/FileReader.js'},
+           { from: './js/main.js', to: 'js/main.js'},
+           { from: './js/MathJax.js', to: 'js/MathJax.js'}
         ])
     ],
 
