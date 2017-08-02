@@ -770,7 +770,7 @@ exports = module.exports = __webpack_require__(0)(undefined);
 
 
 // module
-exports.push([module.i, "#rendered_text2 h1 {margin-bottom: 0.75em}\n#rendered_text2 h2 {margin-bottom: 0.5em; margin-top: 0.75em;}\n#rendered_text2 h3 {margin-bottom: 0.25em; margin-top: 0.6em;}\n#rendered_text2 h4 {margin-bottom: 0.25em; margin-top: 0.6em;}\n#rendered_text2 {line-height: 1.4em}\n#rendered_text2 p {line-height: 1.4em; margin-bottom: 1em; font-size: 0.9em;}\n#rendered_text2 pre { margin-left: 30px; margin-bottom: 20px; }\n", ""]);
+exports.push([module.i, "#rendered_text2 h1 {margin-bottom: 0.75em}\n#rendered_text2 h2 {margin-bottom: 0.5em; margin-top: 1em;}\n#rendered_text2 h3 {margin-bottom: 0.25em; margin-top: 1em;}\n#rendered_text2 h4 {margin-bottom: 0.25em; margin-top: 1em;}\n#rendered_text2 {line-height: 1.4em}\n#rendered_text2 p {line-height: 1.4em; margin-bottom: 1em; font-size: 0.9em;}\n#rendered_text2 pre { margin-left: 30px; margin-bottom: 20px; }\n", ""]);
 
 // exports
 
@@ -35816,7 +35816,7 @@ var _user$project$Views_Common$renderedContent = function (model) {
 					_1: {
 						ctor: '::',
 						_0: _mdgriffith$style_elements$Element_Attributes$maxWidth(
-							_mdgriffith$style_elements$Element_Attributes$px(650)),
+							_mdgriffith$style_elements$Element_Attributes$px(550)),
 						_1: {
 							ctor: '::',
 							_0: _mdgriffith$style_elements$Element_Attributes$width(
@@ -36385,14 +36385,18 @@ var _user$project$Views_Home$home = function (model) {
 									_user$project$Views_Common$homepage(model)),
 								_1: {
 									ctor: '::',
-									_0: A3(_user$project$Views_Common$getDocument, 'key=home', 'Other home pages', model),
+									_0: A3(_user$project$Views_Common$getDocument, 'key=home', 'Home pages', model),
 									_1: {
 										ctor: '::',
-										_0: A3(_user$project$Views_Common$getDocument, 'ident=2017-7-16@19-52-51.443e16', 'User Manual', model),
+										_0: A3(_user$project$Views_Common$getDocument, 'ident=2017-8-2@16-32-16.2a43f7', 'About Noteshare', model),
 										_1: {
 											ctor: '::',
-											_0: _user$project$Views_Component$onlineStatusIndicator(model),
-											_1: {ctor: '[]'}
+											_0: A3(_user$project$Views_Common$getDocument, 'ident=2017-7-16@19-52-51.443e16', 'User Manual', model),
+											_1: {
+												ctor: '::',
+												_0: _user$project$Views_Component$onlineStatusIndicator(model),
+												_1: {ctor: '[]'}
+											}
 										}
 									}
 								}

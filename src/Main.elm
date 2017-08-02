@@ -465,7 +465,7 @@ view : Model -> Html Msg
 view model =
     EL.root StyleSheet.stylesheet <|
         column None
-            []
+            [EA.height (percent 100)]
             [ Component.navigation model
             , hairline Hairline
             , el None [ center, EA.width (percent 100) ] <|

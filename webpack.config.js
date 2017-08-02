@@ -18,7 +18,10 @@ module.exports = {
            { from: './js/asciidoctor.js', to: 'js/asciidoctor.js'},
            { from: './js/FileReader.js', to: 'js/FileReader.js'},
            { from: './js/main.js', to: 'js/main.js'},
-           { from: './js/MathJax.js', to: 'js/MathJax.js'}
+           { from: './js/MathJax.js', to: 'js/MathJax.js'},
+           { from: './src/css/asciidoc2.css', to: 'src/css/asciidoc2.css'},
+           { from: './src/css/extra.css', to: 'src/css/extra.css'}
+
         ])
     ],
 

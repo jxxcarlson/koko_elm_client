@@ -34,7 +34,7 @@ renderedContent model =
   let
     h = (toFloat model.window.height) - 150
   in
-    (el Zero [yScrollbar, id "rendered_text2", padding 20, maxWidth (px 650), width (percent 100), height (px h), property "innerHTML"
+    (el Zero [yScrollbar, id "rendered_text2", padding 20, maxWidth (px 550), width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
 
 
