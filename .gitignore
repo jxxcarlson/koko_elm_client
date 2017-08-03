@@ -11,3 +11,4 @@ references.adoc
 NOTES.adoc
 tests/elm-stuff/
 dist/
+yarn.lock
