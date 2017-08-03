@@ -57,26 +57,31 @@ tocStyle selectedDocument document =
 
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
-    row Zero [paddingXY 0 0 ] [
-    documentIndicator document model
-    , el (tocStyle selectedDocument document)
-        [ onClick (SelectDocument document)
-        , onDoubleClick (SelectMaster document)
-        , paddingXY (documentIndentLevel document model) 4
-        , height (px 20)
-        ]
-        (text (softTruncate 25 document.title))
-
+    row Zero [ verticalCenter, paddingXY (documentIndentLevel document model) 4 ] [
+     documentIndicator document model
+     , titleDisplay model selectedDocument document
   ]
 
+titleDisplay model selectedDocument document =
+  el (tocStyle selectedDocument document)
+      [ onClick (SelectDocument document)
+      , onDoubleClick (SelectMaster document)
+      , paddingXY 8 0
+      , height (px 30)
+      ]
+      (el None [moveDown 15.0] (text (softTruncate 25 document.title)))
+
 documentIndicator document model =
+  el PaleBlue [ height (px 25)] (documentIndicator1 document model)
+
+documentIndicator1 document model =
   if (document.attributes.docType == "master") then
-    if document.id == model.current_document.id then
+    if model.appState.masterDocLoaded then
       (html (FontAwesome.caret_down Color.red 15))
     else
       (html (FontAwesome.caret_right Color.red 15))
   else
-    (text "")
+    (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
 
 documentIndentLevel : Document -> Model -> Float
 documentIndentLevel document model =
@@ -100,11 +105,21 @@ viewTocItem child =
 
 documentListView : String -> Model -> Element Styles variation Msg
 documentListView title model =
-    column TOC
-        [ yScrollbar, padding 20, spacing 5, width (px 300), height (percent 100) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model)) ]
-            ++ (List.map (viewTitle model model.current_document) model.documents)
-        )
+    column None [height (percent 100)] [
+         documentListHeader title model
+         ,documentListView1 title model
+       ]
+
+
+documentListView1 title model =
+   column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, width (px 300), height (px (toFloat (model.window.height - 200))) ]
+    (List.map (viewTitle model model.current_document) model.documents)
+
+
+documentListHeader : String -> Model -> Element Styles variation Msg
+documentListHeader title model =
+  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model))
+
 
 selectTableOfContents : Model -> Element Styles variation Msg
 selectTableOfContents model =

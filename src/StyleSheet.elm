@@ -32,6 +32,7 @@ type Styles
     | Menu
     | TitleStyle
     | Heading
+    | HeadingAlternate
     | Button
     | ButtonReversed
     | ActiveButton
@@ -160,6 +161,12 @@ stylesheet =
             , Font.size 16
             , Font.lineHeight 1.3
             ]
+        , style HeadingAlternate
+            [ Color.background Color.blue
+            , Color.text Color.white
+            , Font.size 16
+            , Font.lineHeight 1.3
+            ]
         , style Footer
             [ Color.background Color.charcoal
             , Color.text Color.white
@@ -222,11 +229,11 @@ stylesheet =
         , style TOCItemMaster
             [ Color.text (Color.rgb 125 0 0), Font.weight 600 ]
         , style TOCItemSelected
-            [ Color.text Color.white, Color.background Color.charcoal ]
+            [ Color.text Color.white, Color.background Color.blue ]
         , style TOCItemChildSelected
             [ Color.text Color.white, Color.background Color.blue ]
         , style TOCItemMasterSelected
-            [ Color.text (Color.rgb 255 130 130), Color.background Color.charcoal, Font.weight 100 ]
+            [ Color.text (Color.rgb 255 130 130), Color.background Color.blue, Font.weight 100 ]
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
