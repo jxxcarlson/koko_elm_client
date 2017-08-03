@@ -11,6 +11,7 @@ import FontAwesome
 import StyleSheet exposing (..)
 import Request.Api as Api
 import List.Extra
+import Json.Decode as Json
 
 
 navigation : Model -> Element Styles variation Msg
@@ -20,9 +21,20 @@ navigation model =
         [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
         , searchForm model
           --, menu model
+        , menu2 model
         , pageSelector model
         , loginButton Button model
         ]
+
+onChange : msg -> Attribute variation msg
+onChange message =
+    on "change" (Json.succeed message)
+
+menu2 model =
+  select "searchMode" TOC [ width (px 120), EA.verticalCenter, onChange (SelectSearchMode "foo")]
+      [ option "public" False (text "Public docs")
+      , option "private" False (text "My docs")
+      ]
 
 searchForm : Model -> Element Styles variation Msg
 searchForm model =
@@ -200,7 +212,7 @@ activeButton currentPage model =
 footer : Model -> Element Styles variation msg
 footer model =
     (row Footer
-        [ justify, paddingXY 30 4 ]
+        [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
         [ el FooterNote [ alignBottom, padding 8 ] (text model.message)
         , (onlineStatusIndicator model)
         ]

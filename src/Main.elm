@@ -165,6 +165,9 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
+        SelectSearchMode searchMode ->
+          ({ model | message = searchMode}, Cmd.none  )    
+
         ClearSearch ->
             updateSearch model ""
 
@@ -473,8 +476,9 @@ view model =
                 column Main
                     [ spacing 0 ]
                     (List.concat
-                        [ page model ] ++ [Component.footer model]
+                        [ page model ]
                     )
+            , screen  (Component.footer model)
             ]
 
 

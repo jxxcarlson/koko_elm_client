@@ -206,6 +206,7 @@ type Msg
     | Username String
     | SelectTool Tool
     | SetSearchTerm String
+    | SelectSearchMode String
     | DoSearch SearchDomain Int
     | ClearSearch
     | RecallLastSearch

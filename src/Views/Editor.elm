@@ -24,7 +24,7 @@ editor model =
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
-            , px 650 => [ span 1 "e_TOC", span 1 "e_content", span 1 "e_renderedContent" ]
+            , fill 1 => [ span 1 "e_TOC", span 1 "e_content", span 1 "e_renderedContent" ]
 
             ]
         }

@@ -18,13 +18,12 @@ imageEditor model =
       , rows =
           [ px 1 => [ spanAll "separator" ]
           , px 40 => [ span 1 "Header1", span 1 "Header2", span 1 "Header3" ]
-          , px 650 => [ span 1 "Content1", span 1 "Content2", span 1 "Content3" ]
-          
+          , fill 1 => [ span 1 "Content1", span 1 "Content2", span 1 "Content3" ]
+
           ]
       }
       []
       [ named "separator" (hairline Hairline)
-      , named "footer" (Component.footer model)
       , named "Content2" (imageUploadPane model)
       ]
   ]
@@ -32,7 +31,7 @@ imageEditor model =
 
 imageUploadPane : Model -> Element Styles variation Msg
 imageUploadPane model =
-  column None [spacing 20] [
+  column None [padding 20, spacing 20] [
     imagePane model
     , uploadImageButton model
   ]

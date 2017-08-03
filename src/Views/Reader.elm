@@ -19,7 +19,7 @@ reader model =
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
-            , px 650 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
+            , fill 1 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
 
             ]
         }
@@ -29,7 +29,7 @@ reader model =
         , named "contentHeader" (contentHeader model)
         , named "content" (Common.renderedContent model)
         , named "TOC" (Common.tool model)
-      
+
         ]
     ]
 
