@@ -36,6 +36,7 @@ type Styles
     | ButtonReversed
     | ActiveButton
     | FlatButton
+    | FlatButtonBlue
     | ActiveFlatButton
     | HeaderLabel
     | SearchField
@@ -182,6 +183,13 @@ stylesheet =
         , style FlatButton
             [ Color.text Color.white
             , Color.background Color.charcoal
+            , Font.size 14
+            , Font.center
+            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            ]
+        , style FlatButtonBlue
+            [ Color.text Color.white
+            , Color.background Color.blue
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]

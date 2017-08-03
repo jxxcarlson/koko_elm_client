@@ -57,13 +57,26 @@ tocStyle selectedDocument document =
 
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
-    el (tocStyle selectedDocument document)
+    row Zero [paddingXY 0 0 ] [
+    documentIndicator document model
+    , el (tocStyle selectedDocument document)
         [ onClick (SelectDocument document)
         , onDoubleClick (SelectMaster document)
         , paddingXY (documentIndentLevel document model) 4
+        , height (px 20)
         ]
         (text (softTruncate 25 document.title))
 
+  ]
+
+documentIndicator document model =
+  if (document.attributes.docType == "master") then
+    if document.id == model.current_document.id then
+      (html (FontAwesome.caret_down Color.red 15))
+    else
+      (html (FontAwesome.caret_right Color.red 15))
+  else
+    (text "")
 
 documentIndentLevel : Document -> Model -> Float
 documentIndentLevel document model =
@@ -208,7 +221,7 @@ addToMasterDocumentButton model =
 
 homepage : Model -> Element Styles variation Msg
 homepage model =
-  el FlatButton
+  el FlatButtonBlue
       [ width (px 200)
       , onClick Types.UserHomePage
       , height (px 30)
@@ -217,9 +230,9 @@ homepage model =
       ]
       (el Zero [verticalCenter] (text ("Home page")))
 
-getDocument : String -> String -> Model -> Element Styles variation Msg
-getDocument searchTerm label model =
-  el FlatButton
+getDocument : Styles -> String -> String -> Model -> Element Styles variation Msg
+getDocument style searchTerm label model =
+  el style
       [ width (px 200)
       , onClick (Types.GetPublicPage searchTerm)
       , height (px 30)

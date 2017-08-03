@@ -103,12 +103,6 @@ signinInfoPanel1 model =
       , el Zero [height (px 20)] (text "")
       , Component.cancelAuthentication ButtonReversed model
       , el Zero [height (px 20)] (text "")
-      , el (Component.onlineStatusStyle model)
-          [ width (px 100)
-          , height (px 40)
-          , paddingXY 20 12
-          ]
-          (text (Component.onlineStatus model))
       ]
     )
 
