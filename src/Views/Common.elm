@@ -69,7 +69,19 @@ titleDisplay model selectedDocument document =
       , paddingXY 8 0
       , height (px 30)
       ]
-      (el None [moveDown 15.0] (text (softTruncate 25 document.title)))
+      (el None [moveDown 15.0] (text (shortString 30 document.title)))
+
+
+shortString : Int -> String -> String
+shortString nChars str =
+  let
+    parts =  String.Extra.softBreak nChars str
+  in
+    if List.length parts > 1 then
+       parts |> List.head |> Maybe.withDefault "" |> \str -> str ++ " ..."
+    else
+       str
+
 
 documentIndicator document model =
   el PaleBlue [ height (px 25)] (documentIndicator1 document model)
