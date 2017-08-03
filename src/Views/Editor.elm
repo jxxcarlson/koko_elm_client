@@ -25,7 +25,7 @@ editor model =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
             , px 650 => [ span 1 "e_TOC", span 1 "e_content", span 1 "e_renderedContent" ]
-            , px 40 => [ spanAll "e_footer" ]
+
             ]
         }
         []
@@ -35,7 +35,6 @@ editor model =
         , named "e_content" (contentPanel model)
         , named "e_renderedContent" (Common.renderedContent model)
         , named "e_TOC" (Common.tool model)
-        , named "e_footer" (Component.footer model)
         , named "e_editorPanel" (editorPanel model)
         ]
     ]
@@ -49,7 +48,7 @@ titlePanel model =
 contentPanel : Model -> Element Styles variation Msg
 contentPanel model =
     (Keyed.row None
-        []
+        [height (percent 100)]
         [ ( (toString model.counter)
           , (textArea Mono
                 [ width (percent 100)

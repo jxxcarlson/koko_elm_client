@@ -17,6 +17,7 @@ import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Window exposing (..)
 import Types exposing (..)
+import Views.Component as Component
 import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Page
@@ -465,15 +466,14 @@ view : Model -> Html Msg
 view model =
     EL.root StyleSheet.stylesheet <|
         column None
-            [EA.height (percent 100)]
+            []
             [ Component.navigation model
             , hairline Hairline
             , el None [ center, EA.width (percent 100) ] <|
                 column Main
-                    [ spacing 50 ]
+                    [ spacing 0 ]
                     (List.concat
-                        [ page model
-                        ]
+                        [ page model ] ++ [Component.footer model]
                     )
             ]
 

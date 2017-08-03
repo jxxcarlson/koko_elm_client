@@ -19,7 +19,7 @@ imageEditor model =
           [ px 1 => [ spanAll "separator" ]
           , px 40 => [ span 1 "Header1", span 1 "Header2", span 1 "Header3" ]
           , px 650 => [ span 1 "Content1", span 1 "Content2", span 1 "Content3" ]
-          , px 40 => [ spanAll "footer" ]
+          
           ]
       }
       []
