@@ -28,7 +28,7 @@ navigation model =
 
 onChange : msg -> Attribute variation msg
 onChange message =
-    on "change" (Json.succeed message)
+    on "change" (Json.succeed (Debug.log "message" message))
 
 menu2 model =
   select "searchMode" TOC [ width (px 120), EA.verticalCenter, onChange (SelectSearchMode "foo")]

@@ -3,6 +3,8 @@ module Configuration exposing(..)
 -- host : String
 -- host =
 --   "http://localhost:4000"
+-- client : String
+-- client = "localhost:3000"
 --
 -- websocketHost : String
 -- websocketHost =
@@ -11,6 +13,10 @@ module Configuration exposing(..)
 host : String
 host =
   "https://mysterious-forest-36511.herokuapp.com"
+
+client : String
+client = "http://www.knode.io"
+
 
 websocketHost : String
 websocketHost =

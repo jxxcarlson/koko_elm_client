@@ -166,7 +166,7 @@ update msg model =
             updateSearch model searchTerms
 
         SelectSearchMode searchMode ->
-          ({ model | message = searchMode}, Cmd.none  )    
+          ({ model | message = searchMode}, Cmd.none  )
 
         ClearSearch ->
             updateSearch model ""
