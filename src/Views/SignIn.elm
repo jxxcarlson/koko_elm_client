@@ -24,7 +24,7 @@ registerUserForm model =
 
 registerUserForm1 : Model -> Element Styles variation Msg
 registerUserForm1 model =
-    column Form
+    column Blue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput Name, placeholder "Name" ] (model.current_user.name)
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
@@ -39,7 +39,7 @@ registerUserForm1 model =
             , padding 8
             ]
             (text "Need to sign in?")
-        ,    Component.cancelAuthentication ButtonReversed model
+        ,    Component.cancelAuthentication Button model
         ]
 
 
@@ -55,7 +55,7 @@ signinForm model =
 
 signinForm1 : Model -> Element Styles variation Msg
 signinForm1 model =
-    column Form
+    column Blue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
@@ -68,7 +68,7 @@ signinForm1 model =
             , padding 8
             ]
             (text "Need to register?")
-        , Component.cancelAuthentication ButtonReversed model
+        , Component.cancelAuthentication Button model
         ]
 
 
@@ -82,7 +82,7 @@ signoutForm model =
 
 signoutForm1 : Model -> Element Styles variation Msg
 signoutForm1 model =
-    column Form
+    column PaleBlue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ (text ("You are signed in as " ++ model.current_user.username))
         , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
@@ -99,9 +99,9 @@ signinInfoPanel1 model =
   (column Box
       [ height (px 260), paddingXY 20 40 ]
       [ el Zero [ width (px 400), height (px 40) ] (text model.message)
-      , Component.loginButton ButtonReversed model
+      , Component.loginButton Button model
       , el Zero [height (px 20)] (text "")
-      , Component.cancelAuthentication ButtonReversed model
+      , Component.cancelAuthentication Button model
       , el Zero [height (px 20)] (text "")
       ]
     )

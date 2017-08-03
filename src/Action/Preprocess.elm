@@ -48,4 +48,4 @@ preprocessLatex content =
 -}
 transformXLinks : String -> String
 transformXLinks source =
-    String.Extra.replace "xlink::" (Configuration.client ++ "##")   source
+    String.Extra.replace "xlink::" (Configuration.client ++ "##") source

@@ -10,7 +10,7 @@ import Style.Color as Color
 import Style.Font as Font
 import Style.Transition as Transition
 
-
+lightBlueColor = Color.rgb 150 150 255
 
 {-| A synonym for creating tuples. This will be included in the standard library soon.
 1 => 2 == (1, 2)
@@ -65,6 +65,7 @@ type Styles
     | StatusFailure
     | Small
     | Mono
+    | Blue
     | PaleBlue
     | PaleGreen
     | PaleYellow
@@ -84,7 +85,7 @@ stylesheet =
             , Color.background Color.lightGray
             ]
         , style Zero [ Font.lineHeight 0 ]
-        , style XXX [ Color.background Color.lightBlue ]
+        , style XXX [ Color.background (Color.rgb 200 200 255)]
         , style Hairline [ Color.background Color.lightGray, Color.text Color.white ]
         , style Main
             [-- Border.all 1
@@ -125,8 +126,8 @@ stylesheet =
 
         , style Box
             [ Color.text Color.white
-            , Color.background Color.charcoal
-            , Color.border Color.gray
+            , Color.background Color.blue
+            , Color.border Color.white
             , Border.rounded 3
               -- round all borders to 3px
             , paddingHint 20
@@ -172,8 +173,8 @@ stylesheet =
             , Color.text Color.white
             ]
         , style Button
-            [ Color.text Color.white
-            , Color.background Color.charcoal
+            [ Color.text Color.black
+            , Color.background Color.gray
             , Font.size 14
             , Font.center
             , Border.rounded 6
@@ -242,6 +243,7 @@ stylesheet =
         , style Small [ Font.size 12 ]
         , style Mono [Font.typeface [ "Lucida Sans Unicode" ]]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255) ]
+        , style Blue [ Color.background Color.blue, Color.text Color.white]
         , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]
         , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
