@@ -193,6 +193,14 @@ update msg model =
         DoRender key ->
             Action.Document.renderDocumentWithKey key model
 
+        GetRenderedText str ->
+          let
+            document = model.current_document
+            newDocument = { document | rendered_content = str }
+           in
+            ({model | message = "Get rendered text (from JS-world)",
+                current_document = newDocument}, Cmd.none)
+
         GetDocuments (Ok serverReply) ->
             case (Data.Document.documents serverReply) of
                 Ok documentsRecord ->
@@ -202,15 +210,6 @@ update msg model =
                     ( { model | info = (toString error) }
                     , Cmd.none
                     )
-
-        GetRenderedText str ->
-          let
-            document = model.current_document
-            newDocument = { document | rendered_content = str }
-           in
-            ({model | message = "Get rendered text (from JS-world)",
-                current_document = newDocument}, Cmd.none)
-
 
         GetDocuments (Err _) ->
             ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
@@ -533,6 +532,7 @@ init flags location =
             defaultMasterDocument
             [ defaultDocument ]
             []
+            "blurb"
             Dict.empty
             []
             searchState

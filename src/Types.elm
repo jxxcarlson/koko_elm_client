@@ -151,6 +151,7 @@ type alias Model =
     , master_document : Document
     , documents : Documents
     , documents2 : Documents
+    , documentKey : String
     , documentDict : Dict.Dict String Document
     , documentStack : DocumentStack
     , searchState : SearchState
