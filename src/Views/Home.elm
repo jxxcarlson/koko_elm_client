@@ -49,10 +49,17 @@ home model =
           , named "RHSidebar"
              (column
                None [spacing 15, paddingXY 20 40]
-               [ el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
-                  paddingLeft 10] (text model.specialDocument.title)
-                 ,Common.specialContent model]
+               [ specialTitle model
+                , Common.specialContent model]
 
              )
         ]
     ]
+
+specialTitle model =
+  el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
+     paddingLeft 10] (el TitleStyle [ verticalCenter ] (text model.specialDocument.title))
+
+specialTitle1 model =
+  el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
+     paddingLeft 10] (text model.specialDocument.title)
