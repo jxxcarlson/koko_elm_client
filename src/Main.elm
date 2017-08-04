@@ -568,7 +568,7 @@ init flags location =
                   External.askToReconnectUser "reconnectUser",
                   Task.perform ReceiveDate Date.now,
                   (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second),
-                  Request.Document.getSpecialDocumentWithQuery "ident=2017-7-16@19-52-51.443e16"
+                  Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
             ]
         )
 
