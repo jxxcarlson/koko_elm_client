@@ -98,7 +98,7 @@ signinInfoPanel1 : Model -> Element Styles variation Msg
 signinInfoPanel1 model =
   (column Box
       [ height (px 260), paddingXY 20 40 ]
-      [ el Zero [ width (px 400), height (px 40) ] (text model.message)
+      [ el Zero [ width (px 320), height (px 40) ] (text model.message)
       , Component.loginButton Button model
       , el Zero [height (px 20)] (text "")
       , Component.cancelAuthentication Button model
