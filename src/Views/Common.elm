@@ -92,6 +92,8 @@ documentIndicator1 document model =
       (html (FontAwesome.caret_down Color.red 15))
     else
       (html (FontAwesome.caret_right Color.red 15))
+  else if document.parent_id > 0 &&  model.appState.masterDocLoaded == False then
+       (html (FontAwesome.caret_up Color.blue 15))
   else
     (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
 
