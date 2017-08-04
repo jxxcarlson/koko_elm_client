@@ -214,7 +214,7 @@ footer model =
     (row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
         [ el FooterNote [ alignBottom, padding 8 ] (text model.message)
-        , (onlineStatusIndicator model)
+        ,  (onlineStatusIndicator model)
         ]
     )
 

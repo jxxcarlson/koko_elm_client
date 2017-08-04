@@ -1,4 +1,5 @@
-module Request.Document exposing (getDocumentsWith, putDocument, createDocument, deleteCurrentDocument)
+module Request.Document exposing (getDocumentsWith, getSpecialDocumentWithQuery, putDocument,
+  createDocument, deleteCurrentDocument)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
@@ -42,6 +43,18 @@ getPublicDocumentsWith searchState =
             Http.getString url
     in
         Http.send GetDocuments request
+
+getSpecialDocumentWithQuery : String -> Cmd Msg
+getSpecialDocumentWithQuery query =
+    let
+        url = publicDocumentsUrl ++ "?" ++ query
+
+    in
+        HB.get url
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send GetSpecialDocument
+        -- Http.send GetSpecialDocument request
+
 
 
 getUserDocumentsWith : SearchState -> String -> Cmd Msg

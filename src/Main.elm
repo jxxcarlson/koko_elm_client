@@ -10,6 +10,7 @@ import Nav.Navigation
 import Date exposing(Date)
 import Configuration
 import Dict
+import Request.Document
 
 
 -- begin style
@@ -217,8 +218,25 @@ update msg model =
         GetUserDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
 
+
         GetUserDocuments (Err error) ->
             ( { model | message = "Error: could not get user documents." }, Cmd.none )
+
+
+        GetSpecialDocument (Ok documentsRecord) ->
+           let
+               specialDocument =
+                   case List.head documentsRecord.documents of
+                       Just document ->
+                           document
+
+                       Nothing ->
+                           defaultDocument
+            in
+               ({model | specialDocument = specialDocument  } , Cmd.none)
+
+        GetSpecialDocument (Err err) ->
+            ({model | message = "Getting special document: error" } , Cmd.none)
 
         -- Action.User.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
@@ -529,6 +547,7 @@ init flags location =
             ""
             ""
             startDocument
+            defaultDocument
             defaultMasterDocument
             [ defaultDocument ]
             []
@@ -548,7 +567,8 @@ init flags location =
                   Cmd.map PhoenixMsg phxCmd, toJs ws,
                   External.askToReconnectUser "reconnectUser",
                   Task.perform ReceiveDate Date.now,
-                  (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
+                  (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second),
+                  Request.Document.getSpecialDocumentWithQuery "ident=2017-7-16@19-52-51.443e16"
             ]
         )
 

@@ -148,6 +148,7 @@ type alias Model =
     , errorMsg : String
     , info : String
     , current_document : Document
+    , specialDocument : Document
     , master_document : Document
     , documents : Documents
     , documents2 : Documents
@@ -185,6 +186,7 @@ type Msg
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
+    | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | PutDocument (Result Http.Error ())
     | CreateDocument (Result Http.Error DocumentRecord)
     | DeleteDocument (Result Http.Error ())

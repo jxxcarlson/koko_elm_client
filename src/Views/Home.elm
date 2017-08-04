@@ -49,7 +49,7 @@ home model =
           , named "RHSidebar"
              (column
                None []
-               [Common.renderedContent model]
+               [Common.specialContent model]
 
              )
         ]
