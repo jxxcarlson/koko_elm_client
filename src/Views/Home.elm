@@ -11,7 +11,7 @@ import Views.Component as Component
 home : Model -> List (Element Styles variation Msg)
 home model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 2, fill 1 ]
+        { columns = [ fill 1, fill 1, fill 2 ]
         , rows =
             [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
               fill 2 => [ span 1 "LHSidebar", span 1 "Middle", span 1 "RHSidebar" ]
@@ -45,5 +45,12 @@ home model =
                 , (Common.visibleIf model.appState.signedIn (Common.documentListView "Recent" model))
                 ]
             )
+
+          , named "RHSidebar"
+             (column
+               None []
+               [Common.renderedContent model]
+
+             )
         ]
     ]
