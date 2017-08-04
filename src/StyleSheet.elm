@@ -224,7 +224,7 @@ stylesheet =
         , style TOC
             [ Color.background Color.gray, Border.none ]
         , style TOCItem
-            [ Color.text Color.black ]
+            [ Color.text Color.blue ]
         , style TOCItemChild
             [ Color.text Color.blue ]
         , style TOCItemMaster

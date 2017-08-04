@@ -31,7 +31,7 @@ onChange message =
     on "change" (Json.succeed (Debug.log "message" message))
 
 menu2 model =
-  select "searchMode" TOC [ width (px 120), EA.verticalCenter, onChange (SelectSearchMode "foo")]
+  select "searchMode" TOC [ width (px 120), EA.verticalCenter, onChange (SelectSearchMode "???")]
       [ option "public" False (text "Public docs")
       , option "private" False (text "My docs")
       ]
