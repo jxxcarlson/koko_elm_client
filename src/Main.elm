@@ -8,6 +8,7 @@ import Task
 import Nav.Parser exposing (..)
 import Nav.Navigation
 import Date exposing(Date)
+import Configuration
 
 
 -- begin style
@@ -433,7 +434,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (1 * Time.second) Tick
+        [ Time.every ((Configuration.tickInterval) * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
