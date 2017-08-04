@@ -9,6 +9,7 @@ import Nav.Parser exposing (..)
 import Nav.Navigation
 import Date exposing(Date)
 import Configuration
+import Dict
 
 
 -- begin style
@@ -532,6 +533,7 @@ init flags location =
             defaultMasterDocument
             [ defaultDocument ]
             []
+            Dict.empty
             []
             searchState
             initSocket

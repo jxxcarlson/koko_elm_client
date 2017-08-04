@@ -5,8 +5,7 @@ import Time exposing (Time)
 import Phoenix.Socket
 import Json.Encode as JsEncode
 import Date exposing(Date)
-
-
+import Dict
 
 
 type alias User =
@@ -71,7 +70,6 @@ type alias DocumentAttributes =
 
 type alias DocumentAttributesRecord =
     { attributes : DocumentAttributes }
-
 
 type alias Child =
     { title : String
@@ -153,6 +151,7 @@ type alias Model =
     , master_document : Document
     , documents : Documents
     , documents2 : Documents
+    , documentDict : Dict.Dict String Document
     , documentStack : DocumentStack
     , searchState : SearchState
     , phxSocket : Phoenix.Socket.Socket Msg
