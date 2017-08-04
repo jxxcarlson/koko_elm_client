@@ -25,9 +25,9 @@ home model =
              [
                (Common.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
               ,(Common.visibleIf model.appState.signedIn (Common.homepage model))
-              ,(Common.getDocument FlatButton "key=home" "Home pages" model)
-              ,(Common.getDocument FlatButton "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
-              ,(Common.getDocument FlatButton "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
+              ,(Common.getDocument BluishCharcoal "key=home" "Home pages" model)
+              ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
+              ,(Common.getDocument BluishCharcoal "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
               -- ,(Component.onlineStatusIndicator model)
              ]
            )
