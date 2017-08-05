@@ -28,12 +28,13 @@ navigation model =
 
 onChange : msg -> Attribute variation msg
 onChange message =
-    on "change" (Json.succeed (Debug.log "message" message))
+    on "change" (Json.succeed message)
 
 menu2 model =
-  select "searchMode" TOC [ width (px 120), EA.verticalCenter, onChange (SelectSearchMode "???")]
-      [ option "public" False (text "Public docs")
-      , option "private" False (text "My docs")
+  -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
+  select "searchMode" TOC [ width (px 120), EA.verticalCenter, onInput SelectSearchMode]
+      [ option "public" (model.searchState.domain == Public) (text "Public docs")
+      , option "private" (model.searchState.domain == Private) (text "My docs")
       ]
 
 searchForm : Model -> Element Styles variation Msg

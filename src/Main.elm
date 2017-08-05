@@ -169,7 +169,15 @@ update msg model =
             updateSearch model searchTerms
 
         SelectSearchMode searchMode ->
-          ({ model | message = searchMode}, Cmd.none  )
+          let
+             domain = case searchMode of
+                "private" -> Private
+                "public" -> Public
+                _ -> Public           
+             oldSearchState = model.searchState
+             newSearchState = { oldSearchState  | domain = domain }
+          in
+            ({ model | searchState = newSearchState }, Cmd.none  )
 
         ClearSearch ->
             updateSearch model ""
