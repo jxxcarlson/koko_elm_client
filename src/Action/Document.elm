@@ -11,6 +11,7 @@ import Utility
 import Action.Search
 import Regex
 import LatexParser.Render
+import Configuration
 
 -- getRenderedText : Model -> (Model, Cmd Msg)
 -- getRenderedText str model =
@@ -35,6 +36,19 @@ updateCurrentDocumentWithContent content model =
         updateCurrentDocument model newDocument
 
 
+toggleUpdateRate : Model -> Model
+toggleUpdateRate model =
+  let
+    oldAppState = model.appState
+    tickerPaused = not oldAppState.tickerPaused
+    tickInterval = if tickerPaused then
+                      5*60.0
+                   else
+                      1.0
+
+    newAppState = { oldAppState | tickerPaused = tickerPaused, tickInterval = tickInterval}
+  in
+    { model | appState = newAppState }
 
 
 -- |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")

@@ -132,9 +132,11 @@ type alias AppState =
     , docTypeMenuDropped : Bool
     , textBufferDirty : Bool
     , masterDocLoaded : Bool
+    , tickerPaused : Bool
     , page : Page
     , tool : Tool
     , textBuffer : String
+    , tickInterval : Float
     , command : String
     }
 
@@ -183,6 +185,7 @@ type Msg
     | ToggleRegister
     | ToggleMenu String
     | TogglePublic
+    | ToggleUpdateRate
     | GetTokenCompleted (Result Http.Error String)
     | GetDocuments (Result Http.Error String)
     | GetUserDocuments (Result Http.Error DocumentsRecord)

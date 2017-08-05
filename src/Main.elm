@@ -33,6 +33,7 @@ import Action.Document
         , selectNewDocument
         , updateCurrentDocument
         , togglePublic
+        , toggleUpdateRate
         , updateCurrentDocumentWithContent
         , updateTags
         , saveCurrentDocument
@@ -162,6 +163,9 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
+        ToggleUpdateRate ->
+           (Action.Document.toggleUpdateRate model , Cmd.none)
+
         ToggleMenu menu ->
             toggleMenu menu model
 
@@ -178,7 +182,7 @@ update msg model =
              newSearchState = if model.appState.signedIn then
                { oldSearchState  | domain = domain }
              else
-               { oldSearchState  | domain = Public }   
+               { oldSearchState  | domain = Public }
           in
             ({ model | searchState = newSearchState }, Cmd.none  )
 
@@ -333,7 +337,7 @@ update msg model =
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-            ( { model | message = "Refresh, rendering" }, Action.Document.renderDocument model.current_document )
+          updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain
@@ -463,7 +467,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every ((Configuration.tickInterval) * Time.second) Tick
+        [ Time.every ((model.appState.tickInterval) * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
@@ -538,7 +542,7 @@ init flags location =
             windowSetup 150 50 HomePage False False
 
         appState =
-            AppState False False False False False False False False False HomePage TableOfContents "" ""
+            AppState False False False False False False False False False False HomePage TableOfContents "" Configuration.tickInterval ""
 
         channel =
             Phoenix.Channel.init "room:lobby"

@@ -71,6 +71,8 @@ editorPanel model =
         [ Common.publicCheckbox model
         , newDocumentButton model
         , refreshButton model
+        , toggleUpdateRateIndicator model
+        , toggleUpdateRateButton model
         , full PanelInfo [] ( el Zero [verticalCenter] (text ("ID: " ++ (toString model.current_document.id))))
         , full PanelInfo [] (el Zero [verticalCenter] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
         , deleteButton model
@@ -100,6 +102,30 @@ refreshButton model =
         ]
         (html (FontAwesome.refresh Color.white 25))
 
+toggleUpdateRateButton : Model -> Element Styles variation Msg
+toggleUpdateRateButton model =
+    el Zero
+        [ width (px 30)
+        , onClick (ToggleUpdateRate)
+        , height (px 30)
+        , padding 2
+        , title "Toggle rate of update: very fast or very slow"
+        ]
+        (toggleUpdateRateIcon model)
+
+toggleUpdateRateIndicator : Model ->  Element Styles variation Msg
+toggleUpdateRateIndicator model =
+  if model.appState.tickerPaused then
+    el Zero [verticalCenter, title "Green = fast update, red = slow udate"] (html (FontAwesome.circle Color.red 25))
+  else
+    el Zero [verticalCenter, title "Green = fast update, red = slow udate"] (html (FontAwesome.circle Color.green 25))
+
+toggleUpdateRateIcon : Model -> Element Styles variation Msg
+toggleUpdateRateIcon model =
+  if model.appState.tickerPaused then
+    (html (FontAwesome.play Color.white 25))
+  else
+    (html (FontAwesome.pause Color.white 25))
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
