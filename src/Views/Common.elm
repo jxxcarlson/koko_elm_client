@@ -282,7 +282,7 @@ editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
         [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
-        [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
+        [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
             [ spacing 4, height (px 130), alignLeft ]
             [ textArea Field
@@ -333,7 +333,7 @@ parentIdPane model =
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =
-    el Button
+    el Blue
         [ width (px 250)
         , alignBottom
         , onClick AdoptChildren
@@ -345,7 +345,7 @@ adoptChildrenButton model =
 
 updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =
-    el Button
+    el Blue
         [ width (px 250)
         , alignBottom
         , onClick SaveCurrentDocument
