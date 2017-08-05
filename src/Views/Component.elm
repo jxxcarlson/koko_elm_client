@@ -21,7 +21,6 @@ navigation model =
         [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
         , searchForm model
           --, menu model
-        , menu2 model
         , pageSelector model
         , loginButton Button model
         ]
@@ -53,53 +52,30 @@ searchForm model =
          , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
         ]
         , row Zero
-            [ center, spacing 5, paddingXY 10 0]
-            [ privateSearchButton model
-            , publicSearchButton model
+            [ center, spacing 15, paddingXY 10 0]
+            [ searchButton model
+            , menu2 model
             ]
         ]
 
 
-privateSearchButton : Model -> Element Styles variation Msg
-privateSearchButton model =
+searchButton : Model -> Element Styles variation Msg
+searchButton model =
     el Zero
         [ EA.width (px 25)
         , title "Search for my documents"
         , EA.alignRight
-        , EE.onClick (DoSearch Private 13)
+        , EE.onClick (DoSearch model.searchState.domain 13)
         , EA.height (px 30)
         , paddingXY 0 4
         ]
-        (privateSearchIcon model Private)
+        (searchIcon model Private)
 
 
-publicSearchButton : Model -> Element Styles variation Msg
-publicSearchButton model =
-    el Zero
-        [ EA.width (px 25)
-        , title "Search for public documents"
-        , EA.alignLeft
-        , EE.onClick (DoSearch Public 13)
-        , EA.height (px 30)
-        , paddingXY 0 4
-        ]
-        (publicSearchIcon model Public)
+searchIcon : Model -> SearchDomain -> Element style variation msg
+searchIcon model searchDomain =
+  (EL.html (FontAwesome.search (Color.white) 25))
 
-
-privateSearchIcon : Model -> SearchDomain -> Element style variation msg
-privateSearchIcon model searchDomain =
-    if model.searchState.domain == searchDomain then
-        (EL.html (FontAwesome.search (Color.rgb 255 125 0) 25))
-    else
-        (EL.html (FontAwesome.search (Color.rgb 150 75 0) 25))
-
-
-publicSearchIcon : Model -> SearchDomain -> Element style variation msg
-publicSearchIcon model searchDomain =
-    if model.searchState.domain == searchDomain then
-        (EL.html (FontAwesome.search (Color.rgb 0 255 0) 25))
-    else
-        (EL.html (FontAwesome.search (Color.rgb 0 200 0) 25))
 
 loginButton : style -> Model -> Element style variation Msg
 loginButton style model =
