@@ -25,6 +25,7 @@ home model =
              [padding 40, spacing 20]
              [
                (Utility.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
+              , (Utility.notVisibleIf model.appState.signedIn (text "Not signed in" ))
               ,(Utility.visibleIf model.appState.signedIn (Common.homepage model))
               ,(Common.getDocument BluishCharcoal "key=home" "Home pages" model)
               ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
