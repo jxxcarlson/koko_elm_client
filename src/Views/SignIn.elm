@@ -9,12 +9,12 @@ import Element.Events as EE exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
 import Views.Component as Component
-import Views.Common exposing(visibleIf, notVisibleIf)
+import Views.Utility as Utility
 
 
 registerUserForm : Model -> Element Styles variation Msg
 registerUserForm model =
-    visibleIf
+    Utility.visibleIf
         ((not model.appState.signedIn)
             && model.appState.authorizing
             && model.appState.registerUser
@@ -45,7 +45,7 @@ registerUserForm1 model =
 
 signinForm : Model -> Element Styles variation Msg
 signinForm model =
-    visibleIf
+    Utility.visibleIf
         ((not model.appState.signedIn)
             && model.appState.authorizing
             && not model.appState.registerUser
@@ -74,7 +74,7 @@ signinForm1 model =
 
 signoutForm : Model -> Element Styles variation Msg
 signoutForm model =
-    visibleIf
+    Utility.visibleIf
         (model.appState.signedIn
             && model.appState.authorizing
         )
@@ -90,7 +90,7 @@ signoutForm1 model =
 
 signinInfoPanel : Model -> Element Styles variation Msg
 signinInfoPanel model =
-  notVisibleIf
+  Utility.notVisibleIf
       (model.appState.authorizing || model.appState.signedIn)
       (signinInfoPanel1 model)
 

@@ -7,6 +7,7 @@ import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
 import Views.Component as Component
+import Views.Utility as Utility
 
 home : Model -> List (Element Styles variation Msg)
 home model =
@@ -23,8 +24,8 @@ home model =
              None
              [padding 40, spacing 20]
              [
-               (Common.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
-              ,(Common.visibleIf model.appState.signedIn (Common.homepage model))
+               (Utility.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
+              ,(Utility.visibleIf model.appState.signedIn (Common.homepage model))
               ,(Common.getDocument BluishCharcoal "key=home" "Home pages" model)
               ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
               ,(Common.getDocument BluishCharcoal "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
@@ -42,7 +43,7 @@ home model =
                 -- , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Common.visibleIf model.appState.signedIn (Common.documentListView "Recent" model))
+                , (Utility.visibleIf model.appState.signedIn (Common.documentListView "Recent" model))
                 ]
             )
 

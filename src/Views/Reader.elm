@@ -3,13 +3,11 @@ module Views.Reader exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Html.Attributes as HA
 import Element.Events exposing (onClick)
 import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
-import Html
 
 
 reader : Model -> List (Element Styles variation Msg)

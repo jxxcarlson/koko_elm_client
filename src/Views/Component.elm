@@ -12,6 +12,7 @@ import StyleSheet exposing (..)
 import Request.Api as Api
 import List.Extra
 import Json.Decode as Json
+import Views.Utility as Utility
 
 
 navigation : Model -> Element Styles variation Msg
@@ -54,7 +55,7 @@ searchForm model =
         , row Zero
             [ center, spacing 15, paddingXY 10 0]
             [ searchButton model
-            , menu2 model
+            , Utility.visibleIf model.appState.signedIn (menu2 model)
             ]
         ]
 

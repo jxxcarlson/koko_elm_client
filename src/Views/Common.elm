@@ -7,14 +7,12 @@ module Views.Common
         , publicCheckbox
         , recallLastSearchButton
         , printButton
-        , visibleIf
-        , notVisibleIf
         , homepage
         , getDocument
         , renderedContent
         , specialContent
         )
-
+import Views.Utility as Utility
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -209,9 +207,9 @@ newDocumentTools model =
         , column Zero
             [ spacing 15, height (px 130), alignLeft ]
             [
-              visibleIf model.appState.masterDocLoaded (newDocumentTable model)
-            , visibleIf model.appState.masterDocLoaded (addToMasterDocumentButton model)
-            , visibleIf model.appState.masterDocLoaded (selectAttachmentOption model)
+              Utility.visibleIf model.appState.masterDocLoaded (newDocumentTable model)
+            , Utility.visibleIf model.appState.masterDocLoaded (addToMasterDocumentButton model)
+            , Utility.visibleIf model.appState.masterDocLoaded (selectAttachmentOption model)
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
@@ -402,17 +400,3 @@ recallLastSearchButton model =
         , title "Recall last search"
         ]
         (html (FontAwesome.rotate_left Color.white 25))
-
-visibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
-visibleIf condition body =
-    if condition then
-        body
-    else
-        el None [] (text "")
-
-notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
-notVisibleIf condition body =
-    if (not condition)then
-        body
-    else
-        el None [] (text "")
