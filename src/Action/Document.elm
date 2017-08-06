@@ -431,6 +431,7 @@ recallLastSearch model =
     newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
   in
     ( { model | documents = model.documents2,
+        current_document = List.head model.documents2 |> Maybe.withDefault defaultDocument,
         appState = newAppState,
         master_document = defaultMasterDocument,
         message = "Set masterDocLoaded: False" }, Cmd.none )
