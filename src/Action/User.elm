@@ -106,7 +106,10 @@ signout message model =
             , info = ""
             , message = message
           }
-        , External.toJs (Views.External.windowData model HomePage)
+        , Cmd.batch[
+           External.toJs (Views.External.windowData model HomePage)
+           , External.disconnectUser "foo"
+          ]
         )
 
 doReconnectUser : String -> Model -> (Model, Cmd Msg)

@@ -148,6 +148,12 @@ async function reconnect(localStorageAsString) {
   console.log('Request to reconnect EXECUTED.');
 }
 
+app.ports.disconnectUser.subscribe(function () {
+  console.log("app.ports.disconnectUser command received");
+  localStorage.clear()
+  console.log("local storage cleared")
+})
+
 app.ports.askToReconnectUser.subscribe(function (str) {
   console.log("app.ports.reconnectUser received: " + str);
   if (str == "reconnectUser") {

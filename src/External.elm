@@ -38,6 +38,8 @@ port askToReconnectUser : String -> Cmd msg
 
 port reconnectUser : (String -> msg) -> Sub msg
 
+port disconnectUser : String -> Cmd msg
+
 port getRenderedText : (String -> msg) -> Sub msg
 
 -- TEST:

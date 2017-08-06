@@ -70,6 +70,7 @@ signinForm1 model =
             ]
             (text "Need to register?")
         , Component.cancelAuthentication Button model
+        , el Blue [paddingXY 20 40] (text model.message)
         ]
 
 
@@ -103,7 +104,7 @@ signinInfoPanel1 model =
       , Component.loginButton Button model
       , el Zero [height (px 20)] (text "")
       , Component.cancelAuthentication Button model
-      , el Zero [height (px 20)] (text "")
+      , el Blue [paddingXY 0 40] (text model.message)
       ]
     )
 

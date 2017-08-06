@@ -130,7 +130,10 @@ update msg model =
         Login ->
           let
             (model1, cmds1) = Action.User.login2 model
-            (model2, cmds2) = Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
+            (model2, cmds2) = if model1.appState.signedIn then
+                (model1, Cmd.none) --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
+            else
+              (model1, Cmd.none)
           in
             (model2, Cmd.batch [cmds1, cmds2])
 
@@ -318,7 +321,6 @@ update msg model =
         AdoptChildren ->
             saveCurrentDocument "adopt_children=yes" model
 
-        -- ( { model | current_document = new_document, message = "Title = " ++ new_document.title }, Cmd.none )
         SelectDocument document ->
           -- selectDocument model document
           let
@@ -446,22 +448,6 @@ update msg model =
                     { model | date = Just date }
             in
                 ( nextModel, Cmd.none )
-
-
-
-
-          -- LinkTo path ->
-          --   ( model, newUrl path )
-
--- app.js:7580 Phoenix message: { event = "phx_reply",
---   topic = "room:lobby",
---   payload = { status = "ok",
---   response = { message = "hello" } },
---   ref = Just 27
--- }
---
--- app.js:7580 PhoenixMsg: NoOp
--- https://github.com/fbonetti/elm-phoenix-socket/issues/29
 
 
 subscriptions : Model -> Sub Msg

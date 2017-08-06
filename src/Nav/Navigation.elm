@@ -17,4 +17,4 @@ navigateTo maybepage model =
           PrivatePage k ->
             Action.Document.search Private ("id:" ++ (toString k)) ReaderPage model
           _ ->
-            ( { model | message = "MESSAGE: something else"  }, Cmd.none )
+            ( model, Cmd.none )

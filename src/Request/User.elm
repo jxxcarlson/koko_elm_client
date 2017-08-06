@@ -12,6 +12,7 @@ import Utility exposing (gotoPage)
 import Action.UI exposing (appStateWithPage)
 import External
 import Views.External
+import Action.Page
 
 
 loginUserCmd : Model -> String -> Cmd Msg
@@ -71,12 +72,18 @@ getTokenCompleted model result =
                         )
 
                 Err error ->
-                    ( { model | info = "Could not get authorization" }, Cmd.none )
+                    ( { model | message = "Incorrect username or password (1)" }, Cmd.none )
 
         Err error ->
+          let
+            appState = model.appState
+
+            updatedAppState  = {appState | page = HomePage, signedIn = False}
+          in
             ( { model
                 | errorMsg = (toString error)
-                , info = "Bad username or password"
+                , appState = updatedAppState
+                , message = "Incorrect username or password"
               }
             , Cmd.none
             )
