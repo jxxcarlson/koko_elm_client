@@ -317,6 +317,10 @@ parseHash : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parseHash parser location =
   parse parser (String.dropLeft 1 location.hash) (parseParams location.search)
 
+{-|
+  This is the hacked parseHash that I am using so that ##123 refers to
+  a document with id 123 and #123 refers to something in the current document.
+ -}
 parseHash2 : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parseHash2 parser location =
   parse parser (String.dropLeft 2 (Debug.log "location" location.hash)) (parseParams location.search)
