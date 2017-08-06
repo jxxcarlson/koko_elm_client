@@ -259,15 +259,6 @@ selectDocument model document =
             | current_document = document
             , documentStack = pushDocumentStack document model.documentStack
             , appState = newAppState
-            , message =
-                "Selected: "
-                    ++ (toString document.id)
-                    ++ " ("
-                    ++ document.title
-                    ++ ")"
-                    ++ " -- "
-                    ++ (toString (List.length document.children))
-                    ++ " children"
             , counter = model.counter + 1
           }
         , Cmd.batch
