@@ -255,6 +255,7 @@ type Page
     | ReaderPage
     | EditorPage
     | ImagePage
+    | AdminPage
 
 
 pageName : Page -> String
@@ -277,6 +278,9 @@ pageName page =
 
         ImagePage ->
           "Image"
+
+        AdminPage ->
+          "Admin"
 
 
 type Tool

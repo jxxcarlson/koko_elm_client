@@ -115,6 +115,7 @@ signout message model =
 doReconnectUser : String -> Model -> (Model, Cmd Msg)
 doReconnectUser jsonString model =
   let
+      _ = Debug.log "jsonString" jsonString
       maybeUserRecord =
           Data.User.userRecord jsonString
   in

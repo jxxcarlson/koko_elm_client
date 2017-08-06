@@ -70,6 +70,7 @@ import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Views.Image exposing (imageEditor)
+import Views.Admin exposing (admin)
 
 
 main : Program Flags Model Msg
@@ -484,6 +485,9 @@ page model =
 
         HomePage ->
             home model
+
+        AdminPage ->
+            admin model
 
 
 view : Model -> Html Msg

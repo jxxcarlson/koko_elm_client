@@ -47,8 +47,8 @@ userRecordDecoder : Decoder UserRecord
 userRecordDecoder =
     decode UserRecord
         |> JPipeline.required "name" Json.Decode.string
-        |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "username" Json.Decode.string
+        |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
 
 
