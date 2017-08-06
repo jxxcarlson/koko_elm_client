@@ -189,7 +189,6 @@ updateCurrentDocument model document =
             | current_document = document
             , documents = new_documents
             , appState = newAppState
-            , message = "!! Rendering #" ++ (toString document.id)
           }
         , Cmd.batch [ putDocument "" model document, renderDocument document ]
         )
