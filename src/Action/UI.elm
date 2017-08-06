@@ -123,7 +123,7 @@ updateTool model page =
             case page of
                 ReaderPage ->
                   TableOfContents
-            
+
                 EditorPage ->
                   EditorTools
                     -- if currentAppState.tool == ReaderTools then
@@ -155,6 +155,9 @@ queryMessage domain =
 
                 Public ->
                     "public documents"
+
+                All ->
+                  "all documents"    
     in
         "search " ++ domain_ ++ " for "
 

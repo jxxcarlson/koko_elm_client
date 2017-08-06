@@ -114,6 +114,7 @@ type alias DocumentsRecord =
 type SearchDomain
     = Private
     | Public
+    | All
 
 
 type alias SearchState =

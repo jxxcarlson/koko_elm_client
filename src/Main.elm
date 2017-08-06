@@ -181,6 +181,7 @@ update msg model =
              domain = case searchMode of
                 "private" -> Private
                 "public" -> Public
+                "all" -> All
                 _ -> Public
              oldSearchState = model.searchState
              newSearchState = if model.appState.signedIn then

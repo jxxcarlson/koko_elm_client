@@ -109,12 +109,11 @@ updatedSearchState model searchDomain =
             model.searchState
 
         newSearchDomain =
-            if searchDomain == Private && model.current_user.token /= "" then
-                Private
-            else if searchDomain == Public then
-                Public
+            if model.current_user.token /= "" then
+                searchState.domain
             else
                 Public
+
     in
         { searchState | domain = newSearchDomain }
 

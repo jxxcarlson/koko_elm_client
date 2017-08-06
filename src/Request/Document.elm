@@ -21,7 +21,7 @@ import HttpBuilder as HB exposing (..)
 
 getDocumentsWith : SearchState -> String -> Cmd Msg
 getDocumentsWith searchState token =
-    if searchState.domain == Private && token /= "" then
+    if searchState.domain == Private || searchState.domain == All && token /= "" then
         getUserDocumentsWith searchState token
     else
         getPublicDocumentsWith searchState
@@ -35,7 +35,7 @@ getPublicDocumentsWith searchState =
 
         url =
             if query == "" then
-                publicDocumentsUrl ++ "?all"
+                publicDocumentsUrl ++ "?publicdocs=all"
             else
                 publicDocumentsUrl ++ "?" ++ Action.Search.parseQuery (query)
 
@@ -65,9 +65,11 @@ getUserDocumentsWith searchState token =
 
         url =
             if query == "" then
-                documentsUrl ++ "?all"
+                documentsUrl ++ "?userdocs=all"
+            else if searchState.domain == All then
+              documentsUrl ++ "?docs=any&" ++ Action.Search.parseQuery (query)
             else
-                documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
+              documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)

@@ -5,7 +5,6 @@ import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Views.Component as Component
 import Types exposing (..)
 import Html
 import Html.Attributes as HA
