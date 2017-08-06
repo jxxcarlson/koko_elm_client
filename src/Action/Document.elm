@@ -13,13 +13,6 @@ import Regex
 import LatexParser.Render
 import Configuration
 
--- getRenderedText : Model -> (Model, Cmd Msg)
--- getRenderedText str model =
---   let
---     document = model.current_document
---     newDocument = { document | rendered_content = Debug.log "abab" str }
---    in
---     ({model | message = "Get rendered text (from JS-world)", current_document = newDocument}, Cmd.none)
 
 -- import Data.Document
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
