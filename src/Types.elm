@@ -170,6 +170,7 @@ type alias Model =
 type alias SystemStatus =
     { online : Bool }
 
+type alias ErrorMessage = String
 
 type Msg
     = NoOp

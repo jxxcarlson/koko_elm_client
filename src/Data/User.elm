@@ -3,7 +3,7 @@ module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userR
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
-import Types exposing (Model, UserRecord)
+import Types exposing (Model, UserRecord, ErrorMessage)
 
 
 signinEncoder : Model -> Encode.Value

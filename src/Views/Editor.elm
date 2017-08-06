@@ -116,9 +116,9 @@ toggleUpdateRateButton model =
 toggleUpdateRateIndicator : Model ->  Element Styles variation Msg
 toggleUpdateRateIndicator model =
   if model.appState.tickerPaused then
-    el Zero [verticalCenter, title "Green = fast update, red = slow udate"] (html (FontAwesome.circle Color.red 25))
+    el Zero [verticalCenter, title "Green = fast update, red = slow update"] (html (FontAwesome.circle Color.red 25))
   else
-    el Zero [verticalCenter, title "Green = fast update, red = slow udate"] (html (FontAwesome.circle Color.green 25))
+    el Zero [verticalCenter, title "Green = fast update, red = slow update"] (html (FontAwesome.circle Color.green 25))
 
 toggleUpdateRateIcon : Model -> Element Styles variation Msg
 toggleUpdateRateIcon model =

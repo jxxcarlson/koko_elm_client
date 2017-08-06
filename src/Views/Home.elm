@@ -58,6 +58,7 @@ home model =
         ]
     ]
 
+specialTitle : Model ->  Element Styles variation msg
 specialTitle model =
   el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
      paddingLeft 10] (el TitleStyle [ verticalCenter ] (text model.specialDocument.title))

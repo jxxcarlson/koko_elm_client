@@ -11,6 +11,8 @@ import Date exposing(Date)
 import Configuration
 import Dict
 import Request.Document
+import Json.Decode as Decode
+import Action.Error
 
 
 -- begin style
@@ -151,8 +153,7 @@ update msg model =
               in
                 ({ model | current_user = newUser, appState = newAppState}, Cmd.none)
             Err err ->
-              (model, Cmd.none)
-
+                ({model | message = Action.Error.httpErrorString err}, Cmd.none)
 
         GetTokenCompleted result ->
             Request.User.getTokenCompleted model result

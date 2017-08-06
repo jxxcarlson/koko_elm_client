@@ -40,6 +40,7 @@ registerUserForm1 model =
             ]
             (text "Need to sign in?")
         ,    Component.cancelAuthentication Button model
+        , el Blue [paddingXY 20 40] (text model.message)
         ]
 
 
