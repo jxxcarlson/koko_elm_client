@@ -15,7 +15,8 @@ module Configuration exposing(..)
 
 host : String
 host =
-  "https://mysterious-forest-36511.herokuapp.com"
+  "https://nshost.herokuapp.com"
+  -- "https://mysterious-forest-36511.herokuapp.com"
 
 client : String
 client = "http://www.knode.io"
