@@ -12,21 +12,62 @@ import Action.Search
 import Regex
 import LatexParser.Render
 import Configuration
+import Action.Preprocess
 
 
--- import Data.Document
+{-|
+  This is the function called when the user changes the document content
+  in the Editorl
+-}
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
     let
+        _ = Debug.log "updateCurrentDocumentWithContent" 1
+        _ = Debug.log "CONTENT" content
+
+        processed_content = Action.Preprocess.preprocessSource content
+        _ = Debug.log "Processed CONTENT" processed_content
+
         oldDocument =
             model.current_document
 
+-- a http://noteimages.s3.amazonaws.com/uploads/frog.jpeg
+
+-- https://images.agoramedia.com/everydayhealth/gcms/Fruit-for-a-Diabetes-Diet-1440x810.jpg
+-- https://images.agoramedia.com/everydayhealth/gcms/Fruit-for-a-Diabetes-Diet-1440x810.jpg?width=722
+
+
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content, rendered_content = oldDocument.rendered_content   }
+            { oldDocument | content = processed_content, rendered_content = oldDocument.rendered_content   }
 
     in
         updateCurrentDocument model newDocument
+
+updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
+updateCurrentDocument model document =
+    let
+        _ = Debug.log "updateCurrentDocument" 1
+        old_documents =
+            model.documents
+
+        new_documents =
+            Utility.replaceIf (hasId document.id) document old_documents
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textBufferDirty = False }
+    in
+        ( { model
+            | current_document = document
+            , documents = new_documents
+            , appState = newAppState
+          }
+        , Cmd.batch [ putDocument "" model document, renderDocument document ]
+        )
+
 
 
 toggleUpdateRate : Model -> Model
@@ -130,6 +171,7 @@ updateTags tagText model =
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 updateDocuments model documentsRecord =
     let
+        _ = Debug.log "updateDocuments" 1
         current_document =
             case List.head documentsRecord.documents of
                 Just document ->
@@ -170,37 +212,21 @@ updateDocuments model documentsRecord =
         )
 
 
-updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
-updateCurrentDocument model document =
-    let
-        old_documents =
-            model.documents
-
-        new_documents =
-            Utility.replaceIf (hasId document.id) document old_documents
-
-        appState =
-            model.appState
-
-        newAppState =
-            { appState | textBufferDirty = False }
-    in
-        ( { model
-            | current_document = document
-            , documents = new_documents
-            , appState = newAppState
-          }
-        , Cmd.batch [ putDocument "" model document, renderDocument document ]
-        )
 
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
 saveCurrentDocument queryString model =
-    ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
+    let
+      _ = Debug.log "saveCurrentDocument" 1
+    in
+      ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
 
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
 saveDocument queryString document model =
-    ( { model | message = ("Saved document " ++ (toString document.id)) }, putDocument queryString model document )
+    let
+      _ = Debug.log "saveDocument" 1
+    in
+      ( { model | message = ("Saved document " ++ (toString document.id)) }, putDocument queryString model document )
 
 
 hasId : Int -> Document -> Bool

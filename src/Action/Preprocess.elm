@@ -1,5 +1,7 @@
-module Action.Preprocess exposing(preprocess)
-import Regex
+module Action.Preprocess exposing(..)
+-- module Action.Preprocess exposing(preprocess, preprocessSource)
+
+import Regex exposing(..)
 import LatexParser.Render
 import Types exposing(Document)
 import Configuration
@@ -18,8 +20,12 @@ preprocess content document =
 
 basicPreprocess : String -> String
 basicPreprocess source =
-  source |> transformXLinks
+  source
+    |> transformXLinks
 
+preprocessSource : String -> String
+preprocessSource source =
+  source |> transformImages
 
 preprocessMaster : String -> String
 preprocessMaster content =
@@ -34,11 +40,9 @@ replace search substitution string =
 preprocessLatex : String -> String
 preprocessLatex content =
         let
-          _ = Debug.log "content" content
           content2 = content
             |> LatexParser.Render.transformText
             |> transformXLinks
-          _ = Debug.log "content2" content2
         in
           content
 {-|
@@ -49,3 +53,50 @@ preprocessLatex content =
 transformXLinks : String -> String
 transformXLinks source =
     String.Extra.replace "xlink::" (Configuration.client ++ "##") source
+
+
+
+findImages1 : String -> List String
+findImages1 str =
+    let
+      -- rx = (regex "\\s(http://.*jpg)\\s")
+      rx = (regex "\\s((https|http)://\\S*?(jpg|png))\\s")
+    in
+      Regex.find All rx str
+      |> List.map .submatches |> List.concat |> List.map (Maybe.withDefault "")
+
+findImages : String -> List String
+findImages str =
+    let
+      rx = (regex "\\s((https|http)://\\S*?(jpg|jpeg|png))\\s")
+    in
+      Regex.find All rx str
+      |> List.map .submatches
+      |> List.map List.head
+      |> List.map (Maybe.withDefault (Just ""))
+      |> List.map (Maybe.withDefault "")
+
+
+transformImage : String -> String -> String
+transformImage imageString sourceString =
+  let
+    imageRef = "image::" ++ imageString ++ "[]"
+  in
+    String.Extra.replace imageString imageRef sourceString
+
+transformImages : String -> String
+transformImages source =
+  let
+    imageList = findImages source
+  in
+    List.foldr transformImage source imageList
+
+-- THIS WORKS: PP.findImage str2 |> List.head |> Maybe.map .submatches |> Maybe.withDefault [] |> List.filterMap identity
+
+-- > PP.findImage str2 |> List.head |> Maybe.andThen (\x -> List.head x.submatches) |> Maybe.map (Maybe.withDefault "")
+-- Just "http://zoo.org/bird.jpg" : Maybe.Maybe String
+
+
+--   PP.findImage str |> List.head |> Maybe.andThen (\m -> Just m.submatches) |> Maybe.andThen List.head
+-- Just (Just "http://d2fbmjy3x0sdua.cloudfront.net/cdn/farfuture/ultnKZor9cPFMcyALjvFJEFrjJhxsr_-ljICzfTVqWA/mtime:1486670068/sites/default/files/styles/nas_bird_teaser_illustration/public/4492_Sibl_9780307957900_art_r1.jpg")
+--     : Maybe.Maybe (Maybe.Maybe String)
