@@ -22,24 +22,18 @@ import Action.Preprocess
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
     let
-        _ = Debug.log "updateCurrentDocumentWithContent" 1
-        _ = Debug.log "CONTENT" content
+        -- _ = Debug.log "updateCurrentDocumentWithContent" 1
+        -- _ = Debug.log "CONTENT" content
 
-        processed_content = Action.Preprocess.preprocessSource content
-        _ = Debug.log "Processed CONTENT" processed_content
+        -- processed_content = Action.Preprocess.preprocessSource content
+        -- _ = Debug.log "Processed CONTENT" processed_content
 
         oldDocument =
             model.current_document
 
--- a http://noteimages.s3.amazonaws.com/uploads/frog.jpeg
-
--- https://images.agoramedia.com/everydayhealth/gcms/Fruit-for-a-Diabetes-Diet-1440x810.jpg
--- https://images.agoramedia.com/everydayhealth/gcms/Fruit-for-a-Diabetes-Diet-1440x810.jpg?width=722
-
-
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = processed_content, rendered_content = oldDocument.rendered_content   }
+            { oldDocument | content = content, rendered_content = oldDocument.rendered_content   }
 
     in
         updateCurrentDocument model newDocument
@@ -393,7 +387,10 @@ selectMasterDocumentAux document_id model =
 
 renderDocument : Document -> Cmd msg
 renderDocument document =
-    External.render (External.encodeDocument document)
+  let
+     document2 = {document | content = Action.Preprocess.preprocessSource document.content}
+  in
+     External.render (External.encodeDocument document2)
 
 renderDocumentWithKey : Int -> Model -> (Model, Cmd Msg)
 renderDocumentWithKey key model =
