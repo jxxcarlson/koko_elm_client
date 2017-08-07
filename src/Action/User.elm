@@ -96,13 +96,10 @@ signout message model =
         newAppState =
             { oldAppState | page = Types.HomePage, registerUser = False, signedIn = False, authorizing = False }
 
-        oldSearchState = model.searchState
-        newSearchState = { oldSearchState | domain = Public }
     in
         ( { model
             | current_user = updated_user
             , appState = newAppState
-            , searchState = newSearchState
             , info = ""
             , message = message
           }

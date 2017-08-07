@@ -527,7 +527,7 @@ init flags location =
             "Welcome"
 
         searchState =
-            SearchState "" Public
+            SearchState "" All
 
         ws =
             windowSetup 150 50 HomePage False False
