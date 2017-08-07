@@ -210,10 +210,7 @@ updateDocuments model documentsRecord =
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
 saveCurrentDocument queryString model =
-    let
-      _ = Debug.log "saveCurrentDocument" 1
-    in
-      ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
+  saveDocument queryString model.current_document model
 
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
 saveDocument queryString document model =
