@@ -18,9 +18,26 @@ import HttpBuilder as HB exposing (..)
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
 
-
 getDocumentsWith : SearchState -> String -> Cmd Msg
 getDocumentsWith searchState token =
+    let
+      searchDomain =  if token == "" then
+        Public
+      else
+        searchState.domain
+      _ = Debug.log "Firing search .... " 1
+    in
+      case searchDomain of
+        Public ->
+          getPublicDocumentsWith searchState
+        Private ->
+          getUserDocumentsWith searchState token
+        All ->
+          getAllDocumentsWith searchState token
+
+
+getDocumentsWith2 : SearchState -> String -> Cmd Msg
+getDocumentsWith2 searchState token =
     if searchState.domain == Private || searchState.domain == All && token /= "" then
         getUserDocumentsWith searchState token
     else
@@ -30,6 +47,7 @@ getDocumentsWith searchState token =
 getPublicDocumentsWith : SearchState -> Cmd Msg
 getPublicDocumentsWith searchState =
     let
+        _ = Debug.log "Firing search with domain = PUBLIC" 1
         query =
             searchState.query
 
@@ -44,6 +62,45 @@ getPublicDocumentsWith searchState =
     in
         Http.send GetDocuments request
 
+
+
+getUserDocumentsWith : SearchState -> String -> Cmd Msg
+getUserDocumentsWith searchState token =
+    let
+        _ = Debug.log "Firing search with domain = PRIVATE" 1
+        query =
+            searchState.query
+
+        url =
+            if query == "" then
+                documentsUrl ++ "?userdocs=all"
+            else
+              documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send GetUserDocuments
+
+getAllDocumentsWith : SearchState -> String -> Cmd Msg
+getAllDocumentsWith searchState token =
+    let
+        _ = Debug.log "Firing search with domain = ALL" 1
+        query =
+            searchState.query
+
+        url =
+            if query == "" then
+                documentsUrl ++ "?docs=any"
+            else
+              documentsUrl ++ "?docs=any&" ++ Action.Search.parseQuery (query)
+
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send GetUserDocuments
+
 getSpecialDocumentWithQuery : String -> Cmd Msg
 getSpecialDocumentWithQuery query =
     let
@@ -54,27 +111,6 @@ getSpecialDocumentWithQuery query =
             |> withExpect (Http.expectJson decodeDocumentsRecord)
             |> HB.send GetSpecialDocument
         -- Http.send GetSpecialDocument request
-
-
-
-getUserDocumentsWith : SearchState -> String -> Cmd Msg
-getUserDocumentsWith searchState token =
-    let
-        query =
-            searchState.query
-
-        url =
-            if query == "" then
-                documentsUrl ++ "?userdocs=all"
-            else if searchState.domain == All then
-              documentsUrl ++ "?docs=any&" ++ Action.Search.parseQuery (query)
-            else
-              documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
-    in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetUserDocuments
 
 
 deleteCurrentDocumentRB : Model -> RequestBuilder ()

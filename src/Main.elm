@@ -298,10 +298,6 @@ update msg model =
         DeleteDocument serverReply ->
           Action.Document.deleteDocument serverReply model
 
-        -- getDocumentsWith newSearchState model.current_user.token
-        -- DeleteDocument (Err errorMessage) ->
-        --     ( { model | info = (toString errorMessage) }, Cmd.none )
-
         Title title ->
             Action.Document.setTitle title model
 
