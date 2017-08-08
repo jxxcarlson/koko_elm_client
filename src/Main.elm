@@ -220,7 +220,7 @@ update msg model =
             document = model.current_document
             newDocument = { document | rendered_content = str }
            in
-            ({model | current_document = newDocument}, Cmd.none)
+            ({model | current_document = newDocument}, Request.Document.putDocument "" model newDocument)
 
         GetDocuments (Ok serverReply) ->
             case (Data.Document.documents serverReply) of
