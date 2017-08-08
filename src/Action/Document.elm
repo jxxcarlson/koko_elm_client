@@ -13,6 +13,7 @@ import Regex
 import LatexParser.Render
 import Configuration
 import Action.Preprocess
+import Task
 
 
 {-|
@@ -59,7 +60,11 @@ updateCurrentDocument model document =
             , documents = new_documents
             , appState = newAppState
           }
-        , Cmd.batch [ putDocument "" model document, renderDocument document ]
+        , Cmd.batch [
+            -- Task.perform Task.succeed (renderDocument document),
+            renderDocument document,
+            putDocument "" model document
+        ]
         )
 
 
@@ -210,10 +215,7 @@ updateDocuments model documentsRecord =
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
 saveCurrentDocument queryString model =
-    let
-      _ = Debug.log "saveCurrentDocument" 1
-    in
-      ( { model | message = ("Saved document " ++ (toString model.current_document.id)) }, putDocument queryString model model.current_document )
+  saveDocument queryString model.current_document model
 
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
 saveDocument queryString document model =
