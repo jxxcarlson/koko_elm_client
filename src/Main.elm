@@ -228,19 +228,19 @@ update msg model =
                     updateDocuments model documentsRecord
 
                 Err error ->
-                    ( { model | info = (toString error) }
+                    ( { model | message = "Error in GetDocuments" }
                     , Cmd.none
                     )
 
-        GetDocuments (Err _) ->
-            ( { model | info = "Error on GET: " ++ (toString Err) }, Cmd.none )
+        GetDocuments (Err error) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         GetUserDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
 
 
         GetUserDocuments (Err error) ->
-            ( { model | message = "Error: could not get user documents." }, Cmd.none )
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
 
         GetSpecialDocument (Ok documentsRecord) ->
@@ -265,8 +265,8 @@ update msg model =
                 () ->
                     ( model, Cmd.none )
 
-        PutDocument (Err _) ->
-            ( { model | info = "Error on PUT: " ++ (toString Err) }, Cmd.none )
+        PutDocument (Err error) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         NewDocument ->
             let
@@ -289,8 +289,8 @@ update msg model =
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
 
-        CreateDocument (Err errorMessage) ->
-            ( { model | info = (toString errorMessage) }, Cmd.none )
+        CreateDocument (Err error) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         DeleteCurrentDocument ->
             ( { model | message = "Delete current document" }, Request.Document.deleteCurrentDocument model )
