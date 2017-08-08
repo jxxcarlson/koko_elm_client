@@ -59,7 +59,10 @@ updateCurrentDocument model document =
             , documents = new_documents
             , appState = newAppState
           }
-        , Cmd.batch [ putDocument "" model document, renderDocument document ]
+        , Cmd.batch [
+            renderDocument document,
+            putDocument "" model document
+        ]
         )
 
 
