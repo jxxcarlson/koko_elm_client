@@ -13,6 +13,7 @@ import Regex
 import LatexParser.Render
 import Configuration
 import Action.Preprocess
+import Task
 
 
 {-|
@@ -60,6 +61,7 @@ updateCurrentDocument model document =
             , appState = newAppState
           }
         , Cmd.batch [
+            -- Task.perform Task.succeed (renderDocument document),
             renderDocument document,
             putDocument "" model document
         ]
