@@ -6,11 +6,19 @@ import Action.Preprocess
 
 
 {-| }
+   render and getRenderedText establish a client-server
+   relationship between the Elm app and JS-world
+   where Asciidoctor.js and MathJax.js live.
+
    Use render (encodeDocument document) to send
    rendered_content to JS-world.
 -}
 port render : Encode.Value -> Cmd msg
 
+{-|
+   Subscribe to rendereed text.
+-}
+port getRenderedText : (String -> msg) -> Sub msg
 
 {-|
 encodeDocument is used to send rendered content to JS-world.
@@ -40,7 +48,6 @@ port reconnectUser : (String -> msg) -> Sub msg
 
 port disconnectUser : String -> Cmd msg
 
-port getRenderedText : (String -> msg) -> Sub msg
 
 -- TEST:
 
