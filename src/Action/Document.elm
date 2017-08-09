@@ -9,11 +9,7 @@ import Views.External exposing (windowData)
 import External exposing (toJs)
 import Utility
 import Action.Search
-import Regex
-import LatexParser.Render
-import Configuration
 import Action.Preprocess
-import Task
 
 
 {-|
@@ -334,6 +330,7 @@ searchOnEnter searchDomain key model =
     else
         ( model, Cmd.none )
 
+-- XXX
 search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
 search searchDomain query page model =
           let
@@ -341,11 +338,10 @@ search searchDomain query page model =
               newAppState = { appState | masterDocLoaded = False,
                  tool = TableOfContents,
                  page = page }
-              newSearchState = SearchState query searchDomain
+              -- newSearchState = SearchState query searchDomain Viewed
               updatedModel =
                   { model
-                      | searchState = newSearchState
-                      , message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
+                      | message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
                       , appState = newAppState
                       , master_document = defaultMasterDocument
                       , documents2 = model.documents
@@ -353,14 +349,10 @@ search searchDomain query page model =
           in
               ( { updatedModel | appState = newAppState }
               , Cmd.batch
-                  [ Request.Document.getDocumentsWith newSearchState model.current_user.token
+                  [ Request.Document.getDocumentsWith model.searchState model.current_user.token
                   , renderDocument model.current_document
                   ]
               )
-
-search2 : SearchDomain -> String -> Page -> Model -> Msg -> ( Model, Cmd Msg )
-search2 searchDomain query page model msg =
-    search searchDomain query page model
 
 
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )

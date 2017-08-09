@@ -116,10 +116,16 @@ type SearchDomain
     | Public
     | All
 
+type SearchOrder
+  = Viewed
+  | Created
+  | Updated
+  | Alphabetical
 
 type alias SearchState =
     { query : String
     , domain : SearchDomain
+    , order : SearchOrder
     }
 
 
@@ -214,6 +220,7 @@ type Msg
     | SelectTool Tool
     | SetSearchTerm String
     | SelectSearchMode String
+    | SelectSearchOrder String
     | DoSearch SearchDomain Int
     | ClearSearch
     | RecallLastSearch

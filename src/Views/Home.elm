@@ -30,7 +30,7 @@ home model =
               ,(Common.getDocument BluishCharcoal "key=home" "Home pages" model)
               ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
               ,(Common.getDocument BluishCharcoal "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
-              ,(Common.getDocument BluishCharcoal "ident=2017-8-9@13-13-39.094b94" "System status and news" model)
+              ,(Common.getDocument Blue "ident=2017-8-9@13-13-39.094b94" "System status and news" model)
 
               -- ,(Component.onlineStatusIndicator model)
              ]

@@ -32,7 +32,7 @@ onChange message =
 
 searchOptionsMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-  select "searchMode" TOC [ width (px 100), EA.verticalCenter, onInput SelectSearchMode]
+  select "searchMode" TOC [ width (px 110), EA.verticalCenter, onInput SelectSearchMode]
       [ option "public" (model.searchState.domain == Public) (text "Public docs")
       , option "private" (model.searchState.domain == Private) (text "My docs")
       , option "all" (model.searchState.domain == All) (text "All docs")
@@ -40,10 +40,11 @@ searchOptionsMenu model =
 
 searchOrderMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-  select "searchMode" TOC [ width (px 100), EA.verticalCenter, onInput SelectSearchMode]
-      [ option "recent" True (text "Recent")
+  select "searchOrder" TOC [ width (px 100), EA.verticalCenter, onInput SelectSearchOrder]
+      [ option "viewed" True (text "Viewed")
+      , option "updated" False (text "Updated")
       , option "created" False (text "Created")
-      , option "alpha" False (text "Alphabetical")
+      , option "alpha" False (text "Alpha")
       ]
 
 searchForm : Model -> Element Styles variation Msg

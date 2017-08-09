@@ -192,6 +192,18 @@ update msg model =
           in
             ({ model | searchState = newSearchState }, Cmd.none  )
 
+        SelectSearchOrder searchOrder ->
+          let
+             order = case searchOrder of
+                "viewed" -> Viewed
+                "created" -> Created
+                "alpha" -> Alphabetical
+                _ -> Viewed
+             oldSearchState = model.searchState
+             newSearchState = { oldSearchState  | order = order }
+          in
+            ({ model | searchState = newSearchState }, Cmd.none  )
+
         ClearSearch ->
             updateSearch model ""
 
@@ -523,7 +535,7 @@ init flags location =
             "Welcome"
 
         searchState =
-            SearchState "" All
+            SearchState "" All Viewed
 
         ws =
             windowSetup 150 50 HomePage False False

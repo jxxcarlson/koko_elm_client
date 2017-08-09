@@ -25,7 +25,7 @@ getDocumentsWith searchState token =
         Public
       else
         searchState.domain
-      _ = Debug.log "Firing search .... " 1
+      _ = Debug.log "Firing search ...., order " searchState.order
     in
       case searchDomain of
         Public ->
@@ -35,27 +35,33 @@ getDocumentsWith searchState token =
         All ->
           getAllDocumentsWith searchState token
 
+searchOrderQuery : SearchOrder -> String
+searchOrderQuery searchOrder =
+  case searchOrder of
+    Viewed -> "sort=viewed"
+    Updated -> "sort=updated"
+    Created -> "sort=created"
+    Alphabetical -> "sort=title"
 
-getDocumentsWith2 : SearchState -> String -> Cmd Msg
-getDocumentsWith2 searchState token =
-    if searchState.domain == Private || searchState.domain == All && token /= "" then
-        getUserDocumentsWith searchState token
-    else
-        getPublicDocumentsWith searchState
-
+buildQuery : List String -> String
+buildQuery queryParts =
+  "?" ++ String.join "&" queryParts
 
 getPublicDocumentsWith : SearchState -> Cmd Msg
 getPublicDocumentsWith searchState =
     let
-        _ = Debug.log "Firing search with domain = PUBLIC" 1
+
         query =
             searchState.query
 
+        soq = searchOrderQuery searchState.order
+        _ = Debug.log "Firing search with domain = PUBLIC, order" soq
+
         url =
             if query == "" then
-                publicDocumentsUrl ++ "?publicdocs=all"
+                publicDocumentsUrl ++ buildQuery ["publicdocs=all",  soq]
             else
-                publicDocumentsUrl ++ "?" ++ Action.Search.parseQuery (query)
+                publicDocumentsUrl ++ buildQuery [Action.Search.parseQuery (query), soq]
 
         request =
             Http.getString url
@@ -70,12 +76,13 @@ getUserDocumentsWith searchState token =
         _ = Debug.log "Firing search with domain = PRIVATE" 1
         query =
             searchState.query
+        soq = searchOrderQuery searchState.order
 
         url =
             if query == "" then
-                documentsUrl ++ "?userdocs=all"
+                documentsUrl ++ buildQuery [soq]
             else
-              documentsUrl ++ "?" ++ Action.Search.parseQuery (query)
+              documentsUrl ++ buildQuery [ Action.Search.parseQuery (query), soq]
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
@@ -88,12 +95,12 @@ getAllDocumentsWith searchState token =
         _ = Debug.log "Firing search with domain = ALL" 1
         query =
             searchState.query
-
+        soq = searchOrderQuery searchState.order
         url =
             if query == "" then
-                documentsUrl ++ "?docs=any"
+                documentsUrl ++ buildQuery ["docs=any", soq]
             else
-              documentsUrl ++ "?docs=any&" ++ Action.Search.parseQuery (query)
+              documentsUrl ++ buildQuery ["docs=any&" , Action.Search.parseQuery (query), soq]
 
     in
         HB.get url
