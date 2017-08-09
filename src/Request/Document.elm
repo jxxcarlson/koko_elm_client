@@ -12,7 +12,7 @@ import Data.Document
         , documentRecordDecoder
         , decodeDocumentsRecord
         )
-import Action.Search exposing (parseQuery)
+import Document.QueryParser exposing (parseQuery)
 import HttpBuilder as HB exposing (..)
 
 
@@ -61,7 +61,7 @@ getPublicDocumentsWith searchState =
             if query == "" then
                 publicDocumentsUrl ++ buildQuery ["publicdocs=all",  soq]
             else
-                publicDocumentsUrl ++ buildQuery [Action.Search.parseQuery (query), soq]
+                publicDocumentsUrl ++ buildQuery [parseQuery(query), soq]
 
         request =
             Http.getString url
@@ -82,7 +82,7 @@ getUserDocumentsWith searchState token =
             if query == "" then
                 documentsUrl ++ buildQuery [soq]
             else
-              documentsUrl ++ buildQuery [ Action.Search.parseQuery (query), soq]
+              documentsUrl ++ buildQuery [ parseQuery(query), soq]
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
@@ -100,7 +100,7 @@ getAllDocumentsWith searchState token =
             if query == "" then
                 documentsUrl ++ buildQuery ["docs=any", soq]
             else
-              documentsUrl ++ buildQuery ["docs=any&" , Action.Search.parseQuery (query), soq]
+              documentsUrl ++ buildQuery ["docs=any&" , parseQuery(query), soq]
 
     in
         HB.get url

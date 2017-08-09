@@ -13,6 +13,7 @@ import Dict
 import Request.Document
 import Json.Decode as Decode
 import Action.Error
+import Document.RenderAsciidoc
 
 
 -- begin style
@@ -225,7 +226,7 @@ update msg model =
           Action.Document.search Private "sort=updated&limit=12" HomePage model
 
         DoRender key ->
-            Action.Document.renderDocumentWithKey key model
+            Document.RenderAsciidoc.putWithKey key model
 
         GetRenderedText str ->
           let

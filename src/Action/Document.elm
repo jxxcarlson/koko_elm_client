@@ -10,6 +10,9 @@ import External exposing (toJs)
 import Utility
 import Action.Search
 import Action.Preprocess
+import Document.RenderAsciidoc as RenderAsciidoc
+
+import Document.Search as Search
 
 
 {-|
@@ -57,8 +60,8 @@ updateCurrentDocument model document =
             , appState = newAppState
           }
         , Cmd.batch [
-            -- Task.perform Task.succeed (renderDocument document),
-            renderDocument document,
+            -- Task.perform Task.succeed (RenderAsciidoc.put document),
+            RenderAsciidoc.put document,
             putDocument "" model document
         ]
         )
@@ -202,7 +205,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , renderDocument current_document
+            , RenderAsciidoc.put current_document
             ]
         )
 
@@ -280,7 +283,7 @@ selectDocument model document =
           }
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
-            , renderDocument document
+            , RenderAsciidoc.put document
             ]
         )
 
@@ -294,7 +297,7 @@ selectNewDocument model document =
         , info = "New document added: " ++ document.title
         , counter = model.counter + 1
       }
-    , renderDocument document
+    , RenderAsciidoc.put document
     )
 
 
@@ -354,9 +357,11 @@ search searchDomain query page model =
               ( { updatedModel | appState = newAppState }
               , Cmd.batch
                   [ Request.Document.getDocumentsWith model.searchState model.current_user.token
-                  , renderDocument model.current_document
+                  , RenderAsciidoc.put model.current_document
                   ]
               )
+
+
 
 
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
@@ -382,23 +387,6 @@ selectMasterDocumentAux document_id model =
             { model | searchState = updatedSearchState }
     in
         searchOnEnter model.searchState.domain 13 updatedModel
-
-renderDocument : Document -> Cmd msg
-renderDocument document =
-  let
-     document2 = {document | content = Action.Preprocess.preprocessSource document.content}
-  in
-     External.render (External.encodeDocument document2)
-
-renderDocumentWithKey : Int -> Model -> (Model, Cmd Msg)
-renderDocumentWithKey key model =
-  if key == 27 then
-      -- 27: ESCAPE
-      ( { model | info = "ESCAPE pressed, rendering ..." }
-      , renderDocument model.current_document
-      )
-  else
-      ( model, Cmd.none )
 
 deleteDocument : Result a value -> Model -> (Model, Cmd Msg)
 deleteDocument serverReply model =
