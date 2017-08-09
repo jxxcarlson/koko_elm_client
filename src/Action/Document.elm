@@ -337,31 +337,41 @@ searchOnEnter searchDomain key model =
 -- XXX
 search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
 search searchDomain query page model =
-          let
-              _ = Debug.log "Firing Action.Document.search" 1
-              appState = model.appState
-              newAppState = { appState | masterDocLoaded = False,
-                 tool = TableOfContents,
-                 page = page }
-              oldSearchState = model.searchState
-              newSearchState = {oldSearchState | query = query, domain = searchDomain }
-              updatedModel =
-                  { model
-                      | message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
-                      , appState = newAppState
-                      , searchState = newSearchState
-                      , master_document = defaultMasterDocument
-                      , documents2 = model.documents
-                  }
-          in
-              ( { updatedModel | appState = newAppState }
-              , Cmd.batch
-                  [ Request.Document.getDocumentsWith model.searchState model.current_user.token
-                  , RenderAsciidoc.put model.current_document
-                  ]
-              )
+  let
+    searchState = model.searchState
+    newSearchState = { searchState | domain = searchDomain, query = query }
+    newModel = { model | searchState = newSearchState }
+  in
+    Search.withModel page model
 
 
+-- search2 : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
+-- search2 searchDomain query page model =
+--           let
+--               _ = Debug.log "Firing Action.Document.search" 1
+--               appState = model.appState
+--               newAppState = { appState | masterDocLoaded = False,
+--                  tool = TableOfContents,
+--                  page = page }
+--               oldSearchState = model.searchState
+--               newSearchState = {oldSearchState | query = query, domain = searchDomain }
+--               updatedModel =
+--                   { model
+--                       | message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
+--                       , appState = newAppState
+--                       , searchState = newSearchState
+--                       , master_document = defaultMasterDocument
+--                       , documents2 = model.documents
+--                   }
+--           in
+--               ( { updatedModel | appState = newAppState }
+--               , Cmd.batch
+--                   [ Request.Document.getDocumentsWith model.searchState model.current_user.token
+--                   , RenderAsciidoc.put model.current_document
+--                   ]
+--               )
+--
+--
 
 
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )

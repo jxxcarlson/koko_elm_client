@@ -14,6 +14,7 @@ import Request.Document
 import Json.Decode as Decode
 import Action.Error
 import Document.RenderAsciidoc
+import Document.Search
 
 
 -- begin style
@@ -216,10 +217,15 @@ update msg model =
            Action.Document.recallLastSearch model
 
         UserHomePage ->
-          Action.Document.search Public ("key=home&authorname=" ++ (Action.User.shortUsername model)) ReaderPage model
+          let
+            searchTerm = "key=home&authorname=" ++ (Action.User.shortUsername model)
+          in
+            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+            -- Action.Document.search Public ("key=home&authorname=" ++ (Action.User.shortUsername model)) ReaderPage model
 
         GetPublicPage searchTerm ->
-            Action.Document.search Public searchTerm ReaderPage model
+            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+            -- Action.Document.search Public searchTerm ReaderPage model
 
 
         InitHomePage ->

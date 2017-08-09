@@ -9,6 +9,7 @@ import Document.RenderAsciidoc as RenderAsciidoc
 withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> (Model, Cmd Msg)
 withParameters query order domain page model =
   let
+    -- _ = Debug.log "Firing Document.Search.withParameters" 1
     newSearchState = SearchState query domain order
     newModel = {model | searchState = newSearchState }
   in
@@ -20,7 +21,7 @@ withParameters query order domain page model =
 withModel : Page -> Model -> ( Model, Cmd Msg )
 withModel page model =
           let
-              _ = Debug.log "Firing Action.Document.search1" 1
+              _ = Debug.log "Firing Document.Search.withModel" 1
 
               appState = model.appState
               newAppState = { appState |
