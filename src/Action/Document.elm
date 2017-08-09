@@ -323,6 +323,7 @@ searchOnEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
 searchOnEnter searchDomain key model =
     if (Debug.log "key" key) == 13 then
         let
+          _ = Debug.log "Firing Action.Document.searchOnEnter" 1
           searchState =
             Action.Search.updatedSearchState model searchDomain
         in
@@ -334,15 +335,18 @@ searchOnEnter searchDomain key model =
 search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
 search searchDomain query page model =
           let
+              _ = Debug.log "Firing Action.Document.search" 1
               appState = model.appState
               newAppState = { appState | masterDocLoaded = False,
                  tool = TableOfContents,
                  page = page }
-              -- newSearchState = SearchState query searchDomain Viewed
+              oldSearchState = model.searchState
+              newSearchState = {oldSearchState | query = query, domain = searchDomain }
               updatedModel =
                   { model
                       | message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
                       , appState = newAppState
+                      , searchState = newSearchState
                       , master_document = defaultMasterDocument
                       , documents2 = model.documents
                   }
