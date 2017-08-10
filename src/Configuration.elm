@@ -3,8 +3,9 @@ module Configuration exposing(..)
 host : String
 host =
   "http://localhost:4000"
+  
 client : String
-client = "localhost:3000"
+client = "http://localhost:3000"
 
 websocketHost : String
 websocketHost =

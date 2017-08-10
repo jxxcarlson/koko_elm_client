@@ -55,7 +55,9 @@ getPublicDocumentsWith searchState =
             searchState.query
 
         soq = searchOrderQuery searchState.order
+
         _ = Debug.log "Firing search with domain = PUBLIC, order" soq
+        _ = Debug.log "QUERY = " query
 
         url =
             if query == "" then

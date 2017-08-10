@@ -1,7 +1,7 @@
 module Nav.Navigation exposing(..)
 
-import Types exposing(Page(..), Model, SearchDomain(..), Msg(..))
-import Action.Document
+import Types exposing(Page(..), Model, SearchDomain(..), Msg(..), SearchOrder(..))
+import Document.Search
 
 
 navigateTo : Maybe Page -> Model -> (Model, Cmd Msg)
@@ -13,8 +13,8 @@ navigateTo maybepage model =
       Just page ->
         case page of
           PublicPage k ->
-            Action.Document.search Public ("id:" ++ (toString k)) ReaderPage model
+            Document.Search.withParameters ("id:" ++ (toString k)) Alphabetical Public ReaderPage model
           PrivatePage k ->
-            Action.Document.search Private ("id:" ++ (toString k)) ReaderPage model
+            Document.Search.withParameters ("id:" ++ (toString k)) Alphabetical Private ReaderPage model
           _ ->
             ( model, Cmd.none )
