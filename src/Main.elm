@@ -229,7 +229,7 @@ update msg model =
 
 
         InitHomePage ->
-          Action.Document.search Private "sort=updated&limit=12" HomePage model
+          Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model
 
         DoRender key ->
             Document.RenderAsciidoc.putWithKey key model
@@ -542,7 +542,7 @@ init flags location =
             "Welcome"
 
         searchState =
-            SearchState "" All Viewed
+            SearchState "" Public Viewed
 
         ws =
             windowSetup 150 50 HomePage False False

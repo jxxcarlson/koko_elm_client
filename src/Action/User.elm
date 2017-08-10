@@ -66,13 +66,21 @@ login model =
         newAppState =
             { appState | page = Types.HomePage, signedIn = True, authorizing = False }
 
+        searchState = model.searchState
+
+        newSearchState = { searchState | domain = Private }
+
         user =
             model.current_user
 
         updatedUser =
             { user | password = "" }
     in
-        { model | message = "LOGGING IN", appState = newAppState, current_user = updatedUser }
+        { model |
+           message = "LOGGING IN",
+           appState = newAppState,
+           searchState = newSearchState, 
+           current_user = updatedUser }
 
 login2 : Model -> (Model, Cmd Msg)
 login2 model =

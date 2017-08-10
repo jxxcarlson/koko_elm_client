@@ -9,7 +9,7 @@ import Views.External exposing (windowData)
 import External exposing (toJs)
 import Utility
 import Action.Search
-import Action.Preprocess
+import Document.Preprocess
 import Document.RenderAsciidoc as RenderAsciidoc
 
 import Document.Search as Search
@@ -25,7 +25,7 @@ updateCurrentDocumentWithContent content model =
         -- _ = Debug.log "updateCurrentDocumentWithContent" 1
         -- _ = Debug.log "CONTENT" content
 
-        -- processed_content = Action.Preprocess.preprocessSource content
+        -- processed_content = Document.Preprocess.preprocessSource content
         -- _ = Debug.log "Processed CONTENT" processed_content
 
         oldDocument =
@@ -338,6 +338,7 @@ searchOnEnter searchDomain key model =
 search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
 search searchDomain query page model =
   let
+    _ = Debug.log "Firing Action.Document.search" 1
     searchState = model.searchState
     newSearchState = { searchState | domain = searchDomain, query = query }
     newModel = { model | searchState = newSearchState }

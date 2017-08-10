@@ -35,7 +35,7 @@ searchOptionsMenu model =
   select "searchMode" TOC [ width (px 110), EA.verticalCenter, onInput SelectSearchMode]
       [ option "public" (model.searchState.domain == Public) (text "Public docs")
       , option "private" (model.searchState.domain == Private) (text "My docs")
-      , option "all" (model.searchState.domain == All) (text "All docs")
+      -- , option "all" (model.searchState.domain == All) (text "All docs")
       ]
 
 searchOrderMenu model =
@@ -183,7 +183,7 @@ pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
         [ spacing 8 ]
-        [ el (activeButton HomePage model) [ EE.onClick (GoTo HomePage), alignBottom, height (px 30), padding 8 ] (text "Start")
+        [ el (activeButton HomePage model) [ EE.onClick (InitHomePage), alignBottom, height (px 30), padding 8 ] (text "Start")
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor")
         , el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image")

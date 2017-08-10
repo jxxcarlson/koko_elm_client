@@ -2,7 +2,7 @@ port module External exposing (..)
 
 import Json.Encode as Encode
 import Types exposing (Document, ImagePortData)
-import Action.Preprocess
+import Document.Preprocess
 
 
 {-| }
@@ -25,7 +25,7 @@ encodeDocument is used to send rendered content to JS-world.
 -}
 encodeDocument : Document -> Encode.Value
 encodeDocument document =
-    [ ( "content", Encode.string (Action.Preprocess.preprocess document.content document) )
+    [ ( "content", Encode.string (Document.Preprocess.preprocess document.content document) )
     , ( "textType", Encode.string document.attributes.textType )
     ]
         |> Encode.object
