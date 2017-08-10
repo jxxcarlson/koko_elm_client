@@ -15,6 +15,9 @@ import Json.Decode as Decode
 import Action.Error
 import Document.RenderAsciidoc
 import Document.Search
+-- import UrlParser as Url exposing ((</>), (<?>), s, int, stringParam, top)
+import Parser
+import Nav.UrlParseExtra as Url
 
 
 -- begin style
@@ -529,6 +532,18 @@ view model =
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     let
+        _ = Debug.log "LOCATION" location.href
+
+        maybeId = Parser.run Url.id location.href
+
+        id = case maybeId of
+               Result.Ok id -> id
+               Err error -> 0
+
+        _ = Debug.log "ID" id
+
+        -- location = "localhost:3000/##public/" ++ (toString id)
+
         current_user =
             User "" "" "" "" ""
 
@@ -582,16 +597,24 @@ init flags location =
             defaultImageRecord
             ""
             Nothing
-    in
-        ( model
-        , Cmd.batch [
-                  Cmd.map PhoenixMsg phxCmd, toJs ws,
-                  External.askToReconnectUser "reconnectUser",
-                  Task.perform ReceiveDate Date.now,
-                  (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second),
-                  Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+
+        commands = if id > 0 then
+            [
+                Cmd.map PhoenixMsg phxCmd, toJs ws
+              , External.askToReconnectUser "reconnectUser"
+              , Task.perform ReceiveDate Date.now
+              , Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id))
             ]
-        )
+          else
+            [
+                Cmd.map PhoenixMsg phxCmd, toJs ws
+              , External.askToReconnectUser "reconnectUser"
+              , Task.perform ReceiveDate Date.now
+              , (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
+              , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+            ]
+    in
+        ( model , Cmd.batch commands )
 
 
 
