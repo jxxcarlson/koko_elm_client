@@ -71,6 +71,7 @@ type Styles
     | PaleGreen
     | PaleYellow
     | PaleRed
+    | LightGray
 
 
 {-| First, we create a stylesheet.
@@ -249,6 +250,7 @@ stylesheet =
         , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]
         , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
+        , style LightGray [Color.background Color.lightGray]
         ]
 
 

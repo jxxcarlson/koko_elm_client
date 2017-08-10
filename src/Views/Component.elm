@@ -14,6 +14,24 @@ import List.Extra
 import Json.Decode as Json
 import Views.Utility as Utility
 
+homepageIcon : Model -> Element Styles variation Msg
+homepageIcon model =
+  activeIcon "Home Page" Types.UserHomePage FontAwesome.home model
+
+startPageIcon : Model -> Element Styles variation Msg
+startPageIcon model =
+  activeIcon "Start page" Types.InitHomePage FontAwesome.asterisk model
+
+-- activeIcon : Msg -> Html msg -> Model -> Element Styles variation Msg
+activeIcon title_ msg icon model =
+  el NavBar
+      [
+       onClick msg
+      , height (px 30)
+      , verticalCenter
+      , title title_
+      ]
+      (EL.html (icon (Color.white) 25))
 
 navigation : Model -> Element Styles variation Msg
 navigation model =
@@ -35,7 +53,7 @@ searchOptionsMenu model =
   select "searchMode" TOC [ width (px 110), EA.verticalCenter, onInput SelectSearchMode]
       [ option "public" (model.searchState.domain == Public) (text "Public docs")
       , option "private" (model.searchState.domain == Private) (text "My docs")
-      -- , option "all" (model.searchState.domain == All) (text "All docs")
+      , option "all" (model.searchState.domain == All) (text "All docs")
       ]
 
 searchOrderMenu model =
@@ -183,13 +201,13 @@ pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
         [ spacing 8 ]
-        [ el (activeButton HomePage model) [ EE.onClick (InitHomePage), alignBottom, height (px 30), padding 8 ] (text "Start")
+        [ Utility.visibleIf model.appState.signedIn (homepageIcon model)
+        , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor")
         , el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image")
         , Utility.visibleIf False (el (activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
         ]
-
 
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =

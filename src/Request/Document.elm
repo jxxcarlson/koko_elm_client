@@ -102,7 +102,7 @@ getAllDocumentsWith searchState token =
             if query == "" then
                 documentsUrl ++ buildQuery ["docs=any", soq]
             else
-              documentsUrl ++ buildQuery ["docs=any&" , parseQuery(query), soq]
+              documentsUrl ++ buildQuery ["docs=any" , parseQuery(query), soq]
 
     in
         HB.get url

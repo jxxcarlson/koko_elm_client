@@ -265,6 +265,8 @@ homepage model =
       ]
       (el Zero [verticalCenter] (text ("Home page")))
 
+   
+
 getDocument : Styles -> String -> String -> Model -> Element Styles variation Msg
 getDocument style searchTerm label model =
   el style
