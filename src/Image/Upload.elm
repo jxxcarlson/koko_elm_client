@@ -53,11 +53,11 @@ getFormattedDate date =
             "19010101"
 
 
-awzCredential : Model -> CredentialsWrapper -> String
-awzCredential model credentialsWrapper  =
+awzCredential : Model -> Credentials -> String
+awzCredential model credentials  =
   let
-    accessKeyId = credentialsWrapper.credentials.awsAccessKeyId
-    date = credentialsWrapper.credentials.date
+    accessKeyId = credentials.awsAccessKeyId
+    date = credentials.date
   in
     accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
 
@@ -107,6 +107,7 @@ request result model =
   let
       _ = Debug.log "credentials" result
       _ = Debug.log "awzCredential = " (awzCredential model result)
+      _ = Debug.log "model.fileToUpload" model.fileToUpload
       cmd =
           model.fileToUpload
               |> Maybe.map

@@ -383,11 +383,12 @@ update msg model =
                 ( { model | imageRecord = newImageRecord }
                 , Cmd.none
                 )
+
         GetUploadCredentials ->
           Image.Upload.getUploadCredentials model
 
         CredentialsResult (Ok result) ->
-            Image.Upload.request result model
+            Image.Upload.request result.credentials model
 
 
         CredentialsResult (Err error) ->
