@@ -74,7 +74,7 @@ import Views.Component as Component
 import Views.Home exposing (home)
 import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
-import Views.Image exposing (imageEditor)
+import Image.View
 import Views.Admin exposing (admin)
 
 
@@ -499,7 +499,7 @@ page model =
             editor model
 
         ImagePage ->
-            imageEditor model
+            Image.View.imageEditor model
 
         HomePage ->
             home model
