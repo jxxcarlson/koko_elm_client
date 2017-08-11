@@ -172,6 +172,7 @@ type alias Model =
     , imageRecord : ImageRecord
     , fileInputId : String
     , date : Maybe Date
+    , fileToUpload : Maybe NativeFile
     }
 
 

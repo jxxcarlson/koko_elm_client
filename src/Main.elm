@@ -604,6 +604,7 @@ init flags location =
             defaultImageRecord
             ""
             Nothing
+            Nothing
 
         commands = if id > 0 then
             [
