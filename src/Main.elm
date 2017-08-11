@@ -387,11 +387,8 @@ update msg model =
           Image.Upload.getUploadCredentials model
 
         CredentialsResult (Ok result) ->
-          let
-            _ = Debug.log "credentials" result
-            _ = Debug.log "awzCredential = " (Image.Upload.awzCredential model result)
-          in
-            (model, Cmd.none)
+            Image.Upload.request result model
+
 
         CredentialsResult (Err error) ->
           let

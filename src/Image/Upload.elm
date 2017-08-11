@@ -6,8 +6,9 @@ import Json.Decode exposing(field)
 import Date.Extra
 import Date exposing(Date)
 
-import Http
+import Http exposing(stringPart, Request)
 import HttpBuilder as HB exposing (..)
+import Image.FileReader as FR exposing(NativeFile)
 
 getUploadCredentials1 model =
   let
@@ -77,16 +78,42 @@ decodeCredentialsWrapper =
         (field "url" Json.Decode.string)
 
 
----
+multiPartBody : Credentials -> FR.NativeFile -> Http.Body
+multiPartBody creds nf =
+    Http.multipartBody
+        [ stringPart "key" nf.name
+        , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
+        , stringPart "x-amz-credential" "_credential_"
+        , stringPart "x-amz-date" creds.date
+        , stringPart "policy" creds.policy
+        , stringPart "x-amz-signature" creds.signature
+        , FR.filePart "file" nf
+        ]
 
--- uploadRequest : Credentials -> NativeFile -> Request String
--- uploadRequest creds file =
---     Http.request
---         { method = "POST"
---         , headers = []
---         , url = "https://localhost:4000"
---         , body = multiPartBody creds file
---         , expect = Http.expectString
---         , timeout = Nothing
---         , withCredentials = False
---         }
+
+uploadRequest : Credentials -> NativeFile -> Request String
+uploadRequest creds file =
+    Http.request
+        { method = "POST"
+        , headers = []
+        , url = "https://noteimages.s3.amazonaws.com"
+        , body = multiPartBody creds file
+        , expect = Http.expectString
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+request result model =
+  let
+      _ = Debug.log "credentials" result
+      _ = Debug.log "awzCredential = " (awzCredential model result)
+      cmd =
+          model.fileToUpload
+              |> Maybe.map
+                  (\file ->
+                      uploadRequest result file
+                          |> Http.send UploadComplete
+                  )
+              |> Maybe.withDefault Cmd.none
+  in
+      (model , cmd )
