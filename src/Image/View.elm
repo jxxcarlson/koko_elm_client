@@ -9,6 +9,7 @@ import Types exposing (..)
 import Html
 import Html.Attributes as HA
 import Html.Events as HE
+import Image.FileReader exposing(parseSelectedFiles)
 
 imageEditor : Model -> List (Element Styles variation Msg)
 imageEditor model =
@@ -24,6 +25,7 @@ imageEditor model =
       []
       [ named "separator" (hairline Hairline)
       , named "Content2" (imageUploadPane model)
+      , named "Content3" (html (fileUploadPanel model))
       ]
   ]
 
@@ -99,3 +101,14 @@ viewImagePreview img =
 --             , Html.text "Upload"
 --             ]
 --         ]
+
+fileUploadPanel : Model -> Html.Html Msg
+fileUploadPanel model =
+    Html.div [  ]
+    [ Html.div [ ]
+        [ Html.form [ HA.id "file-form", HE.onSubmit GetUploadCredentials ]
+            [ Html.input [ HA.type_ "file", HE.on "change" (Json.Decode.map Files parseSelectedFiles) ] []
+            , Html.button [] [ Html.text "Upload" ]
+            ]
+        ]
+    ]

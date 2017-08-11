@@ -399,7 +399,7 @@ update msg model =
 
 
         Files nativeFiles ->
-          (model, Cmd.none)
+          ( {model | fileToUpload = List.head nativeFiles }, Cmd.none)
 
 
         -----

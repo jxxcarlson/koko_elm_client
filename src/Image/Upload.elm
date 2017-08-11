@@ -22,8 +22,14 @@ getUploadCredentials1 model =
 getUploadCredentials : Model -> (Model, Cmd Msg)
 getUploadCredentials model =
     let
-        image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-        url = "http://localhost:4000/api/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
+        filename = case model.fileToUpload of
+          Just file -> file.name
+          Nothing -> "xxx"
+
+        _ = Debug.log "FILENAME = " filename
+
+        -- image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
+        url = "http://localhost:4000/api/credentials?filename=" ++ filename ++ "&mimetype=image/jpeg&bucket=noteimages"
 
         cmd = HB.get url
             |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)
@@ -31,7 +37,7 @@ getUploadCredentials model =
             |> HB.send CredentialsResult
 
     in
-       ( { model | message = "image: " ++ image.filename }, cmd)
+       ( { model | message = "filename: " ++ filename }, cmd)
 
 dateString : Date -> String
 dateString date =
@@ -53,8 +59,8 @@ getFormattedDate date =
             "19010101"
 
 
-awzCredential : Model -> Credentials -> String
-awzCredential model credentials  =
+awzCredential : Credentials -> String
+awzCredential credentials  =
   let
     accessKeyId = credentials.awsAccessKeyId
     date = credentials.date
@@ -83,7 +89,7 @@ multiPartBody creds nf =
     Http.multipartBody
         [ stringPart "key" nf.name
         , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
-        , stringPart "x-amz-credential" "_credential_"
+        , stringPart "x-amz-credential" (awzCredential creds)
         , stringPart "x-amz-date" creds.date
         , stringPart "policy" creds.policy
         , stringPart "x-amz-signature" creds.signature
@@ -106,7 +112,7 @@ uploadRequest creds file =
 request result model =
   let
       _ = Debug.log "credentials" result
-      _ = Debug.log "awzCredential = " (awzCredential model result)
+      _ = Debug.log "awzCredential = " (awzCredential result)
       _ = Debug.log "model.fileToUpload" model.fileToUpload
       cmd =
           model.fileToUpload
