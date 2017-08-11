@@ -6,6 +6,7 @@ import Phoenix.Socket
 import Json.Encode as JsEncode
 import Date exposing(Date)
 import Dict
+import Image.FileReader as FileReader exposing (NativeFile)
 
 
 type alias User =
@@ -244,6 +245,7 @@ type Msg
     | ImageRead ImagePortData
     | GetUploadCredentials
     | CredentialsResult (Result Http.Error CredentialsWrapper)
+    | Files (List NativeFile)
     | UploadComplete (Result Http.Error String)
     | FileSelected
     | FileUploaded Bool

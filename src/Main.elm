@@ -399,6 +399,13 @@ update msg model =
           in
             (model, Cmd.none)
 
+
+        Files nativeFiles ->
+          (model, Cmd.none)
+
+
+        -----
+
         UploadComplete (Ok result) ->
           let
             _ = Debug.log "ok" result
