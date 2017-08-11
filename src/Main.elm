@@ -31,7 +31,7 @@ import Views.Component as Component
 import Action.User exposing (..)
 import Action.Search exposing (..)
 import Action.Page
-import Action.Image
+import Image.Upload
 import Action.Document
     exposing
         ( createDocument
@@ -384,12 +384,12 @@ update msg model =
                 , Cmd.none
                 )
         GetUploadCredentials ->
-          Action.Image.getUploadCredentials model
+          Image.Upload.getUploadCredentials model
 
         CredentialsResult (Ok result) ->
           let
             _ = Debug.log "credentials" result
-            _ = Debug.log "awzCredential = " (Action.Image.awzCredential model result)
+            _ = Debug.log "awzCredential = " (Image.Upload.awzCredential model result)
           in
             (model, Cmd.none)
 
