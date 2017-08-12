@@ -23,13 +23,28 @@ getUploadCredentials : Model -> (Model, Cmd Msg)
 getUploadCredentials model =
     let
         filename = case model.fileToUpload of
-          Just file -> file.name
-          Nothing -> "xxx"
+            Just file -> file.name
+            Nothing -> "xxx"
 
         _ = Debug.log "FILENAME = " filename
 
-        -- image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-        url = "http://localhost:4000/api/credentials?filename=" ++ filename ++ "&mimetype=image/jpeg&bucket=noteimages"
+        mimeType_ = case model.fileToUpload of
+            Just file ->
+              case file.mimeType of
+                Just mtype ->
+                  toString mtype
+                Nothing ->
+                  "xxx"
+            Nothing ->
+                "xxx"
+
+        mimeType = mimeType_ |> String.toLower |> String.split " " |> String.join "/"
+
+        _ = Debug.log "MIMETYPE = " mimeType
+
+        _ = Debug.log "FILE = " model.fileToUpload
+
+        url = "http://localhost:4000/api/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
 
         cmd = HB.get url
             |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)
