@@ -79,8 +79,10 @@ awzCredential credentials  =
   let
     accessKeyId = credentials.awsAccessKeyId
     date = credentials.date
+    cred = accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
+    _ = Debug.log "cred:" cred
   in
-    accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
+    cred
 
 decodeCredentials : Json.Decode.Decoder Credentials
 decodeCredentials =
@@ -101,8 +103,13 @@ decodeCredentialsWrapper =
 
 multiPartBody : Credentials -> FR.NativeFile -> Http.Body
 multiPartBody creds nf =
+  let
+    _ = Debug.log "key" nf.name
+    _ = Debug.log "x-amz-date" creds.date
+    _ = Debug.log "x-amz-credential" (awzCredential creds)
+  in
     Http.multipartBody
-        [ stringPart "key" nf.name
+        [ stringPart "key" (nf.name)
         , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
         , stringPart "x-amz-credential" (awzCredential creds)
         , stringPart "x-amz-date" creds.date
