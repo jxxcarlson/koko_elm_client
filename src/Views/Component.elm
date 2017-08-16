@@ -203,11 +203,23 @@ pageSelector model =
         [ spacing 8 ]
         [ Utility.visibleIf model.appState.signedIn (homepageIcon model)
         , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
+        , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , Utility.visibleIf model.appState.signedIn (el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor"))
         , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
         , Utility.visibleIf False (el (activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
         ]
+
+newDocumentButton : Model -> Element Styles variation Msg
+newDocumentButton model =
+    el Zero
+        [ width (px 30)
+        , onClick (NewDocument)
+        , height (px 30)
+        , padding 2
+        , title "New document"
+        ]
+        (html (FontAwesome.plus Color.white 25))
 
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =

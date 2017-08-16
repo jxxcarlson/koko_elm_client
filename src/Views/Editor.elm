@@ -69,7 +69,6 @@ editorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
         [ Common.publicCheckbox model
-        , newDocumentButton model
         , refreshButton model
         , toggleUpdateRateIndicator model
         , toggleUpdateRateButton model
@@ -79,16 +78,6 @@ editorPanel model =
         ]
 
 
-newDocumentButton : Model -> Element Styles variation Msg
-newDocumentButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (NewDocument)
-        , height (px 30)
-        , padding 2
-        , title "New document"
-        ]
-        (html (FontAwesome.plus Color.white 25))
 
 
 refreshButton : Model -> Element Styles variation Msg

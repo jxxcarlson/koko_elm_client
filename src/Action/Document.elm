@@ -259,9 +259,11 @@ getDocumentById model k =
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
-    ( { model | appState = updateToolStatus model NewDocumentTools }
-    , Request.Document.createDocument document model.current_user.token
-    )
+  let
+    appState = model.appState
+    newAppState = { appState | tool = NewDocumentTools, page = EditorPage}
+  in
+    ( { model | appState = newAppState }, Request.Document.createDocument document model.current_user.token )
 
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
