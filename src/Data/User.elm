@@ -63,6 +63,14 @@ userRecordDecoder =
         |> JPipeline.required "token" Json.Decode.string
         |> JPipeline.required "admin" Json.Decode.bool
 
+        -- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
+
+fixup : String -> Bool
+fixup str =
+  case str of
+      "false" -> False
+      "true" -> True
+      _ -> False
 
 userRecord : String -> Result String UserRecord
 userRecord jsonString =
