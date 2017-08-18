@@ -1,4 +1,4 @@
-module User.Login exposing (..)
+module User.Auth exposing (..)
 
 -- https://auth0.com/blog/creating-your-first-elm-app-part-2/
 

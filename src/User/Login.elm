@@ -1,4 +1,4 @@
-module Action.User exposing (..)
+module User.Login exposing (..)
 
 import Types exposing (..)
 import External

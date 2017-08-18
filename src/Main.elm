@@ -27,7 +27,7 @@ import Element.Attributes as EA exposing (..)
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component as Component
-import Action.User exposing (..)
+import User.Login exposing (..)
 import Action.Search exposing (..)
 import Action.Page
 import Image.Upload
@@ -46,7 +46,7 @@ import Action.Document
         , deleteDocument
         )
 import Data.Document exposing (documents)
-import Request.User exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
+import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Time exposing (Time, second)
@@ -125,7 +125,7 @@ update msg model =
 
         AuthenticationAction ->
             if model.appState.signedIn then
-                Action.User.signout "You are now signed out." model
+                User.Login.signout "You are now signed out." model
             else
                 Action.UI.setAuthorizing model True
 
@@ -134,7 +134,7 @@ update msg model =
 
         Login ->
           let
-            (model1, cmds1) = Action.User.login2 model
+            (model1, cmds1) = User.Login.login2 model
             (model2, cmds2) = if model1.appState.signedIn then
                 (model1, Cmd.none) --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
             else
@@ -149,7 +149,7 @@ update msg model =
           let
             _ = Debug.log "REGISTER" 1
           in
-            ( model, Request.User.registerUserCmd model Request.Api.registerUserUrl )
+            ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
         CompleteRegistration result ->
           case (Debug.log "CompleteRegistration" result) of
@@ -171,7 +171,7 @@ update msg model =
                 ({model | message = Action.Error.httpErrorString err}, Cmd.none)
 
         GetTokenCompleted result ->
-            Request.User.getTokenCompleted model result
+            User.Auth.getTokenCompleted model result
 
         Signout ->
             signout "Please sign in" model
@@ -227,10 +227,10 @@ update msg model =
 
         UserHomePage ->
           let
-            searchTerm = "key=home&authorname=" ++ (Action.User.shortUsername model)
+            searchTerm = "key=home&authorname=" ++ (User.Login.shortUsername model)
           in
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-            -- Action.Document.search Public ("key=home&authorname=" ++ (Action.User.shortUsername model)) ReaderPage model
+            -- Action.Document.search Public ("key=home&authorname=" ++ (User.Login.shortUsername model)) ReaderPage model
 
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
@@ -286,7 +286,7 @@ update msg model =
         GetSpecialDocument (Err err) ->
             ({model | message = "Getting special document: error" } , Cmd.none)
 
-        -- Action.User.signout "Error: could not get user documents." model
+        -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         PutDocument (Ok serverReply) ->
             case (serverReply) of

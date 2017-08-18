@@ -160,7 +160,7 @@ app.ports.askToReconnectUser.subscribe(function (str) {
   if (str == "reconnectUser") {
     var localStorageAsString = JSON.stringify(localStorage)
     console.log("ask to reconnect user with data: " + localStorageAsString)
-    app.ports.reconnectUser.send(localStorage);
+    app.ports.reconnectUser.send(localStorageAsString);
 
     // app.ports.reconnectUser.send(localStorageAsString);
     // reconnect(localStorageAsString)
