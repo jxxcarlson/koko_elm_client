@@ -79,15 +79,13 @@ login model =
         { model |
            message = "LOGGING IN",
            appState = newAppState,
-           searchState = newSearchState, 
+           searchState = newSearchState,
            current_user = updatedUser }
 
 login2 : Model -> (Model, Cmd Msg)
 login2 model =
   ( login model,  Request.User.loginUserCmd model Request.Api.loginUrl)
     --, Action.Document.search Private "sort=updated" HomePage model
-
-
 
 signout : String -> Model -> ( Model, Cmd Msg )
 signout message model =
@@ -96,7 +94,14 @@ signout message model =
             model.current_user
 
         updated_user =
-            User "" "" "" "" ""
+            {
+              name = ""
+            , username = ""
+            , email = ""
+            , password = ""
+            , token = ""
+            , admin = False
+          }
 
         oldAppState =
             model.appState
@@ -120,9 +125,10 @@ signout message model =
 doReconnectUser : String -> Model -> (Model, Cmd Msg)
 doReconnectUser jsonString model =
   let
-      _ = Debug.log "jsonString" jsonString
+      _ = Debug.log "!!jsonString" jsonString
       maybeUserRecord =
           Data.User.userRecord jsonString
+      _ = Debug.log "!!maybeUserRecord" maybeUserRecord      
   in
       case maybeUserRecord of
           Ok userRecord ->
@@ -134,6 +140,7 @@ doReconnectUser jsonString model =
 reconnectUser : Model -> UserRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =
     let
+        _ = Debug.log "reconnnectUser with userRecord" userRecord
         user =
             model.current_user
 

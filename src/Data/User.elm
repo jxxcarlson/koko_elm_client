@@ -21,15 +21,26 @@ signinEncoder model =
 registerUserEncoder : Model -> Encode.Value
 registerUserEncoder model =
     Encode.object
-        [ ( "user"
-          , Encode.object
-                [ ( "name", Encode.string model.current_user.name )
-                , ( "username", Encode.string model.current_user.username )
-                , ( "email", Encode.string model.current_user.email )
-                , ( "password", Encode.string model.current_user.password )
-                ]
-          )
+        [ ("name",  Encode.string <| model.current_user.name)
+        , ("username",  Encode.string <| model.current_user.username)
+        , ("email",  Encode.string <| model.current_user.email)
+        , ("password",  Encode.string <| model.current_user.password)
+        , ("token",  Encode.string <| model.current_user.token)
+        , ("admin",  Encode.bool <| model.current_user.admin)
         ]
+    -- Encode.object
+    --     [ ( "user"
+    --       , Encode.object
+    --             [ ( "name", Encode.string model.current_user.name )
+    --             , ( "username", Encode.string model.current_user.username )
+    --             , ( "email", Encode.string model.current_user.email )
+    --             , ( "password", Encode.string model.current_user.password )
+    --             , ( "admin"), Encode.bool model.current_user.admin
+    --             ]
+    --       )
+    --     ]
+
+
 
 
 type alias Claims =
@@ -50,6 +61,7 @@ userRecordDecoder =
         |> JPipeline.required "username" Json.Decode.string
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
+        |> JPipeline.required "admin" Json.Decode.bool
 
 
 userRecord : String -> Result String UserRecord

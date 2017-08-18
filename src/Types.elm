@@ -10,14 +10,19 @@ import Image.FileReader as FileReader exposing (NativeFile)
 
 
 type alias User =
-    { name : String, username : String, email : String, password : String, token : String }
+    { name : String
+    , username : String
+    , email : String
+    , password : String
+    , token : String
+    , admin : Bool }
 
 
 {-|
   Use to transfer data to JS-world. Does not contani password
 -}
 type alias UserRecord =
-    { name : String, username : String, email : String, token : String }
+    { name : String, username : String, email : String, token : String, admin: Bool }
 
 
 type alias KWindow =

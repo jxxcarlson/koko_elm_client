@@ -11,7 +11,6 @@ import Date exposing(Date)
 import Configuration
 import Dict
 import Request.Document
-import Json.Decode as Decode
 import Action.Error
 import Document.RenderAsciidoc
 import Document.Search
@@ -156,7 +155,14 @@ update msg model =
           case (Debug.log "CompleteRegistration" result) of
             Ok result ->
               let
-                newUser = User result.name result.username result.email "" result.token
+                newUser = {
+                  name =  result.name
+                , username = result.username
+                , email = result.email
+                , password = ""
+                , token = result.token
+                , admin = result.admin
+              }
                 oldAppState = model.appState
                 newAppState = {oldAppState | signedIn = True, authorizing = False}
               in
@@ -556,6 +562,7 @@ init flags location =
           , email = ""
           , password = ""
           , token = ""
+          , admin = False
         }
 
         title =

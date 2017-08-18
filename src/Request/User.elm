@@ -9,10 +9,9 @@ import Request.Api exposing (loginUrl, registerUserUrl)
 import Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder)
 import Types exposing (..)
 import Utility exposing (gotoPage)
-import Action.UI exposing (appStateWithPage)
 import External
 import Views.External
-import Action.Page
+
 
 
 loginUserCmd : Model -> String -> Cmd Msg
