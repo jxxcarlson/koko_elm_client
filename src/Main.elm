@@ -550,7 +550,13 @@ init flags location =
         -- location = "localhost:3000/##public/" ++ (toString id)
 
         current_user =
-            User "" "" "" "" ""
+          {
+          name = ""
+          , username = ""
+          , email = ""
+          , password = ""
+          , token = ""
+        }
 
         title =
             "Test document"
@@ -567,8 +573,23 @@ init flags location =
         ws =
             windowSetup 150 50 HomePage False False
 
-        appState =
-            AppState False False False False False False False False False False HomePage TableOfContents "" Configuration.tickInterval ""
+        appState = {
+         online = False
+         , signedIn = False
+         , authorizing = False
+         , registerUser =  False
+         , menuDropped = False
+         , textTypeMenuDropped = False
+         , docTypeMenuDropped = False
+         , textBufferDirty = False
+         , masterDocLoaded = False
+         , tickerPaused = False
+         , page = HomePage
+         , tool = TableOfContents
+         , textBuffer = ""
+         , tickInterval = Configuration.tickInterval
+         , command = ""
+       }
 
         channel =
             Phoenix.Channel.init "room:lobby"
@@ -579,46 +600,50 @@ init flags location =
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
 
-        model = Model
-            (KWindow flags.width flags.height)
-            0
-            appState
-            "Please sign in"
-            current_user
-            ""
-            ""
-            startDocument
-            defaultDocument
-            defaultMasterDocument
-            [ defaultDocument ]
-            []
-            "blurb"
-            Dict.empty
-            []
-            searchState
-            initSocket
-            ""
-            []
-            defaultImageRecord
-            ""
-            Nothing
-            Nothing
+        model = {
+            window = (KWindow flags.width flags.height)
+            , counter = 0
+            , appState = appState
+            , message = "Please sign in"
+            , errorMsg = ""
+            , info = ""
+            , current_user = current_user
+            , current_document = startDocument
+            , specialDocument = defaultDocument
+            , master_document = defaultMasterDocument
+            , documents = [ defaultDocument ]
+            , documents2 = []
+            , documentKey = "blurb"
+            , documentDict = Dict.empty
+            , documentStack = []
+            , searchState = searchState
+            , phxSocket = initSocket
+            , messageInProgress = ""
+            , messages =[]
+            , imageRecord = defaultImageRecord
+            , fileInputId = ""
+            , date = Nothing
+            , fileToUpload = Nothing
+          }
+
+        standardCommands = [
+          Cmd.map PhoenixMsg phxCmd, toJs ws
+        , External.askToReconnectUser "reconnectUser"
+        , Task.perform ReceiveDate Date.now
+        ]
+
+        masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
+
+        startuPageCommands = [
+          (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
+         , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+        ]
 
         commands = if id > 0 then
-            [
-                Cmd.map PhoenixMsg phxCmd, toJs ws
-              , External.askToReconnectUser "reconnectUser"
-              , Task.perform ReceiveDate Date.now
-              , Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id))
-            ]
+            standardCommands ++ masterDocumentCommands
           else
-            [
-                Cmd.map PhoenixMsg phxCmd, toJs ws
-              , External.askToReconnectUser "reconnectUser"
-              , Task.perform ReceiveDate Date.now
-              , (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
-              , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
-            ]
+            standardCommands ++ startuPageCommands
+
     in
         ( model , Cmd.batch commands )
 
