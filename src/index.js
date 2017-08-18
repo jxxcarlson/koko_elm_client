@@ -136,6 +136,7 @@ app.ports.persist.subscribe(function (str) {
   localStorage.setItem("token", userSettings.token);
   localStorage.setItem("email", userSettings.email);
   localStorage.setItem("name", userSettings.name);
+  localStorage.setItem("admin", false);
 
    // prepareLocalStorage();
 

@@ -42,8 +42,8 @@ windowSetup width height page online signed_in =
         json
 
 
-userData : String -> String -> String -> String -> String
-userData name email username token =
+userData : String -> String -> String -> String -> Bool -> String
+userData name email username token admin =
     let
         data =
             object
@@ -51,6 +51,7 @@ userData name email username token =
                 , ( "email", string email )
                 , ( "username", string username )
                 , ( "token", string token )
+                , ( "admin", bool admin)
                 ]
     in
         encode 2 data
