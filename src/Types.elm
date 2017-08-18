@@ -17,12 +17,18 @@ type alias User =
     , token : String
     , admin : Bool }
 
-
+type alias Users = List User
 {-|
   Use to transfer data to JS-world. Does not contani password
 -}
+
+type alias UsersRecord =
+    { users : List User
+    }
+
+
 type alias UserRecord =
-    { name : String, username : String, email : String, token : String, admin: Bool }
+    { name : String, username : String, email : String, token : String }
 
 
 type alias KWindow =
@@ -178,6 +184,8 @@ type alias Model =
     , fileInputId : String
     , date : Maybe Date
     , fileToUpload : Maybe NativeFile
+    , userList : Users
+    , selectedUser : Maybe User
     }
 
 
@@ -210,6 +218,7 @@ type Msg
     | DeleteDocument (Result Http.Error ())
     | NewDocument
     | DeleteCurrentDocument
+    | GetUsers (Result Http.Error UsersRecord)
     | Title String
     | SetTextType String
     | SetDocType String

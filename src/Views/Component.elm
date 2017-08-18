@@ -207,7 +207,7 @@ pageSelector model =
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , Utility.visibleIf model.appState.signedIn (el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor"))
         , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
-        , Utility.visibleIf (model.current_user.admin == True) (el (activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
+        , Utility.visibleIf (model.current_user.username == "jxxcarlson") (el (activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
         ]
 
 newDocumentButton : Model -> Element Styles variation Msg

@@ -49,6 +49,7 @@ import Data.Document exposing (documents)
 import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import Request.Document exposing (getDocumentsWith)
 import Request.Api exposing (loginUrl, registerUserUrl)
+import User.Request
 import Time exposing (Time, second)
 import Views.External exposing (windowData, windowSetup)
 import External exposing (render, toJs, fileUpload, fileUploaded)
@@ -161,7 +162,7 @@ update msg model =
                 , email = result.email
                 , password = ""
                 , token = result.token
-                , admin = result.admin
+                , admin = False
               }
                 oldAppState = model.appState
                 newAppState = {oldAppState | signedIn = True, authorizing = False}
@@ -259,6 +260,19 @@ update msg model =
                     ( { model | message = "Error in GetDocuments" }
                     , Cmd.none
                     )
+
+        GetUsers (Ok usersRecord) ->
+          let
+            _ = Debug.log "Ok, usersRecord" usersRecord
+          in
+            ({model | userList = usersRecord.users}, Cmd.none)
+
+        GetUsers (Err error) ->
+          let
+             _ = Debug.log "ERROR, usersRecord" error
+          in
+            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
+
 
         GetDocuments (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
@@ -481,6 +495,8 @@ update msg model =
                 ( nextModel, Cmd.none )
 
 
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
@@ -631,12 +647,15 @@ init flags location =
             , fileInputId = ""
             , date = Nothing
             , fileToUpload = Nothing
+            , userList = []
+            , selectedUser = Nothing
           }
 
         standardCommands = [
           Cmd.map PhoenixMsg phxCmd, toJs ws
         , External.askToReconnectUser "reconnectUser"
         , Task.perform ReceiveDate Date.now
+        , User.Request.getList
         ]
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]

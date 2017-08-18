@@ -66,7 +66,7 @@ getTokenCompleted model result =
                           }
                         , Cmd.batch
                             [ Utility.gotoPage model HomePage
-                            , External.persist (Views.External.userData user.name user.email value.username newToken False)
+                            , External.persist (Views.External.userData user.name user.email value.username newToken)
                             ]
                         )
 

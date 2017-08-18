@@ -6,7 +6,6 @@ import Element.Attributes exposing (..)
 import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
-import Views.Component as Component
 import Views.Utility as Utility
 
 home : Model -> List (Element Styles variation Msg)

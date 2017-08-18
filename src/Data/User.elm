@@ -61,7 +61,7 @@ userRecordDecoder =
         |> JPipeline.required "username" Json.Decode.string
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
-        |> JPipeline.required "admin" Json.Decode.bool
+  
 
         -- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
 
