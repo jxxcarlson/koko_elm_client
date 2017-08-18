@@ -13,6 +13,7 @@ type alias User =
     { name : String
     , username : String
     , email : String
+    , blurb : String
     , password : String
     , token : String
     , admin : Bool }
@@ -27,7 +28,7 @@ type alias UsersRecord =
     }
 
 
-type alias UserRecord =
+type alias LoginUserRecord =
     { name : String, username : String, email : String, token : String }
 
 
@@ -201,7 +202,7 @@ type Msg
     | Login
     | ReconnectUser String
     | Register
-    | CompleteRegistration (Result Http.Error UserRecord)
+    | CompleteRegistration (Result Http.Error LoginUserRecord)
     | Signout
     | AuthenticationAction
     | CancelAuthentication
@@ -265,6 +266,8 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | UserHomePage
+    | GotoUserHomePages
+    | GetHomePageForUserHomePages String
     | InitHomePage
     | GoToPage (Maybe Page)
     | LinkTo String
@@ -280,6 +283,7 @@ type Page
     | EditorPage
     | ImagePage
     | AdminPage
+    | UserHomePages
 
 
 pageName : Page -> String
@@ -306,6 +310,8 @@ pageName page =
         AdminPage ->
           "Admin"
 
+        UserHomePages ->
+          "User"
 
 type Tool
     = TableOfContents

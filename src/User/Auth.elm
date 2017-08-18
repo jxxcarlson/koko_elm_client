@@ -93,7 +93,7 @@ getTokenCompleted model result =
 -- |> Debug.log "error in getTokenCompleted"
 
 
-registerUser : Model -> String -> Http.Request UserRecord
+registerUser : Model -> String -> Http.Request LoginUserRecord
 registerUser model c =
     let
         body =

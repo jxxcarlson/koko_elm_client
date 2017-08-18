@@ -18,6 +18,10 @@ homepageIcon : Model -> Element Styles variation Msg
 homepageIcon model =
   activeIcon "Home Page" Types.UserHomePage FontAwesome.home model
 
+userHomePagesIcon : Model -> Element Styles variation Msg
+userHomePagesIcon model =
+  activeIcon "User Pages" Types.GotoUserHomePages FontAwesome.group model
+
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =
   activeIcon "Start page" Types.InitHomePage FontAwesome.asterisk model
@@ -201,7 +205,8 @@ pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
         [ spacing 8 ]
-        [ Utility.visibleIf model.appState.signedIn (homepageIcon model)
+        [ (userHomePagesIcon model)
+        , Utility.visibleIf model.appState.signedIn (homepageIcon model)
         , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
         , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")

@@ -244,7 +244,7 @@ stylesheet =
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
         , style Mono [Font.typeface [ "Lucida Sans Unicode" ]]
-        , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.white ]
+        , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]
         , style Blue [ Color.background Color.blue, Color.text Color.white]
         , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]

@@ -24,10 +24,11 @@ getList =
 
 decodeUser : Json.Decode.Decoder User
 decodeUser =
-    Json.Decode.map6 User
+    Json.Decode.map7 User
         (field "name" Json.Decode.string)
         (field "username" Json.Decode.string)
         (field "email" Json.Decode.string)
+        (field "blurb" Json.Decode.string)
         (field "password" Json.Decode.string)
         (field "token" Json.Decode.string)
         (field "admin" Json.Decode.bool)

@@ -98,6 +98,7 @@ signout message model =
               name = ""
             , username = ""
             , email = ""
+            , blurb = ""
             , password = ""
             , token = ""
             , admin = False
@@ -137,7 +138,7 @@ doReconnectUser jsonString model =
           Err error ->
               ( { model | info = "Sorry, I cannot reconnect you" }, Cmd.none )
 
-reconnectUser : Model -> UserRecord -> ( Model, Cmd Msg )
+reconnectUser : Model -> LoginUserRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =
     let
         _ = Debug.log "reconnnectUser with userRecord" userRecord

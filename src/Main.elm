@@ -76,6 +76,7 @@ import Views.Reader exposing (reader)
 import Views.Editor exposing (editor)
 import Image.View
 import Views.Admin exposing (admin)
+import Views.UserHomePages exposing (userHomePages)
 
 
 main : Program Flags Model Msg
@@ -161,6 +162,7 @@ update msg model =
                 , username = result.username
                 , email = result.email
                 , password = ""
+                , blurb = ""
                 , token = result.token
                 , admin = False
               }
@@ -233,10 +235,21 @@ update msg model =
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
             -- Action.Document.search Public ("key=home&authorname=" ++ (User.Login.shortUsername model)) ReaderPage model
 
+        GotoUserHomePages ->
+          let
+              appState = model.appState
+              newAppState = { appState | page = UserHomePages }
+           in
+              ({model | appState = newAppState }, Cmd.none)
+
+
+
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-            -- Action.Document.search Public searchTerm ReaderPage model
 
+            -- Action.Document.search Public searchTerm ReaderPage model
+        GetHomePageForUserHomePages searchTerm ->
+            Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model
 
         InitHomePage ->
           Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model
@@ -534,6 +547,9 @@ page model =
         AdminPage ->
             admin model
 
+        UserHomePages ->
+            userHomePages model
+
 
 view : Model -> Html Msg
 view model =
@@ -577,6 +593,7 @@ init flags location =
           , username = ""
           , email = ""
           , password = ""
+          , blurb = ""
           , token = ""
           , admin = False
         }

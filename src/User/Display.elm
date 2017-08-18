@@ -1,7 +1,15 @@
 module User.Display exposing(..)
 
 
-import Types exposing (Model, Msg, User, Users)
+import Types exposing (
+     Model
+    , Msg(GetPublicPage, GetHomePageForUserHomePages)
+    , User
+    , Users
+    , Page(..)
+    , SearchDomain(..)
+    , SearchOrder(..)
+  )
 
 import StyleSheet exposing (..)
 import Color
@@ -12,6 +20,7 @@ import Element.Events as EE exposing (..)
 import Utility
 import FontAwesome
 import StyleSheet exposing (..)
+import Document.Search
 
 
 
@@ -25,13 +34,20 @@ list title model =
 
 userListView1 title model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, width (px 300), height (px (toFloat (model.window.height - 200))) ]
-    (List.map (viewTitle model) model.userList)
+    (List.map (viewUser model) model.userList)
 
 
 userListHeader : String -> Model -> Element Styles variation Msg
 userListHeader title model =
   el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text "Users")
 
-viewTitle : Model -> User -> Element Styles variation Msg
-viewTitle model user =
-  (el None [moveDown 15.0] (text user.username))
+viewUser : Model -> User -> Element Styles variation Msg
+viewUser model user =
+  let
+    query =  "authorname=" ++ user.username ++ "&key=home"
+  in
+    (el PaleBlue [onClick (GetHomePageForUserHomePages query), spacing 15, paddingLeft 10, height (px 25), width (px 500)]
+      (text (user.username ++ ": " ++ user.blurb)))
+
+-- gotoHomePage username model =
+--   Document.Search.withParameters ("username=" ++ username ++ "&key=home") Alphabetical Public ReaderPage model
