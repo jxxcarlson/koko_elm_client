@@ -60,7 +60,7 @@ updateCurrentDocument model document =
             , appState = newAppState
           }
         , Cmd.batch [
-            -- Task.perform Task.succeed (RenderAsciidoc.put document),
+            -- put new content in JS-mirror of document and save the document
             RenderAsciidoc.put document,
             putDocument "" model document
         ]

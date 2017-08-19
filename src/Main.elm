@@ -243,13 +243,9 @@ update msg model =
             searchTerm = "key=home&authorname=" ++ (User.Login.shortUsername model)
           in
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-            -- Action.Document.search Public ("key=home&authorname=" ++ (User.Login.shortUsername model)) ReaderPage model
 
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-
-            -- Action.Document.search Public searchTerm ReaderPage model
-
 
         InitHomePage ->
           Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model
@@ -257,12 +253,14 @@ update msg model =
         DoRender key ->
             Document.RenderAsciidoc.putWithKey key model
 
+
         GetRenderedText str ->
           let
             document = model.current_document
             newDocument = { document | rendered_content = str }
-           in
-            ({model | current_document = newDocument}, Request.Document.putDocument "" model newDocument)
+          in
+            ({model | current_document = newDocument}, Cmd.none)
+            -- Request.Document.putDocument "" model newDocument
 
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
@@ -332,7 +330,7 @@ update msg model =
                        Nothing ->
                            defaultDocument
             in
-               ({model | specialDocument = specialDocument  } , Cmd.none)
+               ({model | specialDocument = specialDocument , current_document = specialDocument } , Cmd.none)
 
         GetSpecialDocument (Err err) ->
             ({model | message = "Getting special document: error" } , Cmd.none)
@@ -541,7 +539,7 @@ subscriptions model =
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
-        , External.getRenderedText GetRenderedText
+        , External.getRenderedText GetRenderedText -- pull rendered text from JS-land, then store in DB
         , External.fileContentRead ImageRead
         , fileUploaded FileUploaded
         ]
