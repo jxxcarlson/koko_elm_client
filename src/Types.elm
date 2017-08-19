@@ -166,6 +166,7 @@ type alias Model =
     , counter : Int
     , appState : AppState
     , message : String
+    , textInputBuffer: String
     , current_user : User
     , errorMsg : String
     , info : String
@@ -227,6 +228,7 @@ type Msg
     | AdoptChildren
     | InputTags String
     | InputContent String
+    | UpdateTextInputBuffer String
     | SetParentId String
     | AddToMasterDocument
     | AttachCurrentDocument String

@@ -192,6 +192,9 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
+        UpdateTextInputBuffer str ->
+            ({model | textInputBuffer = str} , Cmd.none)
+
         SelectSearchMode searchMode ->
           let
              domain = case searchMode of
@@ -220,11 +223,17 @@ update msg model =
             ({ model | searchState = newSearchState }, Cmd.none  )
 
         ClearSearch ->
-            updateSearch model ""
+          ({model | textInputBuffer = ""}, Cmd.none)
+            -- updateSearch model ""
 
         -- updatedSearchState
         DoSearch searchDomain key ->
-            Action.Document.searchOnEnter searchDomain key model
+          let
+            searchState = model.searchState
+            newSearchState = { searchState | query = model.textInputBuffer }
+            newModel = { model | searchState = newSearchState }
+          in
+            Action.Document.searchOnEnter searchDomain key newModel
 
         RecallLastSearch ->
            Action.Document.recallLastSearch model
@@ -258,22 +267,11 @@ update msg model =
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
 
-        -- SearchForUserHomePages keyCode ->
-        --   if keyCode == 13 then
-        --     let
-        --       _ = Debug.log "SearchForUserHomePages, keyCode" keyCode
-        --       query = "authorname=" ++ model.searchState.query ++ "&key=home"
-        --       (newModel, cmd) = Document.Search.withParameters query  Alphabetical Public UserHomePages model
-        --     in
-        --       ( newModel, Cmd.batch[ cmd] )
-        --   else
-        --     (model, Cmd.none)
-
         SearchForUserHomePages keyCode ->
           if keyCode == 13 then
             let
               _ = Debug.log "SearchForUserHomePages, keyCode" keyCode
-              query = "is_user=" ++ model.searchState.query
+              query = "is_user=" ++ model.textInputBuffer
             in
               ( model, User.Request.getList query )
           else
@@ -672,6 +670,7 @@ init flags location =
             , appState = appState
             , message = "Please sign in"
             , errorMsg = ""
+            , textInputBuffer = ""
             , info = ""
             , current_user = current_user
             , current_document = startDocument
