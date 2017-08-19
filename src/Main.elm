@@ -235,27 +235,11 @@ update msg model =
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
             -- Action.Document.search Public ("key=home&authorname=" ++ (User.Login.shortUsername model)) ReaderPage model
 
-        GotoUserHomePages ->
-          let
-              appState = model.appState
-              newAppState = { appState | page = UserHomePages }
-           in
-              ( { model | appState = newAppState }, User.Request.getList)
-           -- UserHomePages
-
-
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
             -- Action.Document.search Public searchTerm ReaderPage model
-        GetHomePageForUserHomePages searchTerm username->
-          let
-            model2 = { model | selectedUserName = username}
-            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
-          in
-            ( newModel, Cmd.batch[ cmd,  User.Request.getList] )
-            -- User.Request.getList
-         -- UserHomePages
+
 
         InitHomePage ->
           Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model
@@ -270,6 +254,39 @@ update msg model =
            in
             ({model | current_document = newDocument}, Request.Document.putDocument "" model newDocument)
 
+        GotoUserHomePages ->
+          let
+              appState = model.appState
+              newAppState = { appState | page = UserHomePages }
+           in
+              ( { model | appState = newAppState }, User.Request.getList)
+           -- UserHomePages
+
+        GetHomePageForUserHomePages searchTerm username->
+          let
+            model2 = { model | selectedUserName = username}
+            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
+          in
+            ( newModel, Cmd.batch[ cmd] )
+            -- User.Request.getList
+         -- UserHomePages
+
+        GetUsers (Ok usersRecord) ->
+          let
+            _ = Debug.log "Ok, updating" "USERS (123)"
+            userList = usersRecord.users
+            user = List.head userList |> Maybe.withDefault model.current_user
+            query = "authorname=" ++ user.username ++ "&key=home"
+            (model1, cmd) = Document.Search.withParameters query Alphabetical Public UserHomePages model
+          in
+            ({model1 | userList = userList, selectedUserName = user.username}, cmd)
+
+        GetUsers (Err error) ->
+          let
+             _ = Debug.log "ERROR, usersRecord" error
+          in
+            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
+
         GetDocuments (Ok serverReply) ->
             case (Data.Document.documents serverReply) of
                 Ok documentsRecord ->
@@ -279,19 +296,6 @@ update msg model =
                     ( { model | message = "Error in GetDocuments" }
                     , Cmd.none
                     )
-
-        GetUsers (Ok usersRecord) ->
-          let
-            _ = Debug.log "Ok, updating" "USERS (123)"
-          in
-            ({model | userList = usersRecord.users}, Cmd.none)
-
-        GetUsers (Err error) ->
-          let
-             _ = Debug.log "ERROR, usersRecord" error
-          in
-            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
-
 
         GetDocuments (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
