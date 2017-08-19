@@ -240,8 +240,8 @@ update msg model =
               appState = model.appState
               newAppState = { appState | page = UserHomePages }
            in
-              ({model | appState = newAppState }, Cmd.none)
-
+              ( { model | appState = newAppState }, Cmd.none)
+           -- UserHomePages
 
 
         GetPublicPage searchTerm ->
@@ -250,6 +250,7 @@ update msg model =
             -- Action.Document.search Public searchTerm ReaderPage model
         GetHomePageForUserHomePages searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model
+         -- UserHomePages
 
         InitHomePage ->
           Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model

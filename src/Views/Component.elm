@@ -16,26 +16,28 @@ import Views.Utility as Utility
 
 homepageIcon : Model -> Element Styles variation Msg
 homepageIcon model =
-  activeIcon "Home Page" Types.UserHomePage FontAwesome.home model
+  activeIcon 0 25 "Home Page" Types.UserHomePage FontAwesome.home model
 
 userHomePagesIcon : Model -> Element Styles variation Msg
 userHomePagesIcon model =
-  activeIcon "User Pages" Types.GotoUserHomePages FontAwesome.group model
+  activeIcon 3 20 "User Pages" Types.GotoUserHomePages FontAwesome.group model
+  -- GotoUserHomePages
 
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =
-  activeIcon "Start page" Types.InitHomePage FontAwesome.asterisk model
+  activeIcon 0 25 "Start page" Types.InitHomePage FontAwesome.asterisk model
 
 -- activeIcon : Msg -> Html msg -> Model -> Element Styles variation Msg
-activeIcon title_ msg icon model =
+activeIcon move_down_pixels icon_size title_ msg icon model =
   el NavBar
       [
        onClick msg
       , height (px 30)
       , verticalCenter
+      , moveDown move_down_pixels
       , title title_
       ]
-      (EL.html (icon (Color.white) 25))
+      (EL.html (icon (Color.white) icon_size))
 
 navigation : Model -> Element Styles variation Msg
 navigation model =

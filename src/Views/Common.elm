@@ -11,6 +11,7 @@ module Views.Common
         , getDocument
         , renderedContent
         , specialContent
+        , shortString
         )
 import Views.Utility as Utility
 import StyleSheet exposing (..)
@@ -25,6 +26,7 @@ import Color
 import Request.Api
 import Action.Document
 import String.Extra
+import Element.Keyed as Keyed
 
 import Json.Encode
 
@@ -40,7 +42,7 @@ specialContent model =
   let
     h = (toFloat model.window.height) - 180
   in
-    (el Zero [yScrollbar, id "rendered_text2", padding 20, maxWidth (px 550), width (percent 100), height (px h), property "innerHTML"
+    (el Zero [ yScrollbar, id "rendered_text2", padding 20, maxWidth (px 550), width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
 
 

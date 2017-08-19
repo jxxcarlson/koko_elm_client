@@ -12,6 +12,8 @@ import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
+import Element.Keyed as Keyed
+
 
 
 
@@ -21,7 +23,7 @@ userHomePages model =
         { columns = [ px 300, fill 1, fill 0.2 ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
-            -- , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
+            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
             , fill 1 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
 
             ]
@@ -32,7 +34,12 @@ userHomePages model =
              (User.Display.list "Users" model)
             ]
         )
-        , named "content" (Common.renderedContent model)
+        , named "content" (Keyed.column
+            Zero
+            []
+            [("Foo", Common.renderedContent model)]
+          )
+        , named "TOCHeader" (text "Home pages")
       ]
 
 

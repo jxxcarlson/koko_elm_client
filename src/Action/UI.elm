@@ -11,10 +11,10 @@ import Array
 
 displayPage : Model -> Page
 displayPage model =
-    if model.appState.page == Types.HomePage || model.appState.page == Types.ImagePage then
-        Types.ReaderPage
-    else
+    if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage then
         model.appState.page
+    else
+        Types.ReaderPage
 
 
 toggleMenu menu model =
@@ -157,7 +157,7 @@ queryMessage domain =
                     "public documents"
 
                 All ->
-                  "all documents"    
+                  "all documents"
     in
         "search " ++ domain_ ++ " for "
 

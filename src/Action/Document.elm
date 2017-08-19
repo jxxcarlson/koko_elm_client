@@ -169,18 +169,14 @@ updateTags tagText model =
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 updateDocuments model documentsRecord =
     let
-        _ = Debug.log "updateDocuments" 1
+        _ = Debug.log "updateDocuments" "begin"
+
         current_document =
             case List.head documentsRecord.documents of
                 Just document ->
                     document
-
                 Nothing ->
                     defaultDocument
-
-
-        appState =
-            model.appState
 
         masterDocLoaded =
             if current_document.attributes.docType == "master" then
@@ -192,6 +188,9 @@ updateDocuments model documentsRecord =
           current_document
         else
           defaultMasterDocument
+
+        appState =
+            model.appState
 
         updatedAppState =
             { appState | tool = TableOfContents, masterDocLoaded = masterDocLoaded }

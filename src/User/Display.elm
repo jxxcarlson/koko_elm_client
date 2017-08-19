@@ -22,6 +22,8 @@ import FontAwesome
 import StyleSheet exposing (..)
 import Document.Search
 
+import Views.Common as Common
+
 
 
 list : String -> Model -> Element Styles variation Msg
@@ -47,7 +49,7 @@ viewUser model user =
     query =  "authorname=" ++ user.username ++ "&key=home"
   in
     (el PaleBlue [onClick (GetHomePageForUserHomePages query), spacing 15, paddingLeft 10, height (px 25), width (px 500)]
-      (text (user.username ++ ": " ++ user.blurb)))
+      (text (Common.shortString 35 (user.username ++ ": " ++ user.blurb))))
 
 -- gotoHomePage username model =
 --   Document.Search.withParameters ("username=" ++ username ++ "&key=home") Alphabetical Public ReaderPage model
