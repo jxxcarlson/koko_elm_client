@@ -73,4 +73,4 @@ goToUserHomePages model =
       appState = model.appState
       newAppState = { appState | page = UserHomePages }
    in
-      ( { model | appState = newAppState }, User.Request.getList)
+      ( { model | appState = newAppState }, User.Request.getList "")

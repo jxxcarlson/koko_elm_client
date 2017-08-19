@@ -220,6 +220,7 @@ type Msg
     | NewDocument
     | DeleteCurrentDocument
     | GetUsers (Result Http.Error UsersRecord)
+    | SearchForUserHomePages Int
     | Title String
     | SetTextType String
     | SetDocType String

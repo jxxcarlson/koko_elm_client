@@ -258,6 +258,28 @@ update msg model =
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
 
+        -- SearchForUserHomePages keyCode ->
+        --   if keyCode == 13 then
+        --     let
+        --       _ = Debug.log "SearchForUserHomePages, keyCode" keyCode
+        --       query = "authorname=" ++ model.searchState.query ++ "&key=home"
+        --       (newModel, cmd) = Document.Search.withParameters query  Alphabetical Public UserHomePages model
+        --     in
+        --       ( newModel, Cmd.batch[ cmd] )
+        --   else
+        --     (model, Cmd.none)
+
+        SearchForUserHomePages keyCode ->
+          if keyCode == 13 then
+            let
+              _ = Debug.log "SearchForUserHomePages, keyCode" keyCode
+              query = "is_user=" ++ model.searchState.query
+            in
+              ( model, User.Request.getList query )
+          else
+            (model, Cmd.none)
+
+
         GetHomePageForUserHomePages searchTerm username->
           let
             model2 = { model | selectedUserName = username}

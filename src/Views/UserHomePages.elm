@@ -13,6 +13,7 @@ import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
 import Element.Keyed as Keyed
+import User.Search
 
 
 
@@ -31,7 +32,8 @@ userHomePages model =
        [padding 20]
        [ named "TOC"
          (column None [] [
-             (User.Display.list "Home Pages" model)
+             (User.Search.form model)
+             , (User.Display.list "Home Pages" model)
             ]
         )
         , named "content" (Keyed.column

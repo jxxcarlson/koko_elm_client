@@ -11,11 +11,14 @@ import Http exposing (send)
 import Request.Api
 
 
-getList :  Cmd Msg
-getList =
+getList : String -> Cmd Msg
+getList query =
     let
-        _ = Debug.log "getList" "DOCUMENTS (123)"
-        url = Request.Api.api ++ "/users?public=yes"
+        queries = if query == "" then
+            [Request.Api.api ++ "users?public_user=yes"]
+          else
+            [Request.Api.api ++ "users?public_user=yes", query]
+        url = queries |> String.join("&")
     in
         HB.get url
             -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
