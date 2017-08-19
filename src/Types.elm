@@ -186,7 +186,7 @@ type alias Model =
     , date : Maybe Date
     , fileToUpload : Maybe NativeFile
     , userList : Users
-    , selectedUser : Maybe User
+    , selectedUserName : String
     }
 
 
@@ -267,7 +267,7 @@ type Msg
     | FileUploaded Bool
     | UserHomePage
     | GotoUserHomePages
-    | GetHomePageForUserHomePages String
+    | GetHomePageForUserHomePages String String
     | InitHomePage
     | GoToPage (Maybe Page)
     | LinkTo String

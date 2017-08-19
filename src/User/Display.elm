@@ -48,8 +48,18 @@ viewUser model user =
   let
     query =  "authorname=" ++ user.username ++ "&key=home"
   in
-    (el PaleBlue [onClick (GetHomePageForUserHomePages query), spacing 15, paddingLeft 10, height (px 25), width (px 500)]
+    (el (titleStyle model user) [
+         onClick (GetHomePageForUserHomePages query user.username)
+         , spacing 15
+         , paddingLeft 10
+         , height (px 25)
+         , width (px 500)
+      ]
       (text (Common.shortString 35 (user.username ++ ": " ++ user.blurb))))
 
--- gotoHomePage username model =
---   Document.Search.withParameters ("username=" ++ username ++ "&key=home") Alphabetical Public ReaderPage model
+titleStyle : Model -> User -> Styles
+titleStyle model user =
+    if model.selectedUserName == user.username then
+      Blue
+    else
+      PaleBlue

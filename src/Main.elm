@@ -248,10 +248,10 @@ update msg model =
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
             -- Action.Document.search Public searchTerm ReaderPage model
-        GetHomePageForUserHomePages searchTerm ->
+        GetHomePageForUserHomePages searchTerm username->
           let
-            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model
-
+            model2 = { model | selectedUserName = username}
+            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
           in
             ( newModel, Cmd.batch[ cmd,  User.Request.getList] )
             -- User.Request.getList
@@ -671,7 +671,7 @@ init flags location =
             , date = Nothing
             , fileToUpload = Nothing
             , userList = []
-            , selectedUser = Nothing
+            , selectedUserName = ""
           }
 
         standardCommands = [
