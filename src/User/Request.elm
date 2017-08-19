@@ -14,7 +14,7 @@ import Request.Api
 getList :  Cmd Msg
 getList =
     let
-        _ = Debug.log "getList (xxx)" 1
+        _ = Debug.log "getList" "DOCUMENTS (123)"
         url = Request.Api.api ++ "/users"
     in
         HB.get url

@@ -240,7 +240,7 @@ update msg model =
               appState = model.appState
               newAppState = { appState | page = UserHomePages }
            in
-              ( { model | appState = newAppState }, Cmd.none)
+              ( { model | appState = newAppState }, User.Request.getList)
            -- UserHomePages
 
 
@@ -249,7 +249,12 @@ update msg model =
 
             -- Action.Document.search Public searchTerm ReaderPage model
         GetHomePageForUserHomePages searchTerm ->
-            Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model
+          let
+            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model
+
+          in
+            ( newModel, Cmd.batch[ cmd,  User.Request.getList] )
+            -- User.Request.getList
          -- UserHomePages
 
         InitHomePage ->
@@ -277,7 +282,7 @@ update msg model =
 
         GetUsers (Ok usersRecord) ->
           let
-            _ = Debug.log "Ok, usersRecord" usersRecord
+            _ = Debug.log "Ok, updating" "USERS (123)"
           in
             ({model | userList = usersRecord.users}, Cmd.none)
 

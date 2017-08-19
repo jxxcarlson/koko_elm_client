@@ -20,7 +20,9 @@ signinEncoder model =
 
 registerUserEncoder : Model -> Encode.Value
 registerUserEncoder model =
-    Encode.object
+  Encode.object
+    [ ( "user"
+      , Encode.object
         [ ("name",  Encode.string <| model.current_user.name)
         , ("username",  Encode.string <| model.current_user.username)
         , ("email",  Encode.string <| model.current_user.email)
@@ -28,6 +30,7 @@ registerUserEncoder model =
         , ("token",  Encode.string <| model.current_user.token)
         , ("admin",  Encode.bool <| model.current_user.admin)
         ]
+    )]
     -- Encode.object
     --     [ ( "user"
     --       , Encode.object
