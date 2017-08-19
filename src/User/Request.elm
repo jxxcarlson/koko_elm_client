@@ -15,7 +15,7 @@ getList :  Cmd Msg
 getList =
     let
         _ = Debug.log "getList" "DOCUMENTS (123)"
-        url = Request.Api.api ++ "/users"
+        url = Request.Api.api ++ "/users?public=yes"
     in
         HB.get url
             -- |> HB.withHeader "Authorization" ("Bearer " ++ token)

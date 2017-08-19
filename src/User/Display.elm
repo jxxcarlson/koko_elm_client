@@ -41,7 +41,7 @@ userListView1 title model =
 
 userListHeader : String -> Model -> Element Styles variation Msg
 userListHeader title model =
-  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text "Users")
+  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text "Home Pages")
 
 viewUser : Model -> User -> Element Styles variation Msg
 viewUser model user =
@@ -52,7 +52,9 @@ viewUser model user =
          onClick (GetHomePageForUserHomePages query user.username)
          , spacing 15
          , paddingLeft 10
-         , height (px 25)
+         , paddingTop 5
+         , paddingBottom 2.5
+         , height (px 30)
          , width (px 500)
       ]
       (text (Common.shortString 35 (user.username ++ ": " ++ user.blurb))))

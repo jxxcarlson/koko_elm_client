@@ -31,7 +31,7 @@ userHomePages model =
        [padding 20]
        [ named "TOC"
          (column None [] [
-             (User.Display.list "Users" model)
+             (User.Display.list "Home Pages" model)
             ]
         )
         , named "content" (Keyed.column
@@ -39,7 +39,7 @@ userHomePages model =
             []
             [("Foo", Common.renderedContent model)]
           )
-        , named "TOCHeader" (text "Home pages")
+
       ]
 
 
