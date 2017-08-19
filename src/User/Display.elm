@@ -23,6 +23,7 @@ import StyleSheet exposing (..)
 import Document.Search
 
 import Views.Common as Common
+import User.Request
 
 
 
@@ -65,3 +66,11 @@ titleStyle model user =
       Blue
     else
       PaleBlue
+
+goToUserHomePages : Model -> (Model, Cmd Msg)
+goToUserHomePages model =
+  let
+      appState = model.appState
+      newAppState = { appState | page = UserHomePages }
+   in
+      ( { model | appState = newAppState }, User.Request.getList)

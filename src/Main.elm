@@ -66,6 +66,7 @@ import Action.UI
         )
 import Phoenix.Socket
 import Action.Channel
+import User.Display
 
 
 -- new style
@@ -255,12 +256,7 @@ update msg model =
             ({model | current_document = newDocument}, Request.Document.putDocument "" model newDocument)
 
         GotoUserHomePages ->
-          let
-              appState = model.appState
-              newAppState = { appState | page = UserHomePages }
-           in
-              ( { model | appState = newAppState }, User.Request.getList)
-           -- UserHomePages
+          User.Display.goToUserHomePages model
 
         GetHomePageForUserHomePages searchTerm username->
           let
@@ -268,8 +264,6 @@ update msg model =
             (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
           in
             ( newModel, Cmd.batch[ cmd] )
-            -- User.Request.getList
-         -- UserHomePages
 
         GetUsers (Ok usersRecord) ->
           let
@@ -682,7 +676,6 @@ init flags location =
           Cmd.map PhoenixMsg phxCmd, toJs ws
         , External.askToReconnectUser "reconnectUser"
         , Task.perform ReceiveDate Date.now
-        , User.Request.getList
         ]
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]

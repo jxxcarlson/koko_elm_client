@@ -39,6 +39,16 @@ activeIcon move_down_pixels icon_size title_ msg icon model =
       ]
       (EL.html (icon (Color.white) icon_size))
 
+button  width_ style title_ msg model =
+  el style
+      [
+       onClick msg
+      , height (px 30)
+      , width (px width_)
+      , paddingLeft 8
+      ]
+      (el style [verticalCenter] (text title_))
+
 navigation : Model -> Element Styles variation Msg
 navigation model =
     row NavBar

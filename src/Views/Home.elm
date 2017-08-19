@@ -7,6 +7,7 @@ import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
 import Views.Utility as Utility
+import Views.Component as Component
 
 home : Model -> List (Element Styles variation Msg)
 home model =
@@ -25,7 +26,7 @@ home model =
              [
                (Utility.visibleIf model.appState.signedIn (text ("Signed in as " ++ model.current_user.username)))
               , (Utility.notVisibleIf model.appState.signedIn (text "Not signed in" ))
-              ,(Common.getDocument Blue "key=home" "Home pages" model)
+              ,(Component.button 200 Blue "Home Pages" Types.GotoUserHomePages model)
               ,(Common.getDocument BluishCharcoal "ident=2017-8-10@4-50-53.515776" "Random Links" model)
               , el LightGray [height (px 20), width (px 200)] (text "")
               ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
