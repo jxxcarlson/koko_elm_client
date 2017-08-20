@@ -169,7 +169,7 @@ type alias Model =
     , textInputBuffer: String
     , current_user : User
     , errorMsg : String
-    , info : String
+    , warning : String
     , current_document : Document
     , specialDocument : Document
     , master_document : Document
@@ -185,6 +185,7 @@ type alias Model =
     , imageRecord : ImageRecord
     , fileInputId : String
     , date : Maybe Date
+    , time : Maybe Time
     , fileToUpload : Maybe NativeFile
     , userList : Users
     , selectedUserName : String
@@ -275,7 +276,9 @@ type Msg
     | GoToPage (Maybe Page)
     | LinkTo String
     | RequestDate
+    | RequestTime
     | ReceiveDate Date
+    | ReceiveTime Time
 
 
 type Page

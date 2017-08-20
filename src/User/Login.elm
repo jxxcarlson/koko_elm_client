@@ -114,7 +114,7 @@ signout message model =
         ( { model
             | current_user = updated_user
             , appState = newAppState
-            , info = ""
+            , warning = ""
             , message = message
           }
         , Cmd.batch[
@@ -133,10 +133,13 @@ doReconnectUser jsonString model =
   in
       case maybeUserRecord of
           Ok userRecord ->
-              reconnectUser model userRecord
+            let
+              newModel = { model | warning = "" }
+            in
+              reconnectUser newModel userRecord
 
           Err error ->
-              ( { model | info = "Sorry, I cannot reconnect you" }, Cmd.none )
+              ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
 
 reconnectUser : Model -> LoginUserRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =

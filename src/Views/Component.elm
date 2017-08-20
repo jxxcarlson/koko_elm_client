@@ -150,7 +150,7 @@ textFormatMenu model =
                     [ setTextTypeButton "plain" "Plain" model
                     , setTextTypeButton "adoc" "Asciidoc" model
                     , setTextTypeButton "adoc_latex" "Ascii/Latex" model
-                    , setTextTypeButton "latex" "Latex" model
+                    -- , setTextTypeButton "latex" "Latex" model
                     ]
             ]
 
@@ -173,7 +173,7 @@ docTypeMenu model =
                 column Menu
                     [ padding 8, spacing 2 ]
                     [ el (docTypeButton "standard" model) [ EA.width (px 85), EE.onClick (SetDocType "standard"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Standard")
-                    , el (docTypeButton "note" model) [ EA.width (px 85), EE.onClick (SetDocType "note"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Note")
+                    -- , el (docTypeButton "note" model) [ EA.width (px 85), EE.onClick (SetDocType "note"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Note")
                     , el (docTypeButton "master" model) [ EA.width (px 85), EE.onClick (SetDocType "master"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Master")
                     ]
             ]
@@ -208,14 +208,14 @@ pageSelector model =
         , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
         , el (activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
         , Utility.visibleIf model.appState.signedIn (el (activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor"))
-        , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
+        -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
         , Utility.visibleIf (model.current_user.username == "jxxcarlson") (el (activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
         ]
 
 newDocumentButton : Model -> Element Styles variation Msg
 newDocumentButton model =
   Basic.faIcon "New document" FontAwesome.plus  [onClick NewDocument]
-    
+
 
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =
@@ -224,14 +224,21 @@ activeButton currentPage model =
     else
         FlatButton
 
+warningStyle warning =
+  if warning == "" then
+    FooterNote
+  else
+    WarningFooterNote
 
 footer : Model -> Element Styles variation msg
 footer model =
     (row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
-        [ el FooterNote [ alignBottom, padding 8 ] (text model.message)
-        ,  (onlineStatusIndicator model)
-        ]
+          [
+            el FooterNote [ alignBottom, padding 8 ] (text model.message)
+            , (el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning))
+            ,  (onlineStatusIndicator model)
+         ]
     )
 
 hostString =
@@ -247,6 +254,7 @@ onlineStatus model =
         "Online"
     else
         "Offline"
+
 
 
 onlineStatusStyle : Model -> Styles

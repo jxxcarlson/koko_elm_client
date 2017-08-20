@@ -32,7 +32,7 @@ home model =
               ,(Basic.button "Home Pages" Blue [EE.onClick Types.GotoUserHomePages])
               ,(Common.getDocument BluishCharcoal "ident=2017-8-10@4-50-53.515776" "Random Links" model)
               , el LightGray [height (px 20), width (px 200)] (text "")
-              ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "About Noteshare" model)
+              ,(Common.getDocument Blue "ident=2017-8-2@16-32-16.2a43f7" "Sample documents" model)
               ,(Common.getDocument BluishCharcoal "ident=2017-7-16@19-52-51.443e16" "User Manual" model)
               ,(Common.getDocument Blue "ident=2017-8-9@13-13-39.094b94" "System status and news" model)
 

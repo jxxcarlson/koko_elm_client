@@ -13,6 +13,7 @@ import Document.Preprocess
 import Document.RenderAsciidoc as RenderAsciidoc
 
 import Document.Search as Search
+import Action.Error
 
 
 {-|
@@ -244,17 +245,6 @@ getDocumentById : Model -> Int -> Maybe Document
 getDocumentById model k =
     List.head (getDocumentsById model k)
 
--- getDocument (Ok serverReply) model =
---   case (Data.Document.documents serverReply) of
---       Ok documentsRecord ->
---           updateDocuments model documentsRecord
---
---       Err error ->
---           ( { model | info = (toString error) }
---           , Cmd.none
---           )
-
-
 
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
@@ -296,7 +286,6 @@ selectNewDocument model document =
         | current_document = document
         , documents = [ document ] ++ model.documents
         , message = "New document added: " ++ document.title
-        , info = "New document added: " ++ document.title
         , counter = model.counter + 1
       }
     , RenderAsciidoc.put document
@@ -422,8 +411,8 @@ deleteDocument serverReply model =
               }
             , Cmd.none
             )
-      (Err errorMessage) ->
-            ( { model | info = (toString errorMessage) }, Cmd.none )
+      (Err error) ->
+            ( { model | warning = (toString error) }, Cmd.none )
 
 setTitle : String -> Model -> (Model, Cmd Msg)
 setTitle title model =

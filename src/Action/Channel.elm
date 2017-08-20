@@ -126,6 +126,5 @@ receiveRaw raw model =
           Ok payload ->
               handlePing True model
 
-          -- ( { model | messages = payload :: model.messages, info = payload }  Cmd.none )
           Err error ->
               handlePing False model

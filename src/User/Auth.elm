@@ -62,6 +62,7 @@ getTokenCompleted model result =
                         ( { model
                             | current_user = updated_user
                             , message = "Signed in as " ++ value.username
+                            , warning = ""
                             , appState = updatedAppState -- appStateWithPage model HomePage
                           }
                         , Cmd.batch
@@ -71,7 +72,7 @@ getTokenCompleted model result =
                         )
 
                 Err error ->
-                    ( { model | message = "Incorrect username or password (1)" }, Cmd.none )
+                    ( { model | warning = "Incorrect username or password (1)" }, Cmd.none )
 
         Err error ->
           let
@@ -82,15 +83,10 @@ getTokenCompleted model result =
             ( { model
                 | errorMsg = (toString error)
                 , appState = updatedAppState
-                , message = "Incorrect username or password"
+                , warning = "Incorrect username or password"
               }
             , Cmd.none
             )
-
-
-
---               info = "Error .. " ++ (toString error)} , Cmd.none )
--- |> Debug.log "error in getTokenCompleted"
 
 
 registerUser : Model -> String -> Http.Request LoginUserRecord

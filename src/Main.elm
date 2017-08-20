@@ -67,6 +67,7 @@ import Action.UI
 import Phoenix.Socket
 import Action.Channel
 import User.Display
+import Jwt
 
 
 -- new style
@@ -532,7 +533,21 @@ update msg model =
             in
                 ( nextModel, Cmd.none )
 
+        RequestTime ->
+            ( model, Task.perform ReceiveTime Time.now )
 
+        ReceiveTime time ->
+            let
+                time_ = Just time
+                message = case Jwt.isExpired time model.current_user.token of
+                  Ok val ->
+                    "token is valid"
+                  Err error ->
+                    "token is expired"
+                nextModel =
+                    { model | time = time_, message = message }
+            in
+                ( nextModel, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -672,7 +687,7 @@ init flags location =
             , message = "Please sign in"
             , errorMsg = ""
             , textInputBuffer = ""
-            , info = ""
+            , warning = ""
             , current_user = current_user
             , current_document = startDocument
             , specialDocument = defaultDocument
@@ -689,6 +704,7 @@ init flags location =
             , imageRecord = defaultImageRecord
             , fileInputId = ""
             , date = Nothing
+            , time = Nothing
             , fileToUpload = Nothing
             , userList = []
             , selectedUserName = ""
@@ -698,6 +714,7 @@ init flags location =
           Cmd.map PhoenixMsg phxCmd, toJs ws
         , External.askToReconnectUser "reconnectUser"
         , Task.perform ReceiveDate Date.now
+        , Task.perform ReceiveTime Time.now
         ]
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]

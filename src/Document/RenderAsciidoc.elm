@@ -15,8 +15,6 @@ putWithKey : Int -> Model -> (Model, Cmd Msg)
 putWithKey key model =
   if key == 27 then
       -- 27: ESCAPE
-      ( { model | info = "ESCAPE pressed, rendering ..." }
-      , put model.current_document
-      )
+      (  model, put model.current_document )
   else
       ( model, Cmd.none )
