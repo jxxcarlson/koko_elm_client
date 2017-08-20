@@ -13,41 +13,26 @@ import Request.Api as Api
 import List.Extra
 import Json.Decode as Json
 import Views.Utility as Utility
+import Views.Basic as Basic
 
 homepageIcon : Model -> Element Styles variation Msg
 homepageIcon model =
-  activeIcon 0 25 "Home Page" Types.UserHomePage FontAwesome.home model
+  Basic.faIcon "Home Page" FontAwesome.home [onClick Types.UserHomePage]
 
 userHomePagesIcon : Model -> Element Styles variation Msg
 userHomePagesIcon model =
-  activeIcon 3 20 "User Pages" Types.GotoUserHomePages FontAwesome.group model
+  Basic.faIcon "User Pages" FontAwesome.group  [onClick Types.GotoUserHomePages]
+  -- Basic.icon 3 20 "User Pages" Types.GotoUserHomePages FontAwesome.asterisk model
   -- GotoUserHomePages
 
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =
-  activeIcon 0 25 "Start page" Types.InitHomePage FontAwesome.asterisk model
+  Basic.faIcon "Start page" FontAwesome.asterisk [onClick Types.InitHomePage]
 
--- activeIcon : Msg -> Html msg -> Model -> Element Styles variation Msg
-activeIcon move_down_pixels icon_size title_ msg icon model =
-  el NavBar
-      [
-       onClick msg
-      , height (px 30)
-      , verticalCenter
-      , moveDown move_down_pixels
-      , title title_
-      ]
-      (EL.html (icon (Color.white) icon_size))
+-- icon : Msg -> Html msg -> Model -> Element Styles variation Msg
 
-button  width_ style title_ msg model =
-  el style
-      [
-       onClick msg
-      , height (px 30)
-      , width (px width_)
-      , paddingLeft 8
-      ]
-      (el style [verticalCenter] (text title_))
+
+
 
 navigation : Model -> Element Styles variation Msg
 navigation model =
@@ -229,14 +214,8 @@ pageSelector model =
 
 newDocumentButton : Model -> Element Styles variation Msg
 newDocumentButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (NewDocument)
-        , height (px 30)
-        , padding 2
-        , title "New document"
-        ]
-        (html (FontAwesome.plus Color.white 25))
+  Basic.faIcon "New document" FontAwesome.plus  [onClick NewDocument]
+    
 
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =

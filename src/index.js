@@ -56,7 +56,7 @@ var mountNode = document.getElementById('main');
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
-             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content);
+             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe'});
              typesetNow2()
              current_content = content
            }
