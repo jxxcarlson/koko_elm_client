@@ -6,7 +6,7 @@ import Document.Preprocess
 
 
 {-| }
-   render and getRenderedText establish a client-server
+   NOTE: render and getRenderedText establish a client-server
    relationship between the Elm app and JS-world
    where Asciidoctor.js and MathJax.js live.
 

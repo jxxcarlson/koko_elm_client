@@ -258,8 +258,10 @@ update msg model =
           let
             document = model.current_document
             newDocument = { document | rendered_content = str }
+            newModel = { model | current_document = newDocument }
           in
-            ({model | current_document = newDocument}, Cmd.none)
+            Action.Document.saveCurrentDocument "" newModel
+            -- ({model | current_document = newDocument}, Cmd.none)
             -- Request.Document.putDocument "" model newDocument
 
         GotoUserHomePages ->
@@ -397,7 +399,8 @@ update msg model =
             saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
-          -- selectDocument model document
+          -- XXX: when a document is selected update "viewed_at"
+          -- XXX: do we restrict this to views by user?
           let
             (model1, cmd1) = Action.Document.saveDocument "viewed_at=now" document model
             (model2, cmd2) = selectDocument model document
@@ -699,15 +702,15 @@ init flags location =
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
 
-        startuPageCommands = [
+        startupPageCommands = [
           (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
-         , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+           , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
         ]
 
         commands = if id > 0 then
             standardCommands ++ masterDocumentCommands
           else
-            standardCommands ++ startuPageCommands
+            standardCommands ++ startupPageCommands
 
     in
         ( model , Cmd.batch commands )

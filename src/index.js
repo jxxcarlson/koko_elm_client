@@ -43,7 +43,7 @@ var mountNode = document.getElementById('main');
           request_in_progress = false;
           if (content !== current_content) {
             var rt = asciidoctor.convert(content)
-            app.ports.getRenderedText.send(rt);
+            app.ports.getRenderedText.send(rt); // Send rendered text to Elm
             current_content = content
           }
       }  , millisecondsToWait);

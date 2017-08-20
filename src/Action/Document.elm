@@ -285,6 +285,7 @@ selectDocument model document =
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
             , RenderAsciidoc.put document
+            -- XXX put command here to update doc.viewedAt if it is owned by the user
             ]
         )
 
