@@ -330,7 +330,7 @@ update msg model =
                        Nothing ->
                            defaultDocument
             in
-               ({model | specialDocument = specialDocument , current_document = specialDocument } , Cmd.none)
+               ({model | specialDocument = specialDocument } , Cmd.none)
 
         GetSpecialDocument (Err err) ->
             ({model | message = "Getting special document: error" } , Cmd.none)
