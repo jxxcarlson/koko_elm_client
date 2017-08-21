@@ -1,4 +1,4 @@
-module Document.Search exposing(withParameters, withModel)
+module Document.Search exposing(withParameters, withModel, command)
 
 import Types exposing(Model, Msg, SearchState, SearchOrder,
    SearchDomain, Tool(..), Page, defaultMasterDocument)
@@ -42,3 +42,11 @@ withModel page model =
                   , RenderAsciidoc.put model.current_document
                   ]
               )
+
+command : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
+command query order domain page model =
+  let
+    newSearchState = SearchState query domain order
+    newModel = {model | searchState = newSearchState }
+  in
+    Request.Document.getDocumentsWith model.searchState model.current_user.token
