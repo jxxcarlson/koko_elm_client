@@ -289,6 +289,7 @@ editorTools model =
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
+            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ (toString model.current_document.attributes.level)))
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (UI.displayIdentifier model))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
@@ -332,7 +333,7 @@ updateTagsButton model =
 
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
-  Basic.button "Add to master" FlatButton [onClick AddToMasterDocument, width (px 250)] 
+  Basic.button "Add to master" FlatButton [onClick AddToMasterDocument, width (px 250)]
 
 
 publicCheckbox : Model -> Element Styles variation Msg
