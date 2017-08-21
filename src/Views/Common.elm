@@ -13,22 +13,22 @@ module Views.Common
         , specialContent
         , shortString
         )
-import Views.Utility as Utility
-import StyleSheet exposing (..)
+import Action.Document
+import Action.UI as UI
+import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Types exposing (..)
-import Action.UI as UI
-import Views.Component as Component
-import FontAwesome
-import Color
-import Request.Api
-import Action.Document
-import String.Extra
 import Element.Keyed as Keyed
-
+import FontAwesome
 import Json.Encode
+import Request.Api
+import String.Extra
+import StyleSheet exposing (..)
+import Types exposing (..)
+import Views.Basic as Basic
+import Views.Component as Component
+import Views.Utility as Utility
 
 
 renderedContent model =
@@ -245,17 +245,6 @@ softTruncate : Int -> String -> String
 softTruncate k str =
   String.Extra.softBreak k str |> List.head |> Maybe.withDefault "--"
 
-addToMasterDocumentButton : Model -> Element Styles variation Msg
-addToMasterDocumentButton model =
-  el FlatButton
-      [ width (px 200)
-      , onClick AddToMasterDocument
-      , height (px 30)
-      , paddingXY 8 0
-      , verticalCenter
-      ]
-      (el Zero [verticalCenter] (text ("Add to master")))
-
 homepage : Model -> Element Styles variation Msg
 homepage model =
   el FlatButtonBlue
@@ -335,26 +324,15 @@ parentIdPane model =
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =
-    el Blue
-        [ width (px 250)
-        , alignBottom
-        , onClick AdoptChildren
-        , height (px 25)
-        , paddingXY 10 13
-        ]
-        (text "Adopt children")
-
+  Basic.button "Adopt children" FlatButtonBlue [onClick AdoptChildren, width (px 250)]
 
 updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =
-    el Blue
-        [ width (px 250)
-        , alignBottom
-        , onClick SaveCurrentDocument
-        , height (px 25)
-        , paddingXY 10 13
-        ]
-        (text "Update keywords")
+  Basic.button "Update keywords" FlatButtonBlue [onClick SaveCurrentDocument, width (px 250)]
+
+addToMasterDocumentButton : Model -> Element Styles variation Msg
+addToMasterDocumentButton model =
+  Basic.button "Add to master" FlatButton [onClick AddToMasterDocument, width (px 250)] 
 
 
 publicCheckbox : Model -> Element Styles variation Msg
