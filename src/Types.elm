@@ -11,6 +11,7 @@ import Image.FileReader as FileReader exposing (NativeFile)
 
 type alias User =
     { name : String
+    , id: Int
     , username : String
     , email : String
     , blurb : String
@@ -29,7 +30,7 @@ type alias UsersRecord =
 
 
 type alias LoginUserRecord =
-    { name : String, username : String, email : String, token : String }
+    { name : String, username : String, id: Int, email : String, token : String }
 
 
 type alias KWindow =

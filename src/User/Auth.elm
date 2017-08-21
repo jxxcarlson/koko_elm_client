@@ -49,6 +49,7 @@ getTokenCompleted model result =
             case Jwt.decodeToken jwtDecoder newToken of
                 Ok value ->
                     let
+                        _ = Debug.log "token value" value
                         user =
                             model.current_user
 
@@ -57,7 +58,7 @@ getTokenCompleted model result =
                         updatedAppState  = {appState | page = HomePage, signedIn = Debug.log "signedIn" True}
 
                         updated_user =
-                            { user | username = value.username, token = newToken }
+                            { user | username = value.username, token = newToken, id = value.user_id }
                     in
                         ( { model
                             | current_user = updated_user

@@ -24,6 +24,7 @@ registerUserEncoder model =
     [ ( "user"
       , Encode.object
         [ ("name",  Encode.string <| model.current_user.name)
+        , ("id", Encode.int <| model.current_user.id)
         , ("username",  Encode.string <| model.current_user.username)
         , ("email",  Encode.string <| model.current_user.email)
         , ("password",  Encode.string <| model.current_user.password)
@@ -57,11 +58,13 @@ jwtDecoder =
         |> JPipeline.required "user_id" Json.Decode.int
 
 
+
 userRecordDecoder : Decoder LoginUserRecord
 userRecordDecoder =
     decode LoginUserRecord
         |> JPipeline.required "name" Json.Decode.string
         |> JPipeline.required "username" Json.Decode.string
+        |> JPipeline.required "id" Json.Decode.int
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
 

@@ -27,8 +27,9 @@ getList query =
 
 decodeUser : Json.Decode.Decoder User
 decodeUser =
-    Json.Decode.map7 User
+    Json.Decode.map8 User
         (field "name" Json.Decode.string)
+        (field "id" Json.Decode.int)
         (field "username" Json.Decode.string)
         (field "email" Json.Decode.string)
         (field "blurb" Json.Decode.string)

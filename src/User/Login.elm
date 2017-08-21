@@ -97,6 +97,7 @@ signout message model =
             {
               name = ""
             , username = ""
+            , id = 0
             , email = ""
             , blurb = ""
             , password = ""
@@ -151,6 +152,7 @@ reconnectUser model userRecord =
         current_user =
             { user
                 | username = userRecord.username
+                 , id = userRecord.id
                 , token = userRecord.token
             }
 

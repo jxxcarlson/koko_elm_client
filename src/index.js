@@ -134,6 +134,7 @@ app.ports.persist.subscribe(function (str) {
   console.log("userSettings = " + JSON.stringify(userSettings))
   localStorage.setItem("username", userSettings.username);
   localStorage.setItem("token", userSettings.token);
+  localStorage.setItem("id", userSettings.token);
   localStorage.setItem("email", userSettings.email);
   localStorage.setItem("name", userSettings.name);
 

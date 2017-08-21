@@ -162,6 +162,7 @@ update msg model =
                 newUser = {
                   name =  result.name
                 , username = result.username
+                , id = 0
                 , email = result.email
                 , password = ""
                 , blurb = ""
@@ -403,7 +404,13 @@ update msg model =
           -- XXX: when a document is selected update "viewed_at"
           -- XXX: do we restrict this to views by user?
           let
-            (model1, cmd1) = Action.Document.saveDocument "viewed_at=now" document model
+            _ = Debug.log "SelectDocument, id" document.id
+            _ = Debug.log "document.author_id" document.author_id
+
+            (model1, cmd1) = if document.author_id == model.current_user.id then
+                Action.Document.saveDocument "viewed_at=now" document model
+              else
+                (model, Cmd.none)
             (model2, cmd2) = selectDocument model document
           in
             (model2, Cmd.batch[cmd1, cmd2])
@@ -631,6 +638,7 @@ init flags location =
           {
           name = ""
           , username = ""
+          , id = 0
           , email = ""
           , password = ""
           , blurb = ""

@@ -219,9 +219,23 @@ saveCurrentDocument queryString model =
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
 saveDocument queryString document model =
     let
-      _ = Debug.log "saveDocument" 1
+      _ = Debug.log "AAA, document, id" document.id
+      _ = Debug.log "AAA, document, author_id" document.author_id
+      _ = Debug.log "AAA, current user, id" model.current_user.id
+
+      cmd = if document.author_id == model.current_user.id then
+          putDocument queryString model document
+        else
+          Cmd.none
     in
-      ( { model | message = ("Saved document " ++ (toString document.id)) }, putDocument queryString model document )
+      ( model, cmd )
+
+saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+saveDocumentCmd queryString document model =
+    let
+      _ = Debug.log "BB, saveDocumentCmd, id" document.id
+    in
+      putDocument queryString model document
 
 
 hasId : Int -> Document -> Bool
@@ -265,6 +279,10 @@ selectDocument model document =
             { appState | textBuffer = document.content,
             page = displayPage model,
             textBufferDirty = False }
+        saveCmd = if document.author_id == model.current_user.id then
+             saveDocumentCmd "viewed_at=now" document model
+           else
+             Cmd.none
     in
         ( { model
             | current_document = document
@@ -275,6 +293,7 @@ selectDocument model document =
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
             , RenderAsciidoc.put document
+            , saveCmd
             -- XXX put command here to update doc.viewedAt if it is owned by the user
             ]
         )
