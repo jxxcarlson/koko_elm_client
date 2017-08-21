@@ -152,7 +152,7 @@ reconnectUser model userRecord =
         current_user =
             { user
                 | username = userRecord.username
-                 , id = userRecord.id
+                 , id = String.toInt userRecord.id |> Result.withDefault 0
                 , token = userRecord.token
             }
 

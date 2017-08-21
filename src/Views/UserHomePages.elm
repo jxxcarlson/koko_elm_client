@@ -7,11 +7,8 @@ import User.Display
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick)
 import Views.Common as Common
-import Views.Component as Component
 import Types exposing (..)
-import FontAwesome
 import Element.Keyed as Keyed
 import User.Search
 

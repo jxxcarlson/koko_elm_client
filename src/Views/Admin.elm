@@ -7,11 +7,7 @@ import User.Display
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick)
-import Views.Common as Common
-import Views.Component as Component
 import Types exposing (..)
-import FontAwesome
 
 admin : Model -> List (Element Styles variation Msg)
 admin model =

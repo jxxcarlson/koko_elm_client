@@ -548,9 +548,9 @@ update msg model =
                 time_ = Just time
                 message = case Jwt.isExpired time model.current_user.token of
                   Ok val ->
-                    "token is valid"
+                    "login OK"
                   Err error ->
-                    "token is expired"
+                    "login expired"
                 nextModel =
                     { model | time = time_, message = message }
             in

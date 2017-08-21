@@ -42,13 +42,19 @@ windowSetup width height page online signed_in =
         json
 
 
-userData : String -> String -> String -> String -> String
-userData name email username token =
+{-|
+  This is the data sent via ports to persist the user's
+  login information.  See `External.persist` in
+  User.Auth.getTokenCompleted
+-}
+userData : String -> String -> Int -> String -> String -> String
+userData name email userId username token =
     let
         data =
             object
                 [ ( "name", string name )
                 , ( "email", string email )
+                , ( "id", int userId )
                 , ( "username", string username )
                 , ( "token", string token )
                 ]

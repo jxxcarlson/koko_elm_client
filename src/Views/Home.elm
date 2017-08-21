@@ -3,13 +3,10 @@ module Views.Home exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events as EE
 import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
 import Views.Utility as Utility
-import Views.Component as Component
-import Views.Basic as Basic
 
 home : Model -> List (Element Styles variation Msg)
 home model =
@@ -71,6 +68,7 @@ specialTitle model =
   el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
      paddingLeft 10] (el TitleStyle [ verticalCenter ] (text model.specialDocument.title))
 
+specialTitle1 : Model ->  Element Styles variation msg
 specialTitle1 model =
   el TitleStyle [height (px 35),  verticalCenter, maxWidth (px 550), width (percent 100),
      paddingLeft 10] (text model.specialDocument.title)

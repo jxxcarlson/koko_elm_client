@@ -194,10 +194,6 @@ toolSelectorColor model tool =
 
 
 
--- External.askToReconnectUser "reconnectUser"
--- External.askToReconnectUser "reconnectUser"
-
-
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar

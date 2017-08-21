@@ -30,7 +30,7 @@ type alias UsersRecord =
 
 
 type alias LoginUserRecord =
-    { name : String, username : String, id: Int, email : String, token : String }
+    { name : String, username : String, id: String, email : String, token : String }
 
 
 type alias KWindow =
