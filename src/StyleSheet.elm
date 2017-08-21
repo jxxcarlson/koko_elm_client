@@ -197,6 +197,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "active" [Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButtonBlue
             [ Color.text Color.white
@@ -204,6 +205,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
             ]
         , style HeaderLabel
             [ Color.text Color.white
