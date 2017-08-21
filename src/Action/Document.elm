@@ -475,8 +475,21 @@ setParentId parentIdString model =
   ({model | current_document = newDocument, message = "parent = " ++ parentIdString}, Cmd.none)
 
 
+-- addToMasterDocument model =
+--   ({model | message = model.appState.command}, putDocument model.appState.command model model.master_document)
+
 addToMasterDocument model =
-  ({model | message = model.appState.command}, putDocument model.appState.command model model.master_document)
+  let
+    appState = model.appState
+    newAppState = { appState | tool = TableOfContents }
+    cmds = [
+       putDocument model.appState.command model model.master_document
+       , Cmd.none
+
+    ]
+  in
+    ({model | appState = newAppState,  message = model.appState.command},
+    Cmd.batch cmds)
 
 pushDocumentStack : Document -> DocumentStack -> DocumentStack
 pushDocumentStack document stack =
