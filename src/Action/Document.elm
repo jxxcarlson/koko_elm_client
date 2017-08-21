@@ -2,7 +2,7 @@ module Action.Document exposing (..)
 
 import Types exposing (..)
 import Utility exposing (replaceIf)
-import Request.Document exposing (putDocument)
+import Request.Document
 import External exposing (render)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
@@ -11,6 +11,7 @@ import Utility
 import Action.Search
 import Document.Preprocess
 import Document.RenderAsciidoc as RenderAsciidoc
+import Document.Search
 
 import Document.Search as Search
 import Action.Error
@@ -63,7 +64,7 @@ updateCurrentDocument model document =
         , Cmd.batch [
             -- put new content in JS-mirror of document and save the document (XX: client-server)
             RenderAsciidoc.put document,
-            putDocument "" model document
+            Request.Document.put "" model document
         ]
         )
 
@@ -224,7 +225,7 @@ saveDocument queryString document model =
       _ = Debug.log "AAA, current user, id" model.current_user.id
 
       cmd = if document.author_id == model.current_user.id then
-          putDocument queryString model document
+          Request.Document.put queryString model document
         else
           Cmd.none
     in
@@ -235,7 +236,7 @@ saveDocumentCmd queryString document model =
     let
       _ = Debug.log "BB, saveDocumentCmd, id" document.id
     in
-      putDocument queryString model document
+      Request.Document.put queryString model document
 
 
 hasId : Int -> Document -> Bool
@@ -475,16 +476,15 @@ setParentId parentIdString model =
   ({model | current_document = newDocument, message = "parent = " ++ parentIdString}, Cmd.none)
 
 
--- addToMasterDocument model =
---   ({model | message = model.appState.command}, putDocument model.appState.command model model.master_document)
-
 addToMasterDocument model =
   let
+    _ = Debug.log "addToMasterDocument" model.master_document.id
     appState = model.appState
     newAppState = { appState | tool = TableOfContents }
+    query = "id=" ++ (toString model.master_document.id)
     cmds = [
-       putDocument model.appState.command model model.master_document
-       , Cmd.none
+         Request.Document.put model.appState.command model model.master_document
+       , Document.Search.command query Alphabetical All EditorPage model
 
     ]
   in

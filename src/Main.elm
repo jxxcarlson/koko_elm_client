@@ -264,7 +264,6 @@ update msg model =
           in
             Action.Document.saveCurrentDocument "" newModel
             -- ({model | current_document = newDocument}, Cmd.none)
-            -- Request.Document.putDocument "" model newDocument
 
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
@@ -365,7 +364,7 @@ update msg model =
             appState = model.appState
             newAppState = { appState | command = (Action.Document.attachDocumentCommand location model)}
           in
-          ({model | appState = newAppState}, Cmd.none)
+            ({model | appState = newAppState}, Cmd.none)
 
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document

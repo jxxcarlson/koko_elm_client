@@ -1,4 +1,4 @@
-module Request.Document exposing (getDocumentsWith, getSpecialDocumentWithQuery, putDocument,
+module Request.Document exposing (getDocumentsWith, getSpecialDocumentWithQuery, put,
   createDocument, deleteCurrentDocument)
 
 import Http exposing (send)
@@ -165,8 +165,8 @@ putDocumentRB queryString token document =
             |> withJsonBody params
 
 
-putDocument : String -> Model -> Document -> Cmd Msg
-putDocument queryString model document =
+put : String -> Model -> Document -> Cmd Msg
+put queryString model document =
     let
         request =
             putDocumentRB queryString model.current_user.token document
