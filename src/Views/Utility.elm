@@ -1,6 +1,7 @@
 module Views.Utility exposing(..)
 
 import Element exposing (..)
+import String.Extra
 import StyleSheet exposing (..)
 import Types exposing(Msg)
 
@@ -17,3 +18,13 @@ notVisibleIf condition body =
         body
     else
         el None [] (text "")
+
+shortString : Int -> String -> String
+shortString nChars str =
+  let
+    parts =  String.Extra.softBreak nChars str
+  in
+    if List.length parts > 1 then
+       parts |> List.head |> Maybe.withDefault "" |> \str -> str ++ " ..."
+    else
+       str

@@ -6,6 +6,7 @@ import Element.Attributes exposing (..)
 import Views.Signin as Signin
 import Types exposing(Model, Msg)
 import Views.Common as Common
+import Views.TOC as TOC
 import Views.Utility as Utility
 
 home : Model -> List (Element Styles variation Msg)
@@ -49,7 +50,7 @@ home model =
                 -- , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Utility.visibleIf model.appState.signedIn (Common.documentListView "Recent" model))
+                , (Utility.visibleIf model.appState.signedIn (TOC.documentListView "Recent" model))
                 ]
             )
 

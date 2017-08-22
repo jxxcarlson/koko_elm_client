@@ -17,7 +17,7 @@ import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
 
-import Utility
+import Views.Utility as Utility
 import FontAwesome
 import StyleSheet exposing (..)
 import Document.Search
@@ -58,7 +58,7 @@ viewUser model user =
          , height (px 30)
          , width (px 500)
       ]
-      (text (Common.shortString 35 (user.username ++ ": " ++ user.blurb))))
+      (text (Utility.shortString 35 (user.username ++ ": " ++ user.blurb))))
 
 titleStyle : Model -> User -> Styles
 titleStyle model user =
