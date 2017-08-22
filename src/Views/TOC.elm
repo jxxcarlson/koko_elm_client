@@ -71,9 +71,6 @@ viewTocItem child =
         ]
         (text child.title)
 
-
-
-
 documentListHeader : String -> Model -> Element Styles variation Msg
 documentListHeader title model =
   el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model))
@@ -91,9 +88,9 @@ titleDisplay model selectedDocument document =
       [ onClick (SelectDocument document)
       , onDoubleClick (SelectMaster document)
       , paddingXY 8 0
-      , height (px 30)
+      , height (px 20)
       ]
-      (el None [moveDown 15.0] (text (Utility.shortString 30 document.title)))
+      (el None [verticalCenter] (text (Utility.shortString 30 document.title)))
 
 
 tocStyle : Document -> Document -> Styles
