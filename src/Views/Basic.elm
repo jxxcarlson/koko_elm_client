@@ -22,7 +22,7 @@ label text style =
 
 faIcon title_ icon attrs =
   el NavBar
-    ([height (px 25), width (px 25), alignBottom, title title_, verticalCenter ] ++ attrs) 
+    ([height (px 25), width (px 25), alignBottom, title title_, verticalCenter ] ++ attrs)
     (iconWhite20 icon)
 
 iconMaker color iconSize icon =
@@ -33,7 +33,7 @@ iconWhite20 = iconMaker Color.white 25
 -- Basic.icon 0 25 "Home Page" Types.UserHomePage FontAwesome.home model
 icon : Float -> Int -> String -> msg -> (AwesomeFont msg) -> Model -> Element Styles variation msg
 icon move_down_pixels icon_size title_ message icon model =
-  el NavBar
+  el NavBarActive
       [
        onClick message
       , height (px 30)

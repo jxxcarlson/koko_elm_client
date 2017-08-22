@@ -8,6 +8,7 @@ import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
 import Types exposing (..)
 import Action.UI exposing (appStateWithPage)
+import Views.Basic as Basic
 import Views.Component as Component
 import Views.Utility as Utility
 
@@ -30,18 +31,21 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
-        , el Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
-        , el Button
-            [ onClick ToggleRegister
-            , alignBottom
-            , height (px 30)
-            , width (px 150)
-            , padding 8
-            ]
-            (text "Need to sign in?")
+        , Basic.button "Register" Button [onClick Register, width (px 80)]
+        -- l Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
+        , Basic.button "Toggle" Button [onClick ToggleRegister, width (px 150)]
+        -- el Button
+        --     [ onClick ToggleRegister
+        --     , alignBottom
+        --     , height (px 30)
+        --     , width (px 150)
+        --     , padding 8
+        --     ]
+        --     (text "Need to sign in?")
         ,    Component.cancelAuthentication Button model
         , el Blue [paddingXY 20 40] (text model.message)
         ]
+
 
 
 signinForm : Model -> Element Styles variation Msg

@@ -108,25 +108,19 @@ searchIcon model searchDomain =
   (EL.html (FontAwesome.search (Color.white) 25))
 
 
-loginButton : style -> Model -> Element style variation Msg
+loginButton : Styles -> Model -> Element Styles variation Msg
 loginButton style model =
-    el style
-        [ EA.width (px 85)
-        , EE.onClick AuthenticationAction
-        , EA.height (px 30)
-        , padding 8
-        ]
-        (EL.text (authenticationButtonText model))
+   Basic.button
+     (authenticationButtonText model)
+     Button [
+     EE.onClick AuthenticationAction, EA.width (px 85), EA.height (px 30)]
 
 
 cancelAuthentication style model =
-    el style
-        [ EA.width (px 85)
-        , EE.onClick CancelAuthentication
-        , EA.height (px 30)
-        , padding 8
-        ]
-        (EL.text "Cancel")
+  Basic.button
+    "Cancel"
+    Button [
+    EE.onClick CancelAuthentication, EA.width (px 85), EA.height (px 30)]
 
 
 authenticationButtonText : Model -> String

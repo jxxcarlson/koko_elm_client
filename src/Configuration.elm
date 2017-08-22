@@ -13,7 +13,7 @@ module Configuration exposing(..)
 --     "ws://localhost:4000/socket/websocket"
 --
 -- tickInterval : Float
--- tickInterval = 1000.0
+-- tickInterval = 100.0
 
 host : String
 host =

@@ -23,56 +23,57 @@ lightBlueColor = Color.rgb 150 150 255
 -}
 type Styles
     = None
-    | Zero
-    | XXX
-    | Hairline
-    | Panel
-    | PanelInfo
-    | NavBar
-    | Menu
-    | TitleStyle
-    | Heading
-    | HeadingAlternate
+      | ActiveButton
+    | ActiveFlatButton
+    | Blue
+    | BluishCharcoal
+    | Box
     | Button
     | ButtonReversed
-    | ActiveButton
+    | ClearButton
+    | Container
+    | Field
     | FlatButton
     | FlatButtonBlue
-    | ActiveFlatButton
-    | HeaderLabel
-    | SearchField
-    | ClearButton
-    | Field
+    | Footer
+    | FooterNote
     | Form
+    | Hairline
+    | HeaderLabel
+    | Heading
+    | HeadingAlternate
+    | Label
+    | LightGray
+    | Logo
+    | Main
+    | Menu
+    | Mono
+    | NavBar
+    | NavBarActive
+    | NavOption
+    | Page
+    | PaleBlue
+    | PaleGreen
+    | PaleRed
+    | PaleYellow
+    | Panel
+    | PanelInfo
+    | Radio
+    | SearchField
+    | Small
+    | StatusFailure
+    | StatusSuccess
     | TOC
     | TOCItem
     | TOCItemChild
-    | TOCItemMaster
-    | TOCItemSelected
     | TOCItemChildSelected
+    | TOCItemMaster
     | TOCItemMasterSelected
-    | Radio
-    | Footer
-    | FooterNote
+    | TOCItemSelected
+    | TitleStyle
     | WarningFooterNote
-    | Main
-    | Page
-    | Logo
-    | NavOption
-    | Box
-    | Container
-    | Label
-    | StatusSuccess
-    | StatusFailure
-    | Small
-    | Mono
-    | Blue
-    | BluishCharcoal
-    | PaleBlue
-    | PaleGreen
-    | PaleYellow
-    | PaleRed
-    | LightGray
+    | XXX
+    | Zero
 
 
 {-| First, we create a stylesheet.
@@ -147,6 +148,13 @@ stylesheet =
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
             ]
+         , style NavBarActive
+            [ Color.background Color.lightCharcoal
+            , Color.text Color.white
+            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
+            ]
+
+
         , style Panel
             [ Color.background Color.lightCharcoal ]
         , style PanelInfo
@@ -182,6 +190,7 @@ stylesheet =
             , Font.center
             , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
             ]
         , style ButtonReversed
             [ Color.text Color.charcoal
@@ -190,6 +199,7 @@ stylesheet =
             , Font.center
             , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "active" [Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButton
             [ Color.text Color.white
@@ -219,6 +229,7 @@ stylesheet =
             , Color.background Color.darkRed
             , Font.size 14
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
             ]
         , style SearchField
             [ Color.text Color.black ]
