@@ -351,7 +351,7 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    Document 0 "abcd" 0 "New Document" "New Content" "New Content" defaultAttributes [] [] 0 ""
+                    defaultDocument
             in
                 createDocument model newDocument
 

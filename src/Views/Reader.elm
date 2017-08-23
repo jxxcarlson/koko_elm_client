@@ -34,7 +34,10 @@ reader model =
 
 contentHeader : Model -> Element Styles variation Msg
 contentHeader model =
+  row NavBar [ justify ] [
     el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
+    , el AuthorStyle [ paddingXY 10 8 ] (text model.current_document.authorName)
+    ]
 
 
 toolSelectorPanel : Model -> Element Styles variation Msg

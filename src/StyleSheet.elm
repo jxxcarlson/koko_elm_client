@@ -71,6 +71,7 @@ type Styles
     | TOCItemMasterSelected
     | TOCItemSelected
     | TitleStyle
+    | AuthorStyle
     | WarningFooterNote
     | XXX
     | Zero
@@ -165,6 +166,12 @@ stylesheet =
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
             , Font.size 20
+            , Font.lineHeight 1.3
+            ]
+        , style AuthorStyle
+            [ Color.background (Color.rgb 210 210 210)
+            , Color.text (Color.rgb 120 0 0)
+            , Font.size 12
             , Font.lineHeight 1.3
             ]
         , style Heading

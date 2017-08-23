@@ -98,6 +98,7 @@ type alias Document =
     { id : Int
     , identifier : String
     , author_id : Int
+    , authorName : String
     , title : String
     , content : String
     , rendered_content : String
@@ -337,15 +338,50 @@ defaultAttributes =
     DocumentAttributes False "adoc" "standard" 0
 
 startDocument : Document
-startDocument =
-    Document 0 "nullDocument" 0 "Welcome" "Welcome to noteshare" "Welcome to noteshare" defaultAttributes [] [] 0 ""
-
+startDocument = {
+  id = 0
+  , identifier = "nullDocument"
+  , author_id = 0
+  , authorName = ""
+  , title = "Welcome"
+  , content = "Welcome to noteshare"
+  , rendered_content = "Welcome to noteshare"
+  , attributes = defaultAttributes
+  , tags = []
+  , children = []
+  , parent_id = 0
+  , parent_title = "String"
+  }
 
 
 defaultDocument : Document
-defaultDocument =
-    Document 0 "nullDocument" 0 "Oops!" "Page not found" "Page not found" defaultAttributes [] [] 0 ""
+defaultDocument =  {
+  id = 0
+  , identifier = "nullDocument"
+  , author_id = 0
+  , authorName = ""
+  , title = "Oops!"
+  , content = "Page not found"
+  , rendered_content = "Page not found"
+  , attributes = defaultAttributes
+  , tags = []
+  , children = []
+  , parent_id = 0
+  , parent_title = "String"
+  }
 
 defaultMasterDocument : Document
-defaultMasterDocument =
-    Document 0 "nullMasterDocument" 0 "Null master document" "nothing" "nothing" defaultAttributes [] [] 0 ""
+defaultMasterDocument =  {
+  id = 0
+  , identifier = "nullMasterDocument"
+  , author_id = 0
+  , authorName = ""
+  , title = "Null master document"
+  , content = "nothing"
+  , rendered_content = "nothing"
+  , attributes = defaultAttributes
+  , tags = []
+  , children = []
+  , parent_id = 0
+  , parent_title = "String"
+  }
