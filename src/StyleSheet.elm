@@ -171,8 +171,8 @@ stylesheet =
         , style AuthorStyle
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
-            , Font.size 12
-            , Font.lineHeight 1.3
+            , Font.size 15
+            , Font.lineHeight 1.1
             ]
         , style Heading
             [ Color.background Color.lightCharcoal
