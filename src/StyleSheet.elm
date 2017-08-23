@@ -43,6 +43,7 @@ type Styles
     | Heading
     | HeadingAlternate
     | Label
+    | Gray
     | LightGray
     | Logo
     | Main
@@ -71,6 +72,7 @@ type Styles
     | TOCItemMasterSelected
     | TOCItemSelected
     | TitleStyle
+    | RHSidebar
     | AuthorStyle
     | WarningFooterNote
     | OKFooterNote
@@ -168,6 +170,15 @@ stylesheet =
             , Color.text (Color.rgb 120 0 0)
             , Font.size 20
             , Font.lineHeight 1.3
+            ]
+         , style RHSidebar
+            [ Color.background (Color.rgb 210 210 210)
+            , Color.text (Color.rgb 120 0 0)
+            , Font.size 20
+            , Font.lineHeight 1.3
+            , Border.solid
+            , Color.border (Color.rgb 120 120 120) 
+            , Border.left 1.0
             ]
         , style AuthorStyle
             [ Color.background (Color.rgb 210 210 210)
@@ -274,6 +285,7 @@ stylesheet =
         , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]
         , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
+        , style Gray [Color.background Color.gray]
         , style LightGray [Color.background Color.lightGray]
         ]
 

@@ -13,10 +13,10 @@ import FontAwesome
 reader : Model -> List (Element Styles variation Msg)
 reader model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.2 ]
+        { columns = [ px 300, fill 1, fill 0.3 ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
-            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
+            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sidebarHeader" ]
             , fill 1 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
 
             ]
@@ -27,9 +27,20 @@ reader model =
         , named "contentHeader" (contentHeader model)
         , named "content" (Common.renderedContent model)
         , named "TOC" (Common.tool model)
+        , named "sidebarHeader" (rhSidebarHeader)
+        , named "sidebar" (rhSidebar model)
 
         ]
     ]
+
+rhSidebarHeader  =
+    (el RHSidebar [ padding 0, width (percent 100)] (text ""))
+
+rhSidebar model =
+  let
+    h = (toFloat model.window.height) - 120
+  in
+    (el RHSidebar [ padding 0, width (percent 100), height (px h)] (text ""))
 
 contentHeader : Model -> Element Styles variation Msg
 contentHeader model =
