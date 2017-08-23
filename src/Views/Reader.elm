@@ -31,14 +31,21 @@ reader model =
         ]
     ]
 
-
 contentHeader : Model -> Element Styles variation Msg
 contentHeader model =
   row NavBar [ justify ] [
-    el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
-    , el AuthorStyle [ verticalCenter, paddingXY 16 13 ] (text model.current_document.author_name)
+      el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
+      , authorLink model
     ]
 
+authorLink model =
+  let
+    doc = model.current_document
+    author_name = doc.author_name
+    query = "authorname=" ++ author_name ++ "&key=home"
+  in
+    el AuthorStyle [ onClick (GetHomePageForUserHomePages query author_name),
+          verticalCenter, paddingXY 16 13 ] (text author_name)
 
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
