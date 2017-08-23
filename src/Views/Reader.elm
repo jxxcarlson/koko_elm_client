@@ -36,7 +36,7 @@ contentHeader : Model -> Element Styles variation Msg
 contentHeader model =
   row NavBar [ justify ] [
     el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
-    , el AuthorStyle [ verticalCenter, paddingXY 10 8 ] (text model.current_document.authorName)
+    , el AuthorStyle [ verticalCenter, paddingXY 16 13 ] (text model.current_document.author_name)
     ]
 
 

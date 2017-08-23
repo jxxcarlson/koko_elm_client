@@ -98,7 +98,7 @@ type alias Document =
     { id : Int
     , identifier : String
     , author_id : Int
-    , authorName : String
+    , author_name : String
     , title : String
     , content : String
     , rendered_content : String
@@ -342,7 +342,7 @@ startDocument = {
   id = 0
   , identifier = "nullDocument"
   , author_id = 0
-  , authorName = ""
+  , author_name = ""
   , title = "Welcome"
   , content = "Welcome to noteshare"
   , rendered_content = "Welcome to noteshare"
@@ -359,7 +359,7 @@ defaultDocument =  {
   id = 0
   , identifier = "nullDocument"
   , author_id = 0
-  , authorName = ""
+  , author_name = ""
   , title = "Oops!"
   , content = "Page not found"
   , rendered_content = "Page not found"
@@ -375,7 +375,7 @@ defaultMasterDocument =  {
   id = 0
   , identifier = "nullMasterDocument"
   , author_id = 0
-  , authorName = ""
+  , author_name = ""
   , title = "Null master document"
   , content = "nothing"
   , rendered_content = "nothing"
