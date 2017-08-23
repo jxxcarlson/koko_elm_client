@@ -73,6 +73,7 @@ type Styles
     | TitleStyle
     | AuthorStyle
     | WarningFooterNote
+    | OKFooterNote
     | XXX
     | Zero
 
@@ -262,6 +263,7 @@ stylesheet =
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
         , style WarningFooterNote[ Color.background Color.red, Color.text Color.white ]
+        , style OKFooterNote[ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]

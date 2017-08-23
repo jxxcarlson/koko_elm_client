@@ -549,9 +549,9 @@ update msg model =
                   Ok val ->
                     "login OK"
                   Err error ->
-                    "login expired"
+                    "Session expired -- please sign in!"
                 nextModel =
-                    { model | time = time_, message = message }
+                    { model | time = time_, message = message, warning = message }
             in
                 ( nextModel, Cmd.none )
 

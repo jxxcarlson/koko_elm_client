@@ -217,15 +217,23 @@ activeButton currentPage model =
 warningStyle warning =
   if warning == "" then
     FooterNote
+  else if String.contains "OK" warning then
+    OKFooterNote
   else
     WarningFooterNote
+
+messageWarningStyle message =
+  if String.contains "!" message then
+    WarningFooterNote
+  else
+    FooterNote
 
 footer : Model -> Element Styles variation msg
 footer model =
     (row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
           [
-            el FooterNote [ alignBottom, padding 8 ] (text model.message)
+            el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message)
             , (el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning))
             ,  (onlineStatusIndicator model)
          ]
