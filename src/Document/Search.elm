@@ -23,9 +23,15 @@ withModel page model =
           let
               _ = Debug.log "Firing Document.Search.withModel" 1
 
+              masterDocLoaded_ = if String.contains "master" model.searchState.query then
+                  True
+                else
+                  False
+
+              _ = Debug.log "In Search.withModel, masterDocLoaded_" masterDocLoaded_
               appState = model.appState
               newAppState = { appState |
-                 masterDocLoaded = False,
+                 masterDocLoaded = masterDocLoaded_,
                  tool = TableOfContents,
                  page = page }
 

@@ -180,13 +180,7 @@ updateDocuments model documentsRecord =
                 Nothing ->
                     defaultDocument
 
-        masterDocLoaded =
-            if current_document.attributes.docType == "master" then
-                True
-            else
-                False
-
-        newMasterDocument = if masterDocLoaded then
+        newMasterDocument = if model.appState.masterDocLoaded then
           current_document
         else
           defaultMasterDocument
@@ -195,7 +189,7 @@ updateDocuments model documentsRecord =
             model.appState
 
         updatedAppState =
-            { appState | tool = TableOfContents, masterDocLoaded = masterDocLoaded }
+            { appState | tool = TableOfContents }
     in
         ( { model
             | documents = documentsRecord.documents
@@ -399,6 +393,11 @@ selectMasterDocument document model =
 selectMasterDocumentAux : Int -> Model -> ( Model, Cmd Msg )
 selectMasterDocumentAux document_id model =
     let
+
+        appState = model.appState
+
+        newAppState = { appState | masterDocLoaded = True}
+
         searchState =
             model.searchState
 
@@ -406,7 +405,7 @@ selectMasterDocumentAux document_id model =
             { searchState | query = "master=" ++ (toString document_id) }
 
         updatedModel =
-            { model | searchState = updatedSearchState }
+            { model | searchState = updatedSearchState, appState = newAppState }
     in
         searchOnEnter model.searchState.domain 13 updatedModel
 

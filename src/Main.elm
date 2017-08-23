@@ -406,10 +406,20 @@ update msg model =
             _ = Debug.log "SelectDocument, id" document.id
             _ = Debug.log "document.author_id" document.author_id
 
+            masterDocLoaded_ =
+                if document.attributes.docType == "master" then
+                    True
+                else
+                    False
+
+            appState = model.appState
+            newAppState = { appState | masterDocLoaded = masterDocLoaded_}
+            model_ = { model | appState = newAppState }
+
             (model1, cmd1) = if document.author_id == model.current_user.id then
-                Action.Document.saveDocument "viewed_at=now" document model
+                Action.Document.saveDocument "viewed_at=now" document model_
               else
-                (model, Cmd.none)
+                (model_, Cmd.none)
             (model2, cmd2) = selectDocument model document
           in
             (model2, Cmd.batch[cmd1, cmd2])
