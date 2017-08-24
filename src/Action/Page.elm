@@ -7,6 +7,7 @@ import Views.External
 import Action.Document
 import Time
 import Task
+import Request.Document
 
 goToPage : Page -> Model -> (Model, Cmd Msg)
 goToPage p model =
@@ -26,5 +27,8 @@ goToPage p model =
         )
     else if p == HomePage && model.current_user.token /= "" then
           Action.Document.search Private "sort=updated&limit=12" HomePage model
+    else if p == ReaderPage && model.current_user.token /= "" then
+            ( { model | appState = Action.UI.appStateWithPage model p },
+                Request.Document.getSpecialDocumentWithQuery "key=sidebarNotes")
     else
         ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )

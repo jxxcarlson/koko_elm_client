@@ -353,7 +353,7 @@ update msg model =
                 newDocument =
                     defaultDocument
             in
-                createDocument model newDocument
+                createDocument model blankDocument
 
         AddToMasterDocument ->
            Action.Document.addToMasterDocument model

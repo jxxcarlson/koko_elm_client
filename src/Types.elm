@@ -354,6 +354,22 @@ startDocument = {
   }
 
 
+blankDocument : Document
+blankDocument = {
+  id = 0
+  , identifier = "blank"
+  , author_id = 0
+  , author_name = ""
+  , title = "New Document"
+  , content = "Write content here"
+  , rendered_content = "Write content here"
+  , attributes = defaultAttributes
+  , tags = []
+  , children = []
+  , parent_id = 0
+  , parent_title = "String"
+  }
+
 defaultDocument : Document
 defaultDocument =  {
   id = 0

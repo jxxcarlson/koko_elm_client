@@ -4,6 +4,7 @@ import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
+import Json.Encode
 import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
@@ -27,14 +28,21 @@ reader model =
         , named "contentHeader" (contentHeader model)
         , named "content" (Common.renderedContent model)
         , named "TOC" (Common.tool model)
-        , named "sidebarHeader" (rhSidebarHeader)
-        , named "sidebar" (rhSidebar model)
+        , named "sidebarHeader" (rhSidebarHeader model)
+        , named "sidebar" (specialContent model)
 
         ]
     ]
 
-rhSidebarHeader  =
-    (el RHSidebar [ padding 0, width (percent 100)] (text ""))
+rhSidebarHeader model =
+    (el RHSidebarHeader [ paddingXY 10 8, verticalCenter, width (percent 100)] (text model.specialDocument.title))
+
+specialContent model =
+  let
+    h = (toFloat model.window.height) - 140
+  in
+    (el RHSidebar [ yScrollbar, id "rendered_text2", padding 10, width (percent 100), height (px h), property "innerHTML"
+       (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
 
 rhSidebar model =
   let

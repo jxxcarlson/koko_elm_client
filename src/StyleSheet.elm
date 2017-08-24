@@ -73,6 +73,7 @@ type Styles
     | TOCItemSelected
     | TitleStyle
     | RHSidebar
+    | RHSidebarHeader
     | AuthorStyle
     | WarningFooterNote
     | OKFooterNote
@@ -174,12 +175,22 @@ stylesheet =
          , style RHSidebar
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
-            , Font.size 20
+            , Font.size 14
             , Font.lineHeight 1.3
             , Border.solid
-            , Color.border (Color.rgb 120 120 120) 
+            , Color.border (Color.rgb 120 120 120)
             , Border.left 1.0
             ]
+        , style RHSidebarHeader
+           [ Color.background (Color.rgb 210 210 210)
+           , Color.text (Color.rgb 120 0 0)
+           , Font.size 18
+           , Font.lineHeight 1.3
+           , Border.solid
+           , Color.border (Color.rgb 120 120 120)
+           , Border.left 1.0
+           , Border.bottom 1.0
+           ]
         , style AuthorStyle
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
