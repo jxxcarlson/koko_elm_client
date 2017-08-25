@@ -25,6 +25,8 @@ withModel page model =
               _ = Debug.log "QQ, Query string" model.searchState.query
               _ = Debug.log "QQ, Search Domain" model.searchState.domain
 
+
+
               masterDocLoaded_ = if String.contains "master" model.searchState.query then
                   True
                 else

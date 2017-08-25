@@ -370,6 +370,22 @@ blankDocument = {
   , parent_title = "String"
   }
 
+emptyDocument : Document
+emptyDocument = {
+  id = 0
+  , identifier = "empty"
+  , author_id = 0
+  , author_name = ""
+  , title = ""
+  , content = ""
+  , rendered_content = ""
+  , attributes = defaultAttributes
+  , tags = []
+  , children = []
+  , parent_id = 0
+  , parent_title = "String"
+  }
+
 defaultDocument : Document
 defaultDocument =  {
   id = 0
@@ -377,8 +393,8 @@ defaultDocument =  {
   , author_id = 0
   , author_name = ""
   , title = "Oops!"
-  , content = "Page not found"
-  , rendered_content = "Page not found"
+  , content = "Page not found or access restricted"
+  , rendered_content = "Page not found or access restricted"
   , attributes = defaultAttributes
   , tags = []
   , children = []

@@ -331,7 +331,7 @@ update msg model =
                            document
 
                        Nothing ->
-                           defaultDocument
+                           emptyDocument
             in
                ({model | specialDocument = specialDocument } , Cmd.none)
 
