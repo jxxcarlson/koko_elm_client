@@ -9,8 +9,6 @@ import Types exposing (..)
 import Utility
 import FontAwesome
 import StyleSheet exposing (..)
-import Request.Api as Api
-import List.Extra
 import Json.Decode as Json
 import Views.Utility as Utility
 import Views.Basic as Basic
@@ -31,6 +29,7 @@ onChange : msg -> Attribute variation msg
 onChange message =
     on "change" (Json.succeed message)
 
+searchOptionsMenu : Model -> Element Styles variation Msg
 searchOptionsMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
   select "searchMode" TOC [ width (px 110), EA.verticalCenter, onInput SelectSearchMode]
@@ -39,6 +38,7 @@ searchOptionsMenu model =
       , option "all" (model.searchState.domain == All) (text "All docs")
       ]
 
+searchOrderMenu : Model -> Element Styles variation Msg
 searchOrderMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
   select "searchOrder" TOC [ width (px 100), EA.verticalCenter, onInput SelectSearchOrder]
