@@ -79,57 +79,6 @@ toolSelectorColor model tool =
 
 
 
-
-
-
-warningStyle warning =
-  if warning == "" then
-    FooterNote
-  else if String.contains "OK" warning then
-    OKFooterNote
-  else
-    WarningFooterNote
-
-messageWarningStyle message =
-  if String.contains "!" message then
-    WarningFooterNote
-  else
-    FooterNote
-
-footer : Model -> Element Styles variation msg
-footer model =
-    (row Footer
-        [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
-          [
-            el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message)
-            , (el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning))
-            ,  (onlineStatusIndicator model)
-         ]
-    )
-
-hostString =
-  Api.host |> String.split("//") |> List.Extra.last |> Maybe.withDefault ""
-
-onlineStatusIndicator : Model -> Element Styles variation msg
-onlineStatusIndicator model =
-  el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text ((onlineStatus model) ++ " at " ++ hostString ))
-
-onlineStatus : Model -> String
-onlineStatus model =
-    if model.appState.online then
-        "Online"
-    else
-        "Offline"
-
-
-
-onlineStatusStyle : Model -> Styles
-onlineStatusStyle model =
-    if model.appState.online then
-        StatusSuccess
-    else
-        StatusFailure
-
 activeButton : Page -> Model -> Styles
 activeButton currentPage model =
     if currentPage == model.appState.page then

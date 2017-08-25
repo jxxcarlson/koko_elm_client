@@ -28,6 +28,7 @@ import Window exposing (..)
 import Types exposing (..)
 import Views.Component as Component
 import Views.NavBar as NavBar
+import Views.Footer as Footer
 import User.Login exposing (..)
 import Action.Search exposing (..)
 import Action.Page
@@ -621,7 +622,7 @@ view model =
                     (List.concat
                         [ page model ]
                     )
-            , screen  (Component.footer model)
+            , screen  (Footer.footer model)
             ]
 
 

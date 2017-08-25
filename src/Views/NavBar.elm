@@ -1,4 +1,4 @@
-module Views.NavBar exposing(..)
+module Views.NavBar exposing(navigation, loginButton)
 
 import StyleSheet exposing (..)
 import Color
