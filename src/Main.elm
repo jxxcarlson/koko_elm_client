@@ -1,38 +1,58 @@
 module Main exposing (..)
 
-import Navigation
-import Html exposing (..)
-import Phoenix.Socket
-import Phoenix.Channel
-import Task
-import Nav.Parser exposing (..)
-import Nav.Navigation
-import Date exposing(Date)
-import Configuration
-import Dict
-import Request.Document
+-- 1
+
+import Action.Channel
 import Action.Error
+import Action.Page
+import Action.Search exposing (..)
+import Configuration
+import Data.Document exposing (documents)
+import Date exposing(Date)
+import Dict
 import Document.RenderAsciidoc
 import Document.Search
--- import UrlParser as Url exposing ((</>), (<?>), s, int, stringParam, top)
-import Parser
-import Nav.UrlParseExtra as Url
-
-
--- begin style
-
-import StyleSheet exposing (..)
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import Window exposing (..)
-import Types exposing (..)
-import Views.Component as Component
-import Views.NavBar as NavBar
-import Views.Footer as Footer
-import User.Login exposing (..)
-import Action.Search exposing (..)
-import Action.Page
+import External exposing (render, toJs, fileUpload, fileUploaded)
+import Html exposing (..)
 import Image.Upload
+import Image.View
+import Jwt
+import Nav.Navigation
+import Nav.Parser exposing (..)
+import Nav.UrlParseExtra as Url
+import Navigation
+import Parser
+import Phoenix.Channel
+import Phoenix.Socket
+import Phoenix.Socket
+import Request.Api exposing (loginUrl, registerUserUrl)
+import Request.Document
+import Request.Document
+import Request.Document exposing (getDocumentsWith)
+import StyleSheet exposing (..)
+import Task
+import Time exposing (Time, second)
+import Types exposing (..)
+import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
+import User.Display
+import User.Login exposing (..)
+import User.Request
+import Views.Admin exposing (admin)
+import Views.Component as Component
+import Views.Component as Component
+import Views.Editor exposing (editor)
+import Views.External exposing (windowData, windowSetup)
+import Views.Footer as Footer
+import Views.Home exposing (home)
+import Views.NavBar as NavBar
+import Views.Reader exposing (reader)
+import Views.UserHomePages exposing (userHomePages)
+import Window exposing (..)
+
+-- 2
+
 import Action.Document
     exposing
         ( createDocument
@@ -47,15 +67,7 @@ import Action.Document
         , saveCurrentDocument
         , deleteDocument
         )
-import Data.Document exposing (documents)
-import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
-import Request.Document exposing (getDocumentsWith)
-import Request.Api exposing (loginUrl, registerUserUrl)
-import User.Request
-import Time exposing (Time, second)
-import Views.External exposing (windowData, windowSetup)
-import External exposing (render, toJs, fileUpload, fileUploaded)
-import Request.Document
+
 import Action.UI
     exposing
         ( displayPage
@@ -66,21 +78,7 @@ import Action.UI
         , toggleAuthorizing
         , appStateToggleAuthorizing
         )
-import Phoenix.Socket
-import Action.Channel
-import User.Display
-import Jwt
 
-
--- new style
-
-import Views.Component as Component
-import Views.Home exposing (home)
-import Views.Reader exposing (reader)
-import Views.Editor exposing (editor)
-import Image.View
-import Views.Admin exposing (admin)
-import Views.UserHomePages exposing (userHomePages)
 
 
 main : Program Flags Model Msg
