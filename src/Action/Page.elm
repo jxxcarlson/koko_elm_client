@@ -29,6 +29,6 @@ goToPage p model =
           Action.Document.search Private "sort=updated&limit=12" HomePage model
     else if p == ReaderPage && model.current_user.token /= "" then
             ( { model | appState = Action.UI.appStateWithPage model p },
-                Request.Document.getSpecialDocumentWithQuery "key=sidebarNotes")
+                Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes")
     else
         ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )

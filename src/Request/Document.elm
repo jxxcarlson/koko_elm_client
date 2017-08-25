@@ -1,5 +1,5 @@
 module Request.Document exposing (getDocumentsWith, getSpecialDocumentWithQuery, put,
-  createDocument, deleteCurrentDocument)
+  createDocument, deleteCurrentDocument, getSpecialDocumentWithAuthenticatedQuery)
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
@@ -117,6 +117,17 @@ getSpecialDocumentWithQuery query =
 
     in
         HB.get url
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send GetSpecialDocument
+
+getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg
+getSpecialDocumentWithAuthenticatedQuery token query =
+    let
+        url = documentsUrl ++ "?" ++ query
+
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeDocumentsRecord)
             |> HB.send GetSpecialDocument
         -- Http.send GetSpecialDocument request
