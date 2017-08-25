@@ -27,6 +27,7 @@ import Element.Attributes as EA exposing (..)
 import Window exposing (..)
 import Types exposing (..)
 import Views.Component as Component
+import Views.NavBar as NavBar
 import User.Login exposing (..)
 import Action.Search exposing (..)
 import Action.Page
@@ -612,7 +613,7 @@ view model =
     EL.root StyleSheet.stylesheet <|
         column None
             []
-            [ Component.navigation model
+            [ NavBar.navigation model
             , hairline Hairline
             , el None [ center, EA.width (percent 100) ] <|
                 column Main
