@@ -737,7 +737,7 @@ init flags location =
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
 
         startupPageCommands = [
-          (Action.Document.search Private "sort=updated&limit=12" HomePage model |> Tuple.second)
+          (Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model |> Tuple.second)
            , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
         ]
 

@@ -41,7 +41,12 @@ module.exports = {
       {
         test:    /\.elm$/,
         exclude: [/elm-stuff/, /node_modules/],
-        loader:  'elm-webpack-loader?verbose=true&warn=true&debug=true',
+        loader: 'elm-webpack-loader',
+        options: {
+          verbose: true, warn: true, debug: true,
+          pathToMake: '.bin/unbuffered-elm-make',
+
+        },
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

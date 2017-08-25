@@ -34,9 +34,11 @@ reader model =
         ]
     ]
 
+rhSidebarHeader : Model -> Element Styles variation msg
 rhSidebarHeader model =
     (el RHSidebarHeader [ paddingXY 10 8, verticalCenter, width (percent 100)] (text model.specialDocument.title))
 
+specialContent : Model -> Element Styles variation msg
 specialContent model =
   let
     h = (toFloat model.window.height) - 140
@@ -44,6 +46,7 @@ specialContent model =
     (el RHSidebar [ yScrollbar, id "rendered_text2", padding 10, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
 
+rhSidebar : Model -> Element Styles variation msg
 rhSidebar model =
   let
     h = (toFloat model.window.height) - 120
@@ -57,6 +60,7 @@ contentHeader model =
       , authorLink model
     ]
 
+authorLink : Model -> Element Styles variation Msg
 authorLink model =
   let
     doc = model.current_document
