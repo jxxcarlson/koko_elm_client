@@ -50,8 +50,8 @@ preprocessLatex content =
 -}
 transformXLinks : String -> String
 transformXLinks source =
-    String.Extra.replace "xlink::" (Configuration.client ++ "##public/") source
-    
+    String.Extra.replace "xlink::" (Configuration.client ++ "##document/") source
+
 -- http://www.knode.io/##public/113
 
 
