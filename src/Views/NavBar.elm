@@ -56,7 +56,7 @@ searchForm model =
           inputText SearchField
             [ EE.onInput UpdateTextInputBuffer
             , Utility.onKeyUp (DoSearch model.searchState.domain)
-            , placeholder "Search (title, k:keyword, a:author, ...)"
+            , placeholder "Search: title, k:keyword, a:author, ..."
             , height (px 29), width (px 300),
             paddingXY -20 0
             ]
