@@ -501,3 +501,19 @@ attachDocumentCommand location model =
       ++ (toString model.current_document.id)
       ++ "&current="
       ++ (toString (Stack.top model.documentStack).id)
+
+getRandomDocuments model =
+  let
+    appState = model.appState
+    newAppState = { appState | page = ReaderPage, activeDocumentList = SearchResultList }
+    newModel = {model |appState = newAppState }
+    query = if model.appState.signedIn then
+      "random=all"
+    else
+      "random=public"
+    searchDomain = if model.appState.signedIn then
+      All
+    else
+      Public
+  in
+    Document.Search.withParameters query Alphabetical Public ReaderPage newModel

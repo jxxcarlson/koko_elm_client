@@ -11,24 +11,36 @@ import Request.Document
 
 goToPage : Page -> Model -> (Model, Cmd Msg)
 goToPage p model =
-    if p == EditorPage then
-      ( { model | appState = Action.UI.appStateWithPage model p },
-         Cmd.batch[
-           External.toJs (Views.External.windowData model p)
-           , Task.perform ReceiveTime Time.now
-        ]
-      )
-    else if p == EditorPage && model.current_user.token == "" then
-        ( { model
-            | appState = Action.UI.appStateWithPage model HomePage
-            , message = "Please sign in if you wish to edit"
-          }
-        , External.toJs (Views.External.windowData model p)
+    case (p, model.appState.signedIn) of
+      (EditorPage, True) ->
+        ( { model | appState = Action.UI.appStateWithPage model p },
+           Cmd.batch[
+             External.toJs (Views.External.windowData model p)
+             , Task.perform ReceiveTime Time.now
+          ]
         )
-    else if p == HomePage && model.current_user.token /= "" then
-          Action.Document.search Private "sort=updated&limit=12" HomePage model
-    else if p == ReaderPage && model.current_user.token /= "" then
+      (EditorPage, False) ->
+          ( { model
+              | appState = Action.UI.appStateWithPage model HomePage
+              , message = "Please sign in if you wish to edit"
+            }
+          , External.toJs (Views.External.windowData model p)
+          )
+      (HomePage, True) ->
+           ( { model | appState = Action.UI.appStateWithPage model p },
+              Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes"
+           )
+      (HomePage, False) ->
             ( { model | appState = Action.UI.appStateWithPage model p },
-                Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes")
-    else
-        ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )
+                Request.Document.getSpecialDocumentWithQuery "2017-8-26@18-1-42.887330"
+            )
+      (ReaderPage, True) ->
+            ( { model | appState = Action.UI.appStateWithPage model p },
+                Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes"
+            )
+      (ReaderPage, False) ->
+            ( { model | appState = Action.UI.appStateWithPage model p },
+                Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+            )
+      (_, _) ->
+          ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )

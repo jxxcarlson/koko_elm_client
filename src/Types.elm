@@ -248,6 +248,7 @@ type Msg
     | Password String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | PutDocument (Result Http.Error ())
+    | RandomDocuments
     | RecallLastSearch
     | ReceiveChatMessage JsEncode.Value
     | ReceiveDate Date

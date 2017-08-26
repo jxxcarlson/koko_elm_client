@@ -114,6 +114,7 @@ getSpecialDocumentWithQuery : String -> Cmd Msg
 getSpecialDocumentWithQuery query =
     let
         url = publicDocumentsUrl ++ "?" ++ query
+        _ = Debug.log "getSpecialDocumentWithQuery, url" url
 
     in
         HB.get url

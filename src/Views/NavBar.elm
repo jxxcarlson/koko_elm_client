@@ -66,6 +66,7 @@ searchForm model =
         , row Zero
             [ center, spacing 15, paddingXY 10 0]
             [ searchButton model
+            , randomDocumentIcon model
             , Utility.visibleIf model.appState.signedIn (searchOptionsMenu model)
             , Utility.visibleIf model.appState.signedIn (searchOrderMenu model)
             ]
@@ -123,6 +124,10 @@ authenticationButtonText model =
 homepageIcon : Model -> Element Styles variation Msg
 homepageIcon model =
   Basic.faIcon "Home Page" FontAwesome.home [onClick Types.UserHomePage]
+
+randomDocumentIcon : Model -> Element Styles variation Msg
+randomDocumentIcon model =
+  Basic.faIcon "Get random documents" FontAwesome.random [onClick RandomDocuments]
 
 userHomePagesIcon : Model -> Element Styles variation Msg
 userHomePagesIcon model =

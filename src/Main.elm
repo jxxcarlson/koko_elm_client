@@ -257,7 +257,18 @@ update msg model =
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
         InitHomePage ->
-          Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model
+          let
+            _ = Debug.log "InitHomePage" 1
+            appState = model.appState
+            newAppState = { appState | page = HomePage }
+          in
+            ( { model | appState = newAppState},
+                Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+            )
+            -- Document.Search.withParameters "random=public" Alphabetical Public HomePage model
+
+        RandomDocuments ->
+           Action.Document.getRandomDocuments model
 
         DoRender key ->
             Document.RenderAsciidoc.putWithKey key model
@@ -752,16 +763,16 @@ init flags location =
         ]
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
+        (newModel, command) = Action.Document.getRandomDocuments model
 
         startupPageCommands = [
-          (Document.Search.withParameters "sort=viewed&limit=25" Viewed Private HomePage model |> Tuple.second)
-           , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+           Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330", command
         ]
 
         commands = if id > 0 then
             standardCommands ++ masterDocumentCommands
           else
-            standardCommands ++ startupPageCommands
+            startupPageCommands ++ standardCommands
 
     in
         ( model , Cmd.batch commands )

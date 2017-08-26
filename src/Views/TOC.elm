@@ -1,4 +1,4 @@
-module Views.TOC exposing(documentListView, documentStackView, toggleListView)
+module Views.TOC exposing(documentListView, documentStackView, documentListView0, toggleListView)
 
 import Action.Document
 import Action.UI as UI
@@ -143,7 +143,7 @@ toggleListView model =
                         True
     newAppState =  { appState
      | activeDocumentList = newActiveDocumentList
-       , masterDocLoaded = masterDocLoaded_ 
+       , masterDocLoaded = masterDocLoaded_
        , tool = TableOfContents }
   in
     ({model | appState = newAppState}, Cmd.none)

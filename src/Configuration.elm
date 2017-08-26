@@ -1,7 +1,7 @@
 module Configuration exposing(..)
 -- --
 --
--- host : String
+host : String
 host =
     "http://localhost:4000"
 
@@ -31,4 +31,4 @@ tickInterval = 1000.0
 --   -- "wss://mysterious-forest-36511.herokuapp.com/socket/websocket"
 --
 -- tickInterval : Float
--- tickInterval = 1.0
+-- tickInterval = 1000.0
