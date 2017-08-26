@@ -50,7 +50,7 @@ home model =
                 -- , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Utility.visibleIf model.appState.signedIn (TOC.documentListView "Recent" model))
+                , (Utility.visibleIf model.appState.signedIn (TOC.documentStackView model))
                 ]
             )
 

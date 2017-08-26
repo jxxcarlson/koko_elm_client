@@ -167,6 +167,7 @@ numberOfDocuments title model =
     title ++ ": " ++ (toString (List.length model.documents))
 
 
+
 tocNumberOfDocuments : Model -> String
 tocNumberOfDocuments model =
     "Contents: " ++ (toString (List.length model.current_document.children)) ++ " documents"

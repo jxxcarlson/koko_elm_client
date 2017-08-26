@@ -12,17 +12,12 @@ import Types exposing (
   )
 
 import StyleSheet exposing (..)
-import Color
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
 
 import Views.Utility as Utility
-import FontAwesome
 import StyleSheet exposing (..)
-import Document.Search
-
-import Views.Common as Common
 import User.Request
 
 
@@ -34,7 +29,7 @@ list title model =
          , userListView1 title model
        ]
 
-
+userListView1 : String -> Model -> Element Styles variation Msg
 userListView1 title model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, width (px 300), height (px (toFloat (model.window.height - 200))) ]
     (List.map (viewUser model) model.userList)

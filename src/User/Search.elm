@@ -21,7 +21,7 @@ form model =
           inputText SearchField
             [ EE.onInput Types.UpdateTextInputBuffer
             , Utility.onKeyUp (SearchForUserHomePages)
-            , placeholder "Search for a user"
+            , placeholder "Search for a user (name, keyword)"
             , title "Enter a username or a keyword"
             , height (px 29), width (px 300),
             paddingXY -20 0

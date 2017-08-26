@@ -49,6 +49,7 @@ import Views.Home exposing (home)
 import Views.NavBar as NavBar
 import Views.Reader exposing (reader)
 import Views.UserHomePages exposing (userHomePages)
+import Views.TOC as TOC exposing(toggleListView)
 import Window exposing (..)
 
 -- 2
@@ -182,6 +183,10 @@ update msg model =
         Signout ->
             signout "Please sign in" model
 
+        ToggleListView ->
+          TOC.toggleListView model
+
+
         ToggleRegister ->
             toggleRegister model
 
@@ -285,6 +290,15 @@ update msg model =
             (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
           in
             ( newModel, Cmd.batch[ cmd] )
+
+        EditDocument documentId ->
+          let
+            appState = model.appState
+            newAppState = { appState | page = EditorPage}
+          in
+            ({model | current_document = model.specialDocument, appState = newAppState},
+              Cmd.none)
+
 
         GetUsers (Ok usersRecord) ->
           let
@@ -413,7 +427,7 @@ update msg model =
                     False
 
             appState = model.appState
-            newAppState = { appState | masterDocLoaded = masterDocLoaded_}
+            newAppState = { appState | masterDocLoaded = masterDocLoaded_, activeDocumentList = SearchResultList}
             model_ = { model | appState = newAppState }
 
             (model1, cmd1) = if document.author_id == model.current_user.id then
@@ -671,7 +685,8 @@ init flags location =
             windowSetup 150 50 HomePage False False
 
         appState = {
-         online = False
+         activeDocumentList = SearchResultList
+         , online = False
          , signedIn = False
          , authorizing = False
          , registerUser =  False

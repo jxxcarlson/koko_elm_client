@@ -12,6 +12,7 @@ import Action.Search
 import Document.Preprocess
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Search
+import Document.Stack as Stack
 
 import Document.Search as Search
 import Action.Error
@@ -281,7 +282,7 @@ selectDocument model document =
     in
         ( { model
             | current_document = document
-            , documentStack = pushDocumentStack document model.documentStack
+            , documentStack = Stack.push document model.documentStack
             , appState = newAppState
             , counter = model.counter + 1
           }
@@ -396,7 +397,7 @@ selectMasterDocumentAux document_id model =
 
         appState = model.appState
 
-        newAppState = { appState | masterDocLoaded = True}
+        newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList}
 
         searchState =
             model.searchState
@@ -490,13 +491,6 @@ addToMasterDocument model =
     ({model | appState = newAppState,  message = model.appState.command},
     Cmd.batch cmds)
 
-pushDocumentStack : Document -> DocumentStack -> DocumentStack
-pushDocumentStack document stack =
-     [document] ++ (List.take 2 stack)
-
-docStackTop : DocumentStack -> Document
-docStackTop docstack =
-  List.head docstack |> Maybe.withDefault defaultDocument
 
 
 attachDocumentCommand : String -> Model -> String
@@ -506,4 +500,4 @@ attachDocumentCommand location model =
       ++ "&child="
       ++ (toString model.current_document.id)
       ++ "&current="
-      ++ (toString (docStackTop model.documentStack).id)
+      ++ (toString (Stack.top model.documentStack).id)

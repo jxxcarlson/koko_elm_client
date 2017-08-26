@@ -133,6 +133,7 @@ toolSelectorPanel model =
         [ paddingXY 10 6, spacing 0, justify ]
         [ Common.printButton model.current_document
           , Common.selectTableOfContents model
+          , Common.toggleListView model
           , Common.recallLastSearchButton model
           , selectEditTools model
         ]

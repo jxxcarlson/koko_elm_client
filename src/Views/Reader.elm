@@ -34,9 +34,11 @@ reader model =
         ]
     ]
 
-rhSidebarHeader : Model -> Element Styles variation msg
+rhSidebarHeader : Model -> Element Styles variation Msg
 rhSidebarHeader model =
-    (el RHSidebarHeader [ paddingXY 20 8, verticalCenter] (text model.specialDocument.title))
+    (el RHSidebarHeader
+       [ paddingXY 20 8, verticalCenter, onClick (EditDocument model.specialDocument.id)]
+       (text model.specialDocument.title))
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
@@ -76,6 +78,7 @@ toolSelectorPanel model =
         [ paddingXY 20 6, justify]
         [ Common.printButton model.current_document
         , Common.recallLastSearchButton model
+        , Common.toggleListView model
         , Common.selectTableOfContents model
         , selectReaderTools model
         ]

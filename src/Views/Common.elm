@@ -10,10 +10,12 @@ module Views.Common
         , getDocument
         , renderedContent
         , specialContent
+        , toggleListView
         )
 import Action.Document
 import Action.UI as UI
 import Color
+import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
@@ -50,13 +52,15 @@ selectTableOfContents : Model -> Element Styles variation Msg
 selectTableOfContents model =
     Basic.faIcon "Table of contents" FontAwesome.list [onClick (SelectTool TableOfContents)]
 
-
+toggleListView : Model -> Element Styles variation Msg
+toggleListView model =
+  Basic.faIcon "Home Page" FontAwesome.arrows_h [onClick ToggleListView]
 
 tool : Model -> Element Styles variation Msg
 tool model =
     case model.appState.tool of
         TableOfContents ->
-            TOC.documentListView "Documents" model
+            TOC.documentListView model
 
         ReaderTools ->
             readerTools model
@@ -116,7 +120,7 @@ newDocumentTable model =
 
       ]
       ,[el TOCItemMaster [] (text (Utility.shortString 20 model.master_document.title))
-         ,el TOCItemChild [] (text (Utility.shortString 20 (Action.Document.docStackTop model.documentStack).title))
+         ,el TOCItemChild [] (text (Utility.shortString 20 (Stack.top model.documentStack).title))
          ,(text (Utility.shortString 20 model.current_document.title))
       ]
     ]

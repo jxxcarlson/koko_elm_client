@@ -1,4 +1,4 @@
-module Views.TOC exposing(..)
+module Views.TOC exposing(documentListView, documentStackView, toggleListView)
 
 import Action.Document
 import Action.UI as UI
@@ -17,26 +17,41 @@ import Views.Basic as Basic
 import Views.Component as Component
 import Views.Utility as Utility
 
-tableOfContents : Model -> Element Styles variation Msg
-tableOfContents model =
-    column TOC
-        [ yScrollbar, padding 20, spacing 5, height (px ((toFloat model.window.height) - 129.0)) ]
-        ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.tocNumberOfDocuments model)) ]
-            ++ (List.map viewTocItem model.current_document.children)
-        )
+-- tableOfContents : Model -> Element Styles variation Msg
+-- tableOfContents model =
+--     column TOC
+--         [ yScrollbar, padding 20, spacing 5, height (px ((toFloat model.window.height) - 129.0)) ]
+--         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.tocNumberOfDocuments model)) ]
+--             ++ (List.map viewTocItem model.current_document.children)
+--         )
 
+documentListView : Model -> Element Styles variation Msg
+documentListView model =
+  case model.appState.activeDocumentList of
+    SearchResultList -> documentListView0 model
+    DocumentStackList -> documentStackView model
 
-documentListView : String -> Model -> Element Styles variation Msg
-documentListView title model =
+documentListView0 : Model -> Element Styles variation Msg
+documentListView0 model =
     column None [height (percent 100)] [
-         documentListHeader title model
-         ,documentListView1 title model
+         documentListHeader model
+         ,documentListView1 model
        ]
 
-
-documentListView1 title model =
+documentListView1 model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitle model model.current_document) model.documents)
+
+documentStackView : Model -> Element Styles variation Msg
+documentStackView model =
+    column None [height (percent 100), minWidth (px 200)] [
+         documentStackHeader model
+         ,documentStackView1 model
+       ]
+
+documentStackView1 model =
+   column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
+    (List.map (viewTitle model model.current_document) model.documentStack)
 
 documentIndicator document model =
   el PaleBlue [ height (px 25)] (documentIndicator1 document model)
@@ -71,10 +86,17 @@ viewTocItem child =
         ]
         (text child.title)
 
-documentListHeader : String -> Model -> Element Styles variation Msg
-documentListHeader title model =
-  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments title model))
+documentListHeader : Model -> Element Styles variation Msg
+documentListHeader model =
+  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text (UI.numberOfDocuments "Search results" model))
 
+documentStackHeader : Model -> Element Styles variation Msg
+documentStackHeader model =
+  el HeadingAlternate [ height (px 30), paddingXY 8 4 ] (text (numberOfDocumentInStack model))
+
+numberOfDocumentInStack : Model -> String
+numberOfDocumentInStack model =
+    "Recent documents" ++ ": " ++ (toString (List.length model.documentStack))
 
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
@@ -108,3 +130,19 @@ tocStyle selectedDocument document =
         TOCItemChild
     else
         TOCItem
+
+toggleListView model =
+  let
+    newActiveDocumentList = case model.appState.activeDocumentList of
+      SearchResultList -> DocumentStackList
+      DocumentStackList -> SearchResultList
+    appState = model.appState
+    masterDocLoaded_ = if newActiveDocumentList == DocumentStackList then
+                        False
+                      else
+                        True
+    newAppState =  { appState
+     | activeDocumentList = newActiveDocumentList
+       , masterDocLoaded = masterDocLoaded_  }
+  in
+    ({model | appState = newAppState}, Cmd.none)

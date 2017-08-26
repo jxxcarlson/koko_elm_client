@@ -143,9 +143,13 @@ type alias SearchState =
     , order : SearchOrder
     }
 
+type ActiveDocumentList
+  = SearchResultList | DocumentStackList
 
 type alias AppState =
-    { online : Bool
+    {
+    activeDocumentList : ActiveDocumentList
+    , online : Bool
     , signedIn : Bool
     , authorizing : Bool
     , registerUser : Bool
@@ -201,86 +205,88 @@ type alias ErrorMessage = String
 
 type Msg
     = NoOp
-    | Resize Int Int
-    | GoTo Page
-    | Login
-    | ReconnectUser String
-    | Register
-    | CompleteRegistration (Result Http.Error LoginUserRecord)
-    | Signout
+    | AddToMasterDocument
+    | AdoptChildren
+    | AttachCurrentDocument String
     | AuthenticationAction
     | CancelAuthentication
-    | ToggleRegister
-    | ToggleMenu String
-    | TogglePublic
-    | ToggleUpdateRate
-    | GetTokenCompleted (Result Http.Error String)
-    | GetDocuments (Result Http.Error String)
-    | GetUserDocuments (Result Http.Error DocumentsRecord)
-    | GetSpecialDocument (Result Http.Error DocumentsRecord)
-    | PutDocument (Result Http.Error ())
-    | CreateDocument (Result Http.Error DocumentRecord)
-    | DeleteDocument (Result Http.Error ())
-    | NewDocument
-    | DeleteCurrentDocument
-    | GetUsers (Result Http.Error UsersRecord)
-    | SearchForUserHomePages Int
-    | Title String
-    | SetTextType String
-    | SetDocType String
-    | AdoptChildren
-    | InputTags String
-    | InputContent String
-    | UpdateTextInputBuffer String
-    | SetParentId String
-    | AddToMasterDocument
-    | AttachCurrentDocument String
-    | SaveCurrentDocument
-    | Email String
-    | Password String
-    | Name String
-    | Username String
-    | SelectTool Tool
-    | SetSearchTerm String
-    | SelectSearchMode String
-    | SelectSearchOrder String
-    | DoSearch SearchDomain Int
     | ClearSearch
-    | RecallLastSearch
-    | GetPublicPage String
-    | DoRender Int
-    | GetRenderedText String
-    | SelectDocument Document
-    | SelectMaster Document
-    | UseSearchDomain SearchDomain
-    | Tick Time
-    | Refresh
-    | SendToJS String
-    | SetupPages
-      -- Phoenix channels
-    | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | SetMessage String
-    | SendMessage
-    | ReceiveChatMessage JsEncode.Value
-    | HandleSendError JsEncode.Value
-    | ImageSelected
-    | ImageRead ImagePortData
-    | GetUploadCredentials
+    | CompleteRegistration (Result Http.Error LoginUserRecord)
+    | CreateDocument (Result Http.Error DocumentRecord)
     | CredentialsResult (Result Http.Error CredentialsWrapper)
-    | Files (List NativeFile)
-    | UploadComplete (Result Http.Error String)
+    | DeleteCurrentDocument
+    | DeleteDocument (Result Http.Error ())
+    | DoRender Int
+    | DoSearch SearchDomain Int
+    | EditDocument Int
+    | Email String
     | FileSelected
     | FileUploaded Bool
-    | UserHomePage
-    | GotoUserHomePages
+    | Files (List NativeFile)
+    | GetDocuments (Result Http.Error String)
     | GetHomePageForUserHomePages String String
-    | InitHomePage
+    | GetPublicPage String
+    | GetRenderedText String
+    | GetSpecialDocument (Result Http.Error DocumentsRecord)
+    | GetTokenCompleted (Result Http.Error String)
+    | GetUploadCredentials
+    | GetUserDocuments (Result Http.Error DocumentsRecord)
+    | GetUsers (Result Http.Error UsersRecord)
+    | GoTo Page
     | GoToPage (Maybe Page)
+    | GotoUserHomePages
+    | HandleSendError JsEncode.Value
+    | ImageRead ImagePortData
+    | ImageSelected
+    | InitHomePage
+    | InputContent String
+    | InputTags String
     | LinkTo String
-    | RequestDate
-    | RequestTime
+    | Login
+    | Name String
+    | NewDocument
+    | Password String
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+    | PutDocument (Result Http.Error ())
+    | RecallLastSearch
+    | ReceiveChatMessage JsEncode.Value
     | ReceiveDate Date
     | ReceiveTime Time
+    | ReconnectUser String
+    | Resize Int Int
+    | Refresh
+    | Register
+    | RequestDate
+    | RequestTime
+    | SaveCurrentDocument
+    | SearchForUserHomePages Int
+    | SelectDocument Document
+    | SelectMaster Document
+    | SelectSearchMode String
+    | SelectSearchOrder String
+    | SelectTool Tool
+    | SendMessage
+    | SendToJS String
+    | SetDocType String
+    | SetMessage String
+    | SetParentId String
+    | SetSearchTerm String
+    | SetTextType String
+    | SetupPages
+    | Signout
+    | Tick Time
+    | Title String
+    | ToggleListView
+    | ToggleMenu String
+    | TogglePublic
+    | ToggleRegister
+    | ToggleUpdateRate
+    | UpdateTextInputBuffer String
+    | UploadComplete (Result Http.Error String)
+    | UseSearchDomain SearchDomain
+    | UserHomePage
+    | Username String
+
 
 
 type Page
