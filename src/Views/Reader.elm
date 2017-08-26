@@ -7,7 +7,6 @@ import Element.Events exposing (onClick)
 import Json.Encode
 import Views.Basic as Basic
 import Views.Common as Common
-import Views.Component as Component
 import Types exposing (..)
 import FontAwesome
 

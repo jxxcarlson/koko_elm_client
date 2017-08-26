@@ -3,7 +3,7 @@ module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userR
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
-import Types exposing (Model, LoginUserRecord, ErrorMessage)
+import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage)
 
 
 signinEncoder : Model -> Encode.Value
@@ -59,12 +59,18 @@ jwtDecoder =
 
 
 
-userRecordDecoder : Decoder LoginUserRecord
+
+userRecordDecoder : Decoder UserRecord
 userRecordDecoder =
+    JPipeline.decode UserRecord
+        |> JPipeline.required "user" (userDecoder)
+
+userDecoder : Decoder LoginUserRecord
+userDecoder =
     decode LoginUserRecord
         |> JPipeline.required "name" Json.Decode.string
         |> JPipeline.required "username" Json.Decode.string
-        |> JPipeline.required "id" Json.Decode.string 
+        |> JPipeline.required "id" Json.Decode.int
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
 
@@ -80,4 +86,4 @@ fixup str =
 
 userRecord : String -> Result String LoginUserRecord
 userRecord jsonString =
-    decodeString userRecordDecoder jsonString
+    decodeString userDecoder jsonString

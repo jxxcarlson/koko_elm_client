@@ -44,23 +44,21 @@ loginUser model loginUrl =
 
 getTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
 getTokenCompleted model result =
-    case (Debug.log "Result-getTokenCompleted" result) of
+    case (result) of
         Ok newToken ->
             case Jwt.decodeToken jwtDecoder newToken of
                 Ok value ->
                     let
-                        _ = Debug.log "token value" value
                         user =
                             model.current_user
 
                         appState = model.appState
 
-                        updatedAppState  = {appState | page = HomePage, signedIn = Debug.log "signedIn" True}
+                        updatedAppState  = {appState | page = HomePage, signedIn = True}
 
                         user2 =
                             { user | username = value.username, token = newToken, id = value.user_id }
 
-                        _ = Debug.log "user2" user2 
                     in
                         ( { model
                             | current_user = user2
@@ -92,7 +90,7 @@ getTokenCompleted model result =
             )
 
 
-registerUser : Model -> String -> Http.Request LoginUserRecord
+registerUser : Model -> String -> Http.Request UserRecord
 registerUser model c =
     let
         body =
