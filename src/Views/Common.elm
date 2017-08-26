@@ -33,14 +33,14 @@ renderedContent model =
   let
     h = (toFloat model.window.height) - 150
   in
-    (el Zero [yScrollbar, id "rendered_text2", padding 20, maxWidth (px 550), width (percent 100), height (px h), property "innerHTML"
+    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
 
 specialContent model =
   let
     h = (toFloat model.window.height) - 180
   in
-    (el Zero [ yScrollbar, id "rendered_text2", padding 20, maxWidth (px 550), width (percent 100), height (px h), property "innerHTML"
+    (el Zero [ yScrollbar, id "rendered_text2", padding 20, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
 
 
@@ -48,14 +48,7 @@ specialContent model =
 
 selectTableOfContents : Model -> Element Styles variation Msg
 selectTableOfContents model =
-    el Zero
-        [ width (px 85)
-        , onClick (SelectTool TableOfContents)
-        , title "Table of contents"
-        , height (px 30)
-        , padding 2
-        ]
-        (html (FontAwesome.list (Component.toolSelectorColor model TableOfContents) 25))
+    Basic.faIcon "Table of contents" FontAwesome.list [onClick (SelectTool TableOfContents)]
 
 
 
@@ -93,7 +86,7 @@ searchDomainChecked model domain =
 readerTools : Model -> Element Styles variation msg
 readerTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 10, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 10, height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Reader tools") ]
 
 
@@ -154,7 +147,7 @@ homepage model =
 getDocument : Styles -> String -> String -> Model -> Element Styles variation Msg
 getDocument style searchTerm label model =
   el style
-      [ width (px 200)
+      [ maxWidth (px 200)
       , onClick (Types.GetPublicPage searchTerm)
       , height (px 30)
       , paddingXY 8 0
@@ -165,7 +158,7 @@ getDocument style searchTerm label model =
 editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 30, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 30, height (px ((toFloat model.window.height) - 129.0)) ]
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
             [ spacing 4, height (px 130), alignLeft ]
@@ -268,11 +261,4 @@ printTypeString document =
 
 recallLastSearchButton : Model -> Element Styles variation Msg
 recallLastSearchButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (RecallLastSearch)
-        , height (px 30)
-        , padding 2
-        , title "Recall last search"
-        ]
-        (html (FontAwesome.rotate_left Color.white 25))
+  Basic.faIcon "Recall last search" FontAwesome.rotate_left [onClick RecallLastSearch]

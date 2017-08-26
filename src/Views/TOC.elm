@@ -20,7 +20,7 @@ import Views.Utility as Utility
 tableOfContents : Model -> Element Styles variation Msg
 tableOfContents model =
     column TOC
-        [ yScrollbar, padding 20, spacing 5, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ yScrollbar, padding 20, spacing 5, height (px ((toFloat model.window.height) - 129.0)) ]
         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.tocNumberOfDocuments model)) ]
             ++ (List.map viewTocItem model.current_document.children)
         )
@@ -35,7 +35,7 @@ documentListView title model =
 
 
 documentListView1 title model =
-   column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, width (px 300), height (px (toFloat (model.window.height - 200))) ]
+   column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitle model model.current_document) model.documents)
 
 documentIndicator document model =

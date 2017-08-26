@@ -5,6 +5,7 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
 import Json.Encode
+import Views.Basic as Basic
 import Views.Common as Common
 import Views.Component as Component
 import Types exposing (..)
@@ -14,12 +15,11 @@ import FontAwesome
 reader : Model -> List (Element Styles variation Msg)
 reader model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 0.3 ]
+        { columns = [ fill 2, fill 4, fill 3 ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sidebarHeader" ]
             , fill 1 => [ span 1 "TOC", span 1 "content", span 1 "sidebar" ]
-
             ]
         }
         []
@@ -36,14 +36,14 @@ reader model =
 
 rhSidebarHeader : Model -> Element Styles variation msg
 rhSidebarHeader model =
-    (el RHSidebarHeader [ paddingXY 10 8, verticalCenter, width (percent 100)] (text model.specialDocument.title))
+    (el RHSidebarHeader [ paddingXY 20 8, verticalCenter] (text model.specialDocument.title))
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
   let
-    h = (toFloat model.window.height) - 140
+    h = (toFloat model.window.height) - 120
   in
-    (el RHSidebar [ yScrollbar, id "rendered_text2", padding 10, width (percent 100), height (px h), property "innerHTML"
+    (el RHSidebar [ yScrollbar, id "rendered_text2", paddingXY 20 20, height (px h), property "innerHTML"
        (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
 
 rhSidebar : Model -> Element Styles variation msg
@@ -73,21 +73,14 @@ authorLink model =
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 10 6, spacing 30 ]
+        [ paddingXY 20 6, justify]
         [ Common.printButton model.current_document
-        , Common.selectTableOfContents model
         , Common.recallLastSearchButton model
+        , Common.selectTableOfContents model
         , selectReaderTools model
         ]
 
 
 selectReaderTools : Model -> Element Styles variation Msg
 selectReaderTools model =
-    el Zero
-        [ width (px 85)
-        , onClick (SelectTool ReaderTools)
-        , title "Tools"
-        , height (px 30)
-        , padding 2
-        ]
-        (html (FontAwesome.gear (Component.toolSelectorColor model ReaderTools) 25))
+  Basic.faIcon "Tools" FontAwesome.gear [onClick (SelectTool ReaderTools)]

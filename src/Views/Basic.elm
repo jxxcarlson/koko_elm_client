@@ -30,15 +30,4 @@ iconMaker color iconSize icon =
 
 iconWhite20 = iconMaker Color.white 25
 
--- Basic.icon 0 25 "Home Page" Types.UserHomePage FontAwesome.home model
-icon : Float -> Int -> String -> msg -> (AwesomeFont msg) -> Model -> Element Styles variation msg
-icon move_down_pixels icon_size title_ message icon model =
-  el NavBarActive
-      [
-       onClick message
-      , height (px 30)
-      , verticalCenter
-      , moveDown move_down_pixels
-      , title title_
-      ]
-      (EL.html (icon (Color.white) icon_size))
+     

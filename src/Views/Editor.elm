@@ -20,12 +20,11 @@ import Views.Common as Common
 editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 1 ]
+        { columns = [ fill 2, fill 4, fill 3 ]
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
             , fill 1 => [ span 1 "e_TOC", span 1 "e_content", span 1 "e_renderedContent" ]
-
             ]
         }
         []
@@ -53,7 +52,7 @@ contentPanel model =
           , (textArea Mono
                 [ width (percent 100)
                 , yScrollbar
-                , padding 8
+                , padding 20
                 , onInput InputContent
                 , Utility.onKeyUp DoRender
                 ]
