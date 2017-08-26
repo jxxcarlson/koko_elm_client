@@ -143,6 +143,7 @@ toggleListView model =
                         True
     newAppState =  { appState
      | activeDocumentList = newActiveDocumentList
-       , masterDocLoaded = masterDocLoaded_  }
+       , masterDocLoaded = masterDocLoaded_ 
+       , tool = TableOfContents }
   in
     ({model | appState = newAppState}, Cmd.none)

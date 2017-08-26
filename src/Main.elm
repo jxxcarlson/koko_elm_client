@@ -238,7 +238,9 @@ update msg model =
           let
             searchState = model.searchState
             newSearchState = { searchState | query = model.textInputBuffer }
-            newModel = { model | searchState = newSearchState }
+            appState = model.appState
+            newAppState = { appState | activeDocumentList = SearchResultList}
+            newModel = { model | searchState = newSearchState, appState = newAppState }
           in
             Action.Document.searchOnEnter searchDomain key newModel
 
@@ -427,7 +429,7 @@ update msg model =
                     False
 
             appState = model.appState
-            newAppState = { appState | masterDocLoaded = masterDocLoaded_, activeDocumentList = SearchResultList}
+            newAppState = { appState | masterDocLoaded = masterDocLoaded_}
             model_ = { model | appState = newAppState }
 
             (model1, cmd1) = if document.author_id == model.current_user.id then
