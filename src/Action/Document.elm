@@ -537,4 +537,4 @@ getRandomDocuments model =
     else
       Public
   in
-    Document.Search.withParameters query Alphabetical Public ReaderPage newModel
+    Document.Search.withParameters query Alphabetical searchDomain ReaderPage newModel
