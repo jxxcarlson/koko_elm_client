@@ -151,24 +151,25 @@ update msg model =
             doReconnectUser jsonString model
 
         Register ->
-          let
-            _ = Debug.log "REGISTER" 1
-          in
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
         CompleteRegistration result ->
-          case (Debug.log "CompleteRegistration" result) of
+          case (result) of
             Ok result ->
               let
+<<<<<<< HEAD
                 _ = Debug.log "Registration success" result
+=======
+                user = result.user
+>>>>>>> reg
                 newUser = {
-                  name =  result.name
-                , username = result.username
+                  name =  user.name
+                , username = user.username
                 , id = 0
-                , email = result.email
+                , email = user.email
                 , password = ""
                 , blurb = ""
-                , token = result.token
+                , token = user.token
                 , admin = False
               }
                 oldAppState = model.appState
@@ -262,7 +263,6 @@ update msg model =
 
         InitHomePage ->
           let
-            _ = Debug.log "InitHomePage" 1
             appState = model.appState
             newAppState = { appState | page = HomePage, masterDocLoaded = False }
           in
@@ -293,7 +293,6 @@ update msg model =
         SearchForUserHomePages keyCode ->
           if keyCode == 13 then
             let
-              _ = Debug.log "SearchForUserHomePages, keyCode" keyCode
               query = "is_user=" ++ model.textInputBuffer
             in
               ( model, User.Request.getList query )
@@ -319,7 +318,6 @@ update msg model =
 
         GetUsers (Ok usersRecord) ->
           let
-            _ = Debug.log "Ok, updating" "USERS (123)"
             userList = usersRecord.users
             user = List.head userList |> Maybe.withDefault model.current_user
             query = "authorname=" ++ user.username ++ "&key=home"
@@ -328,9 +326,6 @@ update msg model =
             ({model1 | userList = userList, selectedUserName = user.username}, cmd)
 
         GetUsers (Err error) ->
-          let
-             _ = Debug.log "ERROR, usersRecord" error
-          in
             ({model | message = Action.Error.httpErrorString error}, Cmd.none)
 
         GetDocuments (Ok serverReply) ->
@@ -476,7 +471,7 @@ update msg model =
         ImageRead data ->
             let
                 newImage =
-                    { contents = Debug.log "IMAGE CONTENTS" data.contents
+                    { contents = data.contents
                     , filename = data.filename
                     }
                 newImageRecord = {id = "ImageInputId", mImage = Just newImage }
@@ -493,9 +488,6 @@ update msg model =
 
 
         CredentialsResult (Err error) ->
-          let
-            _ = Debug.log "error" error
-          in
             (model, Cmd.none)
 
 
@@ -506,15 +498,9 @@ update msg model =
         -----
 
         UploadComplete (Ok result) ->
-          let
-            _ = Debug.log "ok" result
-          in
             (model, Cmd.none)
 
         UploadComplete (Err error) ->
-          let
-            _ = Debug.log "error" error
-          in
             (model, Cmd.none)
 
         FileSelected ->
@@ -657,17 +643,11 @@ view model =
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     let
-        _ = Debug.log "LOCATION" location.href
-
         maybeId = Parser.run Url.id location.href
 
         id = case maybeId of
                Result.Ok id -> id
                Err error -> 0
-
-        _ = Debug.log "ID" id
-
-        -- location = "localhost:3000/##public/" ++ (toString id)
 
         current_user =
           {

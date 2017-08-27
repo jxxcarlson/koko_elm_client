@@ -127,10 +127,8 @@ signout message model =
 doReconnectUser : String -> Model -> (Model, Cmd Msg)
 doReconnectUser jsonString model =
   let
-      _ = Debug.log "!!jsonString" jsonString
       maybeUserRecord =
           Data.User.userRecord jsonString
-      _ = Debug.log "!!maybeUserRecord" maybeUserRecord
   in
       case maybeUserRecord of
           Ok userRecord ->
@@ -145,14 +143,13 @@ doReconnectUser jsonString model =
 reconnectUser : Model -> LoginUserRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =
     let
-        _ = Debug.log "reconnnectUser with userRecord" userRecord
         user =
             model.current_user
 
         current_user =
             { user
                 | username = userRecord.username
-                 , id = String.toInt userRecord.id |> Result.withDefault 0
+                 , id = userRecord.id
                 , token = userRecord.token
             }
 

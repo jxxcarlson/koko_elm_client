@@ -30,8 +30,10 @@ type alias UsersRecord =
 
 
 type alias LoginUserRecord =
-    { name : String, username : String, id: String, email : String, token : String }
+    { name : String, username : String, id: Int, email : String, token : String }
 
+type alias UserRecord =
+  { user : LoginUserRecord }
 
 type alias KWindow =
     { width : Int
@@ -211,7 +213,7 @@ type Msg
     | AuthenticationAction
     | CancelAuthentication
     | ClearSearch
-    | CompleteRegistration (Result Http.Error LoginUserRecord)
+    | CompleteRegistration (Result Http.Error UserRecord)
     | CreateDocument (Result Http.Error DocumentRecord)
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DeleteCurrentDocument
