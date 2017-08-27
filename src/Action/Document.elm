@@ -410,6 +410,27 @@ selectMasterDocumentAux document_id model =
     in
         searchOnEnter model.searchState.domain 13 updatedModel
 
+doSelectDocument : Document -> Model -> (Model, Cmd Msg)
+doSelectDocument document model =
+  let
+    masterDocLoaded_ =
+        if document.attributes.docType == "master" then
+            True
+        else
+            False
+
+    appState = model.appState
+    newAppState = { appState | masterDocLoaded = masterDocLoaded_}
+    model_ = { model | appState = newAppState }
+
+    (model1, cmd1) = if document.author_id == model.current_user.id then
+        saveDocument "viewed_at=now" document model_
+      else
+        (model_, Cmd.none)
+    (model2, cmd2) = selectDocument model document
+  in
+    (model2, Cmd.batch[cmd1, cmd2])
+
 deleteDocument : Result a value -> Model -> (Model, Cmd Msg)
 deleteDocument serverReply model =
     case serverReply of
