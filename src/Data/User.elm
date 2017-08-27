@@ -1,9 +1,9 @@
-module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userRecord, userRecordDecoder)
+module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userRecord, userRecordDecoder, localStorageUserRecord)
 
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
-import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage)
+import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage, LoginLocalStorageRecord)
 
 
 signinEncoder : Model -> Encode.Value
@@ -75,6 +75,15 @@ userDecoder =
         |> JPipeline.required "token" Json.Decode.string
 
 
+localStorageUserDecoder : Decoder LoginLocalStorageRecord
+localStorageUserDecoder =
+    decode LoginLocalStorageRecord
+        |> JPipeline.required "name" Json.Decode.string
+        |> JPipeline.required "username" Json.Decode.string
+        |> JPipeline.required "id" Json.Decode.string
+        |> JPipeline.required "email" Json.Decode.string
+        |> JPipeline.required "token" Json.Decode.string
+
         -- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
 
 fixup : String -> Bool
@@ -87,3 +96,7 @@ fixup str =
 userRecord : String -> Result String LoginUserRecord
 userRecord jsonString =
     decodeString userDecoder jsonString
+
+localStorageUserRecord : String -> Result String LoginLocalStorageRecord
+localStorageUserRecord jsonString =
+    decodeString localStorageUserDecoder jsonString

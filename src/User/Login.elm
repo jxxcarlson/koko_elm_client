@@ -127,20 +127,24 @@ signout message model =
 doReconnectUser : String -> Model -> (Model, Cmd Msg)
 doReconnectUser jsonString model =
   let
+      _ = Debug.log "Enter" "doReconnectUser"
+      _ = Debug.log "in doReconnectUser, jsonString" jsonString
       maybeUserRecord =
-          Data.User.userRecord jsonString
+          Data.User.localStorageUserRecord jsonString
+      _ = Debug.log "maybeUserRecord" maybeUserRecord
   in
       case maybeUserRecord of
           Ok userRecord ->
             let
               newModel = { model | warning = "" }
+              _ = Debug.log "userRecord" userRecord
             in
               reconnectUser newModel userRecord
 
           Err error ->
               ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
 
-reconnectUser : Model -> LoginUserRecord -> ( Model, Cmd Msg )
+reconnectUser : Model -> LoginLocalStorageRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =
     let
         user =
@@ -149,7 +153,7 @@ reconnectUser model userRecord =
         current_user =
             { user
                 | username = userRecord.username
-                 , id = userRecord.id
+                 , id = String.toInt userRecord.id |> Result.withDefault 0
                 , token = userRecord.token
             }
 

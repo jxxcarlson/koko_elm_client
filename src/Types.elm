@@ -32,6 +32,10 @@ type alias UsersRecord =
 type alias LoginUserRecord =
     { name : String, username : String, id: Int, email : String, token : String }
 
+type alias LoginLocalStorageRecord =
+    { name : String, username : String, id: String, email : String, token : String }
+    
+
 type alias UserRecord =
   { user : LoginUserRecord }
 

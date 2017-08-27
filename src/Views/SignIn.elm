@@ -32,17 +32,9 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
+
         , Basic.button "Register" Button [onClick Register, width (px 80)]
-        -- l Button [ EE.onClick Register, alignBottom, height (px 30), width (px 80), padding 8 ] (text "Register")
         , Basic.button "Toggle" Button [onClick ToggleRegister, width (px 150)]
-        -- el Button
-        --     [ onClick ToggleRegister
-        --     , alignBottom
-        --     , height (px 30)
-        --     , width (px 150)
-        --     , padding 8
-        --     ]
-        --     (text "Need to sign in?")
         ,    Component.cancelAuthentication Button model
         , el Blue [paddingXY 20 40] (text model.message)
         ]
@@ -58,13 +50,14 @@ signinForm model =
         )
         (signinForm1 model)
 
+-- node "input" <| el None [ type_ "password", value "secret" ] empty
 
 signinForm1 : Model -> Element Styles variation Msg
 signinForm1 model =
     column Blue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
-        , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
+        , node "input" <| el None [ type_ "password", onInput Password, placeholder "Password", value (model.current_user.password)] empty
         , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
         , el Button
             [ onClick ToggleRegister

@@ -134,7 +134,7 @@ app.ports.persist.subscribe(function (str) {
   console.log("userSettings = " + JSON.stringify(userSettings))
   localStorage.setItem("username", userSettings.username);
   localStorage.setItem("token", userSettings.token);
-  localStorage.setItem("id", userSettings.token);
+  localStorage.setItem("id", userSettings.id);
   localStorage.setItem("email", userSettings.email);
   localStorage.setItem("name", userSettings.name);
 
@@ -161,9 +161,6 @@ app.ports.askToReconnectUser.subscribe(function (str) {
     var localStorageAsString = JSON.stringify(localStorage)
     console.log("ask to reconnect user with data: " + localStorageAsString)
     app.ports.reconnectUser.send(localStorageAsString);
-
-    // app.ports.reconnectUser.send(localStorageAsString);
-    // reconnect(localStorageAsString)
     app.ports.toElm.send("Yada yada!");
   } else {
     console.log("I dont't unerstand that: " + str)

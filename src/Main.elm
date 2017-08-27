@@ -148,6 +148,10 @@ update msg model =
             (model2, Cmd.batch [cmds1, cmds2])
 
         ReconnectUser jsonString ->
+          let
+            _ = Debug.log "Enter doReconnectUser" "now"
+            _ = Debug.log "jsonString" jsonString
+          in
             doReconnectUser jsonString model
 
         Register ->
@@ -157,15 +161,11 @@ update msg model =
           case (result) of
             Ok result ->
               let
-<<<<<<< HEAD
-                _ = Debug.log "Registration success" result
-=======
                 user = result.user
->>>>>>> reg
                 newUser = {
                   name =  user.name
                 , username = user.username
-                , id = 0
+                , id = user.id
                 , email = user.email
                 , password = ""
                 , blurb = ""
@@ -175,12 +175,12 @@ update msg model =
                 oldAppState = model.appState
                 newAppState = {oldAppState | signedIn = True, authorizing = False}
               in
-                ({ model | current_user = newUser, appState = newAppState}, Cmd.none)
+                ({ model | current_user = newUser, appState = newAppState}, Task.perform ReceiveTime Time.now)
             Err err ->
               let
                 _ = Debug.log "Registration failure" result
               in
-                ({model | message = Action.Error.httpErrorString err}, Cmd.none)
+                ({model | message = Action.Error.httpErrorString err}, Cmd.none )
 
         GetTokenCompleted result ->
             User.Auth.getTokenCompleted model result
@@ -567,6 +567,8 @@ update msg model =
         ReceiveTime time ->
             let
                 time_ = Just time
+                _ = Debug.log "ReceiveTime, TIME NOW" time_
+                _ = Debug.log "ReceiveTime, token" model.current_user.token
                 message = case Jwt.isExpired time model.current_user.token of
                   Ok val ->
                     "login OK"

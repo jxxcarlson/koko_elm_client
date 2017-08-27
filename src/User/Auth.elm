@@ -41,7 +41,12 @@ loginUser model loginUrl =
     in
         Http.post loginUrl body tokenDecoder
 
+{-|
 
+One of the tasks of getTokenCompleted is to send user data to
+local stoarge via ports so taht it can be persisted between app reloads.
+
+-}
 getTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
 getTokenCompleted model result =
     case (result) of

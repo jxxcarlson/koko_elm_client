@@ -58,6 +58,7 @@ userData name email userId username token =
                 , ( "username", string username )
                 , ( "token", string token )
                 ]
+        _  = Debug.log "userData" data
     in
         encode 2 data
 
