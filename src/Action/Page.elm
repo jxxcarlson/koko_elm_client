@@ -27,11 +27,19 @@ goToPage p model =
           , External.toJs (Views.External.windowData model p)
           )
       (HomePage, True) ->
-           ( { model | appState = Action.UI.appStateWithPage model p },
+        let
+          appState = model.appState
+          newAppState = { appState | page = HomePage, masterDocLoaded = False}
+        in
+           ( { model | appState = newAppState },
               Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes"
            )
       (HomePage, False) ->
-            ( { model | appState = Action.UI.appStateWithPage model p },
+        let
+          appState = model.appState
+          newAppState = { appState | page = HomePage, masterDocLoaded = False}
+        in
+            ( { model | appState = newAppState },
                 Request.Document.getSpecialDocumentWithQuery "2017-8-26@18-1-42.887330"
             )
       (ReaderPage, True) ->

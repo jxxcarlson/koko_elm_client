@@ -59,12 +59,17 @@ jwtDecoder =
 
 
 
+-- documentRecordDecoder : Decoder DocumentRecord
+-- documentRecordDecoder =
+--     JPipeline.decode DocumentRecord
+--         |> JPipeline.required "document" (documentDecoder)
+--         
 userRecordDecoder : Decoder LoginUserRecord
 userRecordDecoder =
     decode LoginUserRecord
         |> JPipeline.required "name" Json.Decode.string
         |> JPipeline.required "username" Json.Decode.string
-        |> JPipeline.required "id" Json.Decode.string 
+        |> JPipeline.required "id" Json.Decode.string
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
 

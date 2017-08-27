@@ -160,6 +160,7 @@ update msg model =
           case (Debug.log "CompleteRegistration" result) of
             Ok result ->
               let
+                _ = Debug.log "Registration success" result
                 newUser = {
                   name =  result.name
                 , username = result.username
@@ -175,6 +176,9 @@ update msg model =
               in
                 ({ model | current_user = newUser, appState = newAppState}, Cmd.none)
             Err err ->
+              let
+                _ = Debug.log "Registration failure" result
+              in
                 ({model | message = Action.Error.httpErrorString err}, Cmd.none)
 
         GetTokenCompleted result ->
@@ -260,7 +264,7 @@ update msg model =
           let
             _ = Debug.log "InitHomePage" 1
             appState = model.appState
-            newAppState = { appState | page = HomePage }
+            newAppState = { appState | page = HomePage, masterDocLoaded = False }
           in
             ( { model | appState = newAppState},
                 Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
@@ -427,12 +431,7 @@ update msg model =
             saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
-          -- XXX: when a document is selected update "viewed_at"
-          -- XXX: do we restrict this to views by user?
           let
-            _ = Debug.log "SelectDocument, id" document.id
-            _ = Debug.log "document.author_id" document.author_id
-
             masterDocLoaded_ =
                 if document.attributes.docType == "master" then
                     True

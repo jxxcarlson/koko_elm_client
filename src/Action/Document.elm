@@ -274,7 +274,8 @@ selectDocument model document =
         newAppState =
             { appState | textBuffer = document.content,
             page = displayPage model,
-            textBufferDirty = False }
+            textBufferDirty = False
+         }
         saveCmd = if document.author_id == model.current_user.id then
              saveDocumentCmd "viewed_at=now" document model
            else
@@ -290,7 +291,6 @@ selectDocument model document =
             [ toJs (windowData model (displayPage model))
             , RenderAsciidoc.put document
             , saveCmd
-            -- XXX put command here to update doc.viewedAt if it is owned by the user
             ]
         )
 
@@ -397,7 +397,7 @@ selectMasterDocumentAux document_id model =
 
         appState = model.appState
 
-        newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList}
+        newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList }
 
         searchState =
             model.searchState
