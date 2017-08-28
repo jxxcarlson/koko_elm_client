@@ -302,6 +302,7 @@ selectNewDocument model document =
         , documents = [ document ] ++ model.documents
         , message = "New document added: " ++ document.title
         , counter = model.counter + 1
+        , documentStack = Stack.push document model.documentStack
       }
     , RenderAsciidoc.put document
     )
@@ -384,15 +385,15 @@ search searchDomain query page model =
 selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
 selectMasterDocument document model =
     if document.attributes.docType == "master" then
-      selectMasterDocumentAux document.id model
+      selectMasterDocumentAux document.id document model
     else if document.parent_id /= 0 then
-      selectMasterDocumentAux document.parent_id model
+      selectMasterDocumentAux document.parent_id document model
     else
       ( model, Cmd.none )
 
 
-selectMasterDocumentAux : Int -> Model -> ( Model, Cmd Msg )
-selectMasterDocumentAux document_id model =
+selectMasterDocumentAux : Int -> Document -> Model -> ( Model, Cmd Msg )
+selectMasterDocumentAux document_id document model =
     let
 
         appState = model.appState
@@ -407,8 +408,10 @@ selectMasterDocumentAux document_id model =
 
         updatedModel =
             { model | searchState = updatedSearchState, appState = newAppState }
+        (model1, cmd1) = searchOnEnter model.searchState.domain 13 updatedModel
+        (model2, cmd2) = doSelectDocument document model1
     in
-        searchOnEnter model.searchState.domain 13 updatedModel
+        (model2, Cmd.batch[cmd1, cmd2])
 
 doSelectDocument : Document -> Model -> (Model, Cmd Msg)
 doSelectDocument document model =
