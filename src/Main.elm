@@ -283,9 +283,10 @@ update msg model =
             document = model.current_document
             newDocument = { document | rendered_content = str }
             newModel = { model | current_document = newDocument }
+            _ = Debug.log "GetRenderedText" "now"
           in
-            Action.Document.saveCurrentDocument "" newModel
-            -- ({model | current_document = newDocument}, Cmd.none)
+            -- Action.Document.saveCurrentDocument "" newModel
+            ({model | current_document = newDocument}, Cmd.none)
 
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
@@ -420,13 +421,22 @@ update msg model =
             updateTags tagString model
 
         SaveCurrentDocument ->
+          let
+            _ = Debug.log "SaveCurrentDocument" "now"
+          in
             saveCurrentDocument "" model
 
         AdoptChildren ->
+          let
+            _ = Debug.log "AdoptChildren" "now"
+          in
             saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
-          Action.Document.doSelectDocument document model
+          let
+            _ = Debug.log "SelectDocument" "now"
+          in
+            Action.Document.selectDocument model document
 
 
         SelectMaster document ->
@@ -438,7 +448,10 @@ update msg model =
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-          updateCurrentDocumentWithContent model.appState.textBuffer model
+          let
+            _ = Debug.log "Refresh" "now"
+          in
+            updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
             updateSearchDomain model searchDomain

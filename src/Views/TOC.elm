@@ -51,7 +51,7 @@ documentStackView model =
 
 documentStackView1 model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
-    (List.map (viewTitle model model.current_document) model.documentStack)
+    (List.map (viewTitleInStack model model.current_document) model.documentStack)
 
 documentIndicator document model =
   el PaleBlue [ height (px 25)] (documentIndicator1 document model)
@@ -105,6 +105,13 @@ viewTitle model selectedDocument document =
      , titleDisplay model selectedDocument document
   ]
 
+viewTitleInStack : Model -> Document -> Document -> Element Styles variation Msg
+viewTitleInStack model selectedDocument document =
+    row Zero [ verticalCenter, paddingXY 4 4 ] [
+     documentIndicator document model
+     , titleDisplay model selectedDocument document
+  ]
+
 titleDisplay model selectedDocument document =
   el (tocStyle selectedDocument document)
       [ onClick (SelectDocument document)
@@ -137,13 +144,13 @@ toggleListView model =
       SearchResultList -> DocumentStackList
       DocumentStackList -> SearchResultList
     appState = model.appState
-    masterDocLoaded_ = if newActiveDocumentList == DocumentStackList then
-                        False
-                      else
-                        True
+    -- masterDocLoaded_ = if newActiveDocumentList == DocumentStackList then
+    --                     False
+    --                   else
+    --                     True
     newAppState =  { appState
      | activeDocumentList = newActiveDocumentList
-       , masterDocLoaded = masterDocLoaded_
+       --, masterDocLoaded = masterDocLoaded_
        , tool = TableOfContents }
   in
     ({model | appState = newAppState}, Cmd.none)

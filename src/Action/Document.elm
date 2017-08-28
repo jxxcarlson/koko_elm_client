@@ -48,6 +48,9 @@ updateCurrentDocument model document =
         old_documents =
             model.documents
 
+        newDocumentStack = Stack.push document model.documentStack
+
+
         new_documents =
             Utility.replaceIf (hasId document.id) document old_documents
 
@@ -60,12 +63,13 @@ updateCurrentDocument model document =
         ( { model
             | current_document = document
             , documents = new_documents
+            , documentStack = newDocumentStack
             , appState = newAppState
           }
         , Cmd.batch [
             -- put new content in JS-mirror of document and save the document (XX: client-server)
             RenderAsciidoc.put document,
-            Request.Document.put "" model document
+            saveDocumentCmd "" document model
         ]
         )
 
@@ -210,28 +214,28 @@ updateDocuments model documentsRecord =
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
 saveCurrentDocument queryString model =
-  saveDocument queryString model.current_document model
+  let
+    _ = Debug.log "saveCurrentDocument" "now"
+  in
+    saveDocument queryString model.current_document model
 
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
 saveDocument queryString document model =
-    let
-      _ = Debug.log "AAA, document, id" document.id
-      _ = Debug.log "AAA, document, author_id" document.author_id
-      _ = Debug.log "AAA, current user, id" model.current_user.id
+  let
+    _ = Debug.log "saveDocument" "now"
+  in
+    ( model, saveDocumentCmd queryString document model )
 
+saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+saveDocumentCmd queryString document model =
+    let
+      _ = Debug.log "saveDocumentCmd, id" document.id
       cmd = if document.author_id == model.current_user.id then
           Request.Document.put queryString model document
         else
           Cmd.none
     in
-      ( model, cmd )
-
-saveDocumentCmd : String -> Document -> Model -> Cmd Msg
-saveDocumentCmd queryString document model =
-    let
-      _ = Debug.log "BB, saveDocumentCmd, id" document.id
-    in
-      Request.Document.put queryString model document
+      cmd
 
 
 hasId : Int -> Document -> Bool
@@ -268,11 +272,17 @@ createDocument model document =
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
     let
+        masterDocLoaded_ =
+            if document.attributes.docType == "master" then
+                True
+            else
+                False
         appState =
             model.appState
 
         newAppState =
             { appState | textBuffer = document.content,
+            masterDocLoaded = masterDocLoaded_,
             page = displayPage model,
             textBufferDirty = False
          }
@@ -409,30 +419,11 @@ selectMasterDocumentAux document_id document model =
         updatedModel =
             { model | searchState = updatedSearchState, appState = newAppState }
         (model1, cmd1) = searchOnEnter model.searchState.domain 13 updatedModel
-        (model2, cmd2) = doSelectDocument document model1
+        (model2, cmd2) = selectDocument model1 document
     in
         (model2, Cmd.batch[cmd1, cmd2])
 
-doSelectDocument : Document -> Model -> (Model, Cmd Msg)
-doSelectDocument document model =
-  let
-    masterDocLoaded_ =
-        if document.attributes.docType == "master" then
-            True
-        else
-            False
 
-    appState = model.appState
-    newAppState = { appState | masterDocLoaded = masterDocLoaded_}
-    model_ = { model | appState = newAppState }
-
-    (model1, cmd1) = if document.author_id == model.current_user.id then
-        saveDocument "viewed_at=now" document model_
-      else
-        (model_, Cmd.none)
-    (model2, cmd2) = selectDocument model document
-  in
-    (model2, Cmd.batch[cmd1, cmd2])
 
 deleteDocument : Result a value -> Model -> (Model, Cmd Msg)
 deleteDocument serverReply model =
@@ -442,8 +433,13 @@ deleteDocument serverReply model =
             documents =
                 model.documents
 
+            documentStack = model.documentStack
+
             updatedDocuments =
                 Utility.removeWhen (\doc -> doc.id == model.current_document.id) documents
+
+            updatedDocumentStack =
+                Utility.removeWhen (\doc -> doc.id == model.current_document.id) documentStack
 
             newCurrentDocument =
                 (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
@@ -451,6 +447,7 @@ deleteDocument serverReply model =
             ( { model
                 | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
                 , documents = updatedDocuments
+                , documentStack = updatedDocumentStack
                 , current_document = newCurrentDocument
               }
             , Cmd.none
@@ -507,7 +504,7 @@ addToMasterDocument model =
     newAppState = { appState | tool = TableOfContents }
     query = "id=" ++ (toString model.master_document.id)
     cmds = [
-         Request.Document.put model.appState.command model model.master_document
+         saveDocumentCmd model.appState.command model.master_document model
        , Document.Search.command query Alphabetical All EditorPage model
 
     ]
