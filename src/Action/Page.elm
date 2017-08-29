@@ -4,7 +4,6 @@ import Types exposing (..)
 import Action.UI
 import External
 import Views.External
-import Action.Document
 import Time
 import Task
 import Request.Document

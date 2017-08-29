@@ -157,6 +157,7 @@ reconnectUser model userRecord =
                 , token = userRecord.token
             }
 
+        searchState = model.searchState
         newSearchState = { searchState | domain = Private }
 
         appState =

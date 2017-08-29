@@ -1,29 +1,15 @@
 module Views.TOC exposing(documentListView, documentStackView, documentListView0, toggleListView)
 
-import Action.Document
 import Action.UI as UI
 import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Element.Keyed as Keyed
 import FontAwesome
-import Json.Encode
-import Request.Api
-import String.Extra
 import StyleSheet exposing (..)
 import Types exposing (..)
-import Views.Basic as Basic
-import Views.Component as Component
 import Views.Utility as Utility
 
--- tableOfContents : Model -> Element Styles variation Msg
--- tableOfContents model =
---     column TOC
---         [ yScrollbar, padding 20, spacing 5, height (px ((toFloat model.window.height) - 129.0)) ]
---         ([ el Heading [ height (px 30), paddingXY 8 4 ] (text (UI.tocNumberOfDocuments model)) ]
---             ++ (List.map viewTocItem model.current_document.children)
---         )
 
 documentListView : Model -> Element Styles variation Msg
 documentListView model =
@@ -38,6 +24,7 @@ documentListView0 model =
          ,documentListView1 model
        ]
 
+documentListView1 : Model -> Element Styles variation Msg
 documentListView1 model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitle model model.current_document) model.documents)
@@ -49,13 +36,16 @@ documentStackView model =
          ,documentStackView1 model
        ]
 
+documentStackView1 : Model -> Element Styles variation Msg
 documentStackView1 model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitleInStack model model.current_document) model.documentStack)
 
+documentIndicator : Document -> Model -> Element Styles variation msg
 documentIndicator document model =
   el PaleBlue [ height (px 25)] (documentIndicator1 document model)
 
+documentIndicator1 : Document -> Model -> Element style variation msg
 documentIndicator1 document model =
   if (document.attributes.docType == "master") then
     if model.appState.masterDocLoaded then
@@ -112,6 +102,7 @@ viewTitleInStack model selectedDocument document =
      , titleDisplay model selectedDocument document
   ]
 
+titleDisplay : Model -> Document -> Document -> Element Styles variation Msg
 titleDisplay model selectedDocument document =
   el (tocStyle selectedDocument document)
       [ onClick (SelectDocument document)
@@ -138,6 +129,7 @@ tocStyle selectedDocument document =
     else
         TOCItem
 
+toggleListView : Model -> (Model, Cmd Msg)
 toggleListView model =
   let
     newActiveDocumentList = case model.appState.activeDocumentList of

@@ -30,11 +30,11 @@ type alias UsersRecord =
 
 
 type alias LoginUserRecord =
-    { name : String, username : String, id: Int, email : String, token : String }
+    { name : String, username : String, id: Int, email : String, token : String, blurb : String }
 
 type alias LoginLocalStorageRecord =
-    { name : String, username : String, id: String, email : String, token : String }
-    
+    { name : String, username : String, id: String, email : String, token : String, blurb : String }
+
 
 type alias UserRecord =
   { user : LoginUserRecord }
@@ -233,6 +233,7 @@ type Msg
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
     | GetRenderedText String
+    | GetUser (Result Http.Error User)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
@@ -241,6 +242,7 @@ type Msg
     | GoTo Page
     | GoToPage (Maybe Page)
     | GotoUserHomePages
+    | GotoUserPreferencesPage
     | HandleSendError JsEncode.Value
     | ImageRead ImagePortData
     | ImageSelected
@@ -305,6 +307,7 @@ type Page
     | ImagePage
     | AdminPage
     | UserHomePages
+    | UserPreferencesPage
 
 
 pageName : Page -> String
@@ -333,6 +336,9 @@ pageName page =
 
         UserHomePages ->
           "User"
+
+        UserPreferencesPage ->
+          "User preferences"
 
 type Tool
     = TableOfContents

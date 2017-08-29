@@ -105,6 +105,7 @@ pageSelector model =
     row NavBar
         [ spacing 8 ]
         [ (userHomePagesIcon model)
+        , (userPreferencesIcon model)
         , Utility.visibleIf model.appState.signedIn (homepageIcon model)
         , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
         , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
@@ -134,6 +135,10 @@ userHomePagesIcon model =
   Basic.faIcon "User Pages" FontAwesome.group  [onClick Types.GotoUserHomePages]
   -- Basic.icon 3 20 "User Pages" Types.GotoUserHomePages FontAwesome.asterisk model
   -- GotoUserHomePages
+
+userPreferencesIcon : Model -> Element Styles variation Msg
+userPreferencesIcon model =
+  Basic.faIcon "User Preferences" FontAwesome.list_alt  [onClick Types.GotoUserPreferencesPage]
 
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =

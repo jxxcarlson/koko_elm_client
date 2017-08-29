@@ -137,6 +137,7 @@ app.ports.persist.subscribe(function (str) {
   localStorage.setItem("id", userSettings.id);
   localStorage.setItem("email", userSettings.email);
   localStorage.setItem("name", userSettings.name);
+  localStorage.setItem("blurb", userSettings.blurb);
 
    // prepareLocalStorage();
 

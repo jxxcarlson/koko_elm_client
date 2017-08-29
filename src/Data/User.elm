@@ -1,4 +1,10 @@
-module Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder, userRecord, userRecordDecoder, localStorageUserRecord)
+module Data.User exposing (
+    signinEncoder
+    , jwtDecoder
+    , registerUserEncoder
+    , userRecord
+    , userRecordDecoder
+    , localStorageUserRecord)
 
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
@@ -30,6 +36,7 @@ registerUserEncoder model =
         , ("password",  Encode.string <| model.current_user.password)
         , ("token",  Encode.string <| model.current_user.token)
         , ("admin",  Encode.bool <| model.current_user.admin)
+        , ("blurb", Encode.string <| model.current_user.blurb)
         ]
     )]
     -- Encode.object
@@ -73,6 +80,7 @@ userDecoder =
         |> JPipeline.required "id" Json.Decode.int
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
+        |> JPipeline.required "blurb" Json.Decode.string
 
 
 localStorageUserDecoder : Decoder LoginLocalStorageRecord
@@ -83,6 +91,7 @@ localStorageUserDecoder =
         |> JPipeline.required "id" Json.Decode.string
         |> JPipeline.required "email" Json.Decode.string
         |> JPipeline.required "token" Json.Decode.string
+        |> JPipeline.required "blurb" Json.Decode.string
 
         -- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
 

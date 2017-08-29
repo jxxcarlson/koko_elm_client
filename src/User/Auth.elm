@@ -62,7 +62,11 @@ getTokenCompleted model result =
                         updatedAppState  = {appState | page = HomePage, signedIn = True}
 
                         user2 =
-                            { user | username = value.username, token = newToken, id = value.user_id }
+                            { user |
+                              username = value.username
+                              , token = newToken
+                              , id = value.user_id
+                            }
 
                     in
                         ( { model

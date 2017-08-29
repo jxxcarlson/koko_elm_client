@@ -47,6 +47,7 @@ import Views.External exposing (windowData, windowSetup)
 import Views.Footer as Footer
 import Views.Home exposing (home)
 import Views.NavBar as NavBar
+import Views.UserPreferences exposing(userPreferences)
 import Views.Reader exposing (reader)
 import Views.UserHomePages exposing (userHomePages)
 import Views.TOC as TOC exposing(toggleListView)
@@ -291,6 +292,13 @@ update msg model =
         GotoUserHomePages ->
           User.Display.goToUserHomePages model
 
+        GotoUserPreferencesPage ->
+          let
+            appState = model.appState
+            newAppState = { appState | page = UserPreferencesPage }
+          in
+            ({model | appState = newAppState}, User.Request.get model.current_user.id)
+
         SearchForUserHomePages keyCode ->
           if keyCode == 13 then
             let
@@ -298,7 +306,7 @@ update msg model =
             in
               ( model, User.Request.getList query )
           else
-            (model, Cmd.none)
+            ( model , Cmd.none)
 
 
         GetHomePageForUserHomePages searchTerm username->
@@ -327,6 +335,28 @@ update msg model =
             ({model1 | userList = userList, selectedUserName = user.username}, cmd)
 
         GetUsers (Err error) ->
+            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
+
+        GetUser (Ok userRecord) ->
+          let
+            _ = Debug.log "userRecord" "yo!"
+          -- let
+          --     specialDocument =
+          --         case List.head documentsRecord.documents of
+          --             Just document ->
+          --                 document
+           --
+          --             Nothing ->
+          --                 emptyDocument
+          --  in
+          --     ({model | specialDocument = specialDocument } , Cmd.none)
+          in
+            ({ model | message =  "Get User"}, Cmd.none)
+
+        GetUser (Err error) ->
+          let
+            _ = Debug.log "error" error
+          in  
             ({model | message = Action.Error.httpErrorString error}, Cmd.none)
 
         GetDocuments (Ok serverReply) ->
@@ -615,6 +645,9 @@ page model =
 
         UserHomePages ->
             userHomePages model
+
+        UserPreferencesPage ->
+            userPreferences model
 
 
 view : Model -> Html Msg

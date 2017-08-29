@@ -1,6 +1,6 @@
-module User.Request exposing(getList)
+module User.Request exposing(getList, get)
 
-import Types exposing(User, Users, UsersRecord, Msg(GetUsers))
+import Types exposing(User, Users, UsersRecord, Msg(GetUsers, GetUser))
 import Json.Encode
 import Json.Decode exposing(field)
 import Json.Decode.Pipeline
@@ -9,6 +9,7 @@ import HttpBuilder as HB exposing (..)
 import Http exposing (send)
 
 import Request.Api
+import Data.User
 
 
 getList : String -> Cmd Msg
@@ -24,6 +25,18 @@ getList query =
             -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeUsers)
             |> HB.send GetUsers
+
+-- get : Int -> Cmd Msg
+get user_id =
+    let
+        url = Request.Api.api ++ "users/" ++ (toString user_id)
+    in
+        HB.get url
+            -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeUser)
+            |> HB.send GetUser
+
+
 
 decodeUser : Json.Decode.Decoder User
 decodeUser =
