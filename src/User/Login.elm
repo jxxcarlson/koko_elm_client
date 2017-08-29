@@ -157,6 +157,8 @@ reconnectUser model userRecord =
                 , token = userRecord.token
             }
 
+        newSearchState = { searchState | domain = Private }
+
         appState =
             model.appState
 
@@ -166,6 +168,7 @@ reconnectUser model userRecord =
         ( { model
             | current_user = current_user
             , appState = newAppState
+            , searchState = newSearchState
             , message = "User reconnected: " ++ userRecord.username
           }
         , Cmd.none
