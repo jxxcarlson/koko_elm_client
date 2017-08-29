@@ -42,7 +42,7 @@ var mountNode = document.getElementById('main');
           console.log("RENDER AS ASCIIDOC " );
           request_in_progress = false;
           if (content !== current_content) {
-            var rt = asciidoctor.convert(content)
+            var rt = asciidoctor.convert(content, {safe: 'safe', icons: 'font'})
             app.ports.getRenderedText.send(rt); // Send rendered text to Elm
             current_content = content
           }
@@ -56,7 +56,7 @@ var mountNode = document.getElementById('main');
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
-             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe'});
+             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', icons: 'font'});
              typesetNow2()
              current_content = content
            }
