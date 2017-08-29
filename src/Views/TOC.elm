@@ -107,7 +107,7 @@ viewTitle model selectedDocument document =
 
 viewTitleInStack : Model -> Document -> Document -> Element Styles variation Msg
 viewTitleInStack model selectedDocument document =
-    row Zero [ verticalCenter, paddingXY 4 4 ] [
+    row Zero [ verticalCenter, paddingXY 10 4 ] [
      documentIndicator document model
      , titleDisplay model selectedDocument document
   ]

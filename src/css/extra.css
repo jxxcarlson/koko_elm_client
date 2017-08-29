@@ -5,3 +5,8 @@
 #rendered_text2 {line-height: 1.4em}
 #rendered_text2 p {line-height: 1.4em; margin-bottom: 1em; font-size: 0.9em;}
 #rendered_text2 pre { margin-left: 30px; margin-bottom: 20px; }
+
+
+#rendered_text2 .listingblock .content pre {background-color:rgba(0,0,255,0.05)}
+#rendered_text2 p code{background-color:rgba(0,0,255,0.05)!important}
+#rendered_text2 .box {margin-left:20px!important; margin-right: 20px!important; color: rgba(0,0,150,1.0);}
