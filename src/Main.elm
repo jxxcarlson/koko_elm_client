@@ -40,8 +40,6 @@ import User.Display
 import User.Login exposing (..)
 import User.Request
 import Views.Admin exposing (admin)
-import Views.Component as Component
-import Views.Component as Component
 import Views.Editor exposing (editor)
 import Views.External exposing (windowData, windowSetup)
 import Views.Footer as Footer
@@ -205,8 +203,12 @@ update msg model =
         SetSearchTerm searchTerms ->
             updateSearch model searchTerms
 
+        UpdateSearchQueryInputBuffer str ->
+            ({model | searchQueryInputBuffer = str} , Cmd.none)
+
         UpdateTextInputBuffer str ->
             ({model | textInputBuffer = str} , Cmd.none)
+
 
         SelectSearchMode searchMode ->
           let
@@ -236,14 +238,14 @@ update msg model =
             ({ model | searchState = newSearchState }, Cmd.none  )
 
         ClearSearch ->
-          ({model | textInputBuffer = ""}, Cmd.none)
+          ({model | searchQueryInputBuffer = ""}, Cmd.none)
             -- updateSearch model ""
 
         -- updatedSearchState
         DoSearch searchDomain key ->
           let
             searchState = model.searchState
-            newSearchState = { searchState | query = model.textInputBuffer }
+            newSearchState = { searchState | query = model.searchQueryInputBuffer }
             appState = model.appState
             newAppState = { appState | activeDocumentList = SearchResultList}
             newModel = { model | searchState = newSearchState, appState = newAppState }
@@ -297,12 +299,17 @@ update msg model =
             appState = model.appState
             newAppState = { appState | page = UserPreferencesPage }
           in
-            ({model | appState = newAppState}, User.Request.get model.current_user.id)
+            ({model |
+                appState = newAppState
+                , textInputBuffer = model.current_user.blurb
+              },
+              User.Request.get model.current_user.id
+            )
 
         SearchForUserHomePages keyCode ->
           if keyCode == 13 then
             let
-              query = "is_user=" ++ model.textInputBuffer
+              query = "is_user=" ++ model.searchQueryInputBuffer
             in
               ( model, User.Request.getList query )
           else
@@ -340,23 +347,16 @@ update msg model =
         GetUser (Ok userRecord) ->
           let
             _ = Debug.log "userRecord" "yo!"
-          -- let
-          --     specialDocument =
-          --         case List.head documentsRecord.documents of
-          --             Just document ->
-          --                 document
-           --
-          --             Nothing ->
-          --                 emptyDocument
-          --  in
-          --     ({model | specialDocument = specialDocument } , Cmd.none)
+            user = userRecord.user
+            current_user = model.current_user
+            updatedCurrentUser = { current_user | blurb = user.blurb }
           in
-            ({ model | message =  "Get User"}, Cmd.none)
+            ({ model | current_user = updatedCurrentUser}, Cmd.none)
 
         GetUser (Err error) ->
           let
             _ = Debug.log "error" error
-          in  
+          in
             ({model | message = Action.Error.httpErrorString error}, Cmd.none)
 
         GetDocuments (Ok serverReply) ->
@@ -397,12 +397,37 @@ update msg model =
 
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
+
+        Message str ->
+          ({model | message = str}, Cmd.none)
+
         PutDocument (Ok serverReply) ->
             case (serverReply) of
                 () ->
                     ( model, Cmd.none )
 
         PutDocument (Err error) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+
+        UpdateCurrentUser ->
+          let
+            currentUser = model.current_user
+            blurb_ = if model.textInputBuffer /= "" then
+              model.textInputBuffer
+            else
+              model.current_user.blurb
+            updatedCurrentUser = {currentUser | blurb = blurb_ }
+            newModel = { model | current_user = updatedCurrentUser }
+          in
+            (newModel, User.Request.putCurrentUser newModel)
+
+
+        PutUser (Ok serverReply) ->
+            case (serverReply) of
+                () ->
+                    ( model, Cmd.none )
+
+        PutUser (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         NewDocument ->
@@ -741,6 +766,7 @@ init flags location =
             , appState = appState
             , message = "Please sign in"
             , errorMsg = ""
+            , searchQueryInputBuffer = ""
             , textInputBuffer = ""
             , warning = ""
             , current_user = current_user

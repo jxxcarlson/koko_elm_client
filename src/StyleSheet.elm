@@ -115,9 +115,9 @@ stylesheet =
             , Color.border Color.lightGrey
             ]
         , style Label
-            [ Font.size 25
-              -- set font size to 25 px
-            , Font.center
+            [ Font.size 18
+             , Color.background Color.darkCharcoal
+            , Color.text Color.white
             ]
         , style Logo
             [ Font.size 16

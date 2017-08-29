@@ -8,8 +8,6 @@ import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
 import Color
 import FontAwesome
-import Html
-import Html.Attributes
 import Utility
 
 
@@ -19,14 +17,14 @@ form model =
         [ spacing 10, verticalCenter ]
         [ row Zero [ spacing -30] [
           inputText SearchField
-            [ EE.onInput Types.UpdateTextInputBuffer
+            [ EE.onInput Types.UpdateSearchQueryInputBuffer
             , Utility.onKeyUp (SearchForUserHomePages)
             , placeholder "Search for a user (name, keyword)"
             , title "Enter a username or a keyword"
             , height (px 29), width (px 300),
             paddingXY -20 0
             ]
-            (model.textInputBuffer)
+            (model.searchQueryInputBuffer)
          , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
         ]
         -- , row Zero

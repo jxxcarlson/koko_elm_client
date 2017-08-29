@@ -19,6 +19,10 @@ type alias User =
     , token : String
     , admin : Bool }
 
+type alias BigUserRecord =
+    { user : User }
+
+
 type alias Users = List User
 {-|
   Use to transfer data to JS-world. Does not contani password
@@ -179,6 +183,7 @@ type alias Model =
     , appState : AppState
     , message : String
     , textInputBuffer: String
+    , searchQueryInputBuffer: String
     , current_user : User
     , errorMsg : String
     , warning : String
@@ -233,7 +238,7 @@ type Msg
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
     | GetRenderedText String
-    | GetUser (Result Http.Error User)
+    | GetUser (Result Http.Error BigUserRecord)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
@@ -251,11 +256,13 @@ type Msg
     | InputTags String
     | LinkTo String
     | Login
+    | Message String
     | Name String
     | NewDocument
     | Password String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | PutDocument (Result Http.Error ())
+    | PutUser (Result Http.Error ())
     | RandomDocuments
     | RecallLastSearch
     | ReceiveChatMessage JsEncode.Value
@@ -290,7 +297,9 @@ type Msg
     | TogglePublic
     | ToggleRegister
     | ToggleUpdateRate
+    | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
+    | UpdateCurrentUser
     | UploadComplete (Result Http.Error String)
     | UseSearchDomain SearchDomain
     | UserHomePage

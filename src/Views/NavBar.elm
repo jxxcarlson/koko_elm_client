@@ -54,13 +54,13 @@ searchForm model =
         [ spacing 10, verticalCenter ]
         [ row Zero [ spacing -30] [
           inputText SearchField
-            [ EE.onInput UpdateTextInputBuffer
+            [ EE.onInput UpdateSearchQueryInputBuffer
             , Utility.onKeyUp (DoSearch model.searchState.domain)
             , placeholder "Search: title, k:keyword, a:author, ..."
             , height (px 29), width (px 300),
             paddingXY -20 0
             ]
-            (model.textInputBuffer)
+            (model.searchQueryInputBuffer)
          , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
         ]
         , row Zero

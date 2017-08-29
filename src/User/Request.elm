@@ -1,6 +1,6 @@
-module User.Request exposing(getList, get)
+module User.Request exposing(getList, get, putCurrentUser)
 
-import Types exposing(User, Users, UsersRecord, Msg(GetUsers, GetUser))
+import Types exposing(Model, User, Users, UsersRecord, Msg(GetUsers, GetUser, PutUser))
 import Json.Encode
 import Json.Decode exposing(field)
 import Json.Decode.Pipeline
@@ -33,22 +33,53 @@ get user_id =
     in
         HB.get url
             -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeUser)
+            |> withExpect (Http.expectJson decodeUserRecord)
             |> HB.send GetUser
 
 
+putCurrentUserRB : Model ->  RequestBuilder ()
+putCurrentUserRB model =
+    let
+        params =
+            encodeMinimalUserRecord model.current_user
+
+        url = Request.Api.api ++ "users/" ++ (toString model.current_user.id)
+    in
+        HB.put url
+            |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
+            |> withJsonBody params
+
+putCurrentUser : Model -> Cmd Msg
+putCurrentUser model =
+    let
+        request =
+            putCurrentUserRB model
+                |> HB.toRequest
+    in
+        Http.send PutUser request
+
+decodeUserRecord : Json.Decode.Decoder Types.BigUserRecord
+decodeUserRecord =
+  Json.Decode.Pipeline.decode Types.BigUserRecord
+      |> Json.Decode.Pipeline.required "user" decodeUser
+
+decodeUsers : Json.Decode.Decoder UsersRecord
+decodeUsers =
+    Json.Decode.Pipeline.decode UsersRecord
+        |> Json.Decode.Pipeline.required "users" (Json.Decode.list decodeUser)
 
 decodeUser : Json.Decode.Decoder User
 decodeUser =
-    Json.Decode.map8 User
-        (field "name" Json.Decode.string)
-        (field "id" Json.Decode.int)
-        (field "username" Json.Decode.string)
-        (field "email" Json.Decode.string)
-        (field "blurb" Json.Decode.string)
-        (field "password" Json.Decode.string)
-        (field "token" Json.Decode.string)
-        (field "admin" Json.Decode.bool)
+    Json.Decode.Pipeline.decode User
+        |> Json.Decode.Pipeline.required "name" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "id" (Json.Decode.int)
+        |> Json.Decode.Pipeline.required "username" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "email" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "blurb" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "password" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "token" (Json.Decode.string)
+        |> Json.Decode.Pipeline.required "admin" (Json.Decode.bool)
+
 
 encodeUser : User -> Json.Encode.Value
 encodeUser user =
@@ -61,11 +92,20 @@ encodeUser user =
         , ("admin",  Json.Encode.bool <| user.admin)
         ]
 
+encodeMinimalUserInfo : User -> Json.Encode.Value
+encodeMinimalUserInfo user =
+    Json.Encode.object
+        [ ("blurb",  Json.Encode.string <| user.blurb)
+        , ("id",  Json.Encode.int <| user.id)
+        ]
 
-decodeUsers : Json.Decode.Decoder UsersRecord
-decodeUsers =
-    Json.Decode.Pipeline.decode UsersRecord
-        |> Json.Decode.Pipeline.required "users" (Json.Decode.list decodeUser)
+encodeMinimalUserRecord : User -> Json.Encode.Value
+encodeMinimalUserRecord user =
+  Json.Encode.object
+      [ ( "user"
+        , encodeMinimalUserInfo user
+        )
+      ]
 
 -- encodeUsers : (List User) -> Json.Encode.Value
 -- encodeUsers record =
