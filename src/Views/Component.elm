@@ -6,16 +6,10 @@ import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
 import Types exposing (..)
-import Utility
-import FontAwesome
 import StyleSheet exposing (..)
-import Request.Api as Api
-import List.Extra
-import Json.Decode as Json
-import Views.Utility as Utility
 import Views.Basic as Basic
 
-
+cancelAuthentication : Styles -> Model -> Element Styles variation Msg
 cancelAuthentication style model =
   Basic.button
     "Cancel"
@@ -25,7 +19,7 @@ cancelAuthentication style model =
 
 -- https://ellie-app.com/3Gqxw7zLGzTa1/6
 
-
+textFormatMenu : Model -> Element Styles variation Msg
 textFormatMenu model =
     el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType") ] (EL.text "Format")
         |> below
@@ -39,18 +33,19 @@ textFormatMenu model =
                     ]
             ]
 
-
+setTextTypeButton : String -> String -> Model -> Element Styles variation Msg
 setTextTypeButton textType label model =
   el (textFormatButton textType model) [ EA.width (px 85), EE.onClick (SetTextType textType), EA.height (px 30), paddingXY 8 14 ] (EL.text label)
 
 
+textFormatButton : String -> Model -> Styles
 textFormatButton textFormat model =
     if textFormat == model.current_document.attributes.textType then
         ActiveFlatButton
     else
         FlatButton
 
-
+docTypeMenu : Model -> Element Styles variation Msg
 docTypeMenu model =
     el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType") ] (EL.text "Type")
         |> below
@@ -63,7 +58,7 @@ docTypeMenu model =
                     ]
             ]
 
-
+docTypeButton : String -> Model -> Styles
 docTypeButton docType model =
     if docType == model.current_document.attributes.docType then
         ActiveFlatButton
@@ -71,6 +66,7 @@ docTypeButton docType model =
         FlatButton
 
 
+toolSelectorColor : Model -> Tool -> Color.Color
 toolSelectorColor model tool =
     if model.appState.tool == tool then
         Color.white

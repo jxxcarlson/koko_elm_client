@@ -1,9 +1,7 @@
-module Document.Stack exposing(..)
-
-import List.Extra
-import Utility
+module Document.Stack exposing(push, top)
 
 import Types exposing(Document, DocumentStack, defaultDocument)
+import Utility
 
 {-|
   Push a new document onto the stack after deleting
@@ -18,14 +16,12 @@ push document stack =
   in
     List.sortWith titleCompare stack3
 
-
+titleCompare : Document -> Document -> Order
 titleCompare doc1 doc2 =
   case (doc1.title == doc2.title, doc1.title < doc2.title) of
     (True, _) -> EQ
     (_, True) -> LT
     (_, False) -> GT
-
-
 
 
 top : DocumentStack -> Document

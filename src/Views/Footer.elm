@@ -1,20 +1,14 @@
 module Views.Footer exposing (footer)
 
 import StyleSheet exposing (..)
-import Color
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import Element.Events as EE exposing (..)
 import Types exposing (..)
-import Utility
-import FontAwesome
 import StyleSheet exposing (..)
 import Request.Api as Api
 import List.Extra
-import Json.Decode as Json
-import Views.Utility as Utility
-import Views.Basic as Basic
 
+warningStyle : String -> Styles
 warningStyle warning =
   if warning == "" then
     FooterNote
@@ -23,6 +17,7 @@ warningStyle warning =
   else
     WarningFooterNote
 
+messageWarningStyle : String -> Styles
 messageWarningStyle message =
   if String.contains "!" message then
     WarningFooterNote
@@ -41,6 +36,7 @@ footer model =
          ]
     )
 
+publicLink : Model -> Element Styles variation msg
 publicLink model =
   let
     linkText = if model.current_document.attributes.public == True then
@@ -50,19 +46,21 @@ publicLink model =
   in
     el FooterNote [verticalCenter] (text linkText )
 
+messageBox : Model -> Element Styles variation msg
 messageBox model =
   if model.appState.signedIn then
     (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
   else
     (el Zero [ alignBottom, padding 8 ] (text ""))
 
+warningMessage : Model -> Element Styles variation msg
 warningMessage model =
   if model.appState.signedIn then
     (el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning))
   else
     (el Zero [ alignBottom, padding 8 ] (text ""))
 
-
+hostString : String
 hostString =
   Api.host |> String.split("//") |> List.Extra.last |> Maybe.withDefault ""
 

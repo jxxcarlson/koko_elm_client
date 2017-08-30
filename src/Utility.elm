@@ -63,7 +63,7 @@ replaceIf predicate replacement list =
         )
         list
 
-
+removeWhen : (a -> Bool) -> List a -> List a
 removeWhen pred list =
   List.filter (not << pred) list
 

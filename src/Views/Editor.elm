@@ -88,7 +88,7 @@ refreshButton model =
         , padding 2
         , title "Refresh display & save. Also: press ESC"
         ]
-        (html (FontAwesome.refresh Color.white 25))
+        (html (FontAwesome.save Color.white 25))
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
 toggleUpdateRateButton model =

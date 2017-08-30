@@ -2,13 +2,11 @@ module Views.UserPreferences exposing (userPreferences)
 
 import Types exposing(Model)
 
-import User.Display
-
-import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick, onInput)
 import Element.Keyed as Keyed
+import StyleSheet exposing (..)
 import Types exposing (..)
 import Views.Basic as Basic
 

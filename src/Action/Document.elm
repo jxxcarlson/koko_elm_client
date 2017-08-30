@@ -8,14 +8,8 @@ import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Views.External exposing (windowData)
 import External exposing (toJs)
 import Utility
-import Action.Search
-import Document.Preprocess
 import Document.RenderAsciidoc as RenderAsciidoc
-import Document.Search
 import Document.Stack as Stack
-
-import Document.Search as Search
-import Action.Error
 
 
 {-|
@@ -273,7 +267,8 @@ selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
     let
         masterDocLoaded_ =
-            if document.attributes.docType == "master" then
+            if document.attributes.docType == "master" ||
+                 document.parent_id == model.master_document.id then
                 True
             else
                 False
@@ -339,89 +334,8 @@ togglePublic model =
         updateCurrentDocument updatedModel newDocument
 
 
-searchOnEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-searchOnEnter searchDomain key model =
-    if (Debug.log "key" key) == 13 then
-        let
-          _ = Debug.log "Firing Action.Document.searchOnEnter" 1
-          searchState =
-            Action.Search.updatedSearchState model searchDomain
-        in
-            search searchState.domain searchState.query (displayPage model) model
-    else
-        ( model, Cmd.none )
-
--- XXX
-search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
-search searchDomain query page model =
-  let
-    _ = Debug.log "Firing Action.Document.search" 1
-    searchState = model.searchState
-    newSearchState = { searchState | domain = searchDomain, query = query }
-    newModel = { model | searchState = newSearchState }
-  in
-    Search.withModel page model
 
 
--- search2 : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
--- search2 searchDomain query page model =
---           let
---               _ = Debug.log "Firing Action.Document.search" 1
---               appState = model.appState
---               newAppState = { appState | masterDocLoaded = False,
---                  tool = TableOfContents,
---                  page = page }
---               oldSearchState = model.searchState
---               newSearchState = {oldSearchState | query = query, domain = searchDomain }
---               updatedModel =
---                   { model
---                       | message = (Action.UI.queryMessage searchDomain) ++ Utility.queryText query
---                       , appState = newAppState
---                       , searchState = newSearchState
---                       , master_document = defaultMasterDocument
---                       , documents2 = model.documents
---                   }
---           in
---               ( { updatedModel | appState = newAppState }
---               , Cmd.batch
---                   [ Request.Document.getDocumentsWith model.searchState model.current_user.token
---                   , RenderAsciidoc.put model.current_document
---                   ]
---               )
---
---
-
-
-selectMasterDocument : Document -> Model -> ( Model, Cmd Msg )
-selectMasterDocument document model =
-    if document.attributes.docType == "master" then
-      selectMasterDocumentAux document.id document model
-    else if document.parent_id /= 0 then
-      selectMasterDocumentAux document.parent_id document model
-    else
-      ( model, Cmd.none )
-
-
-selectMasterDocumentAux : Int -> Document -> Model -> ( Model, Cmd Msg )
-selectMasterDocumentAux document_id document model =
-    let
-
-        appState = model.appState
-
-        newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList }
-
-        searchState =
-            model.searchState
-
-        updatedSearchState =
-            { searchState | query = "master=" ++ (toString document_id) }
-
-        updatedModel =
-            { model | searchState = updatedSearchState, appState = newAppState }
-        (model1, cmd1) = searchOnEnter model.searchState.domain 13 updatedModel
-        (model2, cmd2) = selectDocument model1 document
-    in
-        (model2, Cmd.batch[cmd1, cmd2])
 
 
 
@@ -476,65 +390,3 @@ inputContent content model =
           { appState | textBuffer = content, textBufferDirty = True }
   in
       ( { model | appState = newAppState }, Cmd.none )
-
-recallLastSearch model =
-  let
-    appState = model.appState
-    newAppState = { appState | masterDocLoaded = False, tool = TableOfContents}
-  in
-    ( { model | documents = model.documents2,
-        current_document = List.head model.documents2 |> Maybe.withDefault defaultDocument,
-        appState = newAppState,
-        master_document = defaultMasterDocument,
-        message = "Set masterDocLoaded: False" }, Cmd.none )
-
-setParentId : String -> Model -> (Model, Cmd Msg)
-setParentId parentIdString model =
-  let
-    document = model.current_document
-    newDocument = {document | parent_id = String.toInt parentIdString |> Result.withDefault 0 }
-  in
-  ({model | current_document = newDocument, message = "parent = " ++ parentIdString}, Cmd.none)
-
-
-addToMasterDocument model =
-  let
-    _ = Debug.log "addToMasterDocument" model.master_document.id
-    appState = model.appState
-    newAppState = { appState | tool = TableOfContents }
-    query = "id=" ++ (toString model.master_document.id)
-    cmds = [
-         saveDocumentCmd model.appState.command model.master_document model
-       , Document.Search.command query Alphabetical All EditorPage model
-
-    ]
-  in
-    ({model | appState = newAppState,  message = model.appState.command},
-    Cmd.batch cmds)
-
-
-
-attachDocumentCommand : String -> Model -> String
-attachDocumentCommand location model =
-  "attach="
-      ++ location
-      ++ "&child="
-      ++ (toString model.current_document.id)
-      ++ "&current="
-      ++ (toString (Stack.top model.documentStack).id)
-
-getRandomDocuments model =
-  let
-    appState = model.appState
-    newAppState = { appState | page = ReaderPage, activeDocumentList = SearchResultList }
-    newModel = {model |appState = newAppState }
-    query = if model.appState.signedIn then
-      "random=all"
-    else
-      "random=public"
-    searchDomain = if model.appState.signedIn then
-      All
-    else
-      Public
-  in
-    Document.Search.withParameters query Alphabetical searchDomain ReaderPage newModel

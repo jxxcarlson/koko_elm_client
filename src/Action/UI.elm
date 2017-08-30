@@ -16,7 +16,7 @@ displayPage model =
     else
         Types.ReaderPage
 
-
+toggleMenu : String -> Model -> (Model, Cmd Msg)
 toggleMenu menu model =
     let
         appState =
@@ -39,6 +39,7 @@ toggleMenu menu model =
         ( { model | appState = newAppState }, Cmd.none )
 
 
+toggleTextMenu : Model -> (Model, Cmd Msg)
 toggleTextMenu model =
     let
         appState =
@@ -49,7 +50,7 @@ toggleTextMenu model =
     in
         ( { model | appState = newAppState }, Cmd.none )
 
-
+toggleRegister : Model -> (Model, Cmd Msg)
 toggleRegister model =
     let
         appState =
@@ -69,7 +70,7 @@ appStateToggleAuthorizing model =
     in
         { appState | authorizing = not appState.authorizing }
 
-
+toggleAuthorizing : Model -> (Model, Cmd Msg)
 toggleAuthorizing model =
     let
         oldAppState =
@@ -80,7 +81,7 @@ toggleAuthorizing model =
     in
         ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
 
-
+setAuthorizing : Model -> Bool -> (Model, Cmd Msg)
 setAuthorizing model value =
     let
         oldAppState =

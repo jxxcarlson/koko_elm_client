@@ -3,24 +3,23 @@ module Document.QueryParser exposing(parseQuery)
 import Regex
 
 
-parseQuery1 : String -> String
-parseQuery1 input =
+parseQuery : String -> String
+parseQuery input =
     input
         |> Regex.split Regex.All (Regex.regex "[, ]")
         |> List.map String.trim
         |> List.filter (\item -> item /= "")
-        -- |> List.map (\item -> "title=" ++ item)
-        |>
-            List.map (\item -> transformItem item)
+        |> List.map (\item -> transformItem item)
         |> String.join ("&")
 
 
 transformItem : String -> String
 transformItem item =
-    if String.contains ":" item then
-        Debug.log "term" (transformQualifiedItem item)
-    else
-        "title=" ++ item
+    case (String.contains ":" item, String.contains "=" item) of
+      (True, True)    -> item
+      (True, False)   -> transformQualifiedItem item
+      (False, True)   -> item
+      (False, False)  -> "title=" ++ item
 
 
 transformQualifiedItem : String -> String
@@ -77,13 +76,3 @@ transformQualifiedItem item =
 
         _ ->
             ""
-
-
-parseQuery : String -> String
-parseQuery input =
-    if String.contains "=" input then
-        input
-    else if input == "all" then
-        input
-    else
-        parseQuery1 (input)

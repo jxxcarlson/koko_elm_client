@@ -1,4 +1,4 @@
-module Document.Preprocess exposing(..)
+module Document.Preprocess exposing(preprocess, preprocessSource)
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
 import Regex exposing(..)

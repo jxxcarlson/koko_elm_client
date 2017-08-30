@@ -234,12 +234,13 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
-    | GetDocuments (Result Http.Error String)
+    | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
     | GetRenderedText String
     | GetUser (Result Http.Error BigUserRecord)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
+    | GetMasterDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
     | GetUserDocuments (Result Http.Error DocumentsRecord)

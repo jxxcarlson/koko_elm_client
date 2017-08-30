@@ -5,11 +5,10 @@ module Main exposing (..)
 import Action.Channel
 import Action.Error
 import Action.Page
-import Action.Search exposing (..)
 import Configuration
-import Data.Document exposing (documents)
 import Date exposing(Date)
 import Dict
+import Document.MasterDocument
 import Document.RenderAsciidoc
 import Document.Search
 import Element as EL exposing (..)
@@ -35,6 +34,7 @@ import StyleSheet exposing (..)
 import Task
 import Time exposing (Time, second)
 import Types exposing (..)
+import Utility
 import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import User.Display
 import User.Login exposing (..)
@@ -201,7 +201,7 @@ update msg model =
             toggleMenu menu model
 
         SetSearchTerm searchTerms ->
-            updateSearch model searchTerms
+            Document.Search.update model searchTerms
 
         UpdateSearchQueryInputBuffer str ->
             ({model | searchQueryInputBuffer = str} , Cmd.none)
@@ -239,7 +239,7 @@ update msg model =
 
         ClearSearch ->
           ({model | searchQueryInputBuffer = ""}, Cmd.none)
-            -- updateSearch model ""
+            -- update model ""
 
         -- updatedSearchState
         DoSearch searchDomain key ->
@@ -250,10 +250,10 @@ update msg model =
             newAppState = { appState | activeDocumentList = SearchResultList}
             newModel = { model | searchState = newSearchState, appState = newAppState }
           in
-            Action.Document.searchOnEnter searchDomain key newModel
+            Document.Search.onEnter searchDomain key newModel
 
         RecallLastSearch ->
-           Action.Document.recallLastSearch model
+           Document.Search.recallLastSearch model
 
         UserHomePage ->
           let
@@ -275,7 +275,7 @@ update msg model =
             -- Document.Search.withParameters "random=public" Alphabetical Public HomePage model
 
         RandomDocuments ->
-           Action.Document.getRandomDocuments model
+           Document.Search.getRandomDocuments model
 
         DoRender key ->
             Document.RenderAsciidoc.putWithKey key model
@@ -359,15 +359,8 @@ update msg model =
           in
             ({model | message = Action.Error.httpErrorString error}, Cmd.none)
 
-        GetDocuments (Ok serverReply) ->
-            case (Data.Document.documents serverReply) of
-                Ok documentsRecord ->
-                    updateDocuments model documentsRecord
-
-                Err error ->
-                    ( { model | message = "Error in GetDocuments" }
-                    , Cmd.none
-                    )
+        GetDocuments (Ok documentsRecord) ->
+            updateDocuments model documentsRecord
 
         GetDocuments (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
@@ -394,6 +387,27 @@ update msg model =
 
         GetSpecialDocument (Err err) ->
             ({model | message = "Getting special document: error" } , Cmd.none)
+
+        ---
+
+        GetMasterDocument (Ok documentsRecord) ->
+           let
+              masterDocument =
+                   case List.head documentsRecord.documents of
+                       Just document ->
+                           document
+
+                       Nothing ->
+                           emptyDocument
+
+              oldDocuments = model.documents
+              newDocuments =
+                    Utility.replaceIf (Action.Document.hasId masterDocument.id) masterDocument oldDocuments
+            in
+               ({model | master_document = masterDocument } , Cmd.none)
+
+        GetMasterDocument (Err err) ->
+            ({model | message = "Getting master document: error" } , Cmd.none)
 
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
@@ -438,13 +452,16 @@ update msg model =
                 createDocument model blankDocument
 
         AddToMasterDocument ->
-           Action.Document.addToMasterDocument model
+          let
+             _ = Debug.log "MAIN: AddToMasterDocument" "now"
+          in
+             Document.MasterDocument.addTo model
         --( model , Request.Document.createDocument newDocument model.current_user.token )
 
         AttachCurrentDocument location ->
           let
             appState = model.appState
-            newAppState = { appState | command = (Action.Document.attachDocumentCommand location model)}
+            newAppState = { appState | command = (Document.MasterDocument.attach location model)}
           in
             ({model | appState = newAppState}, Cmd.none)
 
@@ -470,7 +487,7 @@ update msg model =
             Action.Document.setDocType docType model
 
         SetParentId parentIdString ->
-            Action.Document.setParentId parentIdString model
+            Document.MasterDocument.setParentId parentIdString model
 
         InputTags tagString ->
             updateTags tagString model
@@ -495,7 +512,7 @@ update msg model =
 
 
         SelectMaster document ->
-            Action.Document.selectMasterDocument document model
+            Document.MasterDocument.select document model
 
         InputContent content ->
             Action.Document.inputContent content model
@@ -509,7 +526,7 @@ update msg model =
             updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
-            updateSearchDomain model searchDomain
+            Document.Search.updateDomain model searchDomain
 
         TogglePublic ->
             togglePublic model
@@ -566,7 +583,9 @@ update msg model =
             ( model, Cmd.none )
 
         Tick time ->
-            if model.appState.page == EditorPage && model.appState.textBufferDirty then
+            if model.appState.page == EditorPage
+              && model.appState.textBufferDirty
+              && model.current_document.attributes.docType /= "master" then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
                 Action.Channel.sendImmediateMessage "hello" model  -- (model, Cmd.none) --
@@ -799,7 +818,7 @@ init flags location =
         ]
 
         masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
-        (newModel, command) = Action.Document.getRandomDocuments model
+        (newModel, command) = Document.Search.getRandomDocuments model
 
         startupPageCommands = [
            Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330", command

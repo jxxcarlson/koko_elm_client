@@ -1,9 +1,16 @@
-module Request.Document exposing (getDocumentsWith, getSpecialDocumentWithQuery, put,
-  createDocument, deleteCurrentDocument, getSpecialDocumentWithAuthenticatedQuery)
+module Request.Document exposing (
+   getDocumentsWith,
+   getSpecialDocumentWithQuery
+   , put
+   , createDocument
+   , deleteCurrentDocument
+   , getSpecialDocumentWithAuthenticatedQuery
+   , reloadMasterDocument
+   )
 
 import Http exposing (send)
 import Json.Decode as Decode exposing (..)
-import Request.Api exposing (publicDocumentsUrl, documentsUrl)
+import Request.Api exposing (publicDocumentsUrl, documentsUrl, api)
 import Types exposing (..)
 import Data.Document
     exposing
@@ -45,81 +52,55 @@ searchOrderQuery searchOrder =
 
 buildQuery : List String -> String
 buildQuery queryParts =
-  "?" ++ String.join "&" queryParts
+  String.join "&" queryParts
+
 
 getPublicDocumentsWith : SearchState -> Cmd Msg
 getPublicDocumentsWith searchState =
     let
-
-        query =
-            searchState.query
-
+        _ = Debug.log "Firing search with domain = Public" "now"
         soq = searchOrderQuery searchState.order
-
-        _ = Debug.log "Firing search with domain = PUBLIC, order" soq
-        _ = Debug.log "QUERY = " query
-
-        url =
-            if query == "" then
-                publicDocumentsUrl ++ buildQuery ["publicdocs=all",  soq]
-            else
-                publicDocumentsUrl ++ buildQuery [parseQuery(query), soq]
-
-        request =
-            Http.getString url
+        basicQuery = if searchState.query == "" then
+          "publicdocs=all"
+        else
+          parseQuery(searchState.query)
+        query = buildQuery [basicQuery, soq]
     in
-        Http.send GetDocuments request
-
-
+       getDocuments "public/documents" query GetDocuments ""
 
 getUserDocumentsWith : SearchState -> String -> Cmd Msg
 getUserDocumentsWith searchState token =
     let
-        _ = Debug.log "Firing search with domain = PRIVATE" 1
-        query =
-            searchState.query
+        _ = Debug.log "Firing search with domain = Private" "now"
         soq = searchOrderQuery searchState.order
-
-        url =
-            if query == "" then
-                documentsUrl ++ buildQuery [soq]
-            else
-              documentsUrl ++ buildQuery [ parseQuery(query), soq]
+        query = buildQuery [parseQuery(searchState.query), soq]
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetUserDocuments
+       getDocuments "documents" query GetUserDocuments token
 
 getAllDocumentsWith : SearchState -> String -> Cmd Msg
 getAllDocumentsWith searchState token =
     let
-        _ = Debug.log "Firing search with domain = ALL" 1
-        query =
-            searchState.query
+        _ = Debug.log "Firing search with domain = ALL" "now"
         soq = searchOrderQuery searchState.order
-        url =
-            if query == "" then
-                documentsUrl ++ buildQuery ["docs=any", soq]
-            else
-              documentsUrl ++ buildQuery ["docs=any" , parseQuery(query), soq]
+        query = buildQuery ["docs=any" , parseQuery(searchState.query), soq]
+    in
+       getDocuments "documents" query GetUserDocuments token
 
+
+-- getDocuments : String -> (Result Http.Error String) -> Cmd Msg
+getDocuments route query processor token =
+    let
+        url = api ++ route ++ "?" ++ parseQuery(query)
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetUserDocuments
+            |> HB.send processor
 
 getSpecialDocumentWithQuery : String -> Cmd Msg
 getSpecialDocumentWithQuery query =
-    let
-        url = publicDocumentsUrl ++ "?" ++ query
-        _ = Debug.log "getSpecialDocumentWithQuery, url" url
+      getDocuments "public/documents" query GetSpecialDocument ""
 
-    in
-        HB.get url
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetSpecialDocument
 
 getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg
 getSpecialDocumentWithAuthenticatedQuery token query =
@@ -133,6 +114,16 @@ getSpecialDocumentWithAuthenticatedQuery token query =
             |> HB.send GetSpecialDocument
         -- Http.send GetSpecialDocument request
 
+reloadMasterDocument : Int -> String -> Cmd Msg
+reloadMasterDocument doc_id token =
+    let
+        url = documentsUrl ++ "?" ++ "id=" ++ (toString doc_id)
+
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send GetMasterDocument
 
 deleteCurrentDocumentRB : Model -> RequestBuilder ()
 deleteCurrentDocumentRB model =
