@@ -1,5 +1,6 @@
-module Document.Stack exposing(push, top)
+module Document.Stack exposing(push, top, sorted)
 
+import List.Extra
 import Types exposing(Document, DocumentStack, defaultDocument)
 import Utility
 
@@ -12,9 +13,12 @@ push document stack =
   let
     _  = Debug.log "Pushing document" document.id
     stack2 = Utility.removeWhen (\doc -> doc.id == document.id) stack
-    stack3 = [document] ++ (List.take 9 stack2)
   in
-    List.sortWith titleCompare stack3
+    [document] ++ (List.take 9 stack2)
+
+sorted : DocumentStack -> DocumentStack
+sorted stack =
+    List.sortWith titleCompare stack
 
 titleCompare : Document -> Document -> Order
 titleCompare doc1 doc2 =
@@ -24,6 +28,6 @@ titleCompare doc1 doc2 =
     (_, False) -> GT
 
 
-top : DocumentStack -> Document
-top docstack =
-  List.head docstack |> Maybe.withDefault defaultDocument
+top : Int -> DocumentStack -> Document
+top k docstack =
+  List.Extra.getAt k docstack |> Maybe.withDefault defaultDocument

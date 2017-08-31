@@ -88,7 +88,7 @@ attach location model =
       ++ "&child="
       ++ (toString model.current_document.id)
       ++ "&current="
-      ++ (toString (Stack.top model.documentStack).id)
+      ++ (toString (Stack.top 1 model.documentStack).id)
 
 update : Model -> Document -> Cmd Msg
 update model masterDocument =

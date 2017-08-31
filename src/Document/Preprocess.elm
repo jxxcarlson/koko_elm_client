@@ -24,10 +24,11 @@ basicPreprocess source =
     |> transformXLinks
 
 
+tableOfContentsSeparator = "++ Table of Contents\n"
 
 preprocessMaster : String -> String
 preprocessMaster content =
-    (String.split "TOC:\n" content) |> List.head |> Maybe.withDefault ""
+    (String.split tableOfContentsSeparator content) |> List.head |> Maybe.withDefault ""
 
 
 replace : String -> String -> String -> String

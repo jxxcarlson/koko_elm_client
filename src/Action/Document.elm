@@ -268,7 +268,11 @@ selectDocument model document =
     let
         masterDocLoaded_ =
             if document.attributes.docType == "master" ||
-                 document.parent_id == model.master_document.id then
+                 (
+                     document.parent_id == model.master_document.id
+                     && document.parent_id /= 0
+                  )
+            then
                 True
             else
                 False

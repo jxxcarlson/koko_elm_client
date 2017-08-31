@@ -120,7 +120,7 @@ newDocumentTable model =
 
       ]
       ,[el TOCItemMaster [] (text (Utility.shortString 20 model.master_document.title))
-         ,el TOCItemChild [] (text (Utility.shortString 20 (Stack.top model.documentStack).title))
+         ,el TOCItemChild [] (text (Utility.shortString 20 (Stack.top 1 model.documentStack).title))
          ,(text (Utility.shortString 20 model.current_document.title))
       ]
     ]
