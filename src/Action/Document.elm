@@ -179,16 +179,21 @@ updateDocuments model documentsRecord =
                 Nothing ->
                     defaultDocument
 
-        newMasterDocument = if model.appState.masterDocLoaded then
-          current_document
-        else
-          defaultMasterDocument
+        masterDocLoaded = if current_document.attributes.docType == "master" then
+            True
+          else
+             model.appState.masterDocLoaded
+
+        newMasterDocument = if masterDocLoaded then
+              current_document
+            else
+              defaultMasterDocument
 
         appState =
             model.appState
 
         updatedAppState =
-            { appState | tool = TableOfContents }
+            { appState | tool = TableOfContents, masterDocLoaded =  masterDocLoaded }
     in
         ( { model
             | documents = documentsRecord.documents
