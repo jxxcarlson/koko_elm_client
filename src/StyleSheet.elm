@@ -54,7 +54,7 @@ type Styles
     | NavOption
     | Page
     | PaleBlue
-    | PaleGreen
+    | PaleBlue2
     | PaleRed
     | PaleYellow
     | Panel
@@ -79,6 +79,7 @@ type Styles
     | OKFooterNote
     | XXX
     | Zero
+    | Transparent
 
 
 {-| First, we create a stylesheet.
@@ -293,9 +294,10 @@ stylesheet =
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]
         , style Blue [ Color.background Color.blue, Color.text Color.white]
-        , style PaleGreen [ Color.background (Color.rgb 200 255 200) ]
+        , style PaleBlue2 [ Color.background (Color.rgb 200 210 255) ]
         , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
+        , style Transparent [ Color.background (Color.rgba 255 255 255 0.0) ]
         , style Gray [Color.background Color.gray]
         , style LightGray [Color.background Color.lightGray]
         ]

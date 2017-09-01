@@ -66,6 +66,7 @@ addTo : Model -> (Model, Cmd Msg)
 addTo model =
   let
     _ = Debug.log "addTo" model.master_document.id
+    _ = Debug.log "In addTo, command" model.appState.command 
     appState = model.appState
     newAppState = { appState | tool = TableOfContents }
     query = "id=" ++ (toString model.master_document.id)

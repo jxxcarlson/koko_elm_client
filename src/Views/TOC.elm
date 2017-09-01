@@ -1,6 +1,7 @@
 module Views.TOC exposing(documentListView, documentStackView, documentListView0, toggleListView)
 
 import Action.UI as UI
+import Document.Stack as Stack
 import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -19,7 +20,7 @@ documentListView model =
 
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
-    column None [height (percent 100)] [
+    column None [height (percent 100), paddingBottom 20] [
          documentListHeader model
          ,documentListView1 model
        ]
@@ -38,33 +39,46 @@ documentStackView model =
 
 documentStackView1 : Model -> Element Styles variation Msg
 documentStackView1 model =
-   column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
-    (List.map (viewTitleInStack model model.current_document) model.documentStack)
+   column PaleBlue2 [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
+    (List.map (viewTitleInStack model model.current_document) (Stack.sorted model.documentStack))
 
 documentIndicator : Document -> Model -> Element Styles variation msg
 documentIndicator document model =
-  el PaleBlue [ height (px 25)] (documentIndicator1 document model)
+  el Transparent [ height (px 25)] (documentIndicator1 document model)
+
+
 
 documentIndicator1 : Document -> Model -> Element style variation msg
 documentIndicator1 document model =
-  if (document.attributes.docType == "master") then
-    if model.appState.masterDocLoaded then
-      (html (FontAwesome.caret_down Color.red 15))
-    else
-      (html (FontAwesome.caret_right Color.red 15))
-  else if document.parent_id > 0 &&  model.appState.masterDocLoaded == False then
-       (html (FontAwesome.caret_up Color.blue 15))
+  if document.attributes.docType == "master" then
+    masterDocumentIndicator document model
   else
-    (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
+    childDocumentIndicator document model
+
+masterDocumentIndicator : Document -> Model -> Element style variation msg
+masterDocumentIndicator document model =
+  case (model.appState.masterDocLoaded, document.id == model.master_document.id) of
+    (True, True) -> (html (FontAwesome.caret_down Color.red 15))
+    (_, _) -> (html (FontAwesome.caret_right Color.red 15))
+
+
+childDocumentIndicator : Document -> Model -> Element style variation msg
+childDocumentIndicator document model =
+  case (document.parent_id == 0, model.appState.masterDocLoaded, document.parent_id == model.master_document.id) of
+    (True, _, _) -> (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
+    (False, True, True) -> (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
+    (False, False, False) -> (html (FontAwesome.caret_up (Color.blue) 15))
+    (_, _, _) -> (html (FontAwesome.caret_up (Color.green) 15))
+
+
 
 documentIndentLevel : Document -> Model -> Float
 documentIndentLevel document model =
     let
-        level =
-            if model.appState.masterDocLoaded then
-                document.attributes.level
-            else
-                1
+      level =
+        case (model.appState.masterDocLoaded, document.parent_id == model.master_document.id) of
+          (True, True) -> document.attributes.level
+          (_, _) -> 1
     in
         8.0 + 15.0 * (toFloat (level - 1))
 
