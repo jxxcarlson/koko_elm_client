@@ -28,6 +28,7 @@ import HttpBuilder as HB exposing (..)
 getDocumentsWith : SearchState -> String -> Cmd Msg
 getDocumentsWith searchState token =
     let
+      _ = Debug.log "IN getDocumentsWith, searchState is" searchState
       searchDomain =  if token == "" then
         Public
       else

@@ -46,7 +46,6 @@ withParameters query order domain page model =
 withModel : Page -> Model -> ( Model, Cmd Msg )
 withModel page model =
           let
-
               masterDocLoaded_ = if String.contains "master" model.searchState.query then
                   True
                 else
@@ -120,22 +119,31 @@ recallLastSearch model =
         message = "Set masterDocLoaded: False" }, Cmd.none )
 
 
+
+cleanQuery query =
+  String.split "&" query
+  |> List.filter (\item -> not(String.contains "random" item))
+  |> String.join "&"
+
+
 getRandomDocuments : Model -> (Model, Cmd Msg)
 getRandomDocuments model =
   let
+    _ = Debug.log "IN getRandomDocuments, searchDomain is" model.searchState.domain
     appState = model.appState
     newAppState = { appState | page = ReaderPage, activeDocumentList = SearchResultList }
     newModel = {model |appState = newAppState }
-    query = if model.appState.signedIn then
-      "random=all"
-    else
-      "random=public"
-    searchDomain = if model.appState.signedIn then
-      All
-    else
-      Public
+    initialQuery = cleanQuery model.searchState.query
+    randomQuery = case model.searchState.domain of
+      All ->   "random=all"
+      Public -> "random=public"
+      Private -> "random_user=" ++ (toString model.current_user.id)
+    query = if initialQuery == "" then
+        randomQuery
+      else
+        randomQuery ++ "&" ++ initialQuery
   in
-    withParameters query Alphabetical searchDomain ReaderPage newModel
+    withParameters query Alphabetical model.searchState.domain ReaderPage newModel
 
 {-
   UPDATERS: Thes updated the search parameters stored in model.searchState
