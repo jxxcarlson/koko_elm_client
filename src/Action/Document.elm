@@ -189,6 +189,14 @@ updateDocuments model documentsRecord =
             else
               defaultMasterDocument
 
+        docAtTopOfStack = Stack.top 0 model.documentStack
+        current_document2 = if masterDocLoaded
+                              &&  docAtTopOfStack.parent_id == newMasterDocument.id
+                           then
+                             docAtTopOfStack
+                           else
+                             current_document
+
         appState =
             model.appState
 
@@ -198,7 +206,7 @@ updateDocuments model documentsRecord =
         ( { model
             | documents = documentsRecord.documents
             , master_document = newMasterDocument
-            , current_document = current_document
+            , current_document = current_document2
             , appState = updatedAppState
             , counter = Debug.log "updateDocuments" (model.counter + 1)
           }
