@@ -182,7 +182,7 @@ updateDocuments model documentsRecord =
         masterDocLoaded = if current_document.attributes.docType == "master" then
             True
           else
-             model.appState.masterDocLoaded
+            False
 
         newMasterDocument = if masterDocLoaded then
               current_document
