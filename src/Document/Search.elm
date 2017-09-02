@@ -135,7 +135,7 @@ getRandomDocuments model =
     newModel = {model |appState = newAppState }
     initialQuery = cleanQuery model.searchState.query
     randomQuery = case model.searchState.domain of
-      All ->   "random=all"
+      All ->   "random=all&user_id=" ++ (toString model.current_user.id)
       Public -> "random=public"
       Private -> "random_user=" ++ (toString model.current_user.id)
     query = if initialQuery == "" then
