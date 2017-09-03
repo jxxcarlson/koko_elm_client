@@ -3,18 +3,19 @@ module StyleSheet exposing (..)
 import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Html
 import Style exposing (..)
 import Style.Border as Border
 import Style.Color as Color
 import Style.Font as Font
 import Style.Transition as Transition
 
+lightBlueColor : Color.Color
 lightBlueColor = Color.rgb 150 150 255
 
 {-| A synonym for creating tuples. This will be included in the standard library soon.
 1 => 2 == (1, 2)
 -}
+(=>) : a -> b -> ( a, b )
 (=>) =
     (,)
 
@@ -157,7 +158,7 @@ stylesheet =
          , style NavBarActive
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
-            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
+            , pseudo "active" [Transition.all, Color.background Color.darkBlue, Color.text Color.blue]
             ]
 
 
@@ -285,7 +286,8 @@ stylesheet =
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote [ Color.background Color.charcoal,
-             Color.text Color.white, pseudo "visited" [Color.text Color.white ] ]
+             Color.text Color.white, pseudo "visited" [Color.text Color.white ]
+              , pseudo "hover" [Color.text Color.yellow ] ]
         , style WarningFooterNote[ Color.background Color.red, Color.text Color.white ]
         , style OKFooterNote[ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]

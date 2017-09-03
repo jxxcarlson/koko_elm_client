@@ -1,6 +1,6 @@
 module Configuration exposing(..)
 -- --
--- --
+-- -- --
 -- host : String
 -- host =
 --     "http://localhost:4000"
@@ -14,7 +14,7 @@ module Configuration exposing(..)
 --
 -- tickInterval : Float
 -- tickInterval = 1000.0
---
+
 host : String
 host =
   "https://nshost.herokuapp.com"
