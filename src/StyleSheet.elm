@@ -284,7 +284,8 @@ stylesheet =
             [ Color.text (Color.rgb 255 130 130), Color.background Color.blue, Font.weight 100 ]
         , style Menu
             [ Color.background Color.charcoal ]
-        , style FooterNote [ Color.background Color.charcoal, Color.text Color.white ]
+        , style FooterNote [ Color.background Color.charcoal,
+             Color.text Color.white, pseudo "visited" [Color.text Color.white ] ]
         , style WarningFooterNote[ Color.background Color.red, Color.text Color.white ]
         , style OKFooterNote[ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
