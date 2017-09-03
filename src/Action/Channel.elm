@@ -76,6 +76,8 @@ handlePing value model =
         ( { model | appState = updatedAppState }, Cmd.none )
 
 
+joinChannel : { b | phxSocket : a }
+   -> ( { b | phxSocket : Phoenix.Socket.Socket Msg }, Cmd Msg )
 joinChannel model =
     let
         channel =
@@ -90,6 +92,7 @@ joinChannel model =
     in
         ( { model | phxSocket = initSocket }, Cmd.map PhoenixMsg phxCmd )
 
+handleMsg : Phoenix.Socket.Msg Msg -> Model -> (Model, Cmd Msg)
 handleMsg msg model =
   let
       ( phxSocket, phxCmd ) =
@@ -114,6 +117,7 @@ handleMsg msg model =
       , Cmd.map PhoenixMsg phxCmd
       )
 
+receiveRaw : JsDecode.Value -> Model -> ( Model, Cmd Msg )
 receiveRaw raw model =
   let
       messageDecoder =
