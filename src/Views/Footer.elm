@@ -39,7 +39,7 @@ footer model =
 publicLink : Model -> Element Styles variation msg
 publicLink model =
   let
-    linkInfo = ". Please follow this link http://www.knode.io/##public/" ++ (toString model.current_document.id)
+    linkInfo = ". Please follow this link http://www.knode.io/#@public/" ++ (toString model.current_document.id)
     body = "&body=You might be interesed in the article " ++ model.current_document.title ++ linkInfo
     subject = "?subject=" ++ model.current_document.title
 

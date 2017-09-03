@@ -30,6 +30,7 @@ import Request.Api exposing (loginUrl, registerUserUrl)
 import Request.Document
 import Request.Document
 import Request.Document exposing (getDocumentsWith)
+import String.Extra
 import StyleSheet exposing (..)
 import Task
 import Time exposing (Time, second)
@@ -718,7 +719,13 @@ view model =
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     let
-        maybeId = Parser.run Url.id location.href
+        _ = Debug.log "On startup, location.href" location.href
+        loc = String.Extra.replace "#@" "##" location.href
+        _ = Debug.log "On startup, loc" loc
+
+        maybeId = Parser.run Url.id loc
+
+        _ = Debug.log "On startup, maybeId" maybeId
 
         id = case maybeId of
                Result.Ok id -> id

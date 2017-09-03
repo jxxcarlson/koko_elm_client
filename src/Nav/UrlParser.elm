@@ -323,7 +323,7 @@ parseHash parser location =
  -}
 parseHash2 : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parseHash2 parser location =
-  parse parser (String.dropLeft 2 (Debug.log "location" location.hash)) (parseParams location.search)
+  Debug.log "parseHash2" (parse parser (String.dropLeft 2 (Debug.log "location" location.hash)) (parseParams location.search))
 
 -- PARSER HELPERS
 
