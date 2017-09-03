@@ -4,6 +4,7 @@ import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onInput, onClick)
+import Views.Basic as Basic
 import Views.Common as Common
 import Color
 import FontAwesome
@@ -81,25 +82,12 @@ editorPanel model =
 
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (Refresh)
-        , height (px 30)
-        , padding 2
-        , title "Refresh display & save. Also: press ESC"
-        ]
-        (html (FontAwesome.save Color.white 25))
+    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [onClick (Refresh)]
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
 toggleUpdateRateButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (ToggleUpdateRate)
-        , height (px 30)
-        , padding 2
-        , title "Toggle rate of update: very fast or very slow"
-        ]
-        (toggleUpdateRateIcon model)
+    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [onClick (ToggleUpdateRate)]
+
 
 toggleUpdateRateIndicator : Model ->  Element Styles variation Msg
 toggleUpdateRateIndicator model =
@@ -108,23 +96,15 @@ toggleUpdateRateIndicator model =
   else
     el Zero [verticalCenter, title "Green = fast update, red = slow update"] (html (FontAwesome.circle Color.green 25))
 
-toggleUpdateRateIcon : Model -> Element Styles variation Msg
 toggleUpdateRateIcon model =
   if model.appState.tickerPaused then
-    (html (FontAwesome.play Color.white 25))
+    FontAwesome.play
   else
-    (html (FontAwesome.pause Color.white 25))
+    FontAwesome.pause
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
-    el Zero
-        [ width (px 30)
-        , onClick (DeleteCurrentDocument)
-        , height (px 30)
-        , padding 2
-        , title "Delete document"
-        ]
-        (html (FontAwesome.trash Color.white 25))
+    Basic.faIcon "Delete document" FontAwesome.trash [onClick (DeleteCurrentDocument)]
 
 
 toolSelectorPanel : Model -> Element Styles variation Msg
