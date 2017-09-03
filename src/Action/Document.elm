@@ -298,7 +298,10 @@ selectDocument model document =
             page = displayPage model,
             textBufferDirty = False
          }
-        saveCmd = if document.author_id == model.current_user.id then
+        saveCmd = if
+              document.author_id == model.current_user.id
+              && document.attributes.docType /= "master" -- do not let current text overwrite master document state
+           then
              saveDocumentCmd "viewed_at=now" document model
            else
              Cmd.none
