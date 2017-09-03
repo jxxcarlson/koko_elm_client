@@ -39,12 +39,22 @@ footer model =
 publicLink : Model -> Element Styles variation msg
 publicLink model =
   let
+    linkInfo = ". Please follow this link http://www.knode.io/##public/" ++ (toString model.current_document.id)
+    body = "&body=You might be interesed in the article " ++ model.current_document.title ++ linkInfo
+    subject = "?subject=" ++ model.current_document.title
+
+    linkUrl = "mailto:hey@mail" ++ subject ++ body
     linkText = if model.current_document.attributes.public == True then
-         "Share as http://www.knode.io/##public/" ++ (toString model.current_document.id)
+         -- message
+         link linkUrl <| el FooterNote [] <| text ("Share " ++ model.current_document.title)
+         -- "Share as http://www.knode.io/##public/" ++ (toString model.current_document.id)
        else
-          ""
+          link "mailto:hey@mail.me" <| el FooterNote [] <| text ""
   in
-    el FooterNote [verticalCenter] (text linkText )
+    el FooterNote [verticalCenter] (linkText )
+
+
+--  [ href <| "mailto:%22" ++ user.first ++ " " ++ user.last ++ "%22%3c" ++ email ++ "%3e" ] [ text email ]
 
 messageBox : Model -> Element Styles variation msg
 messageBox model =
