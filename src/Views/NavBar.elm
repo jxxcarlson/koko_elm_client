@@ -17,7 +17,7 @@ import Views.Component as Component
 navigation : Model -> Element Styles variation Msg
 navigation model =
     row NavBar
-        [ justify, paddingXY 30 4 ]
+        [ justify, paddingXY 10 4 ]
         [ searchForm model
           --, menu model
         , pageSelector model
@@ -32,28 +32,27 @@ searchOptionsMenu : Model -> Element Styles variation Msg
 searchOptionsMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
   select "searchMode" LightGray [ height (px 25), EA.verticalCenter, onInput SelectSearchMode]
-      [ option "public" (model.searchState.domain == Public) (text "Public docs")
+      [ option "public" (model.searchState.domain == Public) (text "Public")
       , option "private" (model.searchState.domain == Private) (text "My docs")
-      , option "all" (model.searchState.domain == All) (text "All docs")
+      , option "all" (model.searchState.domain == All) (text "All")
       ]
 
 searchForm : Model -> Element Styles variation Msg
 searchForm model =
     row NavBar
-        [ spacing 10, verticalCenter ]
-        [ row Zero [ spacing -30] [
+        [ spacing 5, verticalCenter ]
+        [ row Zero [] [
           inputText SearchField
             [ EE.onInput UpdateSearchQueryInputBuffer
             , Utility.onKeyUp (DoSearch model.searchState.domain)
-            , placeholder "Search: title, k:keyword, a:author, ..."
-            , height (px 29), width (px 300), minWidth (px 100),
-            paddingXY -20 0
+            , placeholder "Search: title, k:keyword .."
+            , height (px 29), minWidth (px 180)
             ]
             (model.searchQueryInputBuffer)
-         , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
+         , circle 10 ClearButton [moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
         ]
         , row Zero
-            [ center, spacing 15, paddingXY 10 0]
+            [spacing 10, moveLeft 18]
             [
             -- searchButton model
              randomDocumentIcon model
@@ -93,11 +92,12 @@ loginButton style model =
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
-        [ spacing 8 ]
+        [ spacing 12 ]
         [ (userHomePagesIcon model)
         , (userPreferencesIcon model)
         , Utility.visibleIf model.appState.signedIn (homepageIcon model)
-        , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
+        -- , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
+        , (startPageIcon model)
         , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
         , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), width (px 60), center]
         , Utility.visibleIf model.appState.signedIn
@@ -122,6 +122,8 @@ randomDocumentIcon : Model -> Element Styles variation Msg
 randomDocumentIcon model =
   Basic.faIcon "Get random documents" FontAwesome.random [onClick RandomDocuments]
 
+
+
 userHomePagesIcon : Model -> Element Styles variation Msg
 userHomePagesIcon model =
   Basic.faIcon "User Pages" FontAwesome.group  [onClick Types.GotoUserHomePages]
@@ -138,4 +140,4 @@ startPageIcon model =
 
 newDocumentButton : Model -> Element Styles variation Msg
 newDocumentButton model =
-  Basic.faIcon "New document" FontAwesome.plus  [onClick NewDocument]
+  Basic.faIcon "New document" FontAwesome.plus [onClick NewDocument]

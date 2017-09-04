@@ -20,7 +20,7 @@ label text_ style attrs  =
 
 faIcon title_ icon attrs =
   el NavBarActive
-    ([height (px 25), width (px 25), alignBottom, title title_, verticalCenter ] ++ attrs)
+    ([height (px 25), width (px 20), alignBottom, title title_, verticalCenter ] ++ attrs)
     (iconWhite20 icon)
 
 iconMaker: a -> b -> (a -> b -> Html.Html msg) -> Element style variation msg
