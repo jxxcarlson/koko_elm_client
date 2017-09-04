@@ -21,6 +21,7 @@ navigation model =
         [ searchForm model
           --, menu model
         , pageSelector model
+        , modeSelector model
         , loginButton Button model
         ]
 
@@ -40,7 +41,7 @@ searchOptionsMenu model =
 searchForm : Model -> Element Styles variation Msg
 searchForm model =
     row NavBar
-        [ spacing 5, verticalCenter ]
+        [ spacing 8, verticalCenter ]
         [ row Zero [] [
           inputText SearchField
             [ EE.onInput UpdateSearchQueryInputBuffer
@@ -91,21 +92,29 @@ loginButton style model =
 
 pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
-    row NavBar
-        [ spacing 12 ]
-        [ (userHomePagesIcon model)
-        , (userPreferencesIcon model)
-        , Utility.visibleIf model.appState.signedIn (homepageIcon model)
-        -- , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
-        , (startPageIcon model)
-        , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
-        , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), width (px 60), center]
-        , Utility.visibleIf model.appState.signedIn
-           (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), width (px 50), center])
-        -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
-        , Utility.visibleIf (model.current_user.username == "jxxcarlson")
-           (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), width (px 55), center])
+    row NavBar [spacing 12] [
+          (userHomePagesIcon model)
+          , (userPreferencesIcon model)
+          , Utility.visibleIf model.appState.signedIn (homepageIcon model)
+          -- , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
+          , (startPageIcon model)
         ]
+
+
+
+modeSelector : Model -> Element Styles variation Msg
+modeSelector model =
+    row NavBar
+       [spacing 8] [
+             Utility.visibleIf model.appState.signedIn (newDocumentButton model)
+            , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), width (px 60), center]
+            , Utility.visibleIf model.appState.signedIn
+               (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), width (px 50), center])
+            -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
+            , Utility.visibleIf (model.current_user.username == "jxxcarlson")
+               (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), width (px 55), center])
+          ]
+
 
 authenticationButtonText : Model -> String
 authenticationButtonText model =
