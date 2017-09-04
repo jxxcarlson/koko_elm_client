@@ -114,6 +114,7 @@ toolSelectorPanel model =
         [ Common.printButton model.current_document
           , Common.selectTableOfContents model
           , Common.toggleListView model
+          , Common.searchOrderMenu model
           , Common.recallLastSearchButton model
           , selectEditTools model
         ]

@@ -35,7 +35,7 @@ select document model =
 selectAux : Int -> Document -> Model -> ( Model, Cmd Msg )
 selectAux document_id document model =
     let
-
+        _ = Debug.log  "Enter Document.MasterDocument.selectAux for id = " document_id
         appState = model.appState
 
         newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList }
@@ -66,7 +66,7 @@ addTo : Model -> (Model, Cmd Msg)
 addTo model =
   let
     _ = Debug.log "addTo" model.master_document.id
-    _ = Debug.log "In addTo, command" model.appState.command 
+    _ = Debug.log "In addTo, command" model.appState.command
     appState = model.appState
     newAppState = { appState | tool = TableOfContents }
     query = "id=" ++ (toString model.master_document.id)

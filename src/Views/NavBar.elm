@@ -18,8 +18,7 @@ navigation : Model -> Element Styles variation Msg
 navigation model =
     row NavBar
         [ justify, paddingXY 30 4 ]
-        [ el Logo [ alignBottom, padding 8 ] (text "Noteshare")
-        , searchForm model
+        [ searchForm model
           --, menu model
         , pageSelector model
         , loginButton Button model
@@ -32,20 +31,10 @@ onChange message =
 searchOptionsMenu : Model -> Element Styles variation Msg
 searchOptionsMenu model =
   -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-  select "searchMode" TOC [ width (px 110), EA.verticalCenter, onInput SelectSearchMode]
+  select "searchMode" LightGray [ height (px 25), EA.verticalCenter, onInput SelectSearchMode]
       [ option "public" (model.searchState.domain == Public) (text "Public docs")
       , option "private" (model.searchState.domain == Private) (text "My docs")
       , option "all" (model.searchState.domain == All) (text "All docs")
-      ]
-
-searchOrderMenu : Model -> Element Styles variation Msg
-searchOrderMenu model =
-  -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-  select "searchOrder" TOC [ width (px 100), EA.verticalCenter, onInput SelectSearchOrder]
-      [ option "viewed" True (text "Viewed")
-      , option "updated" False (text "Updated")
-      , option "created" False (text "Created")
-      , option "alpha" False (text "Alpha")
       ]
 
 searchForm : Model -> Element Styles variation Msg
@@ -57,7 +46,7 @@ searchForm model =
             [ EE.onInput UpdateSearchQueryInputBuffer
             , Utility.onKeyUp (DoSearch model.searchState.domain)
             , placeholder "Search: title, k:keyword, a:author, ..."
-            , height (px 29), width (px 300),
+            , height (px 29), width (px 300), minWidth (px 100),
             paddingXY -20 0
             ]
             (model.searchQueryInputBuffer)
@@ -65,10 +54,11 @@ searchForm model =
         ]
         , row Zero
             [ center, spacing 15, paddingXY 10 0]
-            [ searchButton model
-            , randomDocumentIcon model
+            [
+            -- searchButton model
+             randomDocumentIcon model
             , Utility.visibleIf model.appState.signedIn (searchOptionsMenu model)
-            , Utility.visibleIf model.appState.signedIn (searchOrderMenu model)
+            -- , Utility.visibleIf model.appState.signedIn (searchOrderMenu model)
             ]
         ]
 
@@ -96,7 +86,7 @@ loginButton style model =
    Basic.button
      (authenticationButtonText model)
      Button [
-     EE.onClick AuthenticationAction, EA.width (px 85), EA.height (px 30)]
+     EE.onClick AuthenticationAction, EA.width (px 70), EA.height (px 30)]
 
 
 
@@ -109,10 +99,12 @@ pageSelector model =
         , Utility.visibleIf model.appState.signedIn (homepageIcon model)
         , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
         , Utility.visibleIf model.appState.signedIn (newDocumentButton model)
-        , el (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), alignBottom, height (px 30), padding 8 ] (text "Reader")
-        , Utility.visibleIf model.appState.signedIn (el (Component.activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), alignBottom, height (px 30), padding 8 ] (text "Editor"))
+        , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), width (px 60), center]
+        , Utility.visibleIf model.appState.signedIn
+           (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), width (px 50), center])
         -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
-        , Utility.visibleIf (model.current_user.username == "jxxcarlson") (el (Component.activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), alignBottom, height (px 30), padding 8 ] (text "Admin"))
+        , Utility.visibleIf (model.current_user.username == "jxxcarlson")
+           (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), width (px 55), center])
         ]
 
 authenticationButtonText : Model -> String

@@ -77,7 +77,6 @@ login model =
             { user | password = "" }
     in
         { model |
-           message = "LOGGING IN",
            appState = newAppState,
            searchState = newSearchState,
            current_user = updatedUser }

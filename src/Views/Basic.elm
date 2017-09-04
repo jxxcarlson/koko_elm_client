@@ -15,7 +15,7 @@ button title style attrs  =
 
 
 label text_ style attrs  =
-    (el style ([ verticalCenter, height (px 25), paddingLeft 10] ++ attrs) (el style [verticalCenter] (text text_)))
+    (el style ([ verticalCenter, height (px 25)] ++ attrs) (el style [verticalCenter] (text text_)))
 
 
 faIcon title_ icon attrs =

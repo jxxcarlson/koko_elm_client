@@ -9,6 +9,7 @@ module Views.Common
         , homepage
         , getDocument
         , renderedContent
+        , searchOrderMenu
         , specialContent
         , toggleListView
         )
@@ -262,6 +263,15 @@ printTypeString document =
     "markdown" -> "text=markdown"
     _ -> "text=plain"
 
+searchOrderMenu : Model -> Element Styles variation Msg
+searchOrderMenu model =
+  -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
+  select "searchOrder" LightGray [ height (px 25),  verticalCenter, onInput SelectSearchOrder]
+      [ option "viewed" True (text "Viewed")
+      , option "updated" False (text "Updated")
+      , option "created" False (text "Created")
+      , option "alpha" False (text "Alpha")
+      ]
 
 recallLastSearchButton : Model -> Element Styles variation Msg
 recallLastSearchButton model =

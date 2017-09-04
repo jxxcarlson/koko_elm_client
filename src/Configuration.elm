@@ -13,7 +13,7 @@ websocketHost =
     "ws://localhost:4000/socket/websocket"
 
 tickInterval : Float
-tickInterval = 1.0
+tickInterval = 1000.0
 
 -- host : String
 -- host =

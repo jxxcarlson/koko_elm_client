@@ -85,7 +85,7 @@ signoutForm1 model =
     column PaleBlue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ (text ("You are signed in as " ++ model.current_user.username))
-        , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
+        , Basic.button "Sign out" Button [onClick Signout, width (px 80)]
         ]
 
 signinInfoPanel : Model -> Element Styles variation Msg
