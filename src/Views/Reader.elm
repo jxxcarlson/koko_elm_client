@@ -1,18 +1,27 @@
 module Views.Reader exposing (..)
 
-import StyleSheet exposing (..)
+import Configuration
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
+import FontAwesome
 import Json.Encode
+import StyleSheet exposing (..)
+import Types exposing (..)
 import Views.Basic as Basic
 import Views.Common as Common
-import Types exposing (..)
-import FontAwesome
 
 
 reader : Model -> List (Element Styles variation Msg)
 reader model =
+    if model.window.width < Configuration.tabletWidth
+      then
+        smallReader model
+      else
+        bigReader model
+
+bigReader : Model -> List (Element Styles variation Msg)
+bigReader model =
     [ namedGrid Container
         { columns = [ fill 2, fill 4, fill 3 ]
         , rows =
@@ -30,6 +39,25 @@ reader model =
         , named "sidebarHeader" (rhSidebarHeader model)
         , named "sidebar" (specialContent model)
 
+        ]
+    ]
+
+smallReader : Model -> List (Element Styles variation Msg)
+smallReader model =
+    [ namedGrid Container
+        { columns = [ fill 2, fill 4 ]
+        , rows =
+            [ px 1 => [ spanAll "separator" ]
+            , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader" ]
+            , fill 1 => [ span 1 "TOC", span 1 "content" ]
+            ]
+        }
+        []
+        [ named "separator" (hairline Hairline)
+        , named "TOCHeader" (toolSelectorPanel model)
+        , named "contentHeader" (contentHeader model)
+        , named "content" (Common.renderedContent model)
+        , named "TOC" (Common.tool model)
         ]
     ]
 
