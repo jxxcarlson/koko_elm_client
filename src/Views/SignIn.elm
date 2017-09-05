@@ -27,7 +27,7 @@ registerUserForm model =
 registerUserForm1 : Model -> Element Styles variation Msg
 registerUserForm1 model =
     column Blue
-        [ padding 20, spacing 10.0, width (px 360), height (px 600) ]
+        [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput Name, placeholder "Name" ] (model.current_user.name)
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
@@ -85,7 +85,8 @@ signoutForm1 model =
     column PaleBlue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ (text ("You are signed in as " ++ model.current_user.username))
-        , Basic.button "Sign out" Button [onClick Signout, width (px 80)]
+        , Basic.button "Sign out" Button [onClick Register, width (px 80)]
+        , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
 signinInfoPanel : Model -> Element Styles variation Msg

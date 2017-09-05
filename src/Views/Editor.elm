@@ -110,7 +110,7 @@ deleteButton model =
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 10 6, spacing 0, justify ]
+        [ paddingXY 10 6, spacing 12, justify ]
         [ Common.printButton model.current_document
           , Common.selectTableOfContents model
           , Common.toggleListView model
