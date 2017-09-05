@@ -31,6 +31,7 @@ type Styles
     | Box
     | Button
     | ButtonReversed
+    | Charcoal
     | ClearButton
     | Container
     | Field
@@ -302,6 +303,7 @@ stylesheet =
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
         , style Transparent [ Color.background (Color.rgba 255 255 255 0.0) ]
         , style Gray [Color.background Color.gray]
+        , style Charcoal [Color.background Color.charcoal, Color.text Color.white]
         , style LightGray [Color.background Color.lightGray]
         ]
 

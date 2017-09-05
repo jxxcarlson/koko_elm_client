@@ -42,17 +42,15 @@ phoneNavigation model =
           , goMenu model
         ]
 
-goMenu model =
-  select "goSomewhere" LightGray [ height (px 25), EA.verticalCenter, onInput GoSomewhere]
-      [ option "home" False (text "Found")
-      -- , option "start" False (text "Start")
-      , option "reader" False (text "Reader")
-      , option "signout" False (text "Sign out")
-      , option "none" False (text "---")
-      , option "public" False (text "Search public")
-      , option "private" False (text "Search private")
 
-      ]
+goMenu model =
+  row NavBar [spacing 8] [
+  --   (startPageIcon model)
+    Basic.button "List" Charcoal [width (px 40), onClick Types.InitHomePage]
+   , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 60), center]
+   , Basic.button "s/out" Button [onClick Signout, width (px 45)]
+  ]
+
 
 onChange : msg -> Attribute variation msg
 onChange message =
