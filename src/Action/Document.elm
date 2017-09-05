@@ -1,15 +1,16 @@
 module Action.Document exposing (..)
 
-import Types exposing (..)
-import Utility exposing (replaceIf)
-import Request.Document
-import External exposing (render)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
-import Views.External exposing (windowData)
-import External exposing (toJs)
-import Utility
+import Configuration
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Stack as Stack
+import External exposing (render)
+import External exposing (toJs)
+import Request.Document
+import Types exposing (..)
+import Utility
+import Utility exposing (replaceIf)
+import Views.External exposing (windowData)
 
 
 {-|

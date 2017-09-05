@@ -3,11 +3,14 @@ module Views.Footer exposing (footer)
 import Configuration
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
+import FontAwesome
 import List.Extra
 import Request.Api as Api
 import StyleSheet exposing (..)
 import StyleSheet exposing (..)
 import Types exposing (..)
+import Views.Basic as Basic
+
 
 warningStyle : String -> Styles
 warningStyle warning =
@@ -52,6 +55,7 @@ phoneFooter model =
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
           [
              (publicLink model)
+             , (smallOnlineStatusIndicator model)
          ]
     )
 
@@ -96,6 +100,11 @@ hostString =
 onlineStatusIndicator : Model -> Element Styles variation msg
 onlineStatusIndicator model =
   el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text ((onlineStatus model) ++ " at " ++ hostString ))
+
+-- smallOnlineStatusIndicator : Model -> Element Styles variation msg
+smallOnlineStatusIndicator model =
+  el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text (onlineStatus model))
+
 
 onlineStatus : Model -> String
 onlineStatus model =
