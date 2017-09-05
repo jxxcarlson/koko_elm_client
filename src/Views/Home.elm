@@ -122,7 +122,7 @@ phoneHome model =
         [ named "Middle"
             (row
                 Blue
-                [ height (px 560)]
+                [ height (px 700), width (px 440)]
                 [ (Signin.signinForm model)
                 --, (Signin.signoutForm model)
                 , (Signin.registerUserForm model)

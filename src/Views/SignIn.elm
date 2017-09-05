@@ -27,7 +27,7 @@ registerUserForm model =
 registerUserForm1 : Model -> Element Styles variation Msg
 registerUserForm1 model =
     column Blue
-        [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
+        [ padding 20, spacing 10.0, width (px 360), height (px 600) ]
         [ inputText Field [ EE.onInput Name, placeholder "Name" ] (model.current_user.name)
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)

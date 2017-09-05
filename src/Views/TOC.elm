@@ -56,9 +56,9 @@ documentStackView1 model =
    column PaleBlue2 [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitleInStack model model.current_document) (Stack.sorted model.documentStack))
 
-documentIndicator : Document -> Model -> Element Styles variation msg
+documentIndicator : Document -> Model -> Element Styles variation Msg
 documentIndicator document model =
-  el Transparent [ height (px 25)] (documentIndicator1 document model)
+  el Transparent [ height (px 25), onClick (SelectMaster document)] (documentIndicator1 document model)
 
 
 
@@ -134,7 +134,6 @@ titleDisplay : Model -> Document -> Document -> Element Styles variation Msg
 titleDisplay model selectedDocument document =
   el (tocStyle selectedDocument document)
       [ onClick (SelectDocument document)
-      , onDoubleClick (SelectMaster document)
       , paddingXY 8 0
       , height (px 20)
       ]
