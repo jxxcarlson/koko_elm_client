@@ -210,6 +210,21 @@ update msg model =
         UpdateTextInputBuffer str ->
             ({model | textInputBuffer = str} , Cmd.none)
 
+        GoSomewhere location ->
+          let
+            page = case location of
+              "home" -> HomePage
+              "reader" -> ReaderPage
+              _ -> model.appState.page
+            appState = model.appState
+            newAppState = { appState | page = page }
+            model1 = { model | appState = newAppState, message = location}
+
+            (newModel, cmd) = case location of
+              "signout" -> User.Login.signout "You are now signed out." model1
+              _ -> (model1, Cmd.none)
+          in
+            (newModel, cmd)
 
         SelectSearchMode searchMode ->
           let

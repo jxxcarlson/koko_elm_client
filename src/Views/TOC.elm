@@ -1,4 +1,5 @@
-module Views.TOC exposing(documentListView, documentStackView, documentListView0, toggleListView)
+module Views.TOC exposing(documentListView, documentListViewForPhone,
+   documentStackView, documentListView0, toggleListView)
 
 import Action.UI as UI
 import Document.Stack as Stack
@@ -18,6 +19,13 @@ documentListView model =
     SearchResultList -> documentListView0 model
     DocumentStackList -> documentStackView model
 
+documentListViewForPhone : Model -> Element Styles variation Msg
+documentListViewForPhone model =
+  column None [height (percent 100), paddingBottom 20] [
+       documentListHeader model
+       ,documentListViewForPhone1 model
+     ]
+
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
     column None [height (percent 100), paddingBottom 20] [
@@ -29,6 +37,12 @@ documentListView1 : Model -> Element Styles variation Msg
 documentListView1 model =
    column PaleBlue [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
     (List.map (viewTitle model model.current_document) model.documents)
+
+documentListViewForPhone1 : Model -> Element Styles variation Msg
+documentListViewForPhone1 model =
+   column PaleBlue [ yScrollbar, width (px (toFloat model.window.width)), spacing 0, height (px (toFloat (model.window.height - 90))) ]
+    (List.map (viewTitle model model.current_document) model.documents)
+
 
 documentStackView : Model -> Element Styles variation Msg
 documentStackView model =

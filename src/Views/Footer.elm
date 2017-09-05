@@ -1,12 +1,13 @@
 module Views.Footer exposing (footer)
 
-import StyleSheet exposing (..)
+import Configuration
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import Types exposing (..)
-import StyleSheet exposing (..)
-import Request.Api as Api
 import List.Extra
+import Request.Api as Api
+import StyleSheet exposing (..)
+import StyleSheet exposing (..)
+import Types exposing (..)
 
 warningStyle : String -> Styles
 warningStyle warning =
@@ -24,8 +25,17 @@ messageWarningStyle message =
   else
     FooterNote
 
+
 footer : Model -> Element Styles variation msg
 footer model =
+  if model.window.width <= Configuration.phoneWidth
+    then
+      phoneFooter model
+    else
+      standardFooter model
+
+standardFooter : Model -> Element Styles variation msg
+standardFooter model =
     (row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
           [
@@ -33,6 +43,15 @@ footer model =
             , (publicLink model)
             , (warningMessage model)
             , (onlineStatusIndicator model)
+         ]
+    )
+
+phoneFooter : Model -> Element Styles variation msg
+phoneFooter model =
+    (row Footer
+        [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
+          [
+             (publicLink model)
          ]
     )
 

@@ -14,14 +14,16 @@ import Views.Common as Common
 
 reader : Model -> List (Element Styles variation Msg)
 reader model =
-    if model.window.width < Configuration.tabletWidth
+    if model.window.width <= Configuration.phoneWidth
       then
-        smallReader model
+        phoneReader model
+      else if model.window.width <= Configuration.tabletWidth then
+        tabletReader model
       else
-        bigReader model
+        standardReader model
 
-bigReader : Model -> List (Element Styles variation Msg)
-bigReader model =
+standardReader : Model -> List (Element Styles variation Msg)
+standardReader model =
     [ namedGrid Container
         { columns = [ fill 2, fill 4, fill 3 ]
         , rows =
@@ -42,10 +44,10 @@ bigReader model =
         ]
     ]
 
-smallReader : Model -> List (Element Styles variation Msg)
-smallReader model =
+tabletReader : Model -> List (Element Styles variation Msg)
+tabletReader model =
     [ namedGrid Container
-        { columns = [ fill 2, fill 4 ]
+        { columns = [ fill 2, fill 5 ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader" ]
@@ -58,6 +60,23 @@ smallReader model =
         , named "contentHeader" (contentHeader model)
         , named "content" (Common.renderedContent model)
         , named "TOC" (Common.tool model)
+        ]
+    ]
+
+phoneReader : Model -> List (Element Styles variation Msg)
+phoneReader model =
+    [ namedGrid Container
+        { columns = [ fill 1]
+        , rows =
+            [ px 1 => [ spanAll "separator" ]
+            , px 40 => [  span 1 "contentHeader" ]
+            , fill 1 => [ span 1 "content" ]
+            ]
+        }
+        []
+        [ named "separator" (hairline Hairline)
+        , named "contentHeader" (contentHeader model)
+        , named "content" (Common.renderedContentForPhone model)
         ]
     ]
 

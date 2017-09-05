@@ -9,6 +9,7 @@ module Views.Common
         , homepage
         , getDocument
         , renderedContent
+        , renderedContentForPhone
         , searchOrderMenu
         , specialContent
         , toggleListView
@@ -37,6 +38,15 @@ renderedContent model =
   in
     (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
+
+renderedContentForPhone : Model -> Element Styles variation msg
+renderedContentForPhone model =
+  let
+    h = (toFloat model.window.height) - 100
+  in
+    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
+       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
