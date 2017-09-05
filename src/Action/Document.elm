@@ -190,6 +190,11 @@ updateDocuments model documentsRecord =
             else
               defaultMasterDocument
 
+        page = if model.window.width <= Configuration.phoneWidth then
+            HomePage
+          else
+            model.appState.page
+
         docAtTopOfStack = Stack.top 0 model.documentStack
         current_document2 = if masterDocLoaded
                               &&  docAtTopOfStack.parent_id == newMasterDocument.id
@@ -202,7 +207,7 @@ updateDocuments model documentsRecord =
             model.appState
 
         updatedAppState =
-            { appState | tool = TableOfContents, masterDocLoaded =  masterDocLoaded }
+            { appState | page = page, tool = TableOfContents, masterDocLoaded =  masterDocLoaded }
     in
         ( { model
             | documents = documentsRecord.documents

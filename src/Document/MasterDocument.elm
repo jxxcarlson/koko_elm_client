@@ -51,7 +51,7 @@ selectAux document_id document model =
         (model1, cmd1) = Search.onEnter model.searchState.domain 13 updatedModel
         (model2, cmd2) = Action.Document.selectDocument model1 document
     in
-        (model2, Cmd.batch[cmd1, cmd2])
+        (model1, Cmd.batch[cmd1, cmd2])
 
 
 setParentId : String -> Model -> (Model, Cmd Msg)

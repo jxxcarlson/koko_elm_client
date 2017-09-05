@@ -111,6 +111,36 @@ tabletHome model =
 
 phoneHome : Model -> List (Element Styles variation Msg)
 phoneHome model =
+  if not model.appState.authorizing then
+    phoneList model
+  else
+    phoneSignInOut model
+
+phoneList : Model -> List (Element Styles variation Msg)
+phoneList model =
+    [ namedGrid Container
+        { columns = [ fill 1, fill 2 ]
+        , rows =
+            [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
+              fill 2 => [ span 1 "Middle"]
+            ]
+        }
+        []
+        [ named "Middle"
+            (row
+                Blue
+                [ height (px 700), width (px 440)]
+                [
+                 (TOC.documentListViewForPhone model)
+                ]
+            )
+
+        ]
+    ]
+
+
+phoneSignInOut : Model -> List (Element Styles variation Msg)
+phoneSignInOut model =
     [ namedGrid Container
         { columns = [ fill 1, fill 2 ]
         , rows =
@@ -124,16 +154,14 @@ phoneHome model =
                 Blue
                 [ height (px 700), width (px 440)]
                 [ (Signin.signinForm model)
-                --, (Signin.signoutForm model)
+                , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Utility.visibleIf model.appState.signedIn (TOC.documentListViewForPhone model))
                 ]
             )
 
         ]
     ]
-
 
 specialTitle : Model ->  Element Styles variation msg
 specialTitle model =

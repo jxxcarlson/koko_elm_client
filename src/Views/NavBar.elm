@@ -1,5 +1,6 @@
 module Views.NavBar exposing(navigation, loginButton)
 
+import Action.UI as UI
 import Color
 import Configuration
 import Element as EL exposing (..)
@@ -37,18 +38,18 @@ standardNavigation model =
 phoneNavigation : Model -> Element Styles variation Msg
 phoneNavigation model =
     row NavBar
-        [ justify, paddingXY 10 4 ]
+        [ paddingXY 8 4, spacing 0 ]
         [ basicSearchForm model
           , goMenu model
         ]
 
 
 goMenu model =
-  row NavBar [spacing 8] [
+  row NavBar [spacing 6, paddingRight 8] [
   --   (startPageIcon model)
     Basic.button "List" Charcoal [width (px 40), onClick Types.InitHomePage]
-   , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 60), center]
-   , Basic.button "s/out" Button [onClick Signout, width (px 45)]
+   , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 55), center]
+   , Basic.button "sgn:i/o" Button [onClick ToggleSignInOut, width (px 55)]
   ]
 
 

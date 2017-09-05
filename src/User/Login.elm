@@ -183,3 +183,11 @@ shortUsername model =
         |> Maybe.withDefault "---"
    in
     shortName
+
+toggleSignInOut model  =
+  let
+    appState = model.appState
+    authorizing = not appState.authorizing
+    newAppState = { appState | authorizing = authorizing }
+  in
+    ({ model | appState = newAppState }, Cmd.none)

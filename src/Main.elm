@@ -195,6 +195,9 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
+        ToggleSignInOut ->
+          User.Login.toggleSignInOut model    
+
         ToggleUpdateRate ->
            (Action.Document.toggleUpdateRate model , Cmd.none)
 

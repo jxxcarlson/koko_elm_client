@@ -2,19 +2,25 @@ module Action.UI exposing (..)
 
 -- import Types exposing (Model, Msg, Page, AppState, Tool)
 
-import Types exposing (..)
-import External
-import Views.External
 import Array
+import Configuration
+import External
+import Types exposing (..)
+import Views.External
+
 
 
 
 displayPage : Model -> Page
 displayPage model =
-    if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage then
-        model.appState.page
-    else
-        Types.ReaderPage
+    if model.window.width <= Configuration.phoneWidth
+      then
+        -- if model.current_document.attributes.docType == ""
+        Debug.log "(1) In displayPage, page" Types.ReaderPage
+      else if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage  then
+        Debug.log "(2) In displayPage, page" model.appState.page
+      else
+        Debug.log "(3) In displayPage, page" Types.ReaderPage
 
 toggleMenu : String -> Model -> (Model, Cmd Msg)
 toggleMenu menu model =

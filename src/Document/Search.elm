@@ -76,12 +76,20 @@ withModel page model =
 search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
 search searchDomain query page model =
   let
-    _ = Debug.log "Firing Action.Document.search" 1
+    _ = Debug.log "Document.search, query" query
+    query2 = if query == "" then
+      case searchDomain of
+        Public -> "random=public"
+        Private -> "random_user=" ++ (toString model.current_user.id)
+        All -> "random=all"
+      else
+        query
+    _ = Debug.log "Document.search, query2" query2
     searchState = model.searchState
-    newSearchState = { searchState | domain = searchDomain, query = query }
+    newSearchState = { searchState | domain = searchDomain, query = query2 }
     newModel = { model | searchState = newSearchState }
   in
-    withModel page model
+    withModel page newModel
 
 withCommand : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
 withCommand query order domain page model =

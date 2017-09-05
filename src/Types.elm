@@ -298,6 +298,7 @@ type Msg
     | ToggleMenu String
     | TogglePublic
     | ToggleRegister
+    | ToggleSignInOut
     | ToggleUpdateRate
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
