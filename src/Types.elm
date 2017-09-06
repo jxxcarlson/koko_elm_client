@@ -292,13 +292,13 @@ type Msg
     | SetTextType String
     | SetupPages
     | Signout
+    | SignOutOrIn
     | Tick Time
     | Title String
     | ToggleListView
     | ToggleMenu String
     | TogglePublic
     | ToggleRegister
-    | ToggleSignInOut
     | ToggleUpdateRate
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String

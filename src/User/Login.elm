@@ -184,10 +184,15 @@ shortUsername model =
    in
     shortName
 
-toggleSignInOut model  =
+signOutOrIn model  =
+  if model.appState.signedIn then
+      signout "You are signed out" model
+   else
+     doSignIn model
+
+doSignIn model =
   let
     appState = model.appState
-    authorizing = not appState.authorizing
-    newAppState = { appState | authorizing = authorizing }
+    newAppState = { appState | authorizing = True, page = HomePage }
   in
     ({ model | appState = newAppState }, Cmd.none)

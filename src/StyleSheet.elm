@@ -303,7 +303,8 @@ stylesheet =
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
         , style Transparent [ Color.background (Color.rgba 255 255 255 0.0) ]
         , style Gray [Color.background Color.gray]
-        , style Charcoal [Color.background Color.charcoal, Color.text Color.white]
+        , style Charcoal [Color.background Color.charcoal, Color.text Color.white
+           , pseudo "active" [Transition.all, Color.background Color.lightCharcoal , Color.text Color.blue]]
         , style LightGray [Color.background Color.lightGray]
         ]
 

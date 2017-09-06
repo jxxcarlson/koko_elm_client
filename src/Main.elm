@@ -195,8 +195,8 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
-        ToggleSignInOut ->
-          User.Login.toggleSignInOut model    
+        SignOutOrIn ->
+          User.Login.signOutOrIn model
 
         ToggleUpdateRate ->
            (Action.Document.toggleUpdateRate model , Cmd.none)
@@ -286,7 +286,7 @@ update msg model =
         InitHomePage ->
           let
             appState = model.appState
-            newAppState = { appState | page = HomePage, masterDocLoaded = False }
+            newAppState = { appState | page = HomePage, masterDocLoaded = False, authorizing = False}
           in
             ( { model | appState = newAppState},
                 Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"

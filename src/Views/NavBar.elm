@@ -45,13 +45,19 @@ phoneNavigation model =
 
 
 goMenu model =
-  row NavBar [spacing 6, paddingRight 8] [
+  row NavBar [spacing 6, paddingRight 8, moveLeft 10] [
   --   (startPageIcon model)
     Basic.button "List" Charcoal [width (px 40), onClick Types.InitHomePage]
    , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 55), center]
-   , Basic.button "sgn:i/o" Button [onClick ToggleSignInOut, width (px 55)]
+   , Basic.button (signInOutText model) Button [onClick SignOutOrIn, width (px 60)]
   ]
 
+signInOutText : Model -> String
+signInOutText model =
+  if model.appState.signedIn then
+    "Log out"
+  else
+    "Log in"
 
 onChange : msg -> Attribute variation msg
 onChange message =
