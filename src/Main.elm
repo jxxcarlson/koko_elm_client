@@ -96,9 +96,18 @@ updateWindow : Model -> Int -> Int -> Model
 updateWindow model w h =
     let
         new_window =
-            KWindow w h
+            KWindow w h  
+        device = if w <= Configuration.phoneWidth then
+                    Phone
+                 else if w <= Configuration.tabletWidth then
+                    Tablet
+                  else
+                    Computer
     in
-        { model | window = new_window, message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height) }
+        { model | device = device,
+                  window = new_window,
+                  message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height)
+                }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -806,6 +815,7 @@ init flags location =
 
         model = {
             window = (KWindow flags.width flags.height)
+            , device = Computer
             , counter = 0
             , appState = appState
             , message = "Please sign in"

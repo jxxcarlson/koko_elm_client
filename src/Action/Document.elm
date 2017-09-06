@@ -190,7 +190,7 @@ updateDocuments model documentsRecord =
             else
               defaultMasterDocument
 
-        page = if model.window.width <= Configuration.phoneWidth then
+        page = if model.device == Phone then
             HomePage
           else
             model.appState.page

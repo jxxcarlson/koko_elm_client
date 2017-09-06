@@ -13,7 +13,7 @@ import Views.External
 
 displayPage : Model -> Page
 displayPage model =
-    if model.window.width <= Configuration.phoneWidth
+    if model.device == Phone
       then
         -- if model.current_document.attributes.docType == ""
         Debug.log "(1) In displayPage, page" Types.ReaderPage

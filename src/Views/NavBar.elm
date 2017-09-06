@@ -18,11 +18,10 @@ import Views.Utility as Utility
 
 navigation : Model -> Element Styles variation Msg
 navigation model =
-  if model.window.width <= Configuration.phoneWidth
-    then
-      phoneNavigation model
-    else
-      standardNavigation model
+  case model.device of
+    Phone -> phoneNavigation model
+    _ -> standardNavigation model
+
 
 standardNavigation : Model -> Element Styles variation Msg
 standardNavigation model =

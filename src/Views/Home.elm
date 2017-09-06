@@ -4,7 +4,7 @@ import Configuration
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import StyleSheet exposing (..)
-import Types exposing(Model, Msg)
+import Types exposing(Model, Msg, Device(..))
 import Views.Common as Common
 import Views.Signin as Signin
 import Views.TOC as TOC
@@ -12,13 +12,11 @@ import Views.Utility as Utility
 
 home : Model -> List (Element Styles variation Msg)
 home model =
-  if model.window.width <= Configuration.phoneWidth
-    then
-      phoneHome model
-    else if model.window.width <= Configuration.tabletWidth then
-      tabletHome model
-    else
-      standardHome model
+  case model.device of
+    Phone -> phoneHome model
+    Tablet -> tabletHome model
+    _ -> standardHome model
+
 
 standardHome : Model -> List (Element Styles variation Msg)
 standardHome model =

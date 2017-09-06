@@ -14,13 +14,11 @@ import Views.Common as Common
 
 reader : Model -> List (Element Styles variation Msg)
 reader model =
-    if model.window.width <= Configuration.phoneWidth
-      then
-        phoneReader model
-      else if model.window.width <= Configuration.tabletWidth then
-        tabletReader model
-      else
-        standardReader model
+  case model.device of
+    Phone -> phoneReader model
+    Tablet -> tabletReader model
+    _ -> standardReader model
+
 
 standardReader : Model -> List (Element Styles variation Msg)
 standardReader model =

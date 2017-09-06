@@ -9,6 +9,8 @@ import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
 
 
+type Device = Computer | Tablet | Phone
+
 type alias User =
     { name : String
     , id: Int
@@ -179,6 +181,7 @@ type alias AppState =
 
 type alias Model =
     { window : KWindow
+    , device : Device
     , counter : Int
     , appState : AppState
     , message : String

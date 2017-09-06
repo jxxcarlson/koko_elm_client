@@ -31,11 +31,11 @@ messageWarningStyle message =
 
 footer : Model -> Element Styles variation msg
 footer model =
-  if model.window.width <= Configuration.phoneWidth
-    then
-      phoneFooter model
-    else
-      standardFooter model
+  case model.device of
+    Phone -> phoneFooter model
+    _ -> standardFooter model
+
+
 
 standardFooter : Model -> Element Styles variation msg
 standardFooter model =
