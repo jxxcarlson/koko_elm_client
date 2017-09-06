@@ -21,7 +21,7 @@ documentListView model =
 
 documentListViewForPhone : Model -> Element Styles variation Msg
 documentListViewForPhone model =
-  column None [height (percent 100), paddingBottom 20] [
+  column None [height (percent 100)] [
        documentListHeader model
        ,documentListViewForPhone1 model
      ]
@@ -40,7 +40,10 @@ documentListView1 model =
 
 documentListViewForPhone1 : Model -> Element Styles variation Msg
 documentListViewForPhone1 model =
-   column PaleBlue [ yScrollbar, width (px (toFloat model.window.width)), spacing 0, height (px (toFloat (model.window.height - 90))) ]
+   column PaleBlue [ yScrollbar, width (px (toFloat model.window.width)),
+   spacing 0, height (px (toFloat (model.window.height - 90))) ,
+   paddingLeft 10, paddingTop 10
+   ]
     (List.map (viewTitle model model.current_document) model.documents)
 
 
