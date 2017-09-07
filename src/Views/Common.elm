@@ -265,10 +265,11 @@ printUrl document =
 
 printTypeString : Document -> String
 printTypeString document =
-  case document.attributes.textType of
+  case Debug.log "TEXT_TYPE" document.attributes.textType of
     "plain" -> "text=plain"
     "adoc" -> "text=adoc"
-    "adoc:latex" -> "text=adoc:latex"
+    "adoc:latex" -> "text=adoc_latex"
+    "adoc_latex" -> "text=adoc_latex"
     "latex" -> "text=latex"
     "markdown" -> "text=markdown"
     _ -> "text=plain"
