@@ -6,6 +6,7 @@ import Element.Attributes as EA exposing (..)
 import FontAwesome
 import List.Extra
 import Request.Api as Api
+import String.Extra
 import StyleSheet exposing (..)
 import StyleSheet exposing (..)
 import Types exposing (..)
@@ -68,9 +69,7 @@ publicLink model =
 
     linkUrl = "mailto:hey@mail" ++ subject ++ body
     linkText = if model.current_document.attributes.public == True then
-         -- message
-         link linkUrl <| el FooterNote [] <| text ("Share " ++ model.current_document.title)
-         -- "Share as http://www.knode.io/##public/" ++ (toString model.current_document.id)
+         link linkUrl <| el FooterNote [] <| text ("Share "  ++ (String.Extra.quote model.current_document.title))
        else
           link "mailto:hey@mail.me" <| el FooterNote [] <| text ""
   in
