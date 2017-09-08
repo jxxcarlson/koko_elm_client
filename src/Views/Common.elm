@@ -1,7 +1,8 @@
 module Views.Common
     exposing
         (
-         tool
+         getDevice
+        , tool
         , selectTableOfContents
         , publicCheckbox
         , recallLastSearchButton
@@ -16,6 +17,7 @@ module Views.Common
         )
 import Action.UI as UI
 import Color
+import Configuration
 import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -287,3 +289,13 @@ searchOrderMenu model =
 recallLastSearchButton : Model -> Element Styles variation Msg
 recallLastSearchButton model =
   Basic.faIcon "Recall last search" FontAwesome.rotate_left [onClick RecallLastSearch]
+
+
+getDevice : Int -> Types.Device
+getDevice width =
+  if width <= Configuration.phoneWidth then
+    Phone
+  else if width <= Configuration.tabletWidth then
+    Tablet
+  else
+    Computer

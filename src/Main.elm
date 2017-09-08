@@ -5,6 +5,7 @@ module Main exposing (..)
 import Action.Channel
 import Action.Error
 import Action.Page
+import Views.Common as Common
 import Configuration
 import Date exposing(Date)
 import Dict
@@ -96,13 +97,8 @@ updateWindow : Model -> Int -> Int -> Model
 updateWindow model w h =
     let
         new_window =
-            KWindow w h  
-        device = if w <= Configuration.phoneWidth then
-                    Phone
-                 else if w <= Configuration.tabletWidth then
-                    Tablet
-                  else
-                    Computer
+            KWindow w h
+        device = Common.getDevice w
     in
         { model | device = device,
                   window = new_window,
@@ -808,14 +804,14 @@ init flags location =
             Phoenix.Channel.init "room:lobby"
 
         ( initSocket, phxCmd ) =
-            Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
+            Phoenix.Socket.init Configuration.websocketHost
                 |> Phoenix.Socket.withDebug
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
 
         model = {
             window = (KWindow flags.width flags.height)
-            , device = Computer
+            , device = Common.getDevice flags.width
             , counter = 0
             , appState = appState
             , message = "Please sign in"

@@ -15,12 +15,11 @@ displayPage : Model -> Page
 displayPage model =
     if model.device == Phone
       then
-        -- if model.current_document.attributes.docType == ""
-        Debug.log "(1) In displayPage, page" Types.ReaderPage
+        Types.ReaderPage
       else if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage  then
-        Debug.log "(2) In displayPage, page" model.appState.page
+        model.appState.page
       else
-        Debug.log "(3) In displayPage, page" Types.ReaderPage
+        Types.ReaderPage
 
 toggleMenu : String -> Model -> (Model, Cmd Msg)
 toggleMenu menu model =

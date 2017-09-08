@@ -1,6 +1,5 @@
 module Views.Reader exposing (..)
 
-import Configuration
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)

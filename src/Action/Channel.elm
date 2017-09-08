@@ -82,8 +82,6 @@ joinChannel model =
     let
         channel =
             Phoenix.Channel.init "room:lobby"
---   Phoenix.Socket.init "ws://localhost:4000/socket/websocket"
---   Phoenix.Socket.init "wss://mysterious-forest-36511.herokuapp.com/socket/websocket"
         ( initSocket, phxCmd ) =
             Phoenix.Socket.init Configuration.websocketHost
                 |> Phoenix.Socket.withDebug

@@ -2,18 +2,19 @@ module Image.Upload exposing(..)
 
 -- import Types exposing(Model, Image, defaultImage, Credentials, CredentialsResult)
 import Types exposing(..)
-import Json.Decode exposing(field)
+
 import Date.Extra
 import Date exposing(Date)
-
 import Http exposing(stringPart, Request)
 import HttpBuilder as HB exposing (..)
 import Image.FileReader as FR exposing(NativeFile)
+import Json.Decode exposing(field)
+import Request.Api
 
 getUploadCredentials1 model =
   let
     image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-    url = "http://localhost:4000/api/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
+    url = Request.Api.api ++ "/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
     cmd = Http.get url decodeCredentialsWrapper
       |> Http.send CredentialsResult
   in
@@ -44,7 +45,7 @@ getUploadCredentials model =
 
         _ = Debug.log "FILE = " model.fileToUpload
 
-        url = "http://localhost:4000/api/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
+        url = Request.Api.api ++ "/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
 
         cmd = HB.get url
             |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)

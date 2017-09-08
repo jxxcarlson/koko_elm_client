@@ -1,6 +1,5 @@
 module Views.Home exposing (..)
 
-import Configuration
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import StyleSheet exposing (..)
