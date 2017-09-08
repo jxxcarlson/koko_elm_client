@@ -295,12 +295,19 @@ selectDocument model document =
                 True
             else
                 False
+
+        masterDocOpened = if document.parent_id == model.master_document.id && model.appState.masterDocLoaded then
+            True
+          else
+            False
+
         appState =
             model.appState
 
         newAppState =
             { appState | textBuffer = document.content,
             masterDocLoaded = masterDocLoaded_,
+            masterDocOpened = masterDocOpened,
             page = displayPage model,
             textBufferDirty = False
          }

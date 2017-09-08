@@ -140,7 +140,7 @@ titleDisplay model selectedDocument document =
       , paddingXY 8 0
       , height (px 20)
       ]
-      (el None [verticalCenter] (text (Utility.shortString 30 document.title)))
+      (el None [verticalCenter] (text (Utility.shortString 25 document.title)))
 
 
 tocStyle : Document -> Document -> Styles
@@ -166,13 +166,8 @@ toggleListView model =
       SearchResultList -> DocumentStackList
       DocumentStackList -> SearchResultList
     appState = model.appState
-    -- masterDocLoaded_ = if newActiveDocumentList == DocumentStackList then
-    --                     False
-    --                   else
-    --                     True
     newAppState =  { appState
      | activeDocumentList = newActiveDocumentList
-       --, masterDocLoaded = masterDocLoaded_
        , tool = TableOfContents }
   in
     ({model | appState = newAppState}, Cmd.none)

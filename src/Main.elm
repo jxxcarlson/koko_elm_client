@@ -792,6 +792,7 @@ init flags location =
          , docTypeMenuDropped = False
          , textBufferDirty = False
          , masterDocLoaded = False
+         , masterDocOpened = False
          , tickerPaused = False
          , page = HomePage
          , tool = TableOfContents

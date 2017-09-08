@@ -170,6 +170,7 @@ type alias AppState =
     , docTypeMenuDropped : Bool
     , textBufferDirty : Bool
     , masterDocLoaded : Bool
+    , masterDocOpened : Bool
     , tickerPaused : Bool
     , page : Page
     , tool : Tool

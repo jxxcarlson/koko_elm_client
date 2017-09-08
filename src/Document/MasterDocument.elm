@@ -38,7 +38,10 @@ selectAux document_id document model =
         _ = Debug.log  "Enter Document.MasterDocument.selectAux for id = " document_id
         appState = model.appState
 
-        newAppState = { appState | masterDocLoaded = True, activeDocumentList = SearchResultList }
+        newAppState = { appState |
+              masterDocLoaded = True
+              , masterDocOpened = True
+              , activeDocumentList = SearchResultList }
 
         searchState =
             model.searchState
