@@ -74,9 +74,9 @@ documentIndicator1 document model =
 
 masterDocumentIndicator : Document -> Model -> Element style variation msg
 masterDocumentIndicator document model =
-  case (model.appState.masterDocLoaded, document.id == model.master_document.id) of
-    (True, True) -> (html (FontAwesome.caret_down Color.red 15))
-    (_, _) -> (html (FontAwesome.caret_right Color.red 15))
+  case (model.appState.masterDocLoaded, model.appState.masterDocOpened, document.id == model.master_document.id) of
+    (True, True, True) -> (html (FontAwesome.caret_down Color.red 15))
+    (_, _, _) -> (html (FontAwesome.caret_right Color.red 15))
 
 
 childDocumentIndicator : Document -> Model -> Element style variation msg

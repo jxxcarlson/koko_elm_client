@@ -19,11 +19,6 @@ var mountNode = document.getElementById('main');
 
   function typesetNow(){
     console.log("** calling MathJax.Hub.Queue ... ")
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-  }
-
-  function typesetNow2(){
-    console.log("** calling MathJax.Hub.Queue ... ")
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
   }
 
@@ -31,7 +26,6 @@ var mountNode = document.getElementById('main');
   var current_content = '';
 
   var asciidoctor = Asciidoctor();
-  // var asciidoctorLatex = AsciidoctorLatex();
 
   var render_asciidoc = function(content) {
       console.log("content length = " + content.length)
@@ -57,7 +51,7 @@ var mountNode = document.getElementById('main');
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
-             typesetNow2()
+             typesetNow()
              current_content = content
            }
        }  , millisecondsToWait);
@@ -71,7 +65,7 @@ var mountNode = document.getElementById('main');
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = content;
-             typesetNow2()
+             typesetNow()
              current_content = content
            }
        }  , millisecondsToWait);
