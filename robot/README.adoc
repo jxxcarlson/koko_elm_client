@@ -1,0 +1,2 @@
+alias deploy='sh ./robot/scripts/deploy.sh'
+alias dev='sh ./robot/scripts/dev.sh'

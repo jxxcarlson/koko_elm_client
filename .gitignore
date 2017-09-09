@@ -1,14 +1,15 @@
-elm-stuff/
-# elm.js
-experiments/
-node_modules/
-scratch.txt
-NOTES.html
+
 .idea/
-old_src
-elm.js
-references.adoc
-NOTES.adoc
-tests/elm-stuff/
 dist/
+elm.js
+elm-stuff/
+node_modules/
+tests/elm-stuff/
 yarn.lock
+
+experiments/
+NOTES.adoc
+NOTES.html
+references.adoc
+scratch.txt
+tmp
