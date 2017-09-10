@@ -36,7 +36,7 @@ userHomePages model =
         , named "content" (Keyed.column
             Zero
             []
-            [("Foo", Common.renderedContent model)]
+            [((toString model.counter), Common.renderedContent model)]
           )
 
       ]

@@ -3,7 +3,6 @@ module Views.Reader exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
-import Element.Keyed as Keyed
 import FontAwesome
 import Json.Encode
 import StyleSheet exposing (..)

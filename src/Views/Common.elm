@@ -22,6 +22,7 @@ import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
+import Element.Keyed as Keyed
 import FontAwesome
 import Json.Encode
 import Request.Api
@@ -33,16 +34,34 @@ import Views.TOC as TOC
 import Views.Utility as Utility
 
 
-renderedContent : Model -> Element Styles variation msg
-renderedContent model =
+renderedContent2 : Model -> Element Styles variation msg
+renderedContent2 model =
   let
     h = (toFloat model.window.height) - 150
   in
     (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
 
+
+renderedContent : Model -> Element Styles variation msg
+renderedContent model =
+  Keyed.row None [] [((toString model.counter), innerRenderedContent model)]
+
+innerRenderedContent : Model -> Element Styles variation msg
+innerRenderedContent model =
+  let
+    h = (toFloat model.window.height) - 150
+  in
+    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
+       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+
+
 renderedContentForPhone : Model -> Element Styles variation msg
 renderedContentForPhone model =
+  Keyed.row None [] [((toString model.counter), innerRenderedContentForPhone model)]
+
+innerRenderedContentForPhone : Model -> Element Styles variation msg
+innerRenderedContentForPhone model =
   let
     h = (toFloat model.window.height) - 100
   in
@@ -52,12 +71,15 @@ renderedContentForPhone model =
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
+  Keyed.row None [] [((toString model.counter), innerSpecialContent model)]
+
+innerSpecialContent : Model -> Element Styles variation msg
+innerSpecialContent model =
   let
     h = (toFloat model.window.height) - 180
   in
     (el Zero [ yScrollbar, id "rendered_text2", padding 20, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
-
 
 
 
