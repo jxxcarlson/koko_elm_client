@@ -49,6 +49,8 @@ type Styles
     | LightGray
     | Logo
     | Main
+    | MainContent
+    | MainContentDark
     | Menu
     | Mono
     | NavBar
@@ -99,6 +101,8 @@ stylesheet =
         , style Zero [ Font.lineHeight 0 ]
         , style XXX [ Color.background (Color.rgb 200 200 255)]
         , style Hairline [ Color.background Color.lightGray, Color.text Color.white ]
+        , style MainContent [Color.background Color.white]
+        , style MainContentDark [Color.background Color.black, Color.text Color.white]
         , style Main
             [-- Border.all 1
              --   -- set all border widths to 1 px.

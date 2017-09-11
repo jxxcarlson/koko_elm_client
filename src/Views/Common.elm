@@ -18,6 +18,7 @@ module Views.Common
 import Action.UI as UI
 import Color
 import Configuration
+import Document.Document as Document
 import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -52,8 +53,19 @@ innerRenderedContent model =
   let
     h = (toFloat model.window.height) - 150
   in
-    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
+    (el (contentStyle model) [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
+
+contentStyle : Model -> Styles
+contentStyle model =
+  let
+    doc = model.current_document
+    style_ =  if Document.hasTag "background:dark" model.current_document then
+                MainContentDark
+              else
+                MainContent
+  in
+     style_
 
 
 renderedContentForPhone : Model -> Element Styles variation msg
@@ -65,7 +77,7 @@ innerRenderedContentForPhone model =
   let
     h = (toFloat model.window.height) - 100
   in
-    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
+    (el (contentStyle model) [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
        (Json.Encode.string model.current_document.rendered_content)] (text ""))
 
 
