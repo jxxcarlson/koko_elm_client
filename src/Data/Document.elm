@@ -54,8 +54,8 @@ documentEncoder1 document =
         , ( "author_id", Encode.int <| document.author_id )
         , ( "attributes", encodeDocumentAttributes <| document.attributes )
         , ( "tags", Encode.list <| List.map Encode.string <| document.tags )
-        , ( "parent_id", Encode.int <| document.parent_id)
-        , ( "parent_title", Encode.string <| document.parent_title)
+        , ( "parent_id", Encode.int <| document.parent_id )
+        , ( "parent_title", Encode.string <| document.parent_title )
         ]
 
 

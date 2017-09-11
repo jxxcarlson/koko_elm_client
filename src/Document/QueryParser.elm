@@ -1,4 +1,4 @@
-module Document.QueryParser exposing(parseQuery)
+module Document.QueryParser exposing (parseQuery)
 
 import Regex
 
@@ -15,11 +15,18 @@ parseQuery input =
 
 transformItem : String -> String
 transformItem item =
-    case (String.contains ":" item, String.contains "=" item) of
-      (True, True)    -> item
-      (True, False)   -> transformQualifiedItem item
-      (False, True)   -> item
-      (False, False)  -> "title=" ++ item
+    case ( String.contains ":" item, String.contains "=" item ) of
+        ( True, True ) ->
+            item
+
+        ( True, False ) ->
+            transformQualifiedItem item
+
+        ( False, True ) ->
+            item
+
+        ( False, False ) ->
+            "title=" ++ item
 
 
 transformQualifiedItem : String -> String
@@ -64,15 +71,14 @@ transformQualifiedItem item =
         [ "sort", "t" ] ->
             "sort=title"
 
-        [ "sort", "viewed"] ->
-          "sort=viewed"
+        [ "sort", "viewed" ] ->
+            "sort=viewed"
 
-        [ "sort", "v"] ->
-          "sort=viewed"
+        [ "sort", "v" ] ->
+            "sort=viewed"
 
-        [ "limit", stem] ->
-          "limit=" ++ stem
-
+        [ "limit", stem ] ->
+            "limit=" ++ stem
 
         _ ->
             ""

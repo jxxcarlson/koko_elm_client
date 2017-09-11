@@ -16,20 +16,33 @@ module Image.FileReader
         )
 
 {-| Elm bindings for the main [HTML5 FileReader APIs](https://developer.mozilla.org/en/docs/Web/API/FileReader):
-    FileReaderInstance.readAsText();
-    FileReaderInstance.readAsArrayBuffer();
-    FileReaderInstance.readAsDataURL();
+FileReaderInstance.readAsText();
+FileReaderInstance.readAsArrayBuffer();
+FileReaderInstance.readAsDataURL();
 The module also provides helper Json Decoders for the files values on
 `<Input type="file">` `change` events, and on `drop` events,
 together with a set of examples.
+
+
 # API functions
+
 @docs readAsTextFile, readAsArrayBuffer, readAsDataUrl
+
+
 # Multi-part support
+
 @docs filePart, rawBody
+
+
 # Helper aliases
+
 @docs NativeFile, FileRef, FileContentArrayBuffer, FileContentDataUrl, Error, prettyPrint
+
+
 # Helper Json Decoders
+
 @docs parseSelectedFiles, parseDroppedFiles
+
 -}
 
 import Native.FileReader
@@ -58,9 +71,11 @@ type alias FileContentDataUrl =
 
 
 {-| FileReader can fail in the following cases:
+
   - the File reference / blob passed in was not valid
   - an native error occurs during file reading
   - readAsTextFile is passed a FileRef that does not have a text format (unrecognised formats are read)
+
 -}
 type Error
     = NoValidBlob
@@ -71,7 +86,7 @@ type Error
 {-| Takes a "File" or "Blob" JS object as a Json.Value. If the File is a text
 format, returns a task that reads the file as a text file. The Success value is
 represented as a String to Elm.
-    readAsTextFile ref
+readAsTextFile ref
 -}
 readAsTextFile : FileRef -> Task Error String
 readAsTextFile fileRef =
@@ -85,7 +100,7 @@ readAsTextFile fileRef =
 and starts a task to read the contents as an ArrayBuffer.
 The ArrayBuffer value returned in the Success case of the Task will
 be represented as a Json.Value to Elm.
-    readAsArrayBuffer ref
+readAsArrayBuffer ref
 -}
 readAsArrayBuffer : FileRef -> Task Error FileContentArrayBuffer
 readAsArrayBuffer fileRef =
@@ -97,7 +112,7 @@ and starts a task to read the contents as an DataURL (so it can
 be assigned to the src property of an img e.g.).
 The DataURL value returned in the Success case of the Task will
 be represented as a Json.Value to Elm.
-    readAsDataUrl ref
+readAsDataUrl ref
 -}
 readAsDataUrl : FileRef -> Task Error FileContentDataUrl
 readAsDataUrl fileRef =
@@ -119,7 +134,7 @@ rawBody mimeType nf =
 
 
 {-| Pretty print FileReader errors.
-    prettyPrint ReadFail   -- == "File reading error"
+prettyPrint ReadFail -- == "File reading error"
 -}
 prettyPrint : Error -> String
 prettyPrint err =
@@ -137,12 +152,12 @@ prettyPrint err =
 {-| Helper type for interpreting the Files event value from Input and drag 'n drop.
 The first three elements are useful meta data, while the fourth is the handle
 needed to read the file.
-    type alias NativeFile =
-        { name : String
-        , size : Int
-        , mimeType : Maybe MimeType.MimeType
-        , blob : Value
-        }
+type alias NativeFile =
+{ name : String
+, size : Int
+, mimeType : Maybe MimeType.MimeType
+, blob : Value
+}
 -}
 type alias NativeFile =
     { name : String
@@ -154,12 +169,12 @@ type alias NativeFile =
 
 {-| Parse change event from an HTML input element with 'type="file"'.
 Returns a list of files.
-    onchange : (List NativeFile -> Action) -> Signal.Address Action -> Html.Attribute
-    onchange address actionCreator =
-        on
-            "change"
-            parseSelectedFiles
-            (\vals -> Signal.message address (actionCreator vals))
+onchange : (List NativeFile -> Action) -> Signal.Address Action -> Html.Attribute
+onchange address actionCreator =
+on
+"change"
+parseSelectedFiles
+(\vals -> Signal.message address (actionCreator vals))
 -}
 parseSelectedFiles : Decoder (List NativeFile)
 parseSelectedFiles =
@@ -168,13 +183,13 @@ parseSelectedFiles =
 
 {-| Parse files selected using an HTML drop event.
 Returns a list of files.
-    ondrop : (List NativeFile -> Action) -> Signal.Address Action -> Html.Attribute
-    ondrop actionCreator address =
-        onWithOptions
-            "drop"
-            { stopPropagation = True, preventDefault = True }
-            parseDroppedFiles
-            (\vals -> Signal.message address (actionCreator vals))
+ondrop : (List NativeFile -> Action) -> Signal.Address Action -> Html.Attribute
+ondrop actionCreator address =
+onWithOptions
+"drop"
+{ stopPropagation = True, preventDefault = True }
+parseDroppedFiles
+(\vals -> Signal.message address (actionCreator vals))
 -}
 parseDroppedFiles : Decoder (List NativeFile)
 parseDroppedFiles =

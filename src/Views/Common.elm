@@ -1,7 +1,6 @@
 module Views.Common
     exposing
-        (
-         getDevice
+        ( getDevice
         , tool
         , selectTableOfContents
         , publicCheckbox
@@ -15,6 +14,7 @@ module Views.Common
         , specialContent
         , toggleListView
         )
+
 import Action.UI as UI
 import Color
 import Configuration
@@ -37,71 +37,119 @@ import Views.Utility as Utility
 
 renderedContent2 : Model -> Element Styles variation msg
 renderedContent2 model =
-  let
-    h = (toFloat model.window.height) - 150
-  in
-    (el Zero [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
-       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+    let
+        h =
+            (toFloat model.window.height) - 150
+    in
+        (el Zero
+            [ yScrollbar
+            , id "rendered_text2"
+            , paddingXY 50 50
+            , width (percent 100)
+            , height (px h)
+            , property "innerHTML"
+                (Json.Encode.string model.current_document.rendered_content)
+            ]
+            (text "")
+        )
 
 
 renderedContent : Model -> Element Styles variation msg
 renderedContent model =
-  Keyed.row None [] [((toString model.counter), innerRenderedContent model)]
+    Keyed.row None [] [ ( (toString model.counter), innerRenderedContent model ) ]
+
 
 innerRenderedContent : Model -> Element Styles variation msg
 innerRenderedContent model =
-  let
-    h = (toFloat model.window.height) - 150
-  in
-    (el (contentStyle model) [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
-       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+    let
+        h =
+            (toFloat model.window.height) - 150
+    in
+        (el (contentStyle model)
+            [ yScrollbar
+            , id "rendered_text2"
+            , paddingXY 50 50
+            , width (percent 100)
+            , height (px h)
+            , property "innerHTML"
+                (Json.Encode.string model.current_document.rendered_content)
+            ]
+            (text "")
+        )
+
 
 contentStyle : Model -> Styles
 contentStyle model =
-  let
-    doc = model.current_document
-    style_ =  if Document.hasTag "background:dark" model.current_document then
+    let
+        doc =
+            model.current_document
+
+        style_ =
+            if Document.hasTag "background:dark" model.current_document then
                 MainContentDark
-              else
+            else
                 MainContent
-  in
-     style_
+    in
+        style_
 
 
 renderedContentForPhone : Model -> Element Styles variation msg
 renderedContentForPhone model =
-  Keyed.row None [] [((toString model.counter), innerRenderedContentForPhone model)]
+    Keyed.row None [] [ ( (toString model.counter), innerRenderedContentForPhone model ) ]
+
 
 innerRenderedContentForPhone : Model -> Element Styles variation msg
 innerRenderedContentForPhone model =
-  let
-    h = (toFloat model.window.height) - 100
-  in
-    (el (contentStyle model) [yScrollbar, id "rendered_text2", paddingXY 50 50, width (percent 100), height (px h), property "innerHTML"
-       (Json.Encode.string model.current_document.rendered_content)] (text ""))
+    let
+        h =
+            (toFloat model.window.height) - 100
+    in
+        (el (contentStyle model)
+            [ yScrollbar
+            , id "rendered_text2"
+            , paddingXY 50 50
+            , width (percent 100)
+            , height (px h)
+            , property "innerHTML"
+                (Json.Encode.string model.current_document.rendered_content)
+            ]
+            (text "")
+        )
 
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
-  Keyed.row None [] [((toString model.counter), innerSpecialContent model)]
+    Keyed.row None [] [ ( (toString model.counter), innerSpecialContent model ) ]
+
 
 innerSpecialContent : Model -> Element Styles variation msg
 innerSpecialContent model =
-  let
-    h = (toFloat model.window.height) - 180
-  in
-    (el Zero [ yScrollbar, id "rendered_text2", padding 20, width (percent 100), height (px h), property "innerHTML"
-       (Json.Encode.string model.specialDocument.rendered_content)] (text ""))
-
+    let
+        h =
+            (toFloat model.window.height) - 180
+    in
+        (el Zero
+            [ yScrollbar
+            , id "rendered_text2"
+            , padding 20
+            , width (percent 100)
+            , height (px h)
+            , property "innerHTML"
+                (Json.Encode.string model.specialDocument.rendered_content)
+            ]
+            (text "")
+        )
 
 
 selectTableOfContents : Model -> Element Styles variation Msg
 selectTableOfContents model =
-    Basic.faIcon "Table of contents" FontAwesome.list [onClick (SelectTool TableOfContents)]
+    Basic.faIcon "Table of contents" FontAwesome.list [ onClick (SelectTool TableOfContents) ]
+
 
 toggleListView : Model -> Element Styles variation Msg
 toggleListView model =
-  Basic.faIcon "Home Page" FontAwesome.arrows_h [onClick ToggleListView]
+    Basic.faIcon "Home Page" FontAwesome.arrows_h [ onClick ToggleListView ]
+
 
 tool : Model -> Element Styles variation Msg
 tool model =
@@ -148,63 +196,64 @@ newDocumentTools model =
         [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "New document tools")
         , column Zero
             [ spacing 15, height (px 130), alignLeft ]
-            [
-              Utility.visibleIf model.appState.masterDocLoaded (newDocumentTable model)
+            [ Utility.visibleIf model.appState.masterDocLoaded (newDocumentTable model)
             , Utility.visibleIf model.appState.masterDocLoaded (addToMasterDocumentButton model)
             , Utility.visibleIf model.appState.masterDocLoaded (selectAttachmentOption model)
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
 
+
 newDocumentTable : Model -> Element Styles variation Msg
 newDocumentTable model =
-  table TOC [spacing 20, width (px 250)]
-    [
-      [
-        el TOCItemMaster [] (text "Master"),
-        el TOCItemChild [](text "Current"),
-        (text "New")
+    table TOC
+        [ spacing 20, width (px 250) ]
+        [ [ el TOCItemMaster [] (text "Master")
+          , el TOCItemChild [] (text "Current")
+          , (text "New")
+          ]
+        , [ el TOCItemMaster [] (text (Utility.shortString 20 model.master_document.title))
+          , el TOCItemChild [] (text (Utility.shortString 20 (Stack.top 1 model.documentStack).title))
+          , (text (Utility.shortString 20 model.current_document.title))
+          ]
+        ]
 
-      ]
-      ,[el TOCItemMaster [] (text (Utility.shortString 20 model.master_document.title))
-         ,el TOCItemChild [] (text (Utility.shortString 20 (Stack.top 1 model.documentStack).title))
-         ,(text (Utility.shortString 20 model.current_document.title))
-      ]
-    ]
 
 selectAttachmentOption : Model -> Element Styles variation Msg
 selectAttachmentOption model =
-  radio "Attach new document" TOC [spacing 10, width (px 200), paddingXY 20 0]
-    [ option "top" False (el TOC [spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
-    , option "above" False (el TOC [spacing 10, verticalCenter , onClick (AttachCurrentDocument "above") ] (text "Above current"))
-    , option "below" False (el TOC [spacing 10, verticalCenter, onClick (AttachCurrentDocument "below")] (text "Below current"))
-    , option "bottom" False (el TOC [spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))
-    ]
+    radio "Attach new document"
+        TOC
+        [ spacing 10, width (px 200), paddingXY 20 0 ]
+        [ option "top" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
+        , option "above" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "above") ] (text "Above current"))
+        , option "below" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "below") ] (text "Below current"))
+        , option "bottom" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))
+        ]
 
 
 homepage : Model -> Element Styles variation Msg
 homepage model =
-  el FlatButtonBlue
-      [ width (px 200)
-      , onClick Types.UserHomePage
-      , height (px 30)
-      , paddingXY 8 0
-      , verticalCenter
-      ]
-      (el Zero [verticalCenter] (text ("Home page")))
-
+    el FlatButtonBlue
+        [ width (px 200)
+        , onClick Types.UserHomePage
+        , height (px 30)
+        , paddingXY 8 0
+        , verticalCenter
+        ]
+        (el Zero [ verticalCenter ] (text ("Home page")))
 
 
 getDocument : Styles -> String -> String -> Model -> Element Styles variation Msg
 getDocument style searchTerm label model =
-  el style
-      [ maxWidth (px 200)
-      , onClick (Types.GetPublicPage searchTerm)
-      , height (px 30)
-      , paddingXY 8 0
-      , verticalCenter
-      ]
-      (el Zero [verticalCenter] (text label))
+    el style
+        [ maxWidth (px 200)
+        , onClick (Types.GetPublicPage searchTerm)
+        , height (px 30)
+        , paddingXY 8 0
+        , verticalCenter
+        ]
+        (el Zero [ verticalCenter ] (text label))
+
 
 editorTools : Model -> Element Styles variation Msg
 editorTools model =
@@ -233,44 +282,53 @@ editorTools model =
             ]
         ]
 
+
 parentalControls : Model -> Element Styles variation Msg
 parentalControls model =
-  if model.current_document.attributes.docType == "master" then
-    adoptChildrenButton model
-  else
-    parentIdPanel model
+    if model.current_document.attributes.docType == "master" then
+        adoptChildrenButton model
+    else
+        parentIdPanel model
+
 
 parentIdPanel : Model -> Element Styles variation Msg
 parentIdPanel model =
-  column Panel [ height (px 80) ,width (px 250)] [
-    row Panel [paddingXY 8 12 ] [
-      el Panel [verticalCenter, paddingXY 8 0] (text "Parent: ")
-      , parentIdPane model
-    ]
-    , el Panel [verticalCenter, paddingXY 16 12] (text model.current_document.parent_title) -- model.current_document.parent_name
-  ]
+    column Panel
+        [ height (px 80), width (px 250) ]
+        [ row Panel
+            [ paddingXY 8 12 ]
+            [ el Panel [ verticalCenter, paddingXY 8 0 ] (text "Parent: ")
+            , parentIdPane model
+            ]
+        , el Panel [ verticalCenter, paddingXY 16 12 ] (text model.current_document.parent_title) -- model.current_document.parent_name
+        ]
+
 
 parentIdPane : Model -> Element Styles variation Msg
 parentIdPane model =
-  inputText Field [
-     onInput SetParentId,
-     placeholder "parent_id" ,
-     paddingXY 5 0,
-     height (px 25),
-     width (px 50)]
-  (toString model.current_document.parent_id)
+    inputText Field
+        [ onInput SetParentId
+        , placeholder "parent_id"
+        , paddingXY 5 0
+        , height (px 25)
+        , width (px 50)
+        ]
+        (toString model.current_document.parent_id)
+
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =
-  Basic.button "Adopt children" FlatButtonBlue [onClick AdoptChildren, width (px 250)]
+    Basic.button "Adopt children" FlatButtonBlue [ onClick AdoptChildren, width (px 250) ]
+
 
 updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =
-  Basic.button "Update keywords" FlatButtonBlue [onClick SaveCurrentDocument, width (px 250)]
+    Basic.button "Update keywords" FlatButtonBlue [ onClick SaveCurrentDocument, width (px 250) ]
+
 
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
-  Basic.button "Add to master" FlatButton [onClick AddToMasterDocument, width (px 250)]
+    Basic.button "Add to master" FlatButton [ onClick AddToMasterDocument, width (px 250) ]
 
 
 publicCheckbox : Model -> Element Styles variation Msg
@@ -293,43 +351,62 @@ publicCheckbox model =
 printButton : Document -> Element Styles variation Msg
 printButton document =
     link (printUrl document) <|
-        el Zero [ verticalCenter, target "_blank"] (html (FontAwesome.print Color.white 25))
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.print Color.white 25))
+
 
 printUrl : Document -> String
 printUrl document =
     Request.Api.printUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
 
+
 printTypeString : Document -> String
 printTypeString document =
-  case Debug.log "TEXT_TYPE" document.attributes.textType of
-    "plain" -> "text=plain"
-    "adoc" -> "text=adoc"
-    "adoc:latex" -> "text=adoc_latex"
-    "adoc_latex" -> "text=adoc_latex"
-    "latex" -> "text=latex"
-    "markdown" -> "text=markdown"
-    _ -> "text=plain"
+    case Debug.log "TEXT_TYPE" document.attributes.textType of
+        "plain" ->
+            "text=plain"
+
+        "adoc" ->
+            "text=adoc"
+
+        "adoc:latex" ->
+            "text=adoc_latex"
+
+        "adoc_latex" ->
+            "text=adoc_latex"
+
+        "latex" ->
+            "text=latex"
+
+        "markdown" ->
+            "text=markdown"
+
+        _ ->
+            "text=plain"
+
 
 searchOrderMenu : Model -> Element Styles variation Msg
 searchOrderMenu model =
-  -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-  select "searchOrder" LightGray [ height (px 25),  verticalCenter, onInput SelectSearchOrder]
-      [ option "viewed" True (text "Viewed")
-      , option "updated" False (text "Updated")
-      , option "created" False (text "Created")
-      , option "alpha" False (text "Alpha")
-      ]
+    -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
+    select "searchOrder"
+        LightGray
+        [ height (px 25), verticalCenter, onInput SelectSearchOrder ]
+        [ option "viewed" True (text "Viewed")
+        , option "updated" False (text "Updated")
+        , option "created" False (text "Created")
+        , option "alpha" False (text "Alpha")
+        ]
+
 
 recallLastSearchButton : Model -> Element Styles variation Msg
 recallLastSearchButton model =
-  Basic.faIcon "Recall last search" FontAwesome.rotate_left [onClick RecallLastSearch]
+    Basic.faIcon "Recall last search" FontAwesome.rotate_left [ onClick RecallLastSearch ]
 
 
 getDevice : Int -> Types.Device
 getDevice width =
-  if width <= Configuration.phoneWidth then
-    Phone
-  else if width <= Configuration.tabletWidth then
-    Tablet
-  else
-    Computer
+    if width <= Configuration.phoneWidth then
+        Phone
+    else if width <= Configuration.tabletWidth then
+        Tablet
+    else
+        Computer

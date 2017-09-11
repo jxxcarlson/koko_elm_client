@@ -1,10 +1,12 @@
-module Data.User exposing (
-    signinEncoder
-    , jwtDecoder
-    , registerUserEncoder
-    , userRecord
-    , userRecordDecoder
-    , localStorageUserRecord)
+module Data.User
+    exposing
+        ( signinEncoder
+        , jwtDecoder
+        , registerUserEncoder
+        , userRecord
+        , userRecordDecoder
+        , localStorageUserRecord
+        )
 
 import Json.Encode as Encode exposing (..)
 import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
@@ -26,32 +28,34 @@ signinEncoder model =
 
 registerUserEncoder : Model -> Encode.Value
 registerUserEncoder model =
-  Encode.object
-    [ ( "user"
-      , Encode.object
-        [ ("name",  Encode.string <| model.current_user.name)
-        , ("id", Encode.int <| model.current_user.id)
-        , ("username",  Encode.string <| model.current_user.username)
-        , ("email",  Encode.string <| model.current_user.email)
-        , ("password",  Encode.string <| model.current_user.password)
-        , ("token",  Encode.string <| model.current_user.token)
-        , ("admin",  Encode.bool <| model.current_user.admin)
-        , ("blurb", Encode.string <| model.current_user.blurb)
+    Encode.object
+        [ ( "user"
+          , Encode.object
+                [ ( "name", Encode.string <| model.current_user.name )
+                , ( "id", Encode.int <| model.current_user.id )
+                , ( "username", Encode.string <| model.current_user.username )
+                , ( "email", Encode.string <| model.current_user.email )
+                , ( "password", Encode.string <| model.current_user.password )
+                , ( "token", Encode.string <| model.current_user.token )
+                , ( "admin", Encode.bool <| model.current_user.admin )
+                , ( "blurb", Encode.string <| model.current_user.blurb )
+                ]
+          )
         ]
-    )]
-    -- Encode.object
-    --     [ ( "user"
-    --       , Encode.object
-    --             [ ( "name", Encode.string model.current_user.name )
-    --             , ( "username", Encode.string model.current_user.username )
-    --             , ( "email", Encode.string model.current_user.email )
-    --             , ( "password", Encode.string model.current_user.password )
-    --             , ( "admin"), Encode.bool model.current_user.admin
-    --             ]
-    --       )
-    --     ]
 
 
+
+-- Encode.object
+--     [ ( "user"
+--       , Encode.object
+--             [ ( "name", Encode.string model.current_user.name )
+--             , ( "username", Encode.string model.current_user.username )
+--             , ( "email", Encode.string model.current_user.email )
+--             , ( "password", Encode.string model.current_user.password )
+--             , ( "admin"), Encode.bool model.current_user.admin
+--             ]
+--       )
+--     ]
 
 
 type alias Claims =
@@ -65,12 +69,11 @@ jwtDecoder =
         |> JPipeline.required "user_id" Json.Decode.int
 
 
-
-
 userRecordDecoder : Decoder UserRecord
 userRecordDecoder =
     JPipeline.decode UserRecord
         |> JPipeline.required "user" (userDecoder)
+
 
 userDecoder : Decoder LoginUserRecord
 userDecoder =
@@ -93,18 +96,28 @@ localStorageUserDecoder =
         |> JPipeline.required "token" Json.Decode.string
         |> JPipeline.required "blurb" Json.Decode.string
 
-        -- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
+
+
+-- |> JPipeline.required "admin" Json.Decode.string |> Json.Decode.andThen fixup
+
 
 fixup : String -> Bool
 fixup str =
-  case str of
-      "false" -> False
-      "true" -> True
-      _ -> False
+    case str of
+        "false" ->
+            False
+
+        "true" ->
+            True
+
+        _ ->
+            False
+
 
 userRecord : String -> Result String LoginUserRecord
 userRecord jsonString =
     decodeString userDecoder jsonString
+
 
 localStorageUserRecord : String -> Result String LoginLocalStorageRecord
 localStorageUserRecord jsonString =

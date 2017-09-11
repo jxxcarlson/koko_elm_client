@@ -16,31 +16,29 @@ module LatexParser.Latex
         , texComment
         )
 
-{-|
-
-XParser parses an as-yet undetermined subset LaTeX
+{-| XParser parses an as-yet undetermined subset LaTeX
 of LaTeX into elements like
 
-  Macro1, e.g., a "\foo{bar} "
-  Macro2, e.g., a "\foo{bar}{baz}"
-  Environment, e.g., a "\begin{ENV} BODY \end{ENV}"
-  InlineMath, e.g., a "$ a^2 + b^2 + c^2 $"
-  DisplayMpath, e.g., a "\[ a^2 + b^2 + c^2 \]"
+Macro1, e.g., a "\foo{bar} "
+Macro2, e.g., a "\foo{bar}{baz}"
+Environment, e.g., a "\begin{ENV} BODY \end{ENV}"
+InlineMath, e.g., a "$ a^2 + b^2 + c^2 $"
+DisplayMpath, e.g., a "[ a^2 + b^2 + c^2 ]"
 
 The parsed text will be used to construct a mixture
 of HTML, inlne LateX, and display LaTeX that can
 be rendered by a browser + MathJax.
 
 Recall that MathJax does not process other than inlne and
-display LateX.  The aim, therefore, is to properly render
+display LateX. The aim, therefore, is to properly render
 not only these, but constructs like \emph{foobar},
 
-  \begin{theorem}
-  Blah Blah
-  \end{theorem}
-
+\begin{theorem}
+Blah Blah
+\end{theorem}
 
 Etc.
+
 -}
 
 -- import Parser exposing (Parser, (|.), (|=), succeed, symbol, float, ignore, zeroOrMore)
@@ -75,16 +73,14 @@ word =
 --  |= keep oneOrMore (\c -> c /= ' ')
 
 
-{-|
-  Not currently used
+{-| Not currently used
 -}
 type alias Words_ =
     { value : List String
     }
 
 
-{-|
-  Not currently used
+{-| Not currently used
 -}
 words : Parser Words_
 words =
@@ -101,8 +97,7 @@ type alias Environment_ =
     }
 
 
-{-|
-   run environment "\\begin{foo}Blah, blah ...\\end{foo} "
+{-| run environment "\begin{foo}Blah, blah ...\end{foo} "
 -}
 environment : Parser Environment_
 environment =
@@ -185,9 +180,8 @@ type alias Macro_ =
     }
 
 
-{-|
-   run macro "\\foo{bar} "
-   run macro "\\foo{bar}{baz} "
+{-| run macro "\foo{bar} "
+run macro "\foo{bar}{baz} "
 -}
 macro : Parser Macro_
 macro =
@@ -206,8 +200,7 @@ type alias BareMacro_ =
     }
 
 
-{-|
-  Not used yet
+{-| Not used yet
 -}
 bareMacro : Parser BareMacro_
 bareMacro =

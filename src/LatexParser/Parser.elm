@@ -1,9 +1,6 @@
 module LatexParser.Parser exposing (..)
 
-{-|
-
-
--}
+{-| -}
 
 import Parser exposing (..)
 import LatexParser.Latex

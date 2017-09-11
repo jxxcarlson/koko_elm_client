@@ -1,69 +1,97 @@
-module Image.Upload exposing(..)
+module Image.Upload exposing (..)
 
 -- import Types exposing(Model, Image, defaultImage, Credentials, CredentialsResult)
-import Types exposing(..)
 
+import Types exposing (..)
 import Date.Extra
-import Date exposing(Date)
-import Http exposing(stringPart, Request)
+import Date exposing (Date)
+import Http exposing (stringPart, Request)
 import HttpBuilder as HB exposing (..)
-import Image.FileReader as FR exposing(NativeFile)
-import Json.Decode exposing(field)
+import Image.FileReader as FR exposing (NativeFile)
+import Json.Decode exposing (field)
 import Request.Api
 
-getUploadCredentials1 model =
-  let
-    image = model.imageRecord.mImage |> Maybe.withDefault defaultImage
-    url = Request.Api.api ++ "/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
-    cmd = Http.get url decodeCredentialsWrapper
-      |> Http.send CredentialsResult
-  in
-     ( { model | message = "image: " ++ image.filename }, cmd)
 
-getUploadCredentials : Model -> (Model, Cmd Msg)
+getUploadCredentials1 model =
+    let
+        image =
+            model.imageRecord.mImage |> Maybe.withDefault defaultImage
+
+        url =
+            Request.Api.api ++ "/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
+
+        cmd =
+            Http.get url decodeCredentialsWrapper
+                |> Http.send CredentialsResult
+    in
+        ( { model | message = "image: " ++ image.filename }, cmd )
+
+
+getUploadCredentials : Model -> ( Model, Cmd Msg )
 getUploadCredentials model =
     let
-        filename = case model.fileToUpload of
-            Just file -> file.name
-            Nothing -> "xxx"
+        filename =
+            case model.fileToUpload of
+                Just file ->
+                    file.name
 
-        _ = Debug.log "FILENAME = " filename
-
-        mimeType_ = case model.fileToUpload of
-            Just file ->
-              case file.mimeType of
-                Just mtype ->
-                  toString mtype
                 Nothing ->
-                  "xxx"
-            Nothing ->
-                "xxx"
+                    "xxx"
 
-        mimeType = mimeType_ |> String.toLower |> String.split " " |> String.join "/"
+        _ =
+            Debug.log "FILENAME = " filename
 
-        _ = Debug.log "MIMETYPE = " mimeType
+        mimeType_ =
+            case model.fileToUpload of
+                Just file ->
+                    case file.mimeType of
+                        Just mtype ->
+                            toString mtype
 
-        _ = Debug.log "FILE = " model.fileToUpload
+                        Nothing ->
+                            "xxx"
 
-        url = Request.Api.api ++ "/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
+                Nothing ->
+                    "xxx"
 
-        cmd = HB.get url
-            |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)
-            |> withExpect (Http.expectJson decodeCredentialsWrapper)
-            |> HB.send CredentialsResult
+        mimeType =
+            mimeType_ |> String.toLower |> String.split " " |> String.join "/"
 
+        _ =
+            Debug.log "MIMETYPE = " mimeType
+
+        _ =
+            Debug.log "FILE = " model.fileToUpload
+
+        url =
+            Request.Api.api ++ "/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
+
+        cmd =
+            HB.get url
+                |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)
+                |> withExpect (Http.expectJson decodeCredentialsWrapper)
+                |> HB.send CredentialsResult
     in
-       ( { model | message = "filename: " ++ filename }, cmd)
+        ( { model | message = "filename: " ++ filename }, cmd )
+
 
 dateString : Date -> String
 dateString date =
-  let
-    y = Date.year date |> toString
-    m = Date.Extra.monthNumber date |> toString
-    d = Date.day date |> toString
-    md = List.map (String.padLeft 2 '0') [m,d] |> String.join ""
-  in
-    y ++ md
+    let
+        y =
+            Date.year date |> toString
+
+        m =
+            Date.Extra.monthNumber date |> toString
+
+        d =
+            Date.day date |> toString
+
+        md =
+            List.map (String.padLeft 2 '0') [ m, d ] |> String.join ""
+    in
+        y ++ md
+
 
 getFormattedDate : Maybe Date -> String
 getFormattedDate date =
@@ -76,14 +104,22 @@ getFormattedDate date =
 
 
 awzCredential : Credentials -> String
-awzCredential credentials  =
-  let
-    accessKeyId = credentials.awsAccessKeyId
-    date = credentials.date
-    cred = accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
-    _ = Debug.log "cred:" cred
-  in
-    cred
+awzCredential credentials =
+    let
+        accessKeyId =
+            credentials.awsAccessKeyId
+
+        date =
+            credentials.date
+
+        cred =
+            accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
+
+        _ =
+            Debug.log "cred:" cred
+    in
+        cred
+
 
 decodeCredentials : Json.Decode.Decoder Credentials
 decodeCredentials =
@@ -95,6 +131,7 @@ decodeCredentials =
         (field "AWSAccessKeyId" Json.Decode.string)
         (field "date" Json.Decode.string)
 
+
 decodeCredentialsWrapper : Json.Decode.Decoder CredentialsWrapper
 decodeCredentialsWrapper =
     Json.Decode.map2 CredentialsWrapper
@@ -104,20 +141,25 @@ decodeCredentialsWrapper =
 
 multiPartBody : Credentials -> FR.NativeFile -> Http.Body
 multiPartBody creds nf =
-  let
-    _ = Debug.log "key" nf.name
-    _ = Debug.log "x-amz-date" creds.date
-    _ = Debug.log "x-amz-credential" (awzCredential creds)
-  in
-    Http.multipartBody
-        [ stringPart "key" (nf.name)
-        , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
-        , stringPart "x-amz-credential" (awzCredential creds)
-        , stringPart "x-amz-date" creds.date
-        , stringPart "policy" creds.policy
-        , stringPart "x-amz-signature" creds.signature
-        , FR.filePart "file" nf
-        ]
+    let
+        _ =
+            Debug.log "key" nf.name
+
+        _ =
+            Debug.log "x-amz-date" creds.date
+
+        _ =
+            Debug.log "x-amz-credential" (awzCredential creds)
+    in
+        Http.multipartBody
+            [ stringPart "key" (nf.name)
+            , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
+            , stringPart "x-amz-credential" (awzCredential creds)
+            , stringPart "x-amz-date" creds.date
+            , stringPart "policy" creds.policy
+            , stringPart "x-amz-signature" creds.signature
+            , FR.filePart "file" nf
+            ]
 
 
 uploadRequest : Credentials -> NativeFile -> Request String
@@ -132,18 +174,25 @@ uploadRequest creds file =
         , withCredentials = False
         }
 
+
 request result model =
-  let
-      _ = Debug.log "credentials" result
-      _ = Debug.log "awzCredential = " (awzCredential result)
-      _ = Debug.log "model.fileToUpload" model.fileToUpload
-      cmd =
-          model.fileToUpload
-              |> Maybe.map
-                  (\file ->
-                      uploadRequest result file
-                          |> Http.send UploadComplete
-                  )
-              |> Maybe.withDefault Cmd.none
-  in
-      (model , cmd )
+    let
+        _ =
+            Debug.log "credentials" result
+
+        _ =
+            Debug.log "awzCredential = " (awzCredential result)
+
+        _ =
+            Debug.log "model.fileToUpload" model.fileToUpload
+
+        cmd =
+            model.fileToUpload
+                |> Maybe.map
+                    (\file ->
+                        uploadRequest result file
+                            |> Http.send UploadComplete
+                    )
+                |> Maybe.withDefault Cmd.none
+    in
+        ( model, cmd )

@@ -13,7 +13,6 @@ import External
 import Views.External
 
 
-
 loginUserCmd : Model -> String -> Cmd Msg
 loginUserCmd model loginUrl =
     Http.send GetTokenCompleted (loginUser model loginUrl)
@@ -41,11 +40,9 @@ loginUser model loginUrl =
     in
         Http.post loginUrl body tokenDecoder
 
-{-|
 
-One of the tasks of getTokenCompleted is to send user data to
+{-| One of the tasks of getTokenCompleted is to send user data to
 local stoarge via ports so taht it can be persisted between app reloads.
-
 -}
 getTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
 getTokenCompleted model result =
@@ -57,17 +54,18 @@ getTokenCompleted model result =
                         user =
                             model.current_user
 
-                        appState = model.appState
+                        appState =
+                            model.appState
 
-                        updatedAppState  = {appState | page = HomePage, signedIn = True}
+                        updatedAppState =
+                            { appState | page = HomePage, signedIn = True }
 
                         user2 =
-                            { user |
-                              username = value.username
-                              , token = newToken
-                              , id = value.user_id
+                            { user
+                                | username = value.username
+                                , token = newToken
+                                , id = value.user_id
                             }
-
                     in
                         ( { model
                             | current_user = user2
@@ -85,18 +83,20 @@ getTokenCompleted model result =
                     ( { model | warning = "Incorrect username or password (1)" }, Cmd.none )
 
         Err error ->
-          let
-            appState = model.appState
+            let
+                appState =
+                    model.appState
 
-            updatedAppState  = {appState | page = HomePage, signedIn = False}
-          in
-            ( { model
-                | errorMsg = (toString error)
-                , appState = updatedAppState
-                , warning = "Incorrect username or password"
-              }
-            , Cmd.none
-            )
+                updatedAppState =
+                    { appState | page = HomePage, signedIn = False }
+            in
+                ( { model
+                    | errorMsg = (toString error)
+                    , appState = updatedAppState
+                    , warning = "Incorrect username or password"
+                  }
+                , Cmd.none
+                )
 
 
 registerUser : Model -> String -> Http.Request UserRecord

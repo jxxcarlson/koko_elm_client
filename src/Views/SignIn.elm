@@ -1,8 +1,6 @@
 module Views.Signin exposing (..)
 
-
 import StyleSheet exposing (..)
-
 import Element exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
@@ -32,13 +30,11 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput Username, placeholder "Username" ] (model.current_user.username)
         , inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
         , inputText Field [ EE.onInput Password, placeholder "Password" ] (model.current_user.password)
-
-        , Basic.button "Register" Button [onClick Register, width (px 80)]
-        , Basic.button "Toggle" Button [onClick ToggleRegister, width (px 150)]
-        ,    Component.cancelAuthentication Button model
-        , el Blue [paddingXY 20 40] (text model.message)
+        , Basic.button "Register" Button [ onClick Register, width (px 80) ]
+        , Basic.button "Toggle" Button [ onClick ToggleRegister, width (px 150) ]
+        , Component.cancelAuthentication Button model
+        , el Blue [ paddingXY 20 40 ] (text model.message)
         ]
-
 
 
 signinForm : Model -> Element Styles variation Msg
@@ -50,14 +46,17 @@ signinForm model =
         )
         (signinForm1 model)
 
+
+
 -- node "input" <| el None [ type_ "password", value "secret" ] empty
+
 
 signinForm1 : Model -> Element Styles variation Msg
 signinForm1 model =
     column Blue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput Email, placeholder "Email" ] (model.current_user.email)
-        , node "input" <| el None [ type_ "password", onInput Password, placeholder "Password", value (model.current_user.password)] empty
+        , node "input" <| el None [ type_ "password", onInput Password, placeholder "Password", value (model.current_user.password) ] empty
         , el Button [ EE.onClick Login, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
         , el Button
             [ onClick ToggleRegister
@@ -68,7 +67,7 @@ signinForm1 model =
             ]
             (text "Need to register?")
         , Component.cancelAuthentication Button model
-        , el Blue [paddingXY 20 40] (text model.message)
+        , el Blue [ paddingXY 20 40 ] (text model.message)
         ]
 
 
@@ -80,6 +79,7 @@ signoutForm model =
         )
         (signoutForm1 model)
 
+
 signoutForm1 : Model -> Element Styles variation Msg
 signoutForm1 model =
     column PaleBlue
@@ -88,27 +88,28 @@ signoutForm1 model =
         , el Button [ EE.onClick Signout, alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign out")
         ]
 
+
 signinInfoPanel : Model -> Element Styles variation Msg
 signinInfoPanel model =
-  Utility.notVisibleIf
-      (model.appState.authorizing || model.appState.signedIn)
-      (signinInfoPanel1 model)
+    Utility.notVisibleIf
+        (model.appState.authorizing || model.appState.signedIn)
+        (signinInfoPanel1 model)
+
 
 signinInfoPanel1 : Model -> Element Styles variation Msg
 signinInfoPanel1 model =
-  (column Box
-      [ height (px 260), paddingXY 20 40 ]
-      [ el Zero [ width (px 320), height (px 40) ] (text "")
-      , NavBar.loginButton Button model
-      , el Zero [height (px 20)] (text "")
-      , Component.cancelAuthentication Button model
-      , el Blue [paddingXY 0 40] (text model.message)
-      ]
+    (column Box
+        [ height (px 260), paddingXY 20 40 ]
+        [ el Zero [ width (px 320), height (px 40) ] (text "")
+        , NavBar.loginButton Button model
+        , el Zero [ height (px 20) ] (text "")
+        , Component.cancelAuthentication Button model
+        , el Blue [ paddingXY 0 40 ] (text model.message)
+        ]
     )
 
 
-
-handleAuthentication : Model -> (Model, Cmd Msg)
+handleAuthentication : Model -> ( Model, Cmd Msg )
 handleAuthentication model =
     if model.appState.signedIn then
         ( { model | appState = appStateWithPage model HomePage }, Cmd.none )

@@ -4,56 +4,67 @@ import Http
 import Time exposing (Time)
 import Phoenix.Socket
 import Json.Encode as JsEncode
-import Date exposing(Date)
+import Date exposing (Date)
 import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
 
 
-type Device = Computer | Tablet | Phone
+type Device
+    = Computer
+    | Tablet
+    | Phone
+
 
 type alias User =
     { name : String
-    , id: Int
+    , id : Int
     , username : String
     , email : String
     , blurb : String
     , password : String
     , token : String
-    , admin : Bool }
+    , admin : Bool
+    }
+
 
 type alias BigUserRecord =
     { user : User }
 
 
-type alias Users = List User
-{-|
-  Use to transfer data to JS-world. Does not contani password
--}
+type alias Users =
+    List User
 
+
+{-| Use to transfer data to JS-world. Does not contani password
+-}
 type alias UsersRecord =
     { users : List User
     }
 
 
 type alias LoginUserRecord =
-    { name : String, username : String, id: Int, email : String, token : String, blurb : String }
+    { name : String, username : String, id : Int, email : String, token : String, blurb : String }
+
 
 type alias LoginLocalStorageRecord =
-    { name : String, username : String, id: String, email : String, token : String, blurb : String }
+    { name : String, username : String, id : String, email : String, token : String, blurb : String }
 
 
 type alias UserRecord =
-  { user : LoginUserRecord }
+    { user : LoginUserRecord }
+
 
 type alias KWindow =
     { width : Int
     , height : Int
     }
 
+
 type alias ImagePortData =
     { contents : String
     , filename : String
     }
+
 
 type alias Image =
     { contents : String
@@ -62,29 +73,36 @@ type alias Image =
 
 
 defaultImage : Image
-defaultImage = Image "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" "fileName"
+defaultImage =
+    Image "data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" "fileName"
+
 
 type alias ImageRecord =
     { id : String
     , mImage : Maybe Image
-  }
+    }
+
 
 defaultImageRecord : ImageRecord
-defaultImageRecord = ImageRecord "ImageInputId" Nothing
+defaultImageRecord =
+    ImageRecord "ImageInputId" Nothing
 
-type alias Credentials = {
-  signature: String,
-  policy: String,
-  key: String,
-  acl: String,
-  awsAccessKeyId: String,
-  date: String
-}
 
-type alias CredentialsWrapper = {
-  credentials: Credentials,
-  url: String
-}
+type alias Credentials =
+    { signature : String
+    , policy : String
+    , key : String
+    , acl : String
+    , awsAccessKeyId : String
+    , date : String
+    }
+
+
+type alias CredentialsWrapper =
+    { credentials : Credentials
+    , url : String
+    }
+
 
 type alias DocumentAttributes =
     { public : Bool
@@ -96,6 +114,7 @@ type alias DocumentAttributes =
 
 type alias DocumentAttributesRecord =
     { attributes : DocumentAttributes }
+
 
 type alias Child =
     { title : String
@@ -119,7 +138,7 @@ type alias Document =
         List String
     , children : List Child
     , parent_id : Int
-    , parent_title: String
+    , parent_title : String
     }
 
 
@@ -130,8 +149,10 @@ type alias DocumentRecord =
 type alias Documents =
     List Document
 
+
 type alias DocumentStack =
-  List Document
+    List Document
+
 
 type alias DocumentsRecord =
     { documents : Documents
@@ -143,11 +164,13 @@ type SearchDomain
     | Public
     | All
 
+
 type SearchOrder
-  = Viewed
-  | Created
-  | Updated
-  | Alphabetical
+    = Viewed
+    | Created
+    | Updated
+    | Alphabetical
+
 
 type alias SearchState =
     { query : String
@@ -155,12 +178,14 @@ type alias SearchState =
     , order : SearchOrder
     }
 
+
 type ActiveDocumentList
-  = SearchResultList | DocumentStackList
+    = SearchResultList
+    | DocumentStackList
+
 
 type alias AppState =
-    {
-    activeDocumentList : ActiveDocumentList
+    { activeDocumentList : ActiveDocumentList
     , online : Bool
     , signedIn : Bool
     , authorizing : Bool
@@ -186,8 +211,8 @@ type alias Model =
     , counter : Int
     , appState : AppState
     , message : String
-    , textInputBuffer: String
-    , searchQueryInputBuffer: String
+    , textInputBuffer : String
+    , searchQueryInputBuffer : String
     , current_user : User
     , errorMsg : String
     , warning : String
@@ -216,7 +241,10 @@ type alias Model =
 type alias SystemStatus =
     { online : Bool }
 
-type alias ErrorMessage = String
+
+type alias ErrorMessage =
+    String
+
 
 type Msg
     = NoOp
@@ -313,7 +341,6 @@ type Msg
     | Username String
 
 
-
 type Page
     = HomePage
     | PublicPage Int
@@ -336,25 +363,26 @@ pageName page =
             "Reader"
 
         PublicPage _ ->
-           "Reader"
+            "Reader"
 
         PrivatePage _ ->
-           "Reader"
+            "Reader"
 
         EditorPage ->
             "Editor"
 
         ImagePage ->
-          "Image"
+            "Image"
 
         AdminPage ->
-          "Admin"
+            "Admin"
 
         UserHomePages ->
-          "User"
+            "User"
 
         UserPreferencesPage ->
-          "User preferences"
+            "User preferences"
+
 
 type Tool
     = TableOfContents
@@ -368,87 +396,92 @@ type alias Flags =
     , height : Int
     }
 
+
 defaultAttributes : DocumentAttributes
 defaultAttributes =
     DocumentAttributes False "adoc" "standard" 0
 
+
 startDocument : Document
-startDocument = {
-  id = 0
-  , identifier = "nullDocument"
-  , author_id = 0
-  , author_name = ""
-  , title = "Welcome"
-  , content = "Welcome to noteshare"
-  , rendered_content = "Welcome to noteshare"
-  , attributes = defaultAttributes
-  , tags = []
-  , children = []
-  , parent_id = 0
-  , parent_title = "String"
-  }
+startDocument =
+    { id = 0
+    , identifier = "nullDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Welcome"
+    , content = "Welcome to noteshare"
+    , rendered_content = "Welcome to noteshare"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
 
 
 blankDocument : Document
-blankDocument = {
-  id = 0
-  , identifier = "blank"
-  , author_id = 0
-  , author_name = ""
-  , title = "New Document"
-  , content = "Write content here"
-  , rendered_content = "Write content here"
-  , attributes = defaultAttributes
-  , tags = []
-  , children = []
-  , parent_id = 0
-  , parent_title = "String"
-  }
+blankDocument =
+    { id = 0
+    , identifier = "blank"
+    , author_id = 0
+    , author_name = ""
+    , title = "New Document"
+    , content = "Write content here"
+    , rendered_content = "Write content here"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
 
 emptyDocument : Document
-emptyDocument = {
-  id = 0
-  , identifier = "empty"
-  , author_id = 0
-  , author_name = ""
-  , title = ""
-  , content = ""
-  , rendered_content = ""
-  , attributes = defaultAttributes
-  , tags = []
-  , children = []
-  , parent_id = 0
-  , parent_title = "String"
-  }
+emptyDocument =
+    { id = 0
+    , identifier = "empty"
+    , author_id = 0
+    , author_name = ""
+    , title = ""
+    , content = ""
+    , rendered_content = ""
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
 
 defaultDocument : Document
-defaultDocument =  {
-  id = 0
-  , identifier = "nullDocument"
-  , author_id = 0
-  , author_name = ""
-  , title = "Oops!"
-  , content = "Page not found or access restricted"
-  , rendered_content = "Page not found or access restricted"
-  , attributes = defaultAttributes
-  , tags = []
-  , children = []
-  , parent_id = 0
-  , parent_title = "String"
-  }
+defaultDocument =
+    { id = 0
+    , identifier = "nullDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Oops!"
+    , content = "Page not found or access restricted"
+    , rendered_content = "Page not found or access restricted"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
 
 defaultMasterDocument : Document
-defaultMasterDocument =  {
-  id = 0
-  , identifier = "nullMasterDocument"
-  , author_id = 0
-  , author_name = ""
-  , title = "Null master document"
-  , content = "nothing"
-  , rendered_content = "nothing"
-  , attributes = defaultAttributes
-  , tags = []
-  , children = []
-  , parent_id = 0
-  , parent_title = "String"
-  }
+defaultMasterDocument =
+    { id = 0
+    , identifier = "nullMasterDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Null master document"
+    , content = "nothing"
+    , rendered_content = "nothing"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }

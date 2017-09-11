@@ -7,7 +7,7 @@ import Action.Error
 import Action.Page
 import Views.Common as Common
 import Configuration
-import Date exposing(Date)
+import Date exposing (Date)
 import Dict
 import Document.MasterDocument
 import Document.RenderAsciidoc
@@ -47,11 +47,12 @@ import Views.External exposing (windowData, windowSetup)
 import Views.Footer as Footer
 import Views.Home exposing (home)
 import Views.NavBar as NavBar
-import Views.UserPreferences exposing(userPreferences)
+import Views.UserPreferences exposing (userPreferences)
 import Views.Reader exposing (reader)
 import Views.UserHomePages exposing (userHomePages)
-import Views.TOC as TOC exposing(toggleListView)
+import Views.TOC as TOC exposing (toggleListView)
 import Window exposing (..)
+
 
 -- 2
 
@@ -69,7 +70,6 @@ import Action.Document
         , saveCurrentDocument
         , deleteDocument
         )
-
 import Action.UI
     exposing
         ( displayPage
@@ -80,7 +80,6 @@ import Action.UI
         , toggleAuthorizing
         , appStateToggleAuthorizing
         )
-
 
 
 main : Program Flags Model Msg
@@ -98,12 +97,15 @@ updateWindow model w h =
     let
         new_window =
             KWindow w h
-        device = Common.getDevice w
+
+        device =
+            Common.getDevice w
     in
-        { model | device = device,
-                  window = new_window,
-                  message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height)
-                }
+        { model
+            | device = device
+            , window = new_window
+            , message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height)
+        }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -143,49 +145,64 @@ update msg model =
             Action.UI.toggleAuthorizing model
 
         Login ->
-          let
-            (model1, cmds1) = User.Login.login2 model
-            (model2, cmds2) = if model1.appState.signedIn then
-                (model1, Cmd.none) --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
-            else
-              (model1, Cmd.none)
-          in
-            (model2, Cmd.batch [cmds1, cmds2])
+            let
+                ( model1, cmds1 ) =
+                    User.Login.login2 model
+
+                ( model2, cmds2 ) =
+                    if model1.appState.signedIn then
+                        ( model1, Cmd.none )
+                        --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
+                    else
+                        ( model1, Cmd.none )
+            in
+                ( model2, Cmd.batch [ cmds1, cmds2 ] )
 
         ReconnectUser jsonString ->
-          let
-            _ = Debug.log "Enter doReconnectUser" "now"
-            _ = Debug.log "jsonString" jsonString
-          in
-            doReconnectUser jsonString model
+            let
+                _ =
+                    Debug.log "Enter doReconnectUser" "now"
+
+                _ =
+                    Debug.log "jsonString" jsonString
+            in
+                doReconnectUser jsonString model
 
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
         CompleteRegistration result ->
-          case (result) of
-            Ok result ->
-              let
-                user = result.user
-                newUser = {
-                  name =  user.name
-                , username = user.username
-                , id = user.id
-                , email = user.email
-                , password = ""
-                , blurb = ""
-                , token = user.token
-                , admin = False
-              }
-                oldAppState = model.appState
-                newAppState = {oldAppState | signedIn = True, authorizing = False}
-              in
-                ({ model | current_user = newUser, appState = newAppState}, Task.perform ReceiveTime Time.now)
-            Err err ->
-              let
-                _ = Debug.log "Registration failure" result
-              in
-                ({model | message = Action.Error.httpErrorString err}, Cmd.none )
+            case (result) of
+                Ok result ->
+                    let
+                        user =
+                            result.user
+
+                        newUser =
+                            { name = user.name
+                            , username = user.username
+                            , id = user.id
+                            , email = user.email
+                            , password = ""
+                            , blurb = ""
+                            , token = user.token
+                            , admin = False
+                            }
+
+                        oldAppState =
+                            model.appState
+
+                        newAppState =
+                            { oldAppState | signedIn = True, authorizing = False }
+                    in
+                        ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
+
+                Err err ->
+                    let
+                        _ =
+                            Debug.log "Registration failure" result
+                    in
+                        ( { model | message = Action.Error.httpErrorString err }, Cmd.none )
 
         GetTokenCompleted result ->
             User.Auth.getTokenCompleted model result
@@ -194,17 +211,16 @@ update msg model =
             signout "Please sign in" model
 
         ToggleListView ->
-          TOC.toggleListView model
-
+            TOC.toggleListView model
 
         ToggleRegister ->
             toggleRegister model
 
         SignOutOrIn ->
-          User.Login.signOutOrIn model
+            User.Login.signOutOrIn model
 
         ToggleUpdateRate ->
-           (Action.Document.toggleUpdateRate model , Cmd.none)
+            ( Action.Document.toggleUpdateRate model, Cmd.none )
 
         ToggleMenu menu ->
             toggleMenu menu model
@@ -213,175 +229,258 @@ update msg model =
             Document.Search.update model searchTerms
 
         UpdateSearchQueryInputBuffer str ->
-            ({model | searchQueryInputBuffer = str} , Cmd.none)
+            ( { model | searchQueryInputBuffer = str }, Cmd.none )
 
         UpdateTextInputBuffer str ->
-            ({model | textInputBuffer = str} , Cmd.none)
+            ( { model | textInputBuffer = str }, Cmd.none )
 
         GoSomewhere location ->
-          let
-            page = case location of
-              "home" -> HomePage
-              "reader" -> ReaderPage
-              _ -> model.appState.page
-            appState = model.appState
-            newAppState = { appState | page = page }
-            model1 = { model | appState = newAppState, message = location}
+            let
+                page =
+                    case location of
+                        "home" ->
+                            HomePage
 
-            (newModel, cmd) = case location of
-              "signout" -> User.Login.signout "You are now signed out." model1
-              _ -> (model1, Cmd.none)
-          in
-            (newModel, cmd)
+                        "reader" ->
+                            ReaderPage
+
+                        _ ->
+                            model.appState.page
+
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = page }
+
+                model1 =
+                    { model | appState = newAppState, message = location }
+
+                ( newModel, cmd ) =
+                    case location of
+                        "signout" ->
+                            User.Login.signout "You are now signed out." model1
+
+                        _ ->
+                            ( model1, Cmd.none )
+            in
+                ( newModel, cmd )
 
         SelectSearchMode searchMode ->
-          let
-             domain = case searchMode of
-                "private" -> Private
-                "public" -> Public
-                "all" -> All
-                _ -> Public
-             oldSearchState = model.searchState
-             newSearchState = if model.appState.signedIn then
-               { oldSearchState  | domain = domain }
-             else
-               { oldSearchState  | domain = Public }
-          in
-            ({ model | searchState = newSearchState }, Cmd.none  )
+            let
+                domain =
+                    case searchMode of
+                        "private" ->
+                            Private
+
+                        "public" ->
+                            Public
+
+                        "all" ->
+                            All
+
+                        _ ->
+                            Public
+
+                oldSearchState =
+                    model.searchState
+
+                newSearchState =
+                    if model.appState.signedIn then
+                        { oldSearchState | domain = domain }
+                    else
+                        { oldSearchState | domain = Public }
+            in
+                ( { model | searchState = newSearchState }, Cmd.none )
 
         SelectSearchOrder searchOrder ->
-          let
-             order = case searchOrder of
-                "viewed" -> Viewed
-                "created" -> Created
-                "alpha" -> Alphabetical
-                _ -> Viewed
-             oldSearchState = model.searchState
-             newSearchState = { oldSearchState  | order = order }
-          in
-            ({ model | searchState = newSearchState }, Cmd.none  )
+            let
+                order =
+                    case searchOrder of
+                        "viewed" ->
+                            Viewed
+
+                        "created" ->
+                            Created
+
+                        "alpha" ->
+                            Alphabetical
+
+                        _ ->
+                            Viewed
+
+                oldSearchState =
+                    model.searchState
+
+                newSearchState =
+                    { oldSearchState | order = order }
+            in
+                ( { model | searchState = newSearchState }, Cmd.none )
 
         ClearSearch ->
-          ({model | searchQueryInputBuffer = ""}, Cmd.none)
-            -- update model ""
+            ( { model | searchQueryInputBuffer = "" }, Cmd.none )
 
+        -- update model ""
         -- updatedSearchState
         DoSearch searchDomain key ->
-          let
-            searchState = model.searchState
-            newSearchState = { searchState | query = model.searchQueryInputBuffer }
-            appState = model.appState
-            newAppState = { appState | activeDocumentList = SearchResultList}
-            newModel = { model | searchState = newSearchState, appState = newAppState }
-          in
-            Document.Search.onEnter searchDomain key newModel
+            let
+                searchState =
+                    model.searchState
+
+                newSearchState =
+                    { searchState | query = model.searchQueryInputBuffer }
+
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | activeDocumentList = SearchResultList }
+
+                newModel =
+                    { model | searchState = newSearchState, appState = newAppState }
+            in
+                Document.Search.onEnter searchDomain key newModel
 
         RecallLastSearch ->
-           Document.Search.recallLastSearch model
+            Document.Search.recallLastSearch model
 
         UserHomePage ->
-          let
-            searchTerm = "key=home&authorname=" ++ (User.Login.shortUsername model)
-          in
-            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+            let
+                searchTerm =
+                    "key=home&authorname=" ++ (User.Login.shortUsername model)
+            in
+                Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
         InitHomePage ->
-          let
-            appState = model.appState
-            newAppState = { appState | page = HomePage, masterDocLoaded = False, authorizing = False}
-          in
-            ( { model | appState = newAppState},
-                Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
-            )
-            -- Document.Search.withParameters "random=public" Alphabetical Public HomePage model
+            let
+                appState =
+                    model.appState
 
+                newAppState =
+                    { appState | page = HomePage, masterDocLoaded = False, authorizing = False }
+            in
+                ( { model | appState = newAppState }
+                , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+                )
+
+        -- Document.Search.withParameters "random=public" Alphabetical Public HomePage model
         RandomDocuments ->
-           Document.Search.getRandomDocuments model
+            Document.Search.getRandomDocuments model
 
         DoRender key ->
             Document.RenderAsciidoc.putWithKey key model
 
-
         GetRenderedText str ->
-          let
-            document = model.current_document
-            newDocument = { document | rendered_content = str }
-            newModel = { model | current_document = newDocument }
-            _ = Debug.log "GetRenderedText" "now"
-          in
-            -- Action.Document.saveCurrentDocument "" newModel
-            ({model | current_document = newDocument}, Cmd.none)
+            let
+                document =
+                    model.current_document
+
+                newDocument =
+                    { document | rendered_content = str }
+
+                newModel =
+                    { model | current_document = newDocument }
+
+                _ =
+                    Debug.log "GetRenderedText" "now"
+            in
+                -- Action.Document.saveCurrentDocument "" newModel
+                ( { model | current_document = newDocument }, Cmd.none )
 
         GotoUserHomePages ->
-          User.Display.goToUserHomePages model
+            User.Display.goToUserHomePages model
 
         GotoUserPreferencesPage ->
-          let
-            appState = model.appState
-            newAppState = { appState | page = UserPreferencesPage }
-          in
-            ({model |
-                appState = newAppState
-                , textInputBuffer = model.current_user.blurb
-              },
-              User.Request.get model.current_user.id
-            )
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = UserPreferencesPage }
+            in
+                ( { model
+                    | appState = newAppState
+                    , textInputBuffer = model.current_user.blurb
+                  }
+                , User.Request.get model.current_user.id
+                )
 
         SearchForUserHomePages keyCode ->
-          if keyCode == 13 then
+            if keyCode == 13 then
+                let
+                    query =
+                        "is_user=" ++ model.searchQueryInputBuffer
+                in
+                    ( model, User.Request.getList query )
+            else
+                ( model, Cmd.none )
+
+        GetHomePageForUserHomePages searchTerm username ->
             let
-              query = "is_user=" ++ model.searchQueryInputBuffer
+                model2 =
+                    { model | selectedUserName = username }
+
+                ( newModel, cmd ) =
+                    Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
             in
-              ( model, User.Request.getList query )
-          else
-            ( model , Cmd.none)
-
-
-        GetHomePageForUserHomePages searchTerm username->
-          let
-            model2 = { model | selectedUserName = username}
-            (newModel, cmd) = Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
-          in
-            ( newModel, Cmd.batch[ cmd] )
+                ( newModel, Cmd.batch [ cmd ] )
 
         EditDocument documentId ->
-          let
-            appState = model.appState
-            newAppState = { appState | page = EditorPage}
-          in
-            ({model | current_document = model.specialDocument, appState = newAppState},
-              Cmd.none)
+            let
+                appState =
+                    model.appState
 
+                newAppState =
+                    { appState | page = EditorPage }
+            in
+                ( { model | current_document = model.specialDocument, appState = newAppState }
+                , Cmd.none
+                )
 
         GetUsers (Ok usersRecord) ->
-          let
-            userList = usersRecord.users
-            user = List.head userList |> Maybe.withDefault model.current_user
-            query = "authorname=" ++ user.username ++ "&key=home"
-            (model1, cmd) = Document.Search.withParameters query Alphabetical Public UserHomePages model
-          in
-            ({model1 | userList = userList, selectedUserName = user.username}, cmd)
+            let
+                userList =
+                    usersRecord.users
+
+                user =
+                    List.head userList |> Maybe.withDefault model.current_user
+
+                query =
+                    "authorname=" ++ user.username ++ "&key=home"
+
+                ( model1, cmd ) =
+                    Document.Search.withParameters query Alphabetical Public UserHomePages model
+            in
+                ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
 
         GetUsers (Err error) ->
-            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         GetUser (Ok userRecord) ->
-          let
-            _ = Debug.log "userRecord" "yo!"
-            user = userRecord.user
-            current_user = model.current_user
-            updatedCurrentUser = { current_user | blurb = user.blurb }
-          in
-            ({ model | current_user = updatedCurrentUser}, Cmd.none)
+            let
+                _ =
+                    Debug.log "userRecord" "yo!"
+
+                user =
+                    userRecord.user
+
+                current_user =
+                    model.current_user
+
+                updatedCurrentUser =
+                    { current_user | blurb = user.blurb }
+            in
+                ( { model | current_user = updatedCurrentUser }, Cmd.none )
 
         GetUser (Err error) ->
-          let
-            _ = Debug.log "error" error
-          in
-            ({model | message = Action.Error.httpErrorString error}, Cmd.none)
+            let
+                _ =
+                    Debug.log "error" error
+            in
+                ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         GetDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
@@ -392,52 +491,50 @@ update msg model =
         GetUserDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
 
-
         GetUserDocuments (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-
         GetSpecialDocument (Ok documentsRecord) ->
-           let
-               specialDocument =
-                   case List.head documentsRecord.documents of
-                       Just document ->
-                           document
+            let
+                specialDocument =
+                    case List.head documentsRecord.documents of
+                        Just document ->
+                            document
 
-                       Nothing ->
-                           emptyDocument
+                        Nothing ->
+                            emptyDocument
             in
-               ({model | specialDocument = specialDocument } , Cmd.none)
+                ( { model | specialDocument = specialDocument }, Cmd.none )
 
         GetSpecialDocument (Err err) ->
-            ({model | message = "Getting special document: error" } , Cmd.none)
+            ( { model | message = "Getting special document: error" }, Cmd.none )
 
         ---
-
         GetMasterDocument (Ok documentsRecord) ->
-           let
-              masterDocument =
-                   case List.head documentsRecord.documents of
-                       Just document ->
-                           document
+            let
+                masterDocument =
+                    case List.head documentsRecord.documents of
+                        Just document ->
+                            document
 
-                       Nothing ->
-                           emptyDocument
+                        Nothing ->
+                            emptyDocument
 
-              oldDocuments = model.documents
-              newDocuments =
+                oldDocuments =
+                    model.documents
+
+                newDocuments =
                     Utility.replaceIf (Action.Document.hasId masterDocument.id) masterDocument oldDocuments
             in
-               ({model | master_document = masterDocument } , Cmd.none)
+                ( { model | master_document = masterDocument }, Cmd.none )
 
         GetMasterDocument (Err err) ->
-            ({model | message = "Getting master document: error" } , Cmd.none)
+            ( { model | message = "Getting master document: error" }, Cmd.none )
 
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
-
         Message str ->
-          ({model | message = str}, Cmd.none)
+            ( { model | message = str }, Cmd.none )
 
         PutDocument (Ok serverReply) ->
             case (serverReply) of
@@ -448,17 +545,23 @@ update msg model =
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         UpdateCurrentUser ->
-          let
-            currentUser = model.current_user
-            blurb_ = if model.textInputBuffer /= "" then
-              model.textInputBuffer
-            else
-              model.current_user.blurb
-            updatedCurrentUser = {currentUser | blurb = blurb_ }
-            newModel = { model | current_user = updatedCurrentUser }
-          in
-            (newModel, User.Request.putCurrentUser newModel)
+            let
+                currentUser =
+                    model.current_user
 
+                blurb_ =
+                    if model.textInputBuffer /= "" then
+                        model.textInputBuffer
+                    else
+                        model.current_user.blurb
+
+                updatedCurrentUser =
+                    { currentUser | blurb = blurb_ }
+
+                newModel =
+                    { model | current_user = updatedCurrentUser }
+            in
+                ( newModel, User.Request.putCurrentUser newModel )
 
         PutUser (Ok serverReply) ->
             case (serverReply) of
@@ -476,18 +579,22 @@ update msg model =
                 createDocument model blankDocument
 
         AddToMasterDocument ->
-          let
-             _ = Debug.log "MAIN: AddToMasterDocument" "now"
-          in
-             Document.MasterDocument.addTo model
-        --( model , Request.Document.createDocument newDocument model.current_user.token )
+            let
+                _ =
+                    Debug.log "MAIN: AddToMasterDocument" "now"
+            in
+                Document.MasterDocument.addTo model
 
+        --( model , Request.Document.createDocument newDocument model.current_user.token )
         AttachCurrentDocument location ->
-          let
-            appState = model.appState
-            newAppState = { appState | command = (Document.MasterDocument.attach location model)}
-          in
-            ({model | appState = newAppState}, Cmd.none)
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | command = (Document.MasterDocument.attach location model) }
+            in
+                ( { model | appState = newAppState }, Cmd.none )
 
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
@@ -499,7 +606,7 @@ update msg model =
             ( { model | message = "Delete current document" }, Request.Document.deleteCurrentDocument model )
 
         DeleteDocument serverReply ->
-          Action.Document.deleteDocument serverReply model
+            Action.Document.deleteDocument serverReply model
 
         Title title ->
             Action.Document.setTitle title model
@@ -517,37 +624,41 @@ update msg model =
             updateTags tagString model
 
         SaveCurrentDocument ->
-          let
-            _ = Debug.log "SaveCurrentDocument" "now"
-          in
-            saveCurrentDocument "" model
+            let
+                _ =
+                    Debug.log "SaveCurrentDocument" "now"
+            in
+                saveCurrentDocument "" model
 
         AdoptChildren ->
-          let
-            _ = Debug.log "AdoptChildren" "now"
-          in
-            saveCurrentDocument "adopt_children=yes" model
+            let
+                _ =
+                    Debug.log "AdoptChildren" "now"
+            in
+                saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
-          let
-            _ = Debug.log "SelectDocument" "now"
-          in
-            Action.Document.selectDocument model document
-
+            let
+                _ =
+                    Debug.log "SelectDocument" "now"
+            in
+                Action.Document.selectDocument model document
 
         SelectMaster document ->
             Document.MasterDocument.select document model
 
         InputContent content ->
             Action.Document.inputContent content model
+
         {-
            Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
         -}
         Refresh ->
-          let
-            _ = Debug.log "Refresh" "now"
-          in
-            updateCurrentDocumentWithContent model.appState.textBuffer model
+            let
+                _ =
+                    Debug.log "Refresh" "now"
+            in
+                updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
@@ -556,7 +667,7 @@ update msg model =
             togglePublic model
 
         ImageSelected ->
-            ( {model | message = "Image selected"}
+            ( { model | message = "Image selected" }
             , External.fileSelected model.imageRecord.id
             )
 
@@ -566,34 +677,32 @@ update msg model =
                     { contents = data.contents
                     , filename = data.filename
                     }
-                newImageRecord = {id = "ImageInputId", mImage = Just newImage }
+
+                newImageRecord =
+                    { id = "ImageInputId", mImage = Just newImage }
             in
                 ( { model | imageRecord = newImageRecord }
                 , Cmd.none
                 )
 
         GetUploadCredentials ->
-          Image.Upload.getUploadCredentials model
+            Image.Upload.getUploadCredentials model
 
         CredentialsResult (Ok result) ->
             Image.Upload.request result.credentials model
 
-
         CredentialsResult (Err error) ->
-            (model, Cmd.none)
-
+            ( model, Cmd.none )
 
         Files nativeFiles ->
-          ( {model | fileToUpload = List.head nativeFiles }, Cmd.none)
-
+            ( { model | fileToUpload = List.head nativeFiles }, Cmd.none )
 
         -----
-
         UploadComplete (Ok result) ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         UploadComplete (Err error) ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         FileSelected ->
             ( model, fileUpload model.fileInputId )
@@ -607,15 +716,21 @@ update msg model =
             ( model, Cmd.none )
 
         Tick time ->
-            if model.appState.page == EditorPage
-              && model.appState.textBufferDirty
-              && model.current_document.attributes.docType /= "master" then
+            if
+                model.appState.page
+                    == EditorPage
+                    && model.appState.textBufferDirty
+                    && model.current_document.attributes.docType
+                    /= "master"
+            then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
-                Action.Channel.sendImmediateMessage "hello" model  -- (model, Cmd.none) --
+                Action.Channel.sendImmediateMessage "hello" model
+                -- (model, Cmd.none) --
             else
-                Action.Channel.joinChannel model  -- (model, Cmd.none) --
+                Action.Channel.joinChannel model
 
+        -- (model, Cmd.none) --
         SendToJS str ->
             ( model, toJs str )
 
@@ -640,7 +755,7 @@ update msg model =
             Action.Channel.handleMsg msg model
 
         GoToPage maybepage ->
-           Nav.Navigation.navigateTo maybepage  model
+            Nav.Navigation.navigateTo maybepage model
 
         LinkTo path ->
             ( model, Navigation.newUrl path )
@@ -660,14 +775,23 @@ update msg model =
 
         ReceiveTime time ->
             let
-                time_ = Just time
-                _ = Debug.log "ReceiveTime, TIME NOW" time_
-                _ = Debug.log "ReceiveTime, token" model.current_user.token
-                message = case Jwt.isExpired time model.current_user.token of
-                  Ok val ->
-                    "login OK"
-                  Err error ->
-                    "Session expired -- please sign in!"
+                time_ =
+                    Just time
+
+                _ =
+                    Debug.log "ReceiveTime, TIME NOW" time_
+
+                _ =
+                    Debug.log "ReceiveTime, token" model.current_user.token
+
+                message =
+                    case Jwt.isExpired time model.current_user.token of
+                        Ok val ->
+                            "login OK"
+
+                        Err error ->
+                            "Session expired -- please sign in!"
+
                 nextModel =
                     { model | time = time_, message = message, warning = message }
             in
@@ -731,7 +855,7 @@ view model =
                     (List.concat
                         [ page model ]
                     )
-            , screen  (Footer.footer model)
+            , screen (Footer.footer model)
             ]
 
 
@@ -742,29 +866,39 @@ view model =
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     let
-        _ = Debug.log "On startup, location.href" location.href
-        loc = String.Extra.replace "#@" "##" location.href
-        _ = Debug.log "On startup, loc" loc
+        _ =
+            Debug.log "On startup, location.href" location.href
 
-        maybeId = Parser.run Url.id loc
+        loc =
+            String.Extra.replace "#@" "##" location.href
 
-        _ = Debug.log "On startup, maybeId" maybeId
+        _ =
+            Debug.log "On startup, loc" loc
 
-        id = case maybeId of
-               Result.Ok id -> id
-               Err error -> 0
+        maybeId =
+            Parser.run Url.id loc
+
+        _ =
+            Debug.log "On startup, maybeId" maybeId
+
+        id =
+            case maybeId of
+                Result.Ok id ->
+                    id
+
+                Err error ->
+                    0
 
         current_user =
-          {
-          name = ""
-          , username = ""
-          , id = 0
-          , email = ""
-          , password = ""
-          , blurb = ""
-          , token = ""
-          , admin = False
-        }
+            { name = ""
+            , username = ""
+            , id = 0
+            , email = ""
+            , password = ""
+            , blurb = ""
+            , token = ""
+            , admin = False
+            }
 
         title =
             "Test document"
@@ -781,25 +915,25 @@ init flags location =
         ws =
             windowSetup 150 50 HomePage False False
 
-        appState = {
-         activeDocumentList = SearchResultList
-         , online = False
-         , signedIn = False
-         , authorizing = False
-         , registerUser =  False
-         , menuDropped = False
-         , textTypeMenuDropped = False
-         , docTypeMenuDropped = False
-         , textBufferDirty = False
-         , masterDocLoaded = False
-         , masterDocOpened = False
-         , tickerPaused = False
-         , page = HomePage
-         , tool = TableOfContents
-         , textBuffer = ""
-         , tickInterval = Configuration.tickInterval
-         , command = ""
-       }
+        appState =
+            { activeDocumentList = SearchResultList
+            , online = False
+            , signedIn = False
+            , authorizing = False
+            , registerUser = False
+            , menuDropped = False
+            , textTypeMenuDropped = False
+            , docTypeMenuDropped = False
+            , textBufferDirty = False
+            , masterDocLoaded = False
+            , masterDocOpened = False
+            , tickerPaused = False
+            , page = HomePage
+            , tool = TableOfContents
+            , textBuffer = ""
+            , tickInterval = Configuration.tickInterval
+            , command = ""
+            }
 
         channel =
             Phoenix.Channel.init "room:lobby"
@@ -810,8 +944,8 @@ init flags location =
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
 
-        model = {
-            window = (KWindow flags.width flags.height)
+        model =
+            { window = (KWindow flags.width flags.height)
             , device = Common.getDevice flags.width
             , counter = 0
             , appState = appState
@@ -832,7 +966,7 @@ init flags location =
             , searchState = searchState
             , phxSocket = initSocket
             , messageInProgress = ""
-            , messages =[]
+            , messages = []
             , imageRecord = defaultImageRecord
             , fileInputId = ""
             , date = Nothing
@@ -840,29 +974,34 @@ init flags location =
             , fileToUpload = Nothing
             , userList = []
             , selectedUserName = ""
-          }
+            }
 
-        standardCommands = [
-          Cmd.map PhoenixMsg phxCmd, toJs ws
-        , External.askToReconnectUser "reconnectUser"
-        , Task.perform ReceiveDate Date.now
-        , Task.perform ReceiveTime Time.now
-        ]
+        standardCommands =
+            [ Cmd.map PhoenixMsg phxCmd
+            , toJs ws
+            , External.askToReconnectUser "reconnectUser"
+            , Task.perform ReceiveDate Date.now
+            , Task.perform ReceiveTime Time.now
+            ]
 
-        masterDocumentCommands = [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
-        (newModel, command) = Document.Search.getRandomDocuments model
+        masterDocumentCommands =
+            [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
 
-        startupPageCommands = [
-           Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330", command
-        ]
+        ( newModel, command ) =
+            Document.Search.getRandomDocuments model
 
-        commands = if id > 0 then
-            standardCommands ++ masterDocumentCommands
-          else
-            startupPageCommands ++ standardCommands
+        startupPageCommands =
+            [ Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+            , command
+            ]
 
+        commands =
+            if id > 0 then
+                standardCommands ++ masterDocumentCommands
+            else
+                startupPageCommands ++ standardCommands
     in
-        ( model , Cmd.batch commands )
+        ( model, Cmd.batch commands )
 
 
 

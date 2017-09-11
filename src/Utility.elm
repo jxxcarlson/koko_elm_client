@@ -36,6 +36,7 @@ gotoPage model p =
 
 -- youtube : String -> Html
 
+
 youtube : String -> Html msg
 youtube url =
     div [ class "embed-responsive embed-responsive-16by9" ]
@@ -63,9 +64,11 @@ replaceIf predicate replacement list =
         )
         list
 
+
 removeWhen : (a -> Bool) -> List a -> List a
 removeWhen pred list =
-  List.filter (not << pred) list
+    List.filter (not << pred) list
+
 
 
 -- signinButtonText : Model -> String

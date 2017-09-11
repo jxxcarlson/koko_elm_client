@@ -76,12 +76,14 @@ handlePing value model =
         ( { model | appState = updatedAppState }, Cmd.none )
 
 
-joinChannel : { b | phxSocket : a }
-   -> ( { b | phxSocket : Phoenix.Socket.Socket Msg }, Cmd Msg )
+joinChannel :
+    { b | phxSocket : a }
+    -> ( { b | phxSocket : Phoenix.Socket.Socket Msg }, Cmd Msg )
 joinChannel model =
     let
         channel =
             Phoenix.Channel.init "room:lobby"
+
         ( initSocket, phxCmd ) =
             Phoenix.Socket.init Configuration.websocketHost
                 |> Phoenix.Socket.withDebug
@@ -90,43 +92,45 @@ joinChannel model =
     in
         ( { model | phxSocket = initSocket }, Cmd.map PhoenixMsg phxCmd )
 
-handleMsg : Phoenix.Socket.Msg Msg -> Model -> (Model, Cmd Msg)
+
+handleMsg : Phoenix.Socket.Msg Msg -> Model -> ( Model, Cmd Msg )
 handleMsg msg model =
-  let
-      ( phxSocket, phxCmd ) =
-          Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
+    let
+        ( phxSocket, phxCmd ) =
+            Phoenix.Socket.update (Debug.log "PhoenixMsg" msg) model.phxSocket
 
-      appState =
-          model.appState
+        appState =
+            model.appState
 
-      status =
-          if String.contains "Heartbeat" (toString msg) then
-              False
-          else
-              True
+        status =
+            if String.contains "Heartbeat" (toString msg) then
+                False
+            else
+                True
 
-      updatedAppState =
-          { appState | online = status }
-  in
-      ( { model
-          | phxSocket = phxSocket
-          , appState = updatedAppState
-        }
-      , Cmd.map PhoenixMsg phxCmd
-      )
+        updatedAppState =
+            { appState | online = status }
+    in
+        ( { model
+            | phxSocket = phxSocket
+            , appState = updatedAppState
+          }
+        , Cmd.map PhoenixMsg phxCmd
+        )
+
 
 receiveRaw : JsDecode.Value -> Model -> ( Model, Cmd Msg )
 receiveRaw raw model =
-  let
-      messageDecoder =
-          JsDecode.field "message" JsDecode.string
+    let
+        messageDecoder =
+            JsDecode.field "message" JsDecode.string
 
-      somePayload =
-          JsDecode.decodeValue messageDecoder raw
-  in
-      case somePayload of
-          Ok payload ->
-              handlePing True model
+        somePayload =
+            JsDecode.decodeValue messageDecoder raw
+    in
+        case somePayload of
+            Ok payload ->
+                handlePing True model
 
-          Err error ->
-              handlePing False model
+            Err error ->
+                handlePing False model

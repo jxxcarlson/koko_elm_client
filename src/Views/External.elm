@@ -42,10 +42,9 @@ windowSetup width height page online signed_in =
         json
 
 
-{-|
-  This is the data sent via ports to persist the user's
-  login information.  See `External.persist` in
-  User.Auth.getTokenCompleted
+{-| This is the data sent via ports to persist the user's
+login information. See `External.persist` in
+User.Auth.getTokenCompleted
 -}
 userData : String -> String -> Int -> String -> String -> String
 userData name email userId username token =
@@ -58,9 +57,12 @@ userData name email userId username token =
                 , ( "username", string username )
                 , ( "token", string token )
                 ]
-        _  = Debug.log "userData" data
+
+        _ =
+            Debug.log "userData" data
     in
         encode 2 data
+
 
 documentData : Document -> String
 documentData document =

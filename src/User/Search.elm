@@ -1,7 +1,6 @@
-module User.Search exposing(form)
+module User.Search exposing (form)
 
-import Types exposing(Model, Msg(SearchForUserHomePages, ClearSearch))
-
+import Types exposing (Model, Msg(SearchForUserHomePages, ClearSearch))
 import StyleSheet exposing (..)
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
@@ -15,23 +14,28 @@ form : Model -> Element Styles variation Msg
 form model =
     row NavBar
         [ spacing 10, verticalCenter ]
-        [ row Zero [ spacing -30] [
-          inputText SearchField
-            [ EE.onInput Types.UpdateSearchQueryInputBuffer
-            , Utility.onKeyUp (SearchForUserHomePages)
-            , placeholder "Search for a user (name, keyword)"
-            , title "Enter a username or a keyword"
-            , height (px 29), width (px 300),
-            paddingXY -20 0
+        [ row Zero
+            [ spacing -30 ]
+            [ inputText SearchField
+                [ EE.onInput Types.UpdateSearchQueryInputBuffer
+                , Utility.onKeyUp (SearchForUserHomePages)
+                , placeholder "Search for a user (name, keyword)"
+                , title "Enter a username or a keyword"
+                , height (px 29)
+                , width (px 300)
+                , paddingXY -20 0
+                ]
+                (model.searchQueryInputBuffer)
+            , circle 10 ClearButton [ verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
             ]
-            (model.searchQueryInputBuffer)
-         , circle 10 ClearButton [verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch] (text "x")
-        ]
+
         -- , row Zero
         --     [ center, spacing 15, paddingXY 10 0]
         --     [ searchButton model
         --     ]
         ]
+
+
 searchButton : Model -> Element Styles variation Msg
 searchButton model =
     el Zero
@@ -46,5 +50,5 @@ searchButton model =
 
 
 searchIcon : Element style variation msg
-searchIcon  =
-  (html (FontAwesome.search (Color.white) 25))
+searchIcon =
+    (html (FontAwesome.search (Color.white) 25))

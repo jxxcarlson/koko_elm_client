@@ -30,7 +30,7 @@ editor model =
         }
         []
         [ --named "e_separator" (hairline Hairline)
-         named "e_TOCHeader" (toolSelectorPanel model)
+          named "e_TOCHeader" (toolSelectorPanel model)
         , named "e_contentHeader" (titlePanel model)
         , named "e_content" (contentPanel model)
         , named "e_renderedContent" (Common.renderedContent model)
@@ -48,7 +48,7 @@ titlePanel model =
 contentPanel : Model -> Element Styles variation Msg
 contentPanel model =
     (Keyed.row None
-        [height (percent 100)]
+        [ height (percent 100) ]
         [ ( (toString model.counter)
           , (textArea Mono
                 [ width (percent 100)
@@ -72,39 +72,40 @@ editorPanel model =
         , refreshButton model
         , toggleUpdateRateIndicator model
         , toggleUpdateRateButton model
-        , full PanelInfo [] ( el Zero [verticalCenter] (text ("ID: " ++ (toString model.current_document.id))))
-        , full PanelInfo [] (el Zero [verticalCenter] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
+        , full PanelInfo [] (el Zero [ verticalCenter ] (text ("ID: " ++ (toString model.current_document.id))))
+        , full PanelInfo [] (el Zero [ verticalCenter ] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
         , deleteButton model
         ]
 
 
-
-
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
-    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [onClick (Refresh)]
+    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (Refresh) ]
+
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
 toggleUpdateRateButton model =
-    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [onClick (ToggleUpdateRate)]
+    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [ onClick (ToggleUpdateRate) ]
 
 
-toggleUpdateRateIndicator : Model ->  Element Styles variation Msg
+toggleUpdateRateIndicator : Model -> Element Styles variation Msg
 toggleUpdateRateIndicator model =
-  if model.appState.tickerPaused then
-    el Zero [verticalCenter, title "Green = fast update, red = slow update"] (html (FontAwesome.circle Color.red 25))
-  else
-    el Zero [verticalCenter, title "Green = fast update, red = slow update"] (html (FontAwesome.circle Color.green 25))
+    if model.appState.tickerPaused then
+        el Zero [ verticalCenter, title "Green = fast update, red = slow update" ] (html (FontAwesome.circle Color.red 25))
+    else
+        el Zero [ verticalCenter, title "Green = fast update, red = slow update" ] (html (FontAwesome.circle Color.green 25))
+
 
 toggleUpdateRateIcon model =
-  if model.appState.tickerPaused then
-    FontAwesome.play
-  else
-    FontAwesome.pause
+    if model.appState.tickerPaused then
+        FontAwesome.play
+    else
+        FontAwesome.pause
+
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
-    Basic.faIcon "Delete document" FontAwesome.trash [onClick (DeleteCurrentDocument)]
+    Basic.faIcon "Delete document" FontAwesome.trash [ onClick (DeleteCurrentDocument) ]
 
 
 toolSelectorPanel : Model -> Element Styles variation Msg
@@ -112,20 +113,21 @@ toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 12, justify ]
         [ Common.printButton model.current_document
-          , Common.selectTableOfContents model
-          , Common.toggleListView model
-          , Common.searchOrderMenu model
-          , Common.recallLastSearchButton model
-          , selectEditTools model
+        , Common.selectTableOfContents model
+        , Common.toggleListView model
+        , Common.searchOrderMenu model
+        , Common.recallLastSearchButton model
+        , selectEditTools model
         ]
+
 
 selectEditTools : Model -> Element Styles variation Msg
 selectEditTools model =
-  el Zero
-      [ width (px 85)
-      , onClick (SelectTool EditorTools)
-      , title "Tools"
-      , height (px 30)
-      , padding 2
-      ]
-      (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))
+    el Zero
+        [ width (px 85)
+        , onClick (SelectTool EditorTools)
+        , title "Tools"
+        , height (px 30)
+        , padding 2
+        ]
+        (html (FontAwesome.gear (Component.toolSelectorColor model EditorTools) 25))

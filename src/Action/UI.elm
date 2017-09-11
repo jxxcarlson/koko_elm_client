@@ -9,19 +9,17 @@ import Types exposing (..)
 import Views.External
 
 
-
-
 displayPage : Model -> Page
 displayPage model =
-    if model.device == Phone
-      then
+    if model.device == Phone then
         Types.ReaderPage
-      else if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage  then
+    else if model.appState.page == Types.ReaderPage || model.appState.page == Types.EditorPage then
         model.appState.page
-      else
+    else
         Types.ReaderPage
 
-toggleMenu : String -> Model -> (Model, Cmd Msg)
+
+toggleMenu : String -> Model -> ( Model, Cmd Msg )
 toggleMenu menu model =
     let
         appState =
@@ -44,7 +42,7 @@ toggleMenu menu model =
         ( { model | appState = newAppState }, Cmd.none )
 
 
-toggleTextMenu : Model -> (Model, Cmd Msg)
+toggleTextMenu : Model -> ( Model, Cmd Msg )
 toggleTextMenu model =
     let
         appState =
@@ -55,7 +53,8 @@ toggleTextMenu model =
     in
         ( { model | appState = newAppState }, Cmd.none )
 
-toggleRegister : Model -> (Model, Cmd Msg)
+
+toggleRegister : Model -> ( Model, Cmd Msg )
 toggleRegister model =
     let
         appState =
@@ -75,7 +74,8 @@ appStateToggleAuthorizing model =
     in
         { appState | authorizing = not appState.authorizing }
 
-toggleAuthorizing : Model -> (Model, Cmd Msg)
+
+toggleAuthorizing : Model -> ( Model, Cmd Msg )
 toggleAuthorizing model =
     let
         oldAppState =
@@ -86,7 +86,8 @@ toggleAuthorizing model =
     in
         ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
 
-setAuthorizing : Model -> Bool -> (Model, Cmd Msg)
+
+setAuthorizing : Model -> Bool -> ( Model, Cmd Msg )
 setAuthorizing model value =
     let
         oldAppState =
@@ -96,7 +97,6 @@ setAuthorizing model value =
             { oldAppState | authorizing = value, page = Types.HomePage }
     in
         ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
-
 
 
 appStateWithPage : Model -> Page -> AppState
@@ -117,8 +117,6 @@ updateToolStatus model tool =
         { appState | tool = tool }
 
 
-
-
 updateTool : Model -> Page -> Tool
 updateTool model page =
     let
@@ -128,15 +126,15 @@ updateTool model page =
         newTool =
             case page of
                 ReaderPage ->
-                  TableOfContents
+                    TableOfContents
 
                 EditorPage ->
-                  EditorTools
-                    -- if currentAppState.tool == ReaderTools then
-                    --     EditorTools
-                    -- else
-                    --     currentAppState.tool
+                    EditorTools
 
+                -- if currentAppState.tool == ReaderTools then
+                --     EditorTools
+                -- else
+                --     currentAppState.tool
                 _ ->
                     currentAppState.tool
     in
@@ -163,7 +161,7 @@ queryMessage domain =
                     "public documents"
 
                 All ->
-                  "all documents"
+                    "all documents"
     in
         "search " ++ domain_ ++ " for "
 
@@ -171,7 +169,6 @@ queryMessage domain =
 numberOfDocuments : String -> Model -> String
 numberOfDocuments title model =
     title ++ ": " ++ (toString (List.length model.documents))
-
 
 
 tocNumberOfDocuments : Model -> String
@@ -184,8 +181,11 @@ displayIdentifier model =
     let
         parts =
             (String.split "." model.current_document.identifier) |> Array.fromList
-        datePart = Array.get 2 parts |> Maybe.withDefault "--"
-        hashPart = Array.get 3 parts |> Maybe.withDefault "--"
 
+        datePart =
+            Array.get 2 parts |> Maybe.withDefault "--"
+
+        hashPart =
+            Array.get 3 parts |> Maybe.withDefault "--"
     in
         datePart ++ "." ++ hashPart

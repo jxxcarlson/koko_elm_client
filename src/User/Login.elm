@@ -7,7 +7,9 @@ import Data.User
 import Request.Api
 import User.Auth
 
+
 -- dummy comment
+
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
 updateEmail model email =
@@ -66,9 +68,11 @@ login model =
         newAppState =
             { appState | page = Types.HomePage, signedIn = True, authorizing = False }
 
-        searchState = model.searchState
+        searchState =
+            model.searchState
 
-        newSearchState = { searchState | domain = Private }
+        newSearchState =
+            { searchState | domain = Private }
 
         user =
             model.current_user
@@ -76,15 +80,21 @@ login model =
         updatedUser =
             { user | password = "" }
     in
-        { model |
-           appState = newAppState,
-           searchState = newSearchState,
-           current_user = updatedUser }
+        { model
+            | appState = newAppState
+            , searchState = newSearchState
+            , current_user = updatedUser
+        }
 
-login2 : Model -> (Model, Cmd Msg)
+
+login2 : Model -> ( Model, Cmd Msg )
 login2 model =
-  ( login model,  User.Auth.loginUserCmd model Request.Api.loginUrl)
-    --, Action.Document.search Private "sort=updated" HomePage model
+    ( login model, User.Auth.loginUserCmd model Request.Api.loginUrl )
+
+
+
+--, Action.Document.search Private "sort=updated" HomePage model
+
 
 signout : String -> Model -> ( Model, Cmd Msg )
 signout message model =
@@ -93,8 +103,7 @@ signout message model =
             model.current_user
 
         updated_user =
-            {
-              name = ""
+            { name = ""
             , username = ""
             , id = 0
             , email = ""
@@ -102,14 +111,13 @@ signout message model =
             , password = ""
             , token = ""
             , admin = False
-          }
+            }
 
         oldAppState =
             model.appState
 
         newAppState =
             { oldAppState | page = Types.HomePage, registerUser = False, signedIn = False, authorizing = False }
-
     in
         ( { model
             | current_user = updated_user
@@ -117,31 +125,42 @@ signout message model =
             , warning = ""
             , message = message
           }
-        , Cmd.batch[
-           External.toJs (Views.External.windowData model HomePage)
-           , External.disconnectUser "foo"
-          ]
+        , Cmd.batch
+            [ External.toJs (Views.External.windowData model HomePage)
+            , External.disconnectUser "foo"
+            ]
         )
 
-doReconnectUser : String -> Model -> (Model, Cmd Msg)
-doReconnectUser jsonString model =
-  let
-      _ = Debug.log "Enter" "doReconnectUser"
-      _ = Debug.log "in doReconnectUser, jsonString" jsonString
-      maybeUserRecord =
-          Data.User.localStorageUserRecord jsonString
-      _ = Debug.log "maybeUserRecord" maybeUserRecord
-  in
-      case maybeUserRecord of
-          Ok userRecord ->
-            let
-              newModel = { model | warning = "" }
-              _ = Debug.log "userRecord" userRecord
-            in
-              reconnectUser newModel userRecord
 
-          Err error ->
-              ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
+doReconnectUser : String -> Model -> ( Model, Cmd Msg )
+doReconnectUser jsonString model =
+    let
+        _ =
+            Debug.log "Enter" "doReconnectUser"
+
+        _ =
+            Debug.log "in doReconnectUser, jsonString" jsonString
+
+        maybeUserRecord =
+            Data.User.localStorageUserRecord jsonString
+
+        _ =
+            Debug.log "maybeUserRecord" maybeUserRecord
+    in
+        case maybeUserRecord of
+            Ok userRecord ->
+                let
+                    newModel =
+                        { model | warning = "" }
+
+                    _ =
+                        Debug.log "userRecord" userRecord
+                in
+                    reconnectUser newModel userRecord
+
+            Err error ->
+                ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
+
 
 reconnectUser : Model -> LoginLocalStorageRecord -> ( Model, Cmd Msg )
 reconnectUser model userRecord =
@@ -152,12 +171,15 @@ reconnectUser model userRecord =
         current_user =
             { user
                 | username = userRecord.username
-                 , id = String.toInt userRecord.id |> Result.withDefault 0
+                , id = String.toInt userRecord.id |> Result.withDefault 0
                 , token = userRecord.token
             }
 
-        searchState = model.searchState
-        newSearchState = { searchState | domain = Private }
+        searchState =
+            model.searchState
+
+        newSearchState =
+            { searchState | domain = Private }
 
         appState =
             model.appState
@@ -174,25 +196,32 @@ reconnectUser model userRecord =
         , Cmd.none
         )
 
+
 shortUsername : Model -> String
 shortUsername model =
-  let
-    shortName = model.current_user.username
-        |> String.split("@")
-        |> List.head
-        |> Maybe.withDefault "---"
-   in
-    shortName
+    let
+        shortName =
+            model.current_user.username
+                |> String.split ("@")
+                |> List.head
+                |> Maybe.withDefault "---"
+    in
+        shortName
 
-signOutOrIn model  =
-  if model.appState.signedIn then
-      signout "You are signed out" model
-   else
-     doSignIn model
+
+signOutOrIn model =
+    if model.appState.signedIn then
+        signout "You are signed out" model
+    else
+        doSignIn model
+
 
 doSignIn model =
-  let
-    appState = model.appState
-    newAppState = { appState | authorizing = True, page = HomePage }
-  in
-    ({ model | appState = newAppState }, Cmd.none)
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | authorizing = True, page = HomePage }
+    in
+        ( { model | appState = newAppState }, Cmd.none )

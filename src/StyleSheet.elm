@@ -9,8 +9,11 @@ import Style.Color as Color
 import Style.Font as Font
 import Style.Transition as Transition
 
+
 lightBlueColor : Color.Color
-lightBlueColor = Color.rgb 150 150 255
+lightBlueColor =
+    Color.rgb 150 150 255
+
 
 {-| A synonym for creating tuples. This will be included in the standard library soon.
 1 => 2 == (1, 2)
@@ -24,7 +27,7 @@ lightBlueColor = Color.rgb 150 150 255
 -}
 type Styles
     = None
-      | ActiveButton
+    | ActiveButton
     | ActiveFlatButton
     | Blue
     | BluishCharcoal
@@ -99,10 +102,10 @@ stylesheet =
             , Color.background Color.lightGray
             ]
         , style Zero [ Font.lineHeight 0 ]
-        , style XXX [ Color.background (Color.rgb 200 200 255)]
+        , style XXX [ Color.background (Color.rgb 200 200 255) ]
         , style Hairline [ Color.background Color.lightGray, Color.text Color.white ]
-        , style MainContent [Color.background Color.white]
-        , style MainContentDark [Color.background Color.black, Color.text Color.white]
+        , style MainContent [ Color.background Color.white ]
+        , style MainContentDark [ Color.background Color.black, Color.text Color.white ]
         , style Main
             [-- Border.all 1
              --   -- set all border widths to 1 px.
@@ -123,7 +126,7 @@ stylesheet =
             ]
         , style Label
             [ Font.size 18
-             , Color.background Color.darkCharcoal
+            , Color.background Color.darkCharcoal
             , Color.text Color.white
             ]
         , style Logo
@@ -136,16 +139,16 @@ stylesheet =
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
             ]
         , style ClearButton
-            [ Font.size 14,
-              Color.background Color.gray
+            [ Font.size 14
+            , Color.background Color.gray
             ]
-
         , style Box
             [ Color.text Color.white
             , Color.background Color.blue
             , Color.border Color.white
             , Border.rounded 3
-              -- round all borders to 3px
+
+            -- round all borders to 3px
             , paddingHint 20
             , hover
                 [ cursor "pointer"
@@ -160,26 +163,24 @@ stylesheet =
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
             ]
-         , style NavBarActive
+        , style NavBarActive
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
-            , pseudo "active" [Transition.all, Color.background Color.darkBlue, Color.text Color.blue]
+            , pseudo "active" [ Transition.all, Color.background Color.darkBlue, Color.text Color.blue ]
             ]
-
-
         , style Panel
             [ Color.background Color.lightCharcoal ]
         , style PanelInfo
             [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
         , style Radio
-            [ Font.size 14, Color.background Color.lightGray]
+            [ Font.size 14, Color.background Color.lightGray ]
         , style TitleStyle
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
             , Font.size 20
             , Font.lineHeight 1.3
             ]
-         , style RHSidebar
+        , style RHSidebar
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
             , Font.size 14
@@ -189,15 +190,15 @@ stylesheet =
             , Border.left 1.0
             ]
         , style RHSidebarHeader
-           [ Color.background (Color.rgb 210 210 210)
-           , Color.text (Color.rgb 120 0 0)
-           , Font.size 18
-           , Font.lineHeight 1.3
-           , Border.solid
-           , Color.border (Color.rgb 120 120 120)
-           , Border.left 1.0
-           , Border.bottom 1.0
-           ]
+            [ Color.background (Color.rgb 210 210 210)
+            , Color.text (Color.rgb 120 0 0)
+            , Font.size 18
+            , Font.lineHeight 1.3
+            , Border.solid
+            , Color.border (Color.rgb 120 120 120)
+            , Border.left 1.0
+            , Border.bottom 1.0
+            ]
         , style AuthorStyle
             [ Color.background (Color.rgb 210 210 210)
             , Color.text (Color.rgb 120 0 0)
@@ -227,7 +228,7 @@ stylesheet =
             , Font.center
             , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style ButtonReversed
             [ Color.text Color.charcoal
@@ -236,7 +237,7 @@ stylesheet =
             , Font.center
             , Border.rounded 6
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , pseudo "active" [Transition.all, Color.background Color.lightCharcoal ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButton
             [ Color.text Color.white
@@ -244,7 +245,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , pseudo "active" [Transition.all, Color.background Color.lightCharcoal ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButtonBlue
             [ Color.text Color.white
@@ -252,7 +253,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style HeaderLabel
             [ Color.text Color.white
@@ -266,7 +267,7 @@ stylesheet =
             , Color.background Color.darkRed
             , Font.size 14
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
-            , pseudo "active" [Transition.all, Color.background Color.lightBlue ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style SearchField
             [ Color.text Color.black ]
@@ -290,26 +291,32 @@ stylesheet =
             [ Color.text (Color.rgb 255 130 130), Color.background Color.blue, Font.weight 100 ]
         , style Menu
             [ Color.background Color.charcoal ]
-        , style FooterNote [ Color.background Color.charcoal,
-             Color.text Color.white, pseudo "visited" [Color.text Color.white ]
-              , pseudo "hover" [Color.text Color.yellow ] ]
-        , style WarningFooterNote[ Color.background Color.red, Color.text Color.white ]
-        , style OKFooterNote[ Color.background Color.darkGreen, Color.text Color.white ]
+        , style FooterNote
+            [ Color.background Color.charcoal
+            , Color.text Color.white
+            , pseudo "visited" [ Color.text Color.white ]
+            , pseudo "hover" [ Color.text Color.yellow ]
+            ]
+        , style WarningFooterNote [ Color.background Color.red, Color.text Color.white ]
+        , style OKFooterNote [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
-        , style Mono [Font.typeface [ "Lucida Sans Unicode" ]]
+        , style Mono [ Font.typeface [ "Lucida Sans Unicode" ] ]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]
-        , style Blue [ Color.background Color.blue, Color.text Color.white]
+        , style Blue [ Color.background Color.blue, Color.text Color.white ]
         , style PaleBlue2 [ Color.background (Color.rgb 200 210 255) ]
         , style PaleYellow [ Color.background (Color.rgb 255 255 200) ]
         , style PaleRed [ Color.background (Color.rgb 255 200 200) ]
         , style Transparent [ Color.background (Color.rgba 255 255 255 0.0) ]
-        , style Gray [Color.background Color.gray]
-        , style Charcoal [Color.background Color.charcoal, Color.text Color.white
-           , pseudo "active" [Transition.all, Color.background Color.lightCharcoal , Color.text Color.blue]]
-        , style LightGray [Color.background Color.lightGray]
+        , style Gray [ Color.background Color.gray ]
+        , style Charcoal
+            [ Color.background Color.charcoal
+            , Color.text Color.white
+            , pseudo "active" [ Transition.all, Color.background Color.lightCharcoal, Color.text Color.blue ]
+            ]
+        , style LightGray [ Color.background Color.lightGray ]
         ]
 
 
