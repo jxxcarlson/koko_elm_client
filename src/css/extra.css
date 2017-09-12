@@ -10,3 +10,5 @@
 #rendered_text2 .listingblock .content pre {background-color:rgba(0,0,255,0.05)}
 #rendered_text2 p code{background-color:rgba(0,0,255,0.05)!important}
 #rendered_text2 .box {margin-left:20px!important; margin-right: 20px!important;}
+
+#rendered_text2 .indent {margin-left: 2em!important}
