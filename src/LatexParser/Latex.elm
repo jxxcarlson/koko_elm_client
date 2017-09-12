@@ -14,6 +14,7 @@ module LatexParser.Latex
         , word
         , words
         , texComment
+        , ws
         )
 
 {-| XParser parses an as-yet undetermined subset LaTeX
@@ -115,6 +116,11 @@ environment =
                 |. symbol "}"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
                 |. spaces
+                |. repeat zeroOrMore (oneOf [ symbol "\n" ])
+
+
+
+-- spaces
 
 
 type alias InlineMath_ =
