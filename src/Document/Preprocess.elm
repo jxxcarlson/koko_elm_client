@@ -49,7 +49,7 @@ preprocessLatex content =
                 |> LatexParser.Render.transformText
                 |> transformXLinks
     in
-        content
+        content2
 
 
 {-| xlink::public/123[label] => <http://www.knode.io##public/123[Labe]>

@@ -28,7 +28,7 @@ cp ./robot/src/deploy/webpack.config.js ./src/
 
 echo
 echo "${color}build app ...${reset}";
-npm run build
+tput setaf 6;time npm run build; tput setaf 7;
 
 echo
 echo "${color}upload to cloud ...${reset}"

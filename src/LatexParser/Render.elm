@@ -32,10 +32,20 @@ remapBackslash =
 
 transformText text =
     -- Parser.run latexList (text |> remapBackslash)
-    Parser.run latexList text
-        |> latexListGet
-        |> List.map transformLatex
-        |> String.join (" ")
+    let
+        _ =
+            Debug.log "transformText" text
+
+        transformedText =
+            Parser.run latexList text
+                |> latexListGet
+                |> List.map transformLatex
+                |> String.join (" ")
+
+        -- _ =
+        --     Debug.log "transformed text" transformedText
+    in
+        transformedText
 
 
 getAt : Int -> List String -> String
