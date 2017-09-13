@@ -1,24 +1,36 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <title>Noteshare</title>
-    <LINK href="src/css/asciidoc2.css" rel="stylesheet" type="text/css">
-    <LINK href="src/css/extra.css" rel="stylesheet" type="text/css">
 
-      <script src="app.js"></script>
+    <!--  META -->
+
+    <meta charset="utf-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+
+    <!--  Still running under knoode.io -->
+
+    <title>Noteshare</title>
+
+    <!--  Asciidoctor (see also index.js) -->
+
+      <LINK href="src/css/asciidoc2.css" rel="stylesheet" type="text/css">
+      <LINK href="src/css/extra.css" rel="stylesheet" type="text/css">
+      <script src="js/asciidoctor.js"></script>
+
+     <!--  SYNTAX HIGLIGHTING (NOT WORKNG) -->
+
+      <link rel="stylesheet"
+         href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+      <!--  MathJax -->
 
       <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
       </script>
-
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-
-      <script>hljs.initHighlightingOnLoad();</script>
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-dune-light.min.css"></script>
-
 
 
       <script type="text/x-mathjax-config">
@@ -27,23 +39,21 @@
            processSectionDelay: 5,
            "HTML-CSS": {
              preferredFont: "STIX",
+             webFont: "STIX-Web",
              minScaleAdjust: 50,
              noReflows: true
            }
          }});
 
-          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-
-          function typesetNow2(){
-            console.log("II.  calling MathJax.Hub.Queue ... ")
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-          }
-
-          typesetNow2()
+          // MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+          //
+          // function typesetNow(){
+          //   console.log("II.  calling MathJax.Hub.Queue ... ")
+          //   MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+          // }
+          //
+          // typesetNow()
       </script>
-
-
-    <script src="js/asciidoctor.js"></script>
 
   </head>
   <body>
