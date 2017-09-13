@@ -6,44 +6,16 @@
     <LINK href="src/css/asciidoc2.css" rel="stylesheet" type="text/css">
     <LINK href="src/css/extra.css" rel="stylesheet" type="text/css">
 
-      <script src="app.js"></script>
-
       <script type="text/javascript" async
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
       </script>
 
-
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 
-      <script>hljs.initHighlightingOnLoad();</script>
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-dune-light.min.css"></script>
 
 
 
-      <script type="text/x-mathjax-config">
-         MathJax.Hub.Config({tex2jax: {
-           inlineMath: [['$','$'], ['\\(','\\)']],
-           processSectionDelay: 5,
-           "HTML-CSS": {
-             preferredFont: "STIX",
-             minScaleAdjust: 50,
-             noReflows: true
-           }
-         }});
 
-          MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-
-          function typesetNow2(){
-            console.log("II.  calling MathJax.Hub.Queue ... ")
-            MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-          }
-
-          typesetNow2()
-      </script>
-
-
-    <script src="js/asciidoctor.js"></script>
 
   </head>
   <body>
@@ -59,6 +31,27 @@
     </div>
 
     <script src="app.js"></script>
+    <script src="js/asciidoctor.js"></script>
+    <script type="text/x-mathjax-config">
+       MathJax.Hub.Config({tex2jax: {
+         inlineMath: [['$','$'], ['\\(','\\)']],
+         processSectionDelay: 5,
+         "HTML-CSS": {
+           preferredFont: "STIX",
+           minScaleAdjust: 50,
+           noReflows: true
+         }
+       }});
+
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+
+        function typesetNow(){
+          console.log("II.  calling MathJax.Hub.Queue ... ")
+          MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+        }
+
+        typesetNow()
+    </script>
 
   </body>
 </html>
