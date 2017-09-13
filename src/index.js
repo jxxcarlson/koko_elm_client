@@ -18,8 +18,11 @@ var mountNode = document.getElementById('main');
     );
 
   function typesetNow(){
-    console.log("** calling MathJax.Hub.Queue ... ")
-    MathJax.Hub.Queue(["Typeset", MathJax.Hub, function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
+    console.log("** calling MathJax.Hub.Queue in index.js ... ")
+    MathJax.Hub.Queue([
+      "Typeset",
+      MathJax.Hub,
+      function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
   }
 
   var request_in_progress = false;
@@ -114,10 +117,6 @@ var mountNode = document.getElementById('main');
 
   var count = 0;
 
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 
 // PERSIST AND RECONNECT USER

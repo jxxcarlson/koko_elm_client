@@ -18,6 +18,5 @@ Go to `localhost:3000`.  With an internet connection you will be connected to th
 4872770 Sept  3 OK
 
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atelier-dune-light.min.css"></script>
