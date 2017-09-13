@@ -13,3 +13,6 @@ Using the app
 =============
 
 Go to `localhost:3000`.  With an internet connection you will be connected to the backend server.  Register to create an account, or use this one: login as `johndoe@foo.io` with password `prime1719`
+
+20158f7 Sept 10 OK
+4872770 Sept  3 OK
