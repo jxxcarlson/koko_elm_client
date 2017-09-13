@@ -778,12 +778,18 @@ update msg model =
                 time_ =
                     Just time
 
+                _ =
+                    Debug.log "TOK VAL" model.current_user.token
+
+                _ =
+                    Debug.log "TOK EXP" (Jwt.isExpired time model.current_user.token)
+
                 message =
                     case Jwt.isExpired time model.current_user.token of
-                        Ok True ->
+                        Ok False ->
                             "sign in OK"
 
-                        Ok False ->
+                        Ok True ->
                             "Session expired - please sign in again"
 
                         Err error ->
