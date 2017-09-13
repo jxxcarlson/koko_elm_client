@@ -44,10 +44,9 @@ module.exports = {
         loader: 'elm-webpack-loader',
         options: {
           verbose: true,
-          debug: false,
+          debug: true,
           warn: true,
           pathToMake: '.bin/unbuffered-elm-make',
-
         },
       },
       {

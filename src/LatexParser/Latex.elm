@@ -66,7 +66,7 @@ word =
         succeed identity
             |. spaces
             |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
-            |. ignore zeroOrMore (\c -> c == ' ')
+            |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 
@@ -114,12 +114,13 @@ environment =
                 |. symbol "{"
                 |. keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"
-                |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-                |. spaces
-                |. repeat zeroOrMore (oneOf [ symbol "\n" ])
+                --|. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+                |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 
+-- |. spaces
+-- |. repeat zeroOrMore (oneOf [ symbol "\n" ])
 -- spaces
 
 
@@ -135,8 +136,9 @@ inlineMath =
             |. symbol "$"
             |= keep zeroOrMore (\c -> c /= '$')
             |. symbol "$"
-            |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-            |. spaces
+            -- |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+            -- |. spaces
+            |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 type alias DisplayMath_ =
@@ -152,8 +154,9 @@ displayMath =
                 DisplayMath_
                 |= keep zeroOrMore (\c -> c /= '$')
                 |. symbol "$$"
-                |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-                |. spaces
+                --|. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
+                --|. spaces
+                |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
 
 
 
@@ -166,10 +169,16 @@ displayMath2 =
         delayedCommit (symbol "\\[") <|
             succeed
                 DisplayMath_
+                -- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
                 |= keep zeroOrMore (\c -> c /= '\\')
                 |. symbol "\\]"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
                 |. spaces
+
+
+
+-- |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
+-- |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
 
 
 arg : Parser String
@@ -198,7 +207,8 @@ macro =
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
             |. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n'), Parser.end ]
-            |. spaces
+            -- |. spaces
+            |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 type alias BareMacro_ =
@@ -220,6 +230,7 @@ texComment : Parser ()
 texComment =
     symbol "%"
         |. ignoreUntil "\n"
+        |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 
