@@ -784,19 +784,25 @@ update msg model =
                 _ =
                     Debug.log "TOK EXP" (Jwt.isExpired time model.current_user.token)
 
-                message =
+                ( message, signedIn ) =
                     case Jwt.isExpired time model.current_user.token of
                         Ok False ->
-                            "sign in OK"
+                            ( "sign in OK", model.appState.signedIn )
 
                         Ok True ->
-                            "Session expired - please sign in again"
+                            ( "Session expired - please sign in again", False )
 
                         Err error ->
-                            "Session expired -- please sign in!"
+                            ( "Session expired -- please sign in!", False )
+
+                appState =
+                    model.appState
+
+                nextAppState =
+                    { appState | signedIn = signedIn }
 
                 nextModel =
-                    { model | time = time_, message = message, warning = message }
+                    { model | time = time_, message = message, warning = message, appState = nextAppState }
             in
                 ( nextModel, Cmd.none )
 
