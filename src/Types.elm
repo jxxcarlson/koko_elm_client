@@ -277,7 +277,6 @@ type Msg
     | GetUploadCredentials
     | GetUserDocuments (Result Http.Error DocumentsRecord)
     | GetUsers (Result Http.Error UsersRecord)
-    | GoSomewhere String
     | GoTo Page
     | GoToPage (Maybe Page)
     | GotoUserHomePages

@@ -5,6 +5,8 @@ module Main exposing (..)
 import Action.Channel
 import Action.Error
 import Action.Page
+import Action.Search
+import Action.User
 import Views.Common as Common
 import Configuration
 import Date exposing (Date)
@@ -39,7 +41,7 @@ import Types exposing (..)
 import Utility
 import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import User.Display
-import User.Login exposing (..)
+import User.Login
 import User.Request
 import Views.Admin exposing (admin)
 import Views.Editor exposing (editor)
@@ -124,16 +126,19 @@ update msg model =
             ( { model | appState = (updateToolStatus model t) }, Cmd.none )
 
         Name name ->
-            updateName model name
+            User.Login.updateName model name
 
         Username username ->
-            updateUsername model username
+            User.Login.updateUsername model username
 
         Email email ->
-            updateEmail model email
+            User.Login.updateEmail model email
 
         Password password ->
-            updatePassword model password
+            User.Login.updatePassword model password
+
+        Signout ->
+            User.Login.signout "Please sign in" model
 
         AuthenticationAction ->
             if model.appState.signedIn then
@@ -145,70 +150,19 @@ update msg model =
             Action.UI.toggleAuthorizing model
 
         Login ->
-            let
-                ( model1, cmds1 ) =
-                    User.Login.login2 model
-
-                ( model2, cmds2 ) =
-                    if model1.appState.signedIn then
-                        ( model1, Cmd.none )
-                        --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
-                    else
-                        ( model1, Cmd.none )
-            in
-                ( model2, Cmd.batch [ cmds1, cmds2 ] )
+            User.Login.doLogin model
 
         ReconnectUser jsonString ->
-            let
-                _ =
-                    Debug.log "Enter doReconnectUser" "now"
-
-                _ =
-                    Debug.log "jsonString" jsonString
-            in
-                doReconnectUser jsonString model
+            User.Login.doReconnectUser jsonString model
 
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
         CompleteRegistration result ->
-            case (result) of
-                Ok result ->
-                    let
-                        user =
-                            result.user
-
-                        newUser =
-                            { name = user.name
-                            , username = user.username
-                            , id = user.id
-                            , email = user.email
-                            , password = ""
-                            , blurb = ""
-                            , token = user.token
-                            , admin = False
-                            }
-
-                        oldAppState =
-                            model.appState
-
-                        newAppState =
-                            { oldAppState | signedIn = True, authorizing = False }
-                    in
-                        ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
-
-                Err err ->
-                    let
-                        _ =
-                            Debug.log "Registration failure" result
-                    in
-                        ( { model | message = Action.Error.httpErrorString err }, Cmd.none )
+            User.Login.completeRegistration result model
 
         GetTokenCompleted result ->
             User.Auth.getTokenCompleted model result
-
-        Signout ->
-            signout "Please sign in" model
 
         ToggleListView ->
             TOC.toggleListView model
@@ -234,112 +188,17 @@ update msg model =
         UpdateTextInputBuffer str ->
             ( { model | textInputBuffer = str }, Cmd.none )
 
-        GoSomewhere location ->
-            let
-                page =
-                    case location of
-                        "home" ->
-                            HomePage
-
-                        "reader" ->
-                            ReaderPage
-
-                        _ ->
-                            model.appState.page
-
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | page = page }
-
-                model1 =
-                    { model | appState = newAppState, message = location }
-
-                ( newModel, cmd ) =
-                    case location of
-                        "signout" ->
-                            User.Login.signout "You are now signed out." model1
-
-                        _ ->
-                            ( model1, Cmd.none )
-            in
-                ( newModel, cmd )
-
         SelectSearchMode searchMode ->
-            let
-                domain =
-                    case searchMode of
-                        "private" ->
-                            Private
-
-                        "public" ->
-                            Public
-
-                        "all" ->
-                            All
-
-                        _ ->
-                            Public
-
-                oldSearchState =
-                    model.searchState
-
-                newSearchState =
-                    if model.appState.signedIn then
-                        { oldSearchState | domain = domain }
-                    else
-                        { oldSearchState | domain = Public }
-            in
-                ( { model | searchState = newSearchState }, Cmd.none )
+            Action.Search.selectSearchMode searchMode model
 
         SelectSearchOrder searchOrder ->
-            let
-                order =
-                    case searchOrder of
-                        "viewed" ->
-                            Viewed
-
-                        "created" ->
-                            Created
-
-                        "alpha" ->
-                            Alphabetical
-
-                        _ ->
-                            Viewed
-
-                oldSearchState =
-                    model.searchState
-
-                newSearchState =
-                    { oldSearchState | order = order }
-            in
-                ( { model | searchState = newSearchState }, Cmd.none )
+            Action.Search.selectSearchOrder searchOrder model
 
         ClearSearch ->
             ( { model | searchQueryInputBuffer = "" }, Cmd.none )
 
-        -- update model ""
-        -- updatedSearchState
         DoSearch searchDomain key ->
-            let
-                searchState =
-                    model.searchState
-
-                newSearchState =
-                    { searchState | query = model.searchQueryInputBuffer }
-
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | activeDocumentList = SearchResultList }
-
-                newModel =
-                    { model | searchState = newSearchState, appState = newAppState }
-            in
-                Document.Search.onEnter searchDomain key newModel
+            Action.Search.doSearch searchDomain key model
 
         RecallLastSearch ->
             Document.Search.recallLastSearch model
@@ -545,24 +404,25 @@ update msg model =
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         UpdateCurrentUser ->
-            let
-                currentUser =
-                    model.current_user
+            Action.User.updateCurrentUser model
 
-                blurb_ =
-                    if model.textInputBuffer /= "" then
-                        model.textInputBuffer
-                    else
-                        model.current_user.blurb
-
-                updatedCurrentUser =
-                    { currentUser | blurb = blurb_ }
-
-                newModel =
-                    { model | current_user = updatedCurrentUser }
-            in
-                ( newModel, User.Request.putCurrentUser newModel )
-
+        -- let
+        --     currentUser =
+        --         model.current_user
+        --
+        --     blurb_ =
+        --         if model.textInputBuffer /= "" then
+        --             model.textInputBuffer
+        --         else
+        --             model.current_user.blurb
+        --
+        --     updatedCurrentUser =
+        --         { currentUser | blurb = blurb_ }
+        --
+        --     newModel =
+        --         { model | current_user = updatedCurrentUser }
+        -- in
+        --     ( newModel, User.Request.putCurrentUser newModel )
         PutUser (Ok serverReply) ->
             case (serverReply) of
                 () ->

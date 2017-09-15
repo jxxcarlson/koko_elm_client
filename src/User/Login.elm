@@ -1,14 +1,67 @@
 module User.Login exposing (..)
 
-import Types exposing (..)
-import External
-import Views.External
+import Types exposing (Model, AppState, Page, Msg(..), Page(..), SearchDomain(..), LoginLocalStorageRecord)
+import Task
+import Time exposing (Time, second)
+
+
+-- App imports
+
+import Action.Error
 import Data.User
+import External
 import Request.Api
 import User.Auth
+import Views.External
 
 
--- dummy comment
+completeRegistration result model =
+    case (result) of
+        Ok result ->
+            let
+                user =
+                    result.user
+
+                newUser =
+                    { name = user.name
+                    , username = user.username
+                    , id = user.id
+                    , email = user.email
+                    , password = ""
+                    , blurb = ""
+                    , token = user.token
+                    , admin = False
+                    }
+
+                oldAppState =
+                    model.appState
+
+                newAppState =
+                    { oldAppState | signedIn = True, authorizing = False }
+            in
+                ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
+
+        Err err ->
+            let
+                _ =
+                    Debug.log "Registration failure" result
+            in
+                ( { model | message = Action.Error.httpErrorString err }, Cmd.none )
+
+
+doLogin model =
+    let
+        ( model1, cmds1 ) =
+            login2 model
+
+        ( model2, cmds2 ) =
+            if model1.appState.signedIn then
+                ( model1, Cmd.none )
+                --Action.Document.search Private "sort=viewed&limit=12" ReaderPage model1
+            else
+                ( model1, Cmd.none )
+    in
+        ( model2, Cmd.batch [ cmds1, cmds2 ] )
 
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
