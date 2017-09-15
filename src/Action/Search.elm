@@ -33,6 +33,7 @@ selectSearchMode searchMode model =
         ( { model | searchState = newSearchState }, Cmd.none )
 
 
+selectSearchOrder : String -> Model -> ( Model, Cmd Msg )
 selectSearchOrder searchOrder model =
     let
         order =
@@ -58,6 +59,7 @@ selectSearchOrder searchOrder model =
         ( { model | searchState = newSearchState }, Cmd.none )
 
 
+doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
 doSearch searchDomain key model =
     let
         searchState =

@@ -308,6 +308,7 @@ type Msg
     | RequestDate
     | RequestTime
     | SaveCurrentDocument
+    | SaveDocument (Result Http.Error ())
     | SearchForUserHomePages Int
     | SelectDocument Document
     | SelectMaster Document

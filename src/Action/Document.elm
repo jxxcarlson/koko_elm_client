@@ -1,12 +1,12 @@
 module Action.Document exposing (..)
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
-import Configuration
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Stack as Stack
 import External exposing (render)
 import External exposing (toJs)
 import Request.Document
+import Task
 import Types exposing (..)
 import Utility
 import Utility exposing (replaceIf)
@@ -37,7 +37,7 @@ updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
 updateCurrentDocument model document =
     let
         _ =
-            Debug.log "updateCurrentDocument" 1
+            Debug.log "updateCurrentDocument" document.title
 
         old_documents =
             model.documents
@@ -53,6 +53,28 @@ updateCurrentDocument model document =
 
         newAppState =
             { appState | textBufferDirty = False }
+
+        saveTask =
+            Request.Document.saveDocumentTask model.appState.command document model
+
+        route =
+            "documents"
+
+        query =
+            "master=" ++ (toString document.id)
+
+        refreshMasterDocumentTask =
+            Request.Document.getDocumentsTask route query model.current_user.token
+
+        cmds =
+            if document.attributes.docType == "master" then
+                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
+                ]
+            else
+                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                , Task.attempt SaveDocument saveTask
+                ]
     in
         ( { model
             | current_document = document
@@ -60,11 +82,7 @@ updateCurrentDocument model document =
             , documentStack = newDocumentStack
             , appState = newAppState
           }
-        , Cmd.batch
-            [ -- put new content in JS-mirror of document and save the document (XX: client-server)
-              RenderAsciidoc.put document
-            , saveDocumentCmd "" document model
-            ]
+        , Cmd.batch cmds
         )
 
 

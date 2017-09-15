@@ -406,23 +406,6 @@ update msg model =
         UpdateCurrentUser ->
             Action.User.updateCurrentUser model
 
-        -- let
-        --     currentUser =
-        --         model.current_user
-        --
-        --     blurb_ =
-        --         if model.textInputBuffer /= "" then
-        --             model.textInputBuffer
-        --         else
-        --             model.current_user.blurb
-        --
-        --     updatedCurrentUser =
-        --         { currentUser | blurb = blurb_ }
-        --
-        --     newModel =
-        --         { model | current_user = updatedCurrentUser }
-        -- in
-        --     ( newModel, User.Request.putCurrentUser newModel )
         PutUser (Ok serverReply) ->
             case (serverReply) of
                 () ->
@@ -489,6 +472,9 @@ update msg model =
                     Debug.log "SaveCurrentDocument" "now"
             in
                 saveCurrentDocument "" model
+
+        SaveDocument result ->
+            ( { model | message = "Document saved" }, Cmd.none )
 
         AdoptChildren ->
             let

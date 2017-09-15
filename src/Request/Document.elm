@@ -5,8 +5,10 @@ module Request.Document
         , put
         , createDocument
         , deleteCurrentDocument
+        , getDocumentsTask
         , getSpecialDocumentWithAuthenticatedQuery
         , reloadMasterDocument
+        , saveDocumentTask
         )
 
 import Http exposing (send)
@@ -22,6 +24,7 @@ import Data.Document
         )
 import Document.QueryParser exposing (parseQuery)
 import HttpBuilder as HB exposing (..)
+import Task
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
@@ -39,18 +42,53 @@ getDocumentsWith searchState token =
             else
                 searchState.domain
 
+        ( message, route ) =
+            messageRoute searchDomain
+
         _ =
             Debug.log "Firing search ...., order " searchState.order
     in
-        case searchDomain of
-            Public ->
-                getPublicDocumentsWith searchState
+        getDocuments route (makeQuery searchState) message token
 
-            Private ->
-                getUserDocumentsWith searchState token
 
-            All ->
-                getAllDocumentsWith searchState token
+makeQuery searchState =
+    let
+        basicQuery =
+            if searchState.query == "" then
+                "publicdocs=all"
+            else
+                parseQuery (searchState.query)
+
+        soq =
+            searchOrderQuery searchState.order
+
+        prefix =
+            case ( searchState.domain, searchState.query ) of
+                ( _, "" ) ->
+                    "publicdocs=all"
+
+                ( All, _ ) ->
+                    "docs=any"
+
+                ( _, _ ) ->
+                    ""
+
+        queryList =
+            [ prefix ] ++ [ parseQuery (searchState.query), soq ]
+    in
+        buildQuery queryList
+
+
+messageRoute searchDomain =
+    case searchDomain of
+        Public ->
+            ( GetDocuments, "public/documents" )
+
+        Private ->
+            ( GetUserDocuments, "documents" )
+
+        All ->
+            ( GetUserDocuments, "documents" )
 
 
 searchOrderQuery : SearchOrder -> String
@@ -71,65 +109,19 @@ searchOrderQuery searchOrder =
 
 buildQuery : List String -> String
 buildQuery queryParts =
-    String.join "&" queryParts
-
-
-getPublicDocumentsWith : SearchState -> Cmd Msg
-getPublicDocumentsWith searchState =
-    let
-        _ =
-            Debug.log "Firing search with domain = Public" "now"
-
-        soq =
-            searchOrderQuery searchState.order
-
-        basicQuery =
-            if searchState.query == "" then
-                "publicdocs=all"
-            else
-                parseQuery (searchState.query)
-
-        query =
-            buildQuery [ basicQuery, soq ]
-    in
-        getDocuments "public/documents" query GetDocuments ""
-
-
-getUserDocumentsWith : SearchState -> String -> Cmd Msg
-getUserDocumentsWith searchState token =
-    let
-        _ =
-            Debug.log "Firing search with domain = Private" "now"
-
-        soq =
-            searchOrderQuery searchState.order
-
-        query =
-            buildQuery [ parseQuery (searchState.query), soq ]
-    in
-        getDocuments "documents" query GetUserDocuments token
-
-
-getAllDocumentsWith : SearchState -> String -> Cmd Msg
-getAllDocumentsWith searchState token =
-    let
-        _ =
-            Debug.log "Firing search with domain = ALL" "now"
-
-        soq =
-            searchOrderQuery searchState.order
-
-        query =
-            buildQuery [ "docs=any", parseQuery (searchState.query), soq ]
-    in
-        getDocuments "documents" query GetUserDocuments token
+    queryParts
+        |> List.filter (\x -> x /= "")
+        |> String.join "&"
 
 
 
--- getDocuments : String -> (Result Http.Error String) -> Cmd Msg
+-- (Result Http.Error DocumentsRecord)
+-- (Result Http.Error DocumentsRecord -> msg)
+-- getDocuments : String -> String -> Result Http.Error DocumentsRecord -> String -> Cmd msg
 
 
-getDocuments route query processor token =
+getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocuments route query message token =
     let
         url =
             api ++ route ++ "?" ++ parseQuery (query)
@@ -137,7 +129,36 @@ getDocuments route query processor token =
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send processor
+            |> HB.send message
+
+
+getDocumentsTask : String -> String -> String -> Task.Task Http.Error DocumentsRecord
+getDocumentsTask route query token =
+    let
+        url =
+            api ++ route ++ "?" ++ parseQuery (query)
+
+        request =
+            HB.get url
+                |> HB.withHeader "Authorization" ("Bearer " ++ token)
+                |> withExpect (Http.expectJson decodeDocumentsRecord)
+                |> HB.toRequest
+    in
+        request |> Http.toTask
+
+
+
+-- saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+
+
+saveDocumentTask : String -> Document -> Model -> Task.Task Http.Error ()
+saveDocumentTask queryString document model =
+    let
+        request =
+            putDocumentRB queryString model.current_user.token document
+                |> HB.toRequest
+    in
+        request |> Http.toTask
 
 
 getSpecialDocumentWithQuery : String -> Cmd Msg

@@ -176,6 +176,7 @@ recallLastSearch model =
         )
 
 
+cleanQuery : String -> String
 cleanQuery query =
     String.split "&" query
         |> List.filter (\item -> not (String.contains "random" item))

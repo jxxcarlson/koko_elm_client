@@ -11,7 +11,7 @@ import Types
         ( ActiveDocumentList(..)
         , Document
         , Model
-        , Msg
+        , Msg(..)
         , Page(EditorPage)
         , SearchDomain(All)
         , SearchOrder(Alphabetical)
@@ -21,6 +21,7 @@ import Action.Document exposing (saveDocumentCmd, hasId)
 import Document.Search as Search exposing (withCommand, onEnter)
 import Document.Stack as Stack
 import Request.Document
+import Task
 
 
 select : Document -> Model -> ( Model, Cmd Msg )
@@ -79,6 +80,10 @@ setParentId parentIdString model =
         ( { model | current_document = newDocument, message = "parent = " ++ parentIdString }, Cmd.none )
 
 
+
+-- addTo2 : Model -> ( Model, Cmd Msg )
+
+
 addTo : Model -> ( Model, Cmd Msg )
 addTo model =
     let
@@ -92,21 +97,28 @@ addTo model =
             model.appState
 
         newAppState =
-            { appState | tool = TableOfContents }
+            { appState | tool = TableOfContents, masterDocLoaded = True, masterDocOpened = True }
+
+        route =
+            "documents"
 
         query =
-            "id=" ++ (toString model.master_document.id)
+            "master=" ++ (toString model.master_document.id)
 
-        cmds =
-            [ saveDocumentCmd model.appState.command model.master_document model
+        saveTask =
+            Request.Document.saveDocumentTask model.appState.command model.master_document model
 
-            --, update model model.master_document
-            , Search.withCommand query Alphabetical All EditorPage model
-            ]
+        refreshMasterDocumentTask =
+            Request.Document.getDocumentsTask route query model.current_user.token
     in
         ( { model | appState = newAppState, message = model.appState.command }
-        , Cmd.batch cmds
+          -- , Cmd.batch [ cmd1 ]
+        , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
         )
+
+
+
+-- https://spin.atomicobject.com/2016/10/11/elm-chain-http-requests/
 
 
 attach : String -> Model -> String
