@@ -278,7 +278,7 @@ updateDomain model searchDomain =
 {- Code below was moved from Request.Document -}
 
 
-refreshMasterDocumentTask token documentsRecord =
+refreshMasterDocumentTask route token documentsRecord =
     let
         documents =
             documentsRecord.documents
@@ -296,7 +296,7 @@ refreshMasterDocumentTask token documentsRecord =
 
         task =
             if (List.length documents == 1) && (isMasterDocument == True) then
-                Request.Document.getDocumentsTask "documents" ("master=" ++ (toString masterDocumentId)) token
+                Request.Document.getDocumentsTask route ("master=" ++ (toString masterDocumentId)) token
             else
                 Task.succeed documentsRecord
     in
@@ -318,13 +318,22 @@ getDocuments searchState user_id token =
         ( processor, route ) =
             processorAndRoute searchDomain
 
+        adjustedQuery =
+            makeQuery searchState searchDomain user_id
+
+        _ =
+            Debug.log "adjustedQuery" adjustedQuery
+
+        _ =
+            Debug.log "route" route
+
         _ =
             Debug.log "Firing search ...., order " searchState.order
 
         searchTask =
-            Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token
+            Request.Document.getDocumentsTask route adjustedQuery token
     in
-        Task.attempt GetUserDocuments (searchTask |> Task.andThen (\documentsRecord -> (refreshMasterDocumentTask token documentsRecord)))
+        Task.attempt GetUserDocuments (searchTask |> Task.andThen (\documentsRecord -> (refreshMasterDocumentTask route token documentsRecord)))
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
@@ -347,6 +356,8 @@ makeQuery searchState updatedSearchDomain user_id =
                 ( Public, "" ) ->
                     "random=public"
 
+                -- ( Public, _ ) ->
+                --     "public=yes"
                 ( Private, "" ) ->
                     "random_user=" ++ (toString user_id)
 
