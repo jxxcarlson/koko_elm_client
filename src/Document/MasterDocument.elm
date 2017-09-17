@@ -18,7 +18,7 @@ import Types
         , Tool(TableOfContents)
         )
 import Action.Document exposing (saveDocumentCmd, hasId)
-import Document.Search as Search exposing (onEnter)
+import Document.Search as Search exposing (dispatch)
 import Document.Stack as Stack
 import Request.Document
 import Task
@@ -50,22 +50,24 @@ selectAux document_id document model =
                 , activeDocumentList = SearchResultList
             }
 
-        searchState =
-            model.searchState
-
-        updatedSearchState =
-            { searchState | query = "master=" ++ (toString document_id) }
-
         updatedModel =
-            { model | searchState = updatedSearchState, appState = newAppState }
+            { model | appState = newAppState }
 
-        ( model1, cmd1 ) =
-            Search.onEnter model.searchState.domain 13 updatedModel
+        query =
+            "master=" ++ (toString document_id)
 
-        ( model2, cmd2 ) =
-            Action.Document.selectDocument model1 document
+        token =
+            model.current_user.token
+
+        cmd1 =
+            Task.attempt GetDocuments (Request.Document.getDocumentsTask "documents" query token)
+
+        -- ( model1, cmd1 ) =
+        --     Search.dispatch updatedSearchState model.appState.page updatedModel
+        -- ( model2, cmd2 ) =
+        --     Action.Document.selectDocument model1 document
     in
-        ( model1, Cmd.batch [ cmd1, cmd2 ] )
+        ( updatedModel, cmd1 )
 
 
 setParentId : String -> Model -> ( Model, Cmd Msg )

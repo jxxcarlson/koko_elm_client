@@ -1,6 +1,7 @@
 module Document.Search
     exposing
-        ( getRandomDocuments
+        ( dispatch
+        , getRandomDocuments
         , recallLastSearch
         , onEnter
         , update
@@ -33,17 +34,15 @@ import Document.RenderAsciidoc as RenderAsciidoc
    Search methods.
 
    Main:
-   UserHomePage GetPublicPage GetHomePageForUserHomePages UserHomePage  => withParameters
-
+   UserHomePage, GetPublicPage, GetHomePageForUserHomePages, UserHomePage  => withParameters
    =============================
    Document.Search:
-     withParameters withCommand onEnter
+     withParameters, onEnter >>> dispatch
      ----------------------------------
-     dispatchSearch
-     ----------------------------------
-     getDocuments GetPublicPage
+     getDocuments searchState user_id token
+     Note: user_id can be 0 (empty current_user)
    =========================
-   Request.Document.getDocuments
+   Request.Document.getDocuments route query message token
 
 -}
 
@@ -54,14 +53,32 @@ withParameters query order domain page model =
         searchState =
             SearchState query domain order
     in
-        dispatchSearch searchState page model
+        dispatch searchState page model
+
+
+onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+onEnter searchDomain key model =
+    if (Debug.log "key" key) == 13 then
+        let
+            _ =
+                Debug.log "Firing Action.Document.onEnter" 1
+
+            searchState =
+                model.searchState
+
+            newSearchState =
+                { searchState | domain = searchDomain }
+        in
+            dispatch newSearchState (Action.UI.displayPage model) model
+    else
+        ( model, Cmd.none )
 
 
 {-| Execute search stored in model.searchState and display results in Page.
 All searches should be run through this function.
 -}
-dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
-dispatchSearch searchState page model =
+dispatch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
+dispatch searchState page model =
     let
         masterDocLoaded_ =
             if String.contains "master" model.searchState.query then
@@ -70,7 +87,7 @@ dispatchSearch searchState page model =
                 False
 
         _ =
-            Debug.log "In Search.dispatchSearch, masterDocLoaded_" masterDocLoaded_
+            Debug.log "In Search.dispatch, masterDocLoaded_" masterDocLoaded_
 
         appState =
             model.appState
@@ -136,40 +153,6 @@ fixQueryIfEmpty query searchDomain model =
                 "random=all"
     else
         query
-
-
-withCommand : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
-withCommand query order domain page model =
-    let
-        newSearchState =
-            SearchState query domain order
-
-        newModel =
-            { model | searchState = newSearchState }
-    in
-        getDocuments model.searchState model.current_user.id model.current_user.token
-
-
-
----------- Below the line --------
-
-
-onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-onEnter searchDomain key model =
-    if (Debug.log "key" key) == 13 then
-        let
-            _ =
-                Debug.log "Firing Action.Document.onEnter" 1
-
-            searchState =
-                model.searchState
-
-            newSearchState =
-                { searchState | domain = searchDomain }
-        in
-            dispatchSearch newSearchState (Action.UI.displayPage model) model
-    else
-        ( model, Cmd.none )
 
 
 recallLastSearch : Model -> ( Model, Cmd Msg )
