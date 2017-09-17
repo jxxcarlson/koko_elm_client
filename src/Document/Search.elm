@@ -138,6 +138,18 @@ fixQueryIfEmpty query searchDomain model =
         query
 
 
+withCommand : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
+withCommand query order domain page model =
+    let
+        newSearchState =
+            SearchState query domain order
+
+        newModel =
+            { model | searchState = newSearchState }
+    in
+        getDocuments model.searchState model.current_user.id model.current_user.token
+
+
 
 ---------- Below the line --------
 
