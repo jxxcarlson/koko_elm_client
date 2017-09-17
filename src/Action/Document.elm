@@ -55,7 +55,7 @@ updateCurrentDocument model document =
             { appState | textBufferDirty = False }
 
         saveTask =
-            Request.Document.saveDocumentTask model.appState.command document model
+            Request.Document.saveDocumentTask "" document model
 
         -- XXX: ??? re first argument above Why?
         route =
