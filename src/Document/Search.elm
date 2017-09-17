@@ -27,6 +27,7 @@ import Http
 import Request.Document
 import Document.QueryParser exposing (parseQuery)
 import Document.RenderAsciidoc as RenderAsciidoc
+import Task
 
 
 {-
@@ -286,7 +287,7 @@ getDocuments searchState user_id token =
         _ =
             Debug.log "Firing search ...., order " searchState.order
     in
-        Request.Document.getDocuments route (makeQuery searchState searchDomain user_id) message token
+        Task.attempt message (Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token)
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
