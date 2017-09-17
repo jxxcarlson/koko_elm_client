@@ -1,10 +1,10 @@
 module Request.Document
     exposing
-        ( getDocumentsWith
-        , getSpecialDocumentWithQuery
+        ( getSpecialDocumentWithQuery
         , put
         , createDocument
         , deleteCurrentDocument
+        , getDocuments
         , getDocumentsTask
         , getSpecialDocumentWithAuthenticatedQuery
         , reloadMasterDocument
@@ -28,96 +28,6 @@ import Task
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
-
-
-getDocumentsWith : SearchState -> String -> Cmd Msg
-getDocumentsWith searchState token =
-    let
-        _ =
-            Debug.log "IN getDocumentsWith, searchState is" searchState
-
-        searchDomain =
-            if token == "" then
-                Public
-            else
-                searchState.domain
-
-        ( message, route ) =
-            messageRoute searchDomain
-
-        _ =
-            Debug.log "Firing search ...., order " searchState.order
-    in
-        getDocuments route (makeQuery searchState) message token
-
-
-makeQuery searchState =
-    let
-        basicQuery =
-            if searchState.query == "" then
-                "publicdocs=all"
-            else
-                parseQuery (searchState.query)
-
-        soq =
-            searchOrderQuery searchState.order
-
-        prefix =
-            case ( searchState.domain, searchState.query ) of
-                ( _, "" ) ->
-                    "publicdocs=all"
-
-                ( All, _ ) ->
-                    "docs=any"
-
-                ( _, _ ) ->
-                    ""
-
-        queryList =
-            [ prefix ] ++ [ parseQuery (searchState.query), soq ]
-    in
-        buildQuery queryList
-
-
-messageRoute searchDomain =
-    case searchDomain of
-        Public ->
-            ( GetDocuments, "public/documents" )
-
-        Private ->
-            ( GetUserDocuments, "documents" )
-
-        All ->
-            ( GetUserDocuments, "documents" )
-
-
-searchOrderQuery : SearchOrder -> String
-searchOrderQuery searchOrder =
-    case searchOrder of
-        Viewed ->
-            "sort=viewed"
-
-        Updated ->
-            "sort=updated"
-
-        Created ->
-            "sort=created"
-
-        Alphabetical ->
-            "sort=title"
-
-
-buildQuery : List String -> String
-buildQuery queryParts =
-    queryParts
-        |> List.filter (\x -> x /= "")
-        |> String.join "&"
-
-
-
--- (Result Http.Error DocumentsRecord)
--- (Result Http.Error DocumentsRecord -> msg)
--- getDocuments : String -> String -> Result Http.Error DocumentsRecord -> String -> Cmd msg
 
 
 getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg

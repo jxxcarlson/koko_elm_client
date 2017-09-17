@@ -15,7 +15,7 @@ import Types
         , defaultMasterDocument
         , defaultDocument
         , Model
-        , Msg
+        , Msg(..)
         , Page(..)
         , SearchDomain(..)
         , SearchOrder(..)
@@ -24,6 +24,7 @@ import Types
         )
 import Action.UI
 import Request.Document
+import Document.QueryParser exposing (parseQuery)
 import Document.RenderAsciidoc as RenderAsciidoc
 
 
@@ -37,20 +38,17 @@ import Document.RenderAsciidoc as RenderAsciidoc
 withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
 withParameters query order domain page model =
     let
-        newSearchState =
+        searchState =
             SearchState query domain order
-
-        newModel =
-            { model | searchState = newSearchState }
     in
-        withModel page newModel
+        dispatchSearch searchState page model
 
 
 {-| Execute search stored in model.searchState and display results in Page.
 All searches should be run through this function.
 -}
-withModel : Page -> Model -> ( Model, Cmd Msg )
-withModel page model =
+dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
+dispatchSearch searchState page model =
     let
         masterDocLoaded_ =
             if String.contains "master" model.searchState.query then
@@ -59,7 +57,7 @@ withModel page model =
                 False
 
         _ =
-            Debug.log "In Search.withModel, masterDocLoaded_" masterDocLoaded_
+            Debug.log "In Search.dispatchSearch, masterDocLoaded_" masterDocLoaded_
 
         appState =
             model.appState
@@ -71,16 +69,29 @@ withModel page model =
                 , page = page
             }
 
+        query =
+            fixQueryIfEmpty searchState.query searchState.domain model
+
+        domain =
+            fixDomain model
+
+        order =
+            searchState.order
+
+        newSearchState =
+            SearchState query domain order
+
         updatedModel =
             { model
                 | appState = newAppState
                 , master_document = defaultMasterDocument
+                , searchState = newSearchState
                 , documents2 = model.documents
             }
     in
-        ( { updatedModel | appState = newAppState }
+        ( updatedModel
         , Cmd.batch
-            [ Request.Document.getDocumentsWith model.searchState model.current_user.token
+            [ getDocumentsWith model.searchState model.current_user.id model.current_user.token
             , RenderAsciidoc.put model.current_document
             ]
         )
@@ -90,39 +101,28 @@ withModel page model =
 -- XXX
 
 
-search : SearchDomain -> String -> Page -> Model -> ( Model, Cmd Msg )
-search searchDomain query page model =
-    let
-        _ =
-            Debug.log "Document.search, query" query
+fixDomain : Model -> SearchDomain
+fixDomain model =
+    if model.current_user.token == "" then
+        Public
+    else
+        model.searchState.domain
 
-        query2 =
-            if query == "" then
-                case searchDomain of
-                    Public ->
-                        "random=public"
 
-                    Private ->
-                        "random_user=" ++ (toString model.current_user.id)
+fixQueryIfEmpty : String -> SearchDomain -> Model -> String
+fixQueryIfEmpty query searchDomain model =
+    if query == "" then
+        case searchDomain of
+            Public ->
+                "random=public"
 
-                    All ->
-                        "random=all"
-            else
-                query
+            Private ->
+                "random_user=" ++ (toString model.current_user.id)
 
-        _ =
-            Debug.log "Document.search, query2" query2
-
-        searchState =
-            model.searchState
-
-        newSearchState =
-            { searchState | domain = searchDomain, query = query2 }
-
-        newModel =
-            { model | searchState = newSearchState }
-    in
-        withModel page newModel
+            All ->
+                "random=all"
+    else
+        query
 
 
 withCommand : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
@@ -134,7 +134,7 @@ withCommand query order domain page model =
         newModel =
             { model | searchState = newSearchState }
     in
-        Request.Document.getDocumentsWith model.searchState model.current_user.token
+        getDocumentsWith model.searchState model.current_user.id model.current_user.token
 
 
 
@@ -149,9 +149,12 @@ onEnter searchDomain key model =
                 Debug.log "Firing Action.Document.onEnter" 1
 
             searchState =
-                updatedSearchState model searchDomain
+                model.searchState
+
+            newSearchState =
+                { searchState | domain = searchDomain }
         in
-            search searchState.domain searchState.query (Action.UI.displayPage model) model
+            dispatchSearch newSearchState (Action.UI.displayPage model) model
     else
         ( model, Cmd.none )
 
@@ -239,21 +242,6 @@ update model query =
         ( { model | searchState = new_searchState }, Cmd.none )
 
 
-updatedSearchState : Model -> SearchDomain -> SearchState
-updatedSearchState model searchDomain =
-    let
-        searchState =
-            model.searchState
-
-        newSearchDomain =
-            if model.current_user.token /= "" then
-                searchState.domain
-            else
-                Public
-    in
-        { searchState | domain = newSearchDomain }
-
-
 updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
 updateDomain model searchDomain =
     let
@@ -278,3 +266,103 @@ updateDomain model searchDomain =
             { searchState | domain = newSearchDomain }
     in
         ( { model | searchState = new_searchState, message = newMessage }, Cmd.none )
+
+
+
+{- Code below was moved from Request.Document -}
+
+
+getDocumentsWith : SearchState -> Int -> String -> Cmd Msg
+getDocumentsWith searchState user_id token =
+    let
+        _ =
+            Debug.log "IN getDocumentsWith, searchState is" searchState
+
+        searchDomain =
+            if token == "" then
+                Public
+            else
+                searchState.domain
+
+        ( message, route ) =
+            messageRoute searchDomain
+
+        _ =
+            Debug.log "Firing search ...., order " searchState.order
+    in
+        Request.Document.getDocuments route (makeQuery searchState searchDomain user_id) message token
+
+
+makeQuery searchState updatedSearchDomain user_id =
+    let
+        basicQuery =
+            -- if searchState.query == "" then
+            --     "publicdocs=all"
+            -- else
+            parseQuery (searchState.query)
+
+        soq =
+            searchOrderQuery searchState.order
+
+        prefix =
+            case ( updatedSearchDomain, searchState.query ) of
+                ( All, "" ) ->
+                    "random=all"
+
+                ( Public, "" ) ->
+                    "random=public"
+
+                ( Private, "" ) ->
+                    "random_user=" ++ (toString user_id)
+
+                ( All, _ ) ->
+                    "docs=any"
+
+                ( _, _ ) ->
+                    ""
+
+        queryList =
+            [ prefix ] ++ [ parseQuery (searchState.query), soq ]
+    in
+        buildQuery queryList
+
+
+messageRoute searchDomain =
+    case searchDomain of
+        Public ->
+            ( GetDocuments, "public/documents" )
+
+        Private ->
+            ( GetUserDocuments, "documents" )
+
+        All ->
+            ( GetUserDocuments, "documents" )
+
+
+searchOrderQuery : SearchOrder -> String
+searchOrderQuery searchOrder =
+    case searchOrder of
+        Viewed ->
+            "sort=viewed"
+
+        Updated ->
+            "sort=updated"
+
+        Created ->
+            "sort=created"
+
+        Alphabetical ->
+            "sort=title"
+
+
+buildQuery : List String -> String
+buildQuery queryParts =
+    queryParts
+        |> List.filter (\x -> x /= "")
+        |> String.join "&"
+
+
+
+-- (Result Http.Error DocumentsRecord)
+-- (Result Http.Error DocumentsRecord -> msg)
+-- getDocuments : String -> String -> Result Http.Error DocumentsRecord -> String -> Cmd msg
