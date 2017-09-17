@@ -1,7 +1,6 @@
 module Document.Search
     exposing
-        ( withCommand
-        , getRandomDocuments
+        ( getRandomDocuments
         , recallLastSearch
         , onEnter
         , update
@@ -23,6 +22,7 @@ import Types
         , Tool(..)
         )
 import Action.UI
+import Http
 import Request.Document
 import Document.QueryParser exposing (parseQuery)
 import Document.RenderAsciidoc as RenderAsciidoc
@@ -31,6 +31,19 @@ import Document.RenderAsciidoc as RenderAsciidoc
 {-
 
    Search methods.
+
+   Main:
+   UserHomePage GetPublicPage GetHomePageForUserHomePages UserHomePage  => withParameters
+
+   =============================
+   Document.Search:
+     withParameters withCommand onEnter
+     ----------------------------------
+     dispatchSearch
+     ----------------------------------
+     getDocuments GetPublicPage
+   =========================
+   Request.Document.getDocuments
 
 -}
 
@@ -91,7 +104,7 @@ dispatchSearch searchState page model =
     in
         ( updatedModel
         , Cmd.batch
-            [ getDocumentsWith model.searchState model.current_user.id model.current_user.token
+            [ getDocuments model.searchState model.current_user.id model.current_user.token
             , RenderAsciidoc.put model.current_document
             ]
         )
@@ -123,18 +136,6 @@ fixQueryIfEmpty query searchDomain model =
                 "random=all"
     else
         query
-
-
-withCommand : String -> SearchOrder -> SearchDomain -> Page -> Model -> Cmd Msg
-withCommand query order domain page model =
-    let
-        newSearchState =
-            SearchState query domain order
-
-        newModel =
-            { model | searchState = newSearchState }
-    in
-        getDocumentsWith model.searchState model.current_user.id model.current_user.token
 
 
 
@@ -272,11 +273,11 @@ updateDomain model searchDomain =
 {- Code below was moved from Request.Document -}
 
 
-getDocumentsWith : SearchState -> Int -> String -> Cmd Msg
-getDocumentsWith searchState user_id token =
+getDocuments : SearchState -> Int -> String -> Cmd Msg
+getDocuments searchState user_id token =
     let
         _ =
-            Debug.log "IN getDocumentsWith, searchState is" searchState
+            Debug.log "IN getDocuments, searchState is" searchState
 
         searchDomain =
             if token == "" then
@@ -293,6 +294,7 @@ getDocumentsWith searchState user_id token =
         Request.Document.getDocuments route (makeQuery searchState searchDomain user_id) message token
 
 
+makeQuery : SearchState -> SearchDomain -> Int -> String
 makeQuery searchState updatedSearchDomain user_id =
     let
         basicQuery =
@@ -327,6 +329,7 @@ makeQuery searchState updatedSearchDomain user_id =
         buildQuery queryList
 
 
+messageRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> Msg, String )
 messageRoute searchDomain =
     case searchDomain of
         Public ->

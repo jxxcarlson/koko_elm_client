@@ -18,7 +18,7 @@ import Types
         , Tool(TableOfContents)
         )
 import Action.Document exposing (saveDocumentCmd, hasId)
-import Document.Search as Search exposing (withCommand, onEnter)
+import Document.Search as Search exposing (onEnter)
 import Document.Stack as Stack
 import Request.Document
 import Task

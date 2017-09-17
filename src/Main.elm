@@ -223,7 +223,6 @@ update msg model =
                 , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
                 )
 
-        -- Document.Search.withParameters "random=public" Alphabetical Public HomePage model
         RandomDocuments ->
             Document.Search.getRandomDocuments model
 
