@@ -269,8 +269,14 @@ update msg model =
                 let
                     query =
                         "is_user=" ++ model.searchQueryInputBuffer
+
+                    searchState =
+                        model.searchState
+
+                    newSearchState =
+                        { searchState | domain = Public }
                 in
-                    ( model, User.Request.getList query )
+                    ( { model | searchState = newSearchState }, User.Request.getList query )
             else
                 ( model, Cmd.none )
 

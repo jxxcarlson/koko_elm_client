@@ -51,6 +51,9 @@ import Task
 withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
 withParameters query order domain page model =
     let
+        _ =
+            Debug.log "withParameters" ( query, order, domain )
+
         searchState =
             SearchState query domain order
     in
@@ -88,6 +91,9 @@ dispatch searchState page model =
                 False
 
         _ =
+            Debug.log "Search.dispatch, searchState" searchState
+
+        _ =
             Debug.log "In Search.dispatch, masterDocLoaded_" masterDocLoaded_
 
         appState =
@@ -104,7 +110,10 @@ dispatch searchState page model =
             fixQueryIfEmpty searchState.query searchState.domain model
 
         domain =
-            fixDomain model
+            fixDomain searchState model
+
+        _ =
+            Debug.log "fixDomain => domain" domain
 
         order =
             searchState.order
@@ -132,12 +141,12 @@ dispatch searchState page model =
 -- XXX
 
 
-fixDomain : Model -> SearchDomain
-fixDomain model =
+fixDomain : SearchState -> Model -> SearchDomain
+fixDomain searchState model =
     if model.current_user.token == "" then
         Public
     else
-        model.searchState.domain
+        searchState.domain
 
 
 fixQueryIfEmpty : String -> SearchDomain -> Model -> String

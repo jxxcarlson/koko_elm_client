@@ -12,6 +12,9 @@ import Request.Api
 getList : String -> Cmd Msg
 getList query =
     let
+        _ =
+            Debug.log "User.getList, query" query
+
         queries =
             if query == "" then
                 [ Request.Api.api ++ "users?public_user=yes" ]
