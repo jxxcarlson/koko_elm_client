@@ -82,7 +82,7 @@ dispatch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
 dispatch searchState page model =
     let
         masterDocLoaded_ =
-            if String.contains "master" model.searchState.query then
+            if String.contains "master" searchState.query then
                 True
             else
                 False
@@ -122,7 +122,7 @@ dispatch searchState page model =
     in
         ( updatedModel
         , Cmd.batch
-            [ getDocuments model.searchState model.current_user.id model.current_user.token
+            [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
             , RenderAsciidoc.put model.current_document
             ]
         )
