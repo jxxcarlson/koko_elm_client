@@ -31,8 +31,6 @@ import Phoenix.Socket
 import Phoenix.Socket
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Request.Document
-import Request.Document
-import Request.Document exposing (getDocumentsWith)
 import String.Extra
 import StyleSheet exposing (..)
 import Task

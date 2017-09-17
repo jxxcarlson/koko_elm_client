@@ -62,6 +62,9 @@ selectSearchOrder searchOrder model =
 doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
 doSearch searchDomain key model =
     let
+        _ =
+            Debug.log "Action.Search.doSearch with query" model.searchQueryInputBuffer
+
         searchState =
             model.searchState
 
