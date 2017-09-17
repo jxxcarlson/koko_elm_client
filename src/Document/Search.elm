@@ -281,13 +281,13 @@ getDocuments searchState user_id token =
             else
                 searchState.domain
 
-        ( message, route ) =
-            messageRoute searchDomain
+        ( processor, route ) =
+            processorAndRoute searchDomain
 
         _ =
             Debug.log "Firing search ...., order " searchState.order
     in
-        Task.attempt message (Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token)
+        Task.attempt processor (Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token)
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
@@ -325,8 +325,8 @@ makeQuery searchState updatedSearchDomain user_id =
         buildQuery queryList
 
 
-messageRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> Msg, String )
-messageRoute searchDomain =
+processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> Msg, String )
+processorAndRoute searchDomain =
     case searchDomain of
         Public ->
             ( GetDocuments, "public/documents" )
