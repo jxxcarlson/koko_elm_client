@@ -269,6 +269,31 @@ updateDomain model searchDomain =
 {- Code below was moved from Request.Document -}
 
 
+refreshMasterDocumentTask token documentsRecord =
+    let
+        documents =
+            documentsRecord.documents
+
+        maybeFirstDocument =
+            List.head documents
+
+        ( isMasterDocument, masterDocumentId ) =
+            case maybeFirstDocument of
+                Just document ->
+                    ( document.attributes.docType == "master", document.id )
+
+                Nothing ->
+                    ( False, 0 )
+
+        task =
+            if (List.length documents == 1) && (isMasterDocument == True) then
+                Request.Document.getDocumentsTask "documents" ("master=" ++ (toString masterDocumentId)) token
+            else
+                Task.succeed documentsRecord
+    in
+        task
+
+
 getDocuments : SearchState -> Int -> String -> Cmd Msg
 getDocuments searchState user_id token =
     let
@@ -286,8 +311,11 @@ getDocuments searchState user_id token =
 
         _ =
             Debug.log "Firing search ...., order " searchState.order
+
+        searchTask =
+            Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token
     in
-        Task.attempt processor (Request.Document.getDocumentsTask route (makeQuery searchState searchDomain user_id) token)
+        Task.attempt GetUserDocuments (searchTask |> Task.andThen (\documentsRecord -> (refreshMasterDocumentTask token documentsRecord)))
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
