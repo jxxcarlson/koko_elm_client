@@ -164,7 +164,7 @@ pageSelector model =
     row NavBar
         [ spacing 12 ]
         [ (userHomePagesIcon model)
-        , Utility.visibleIf (model.window.width > Configuration.tabletWidth) (userPreferencesIcon model)
+        , Utility.visibleIf ((model.window.width > Configuration.tabletWidth) && (model.appState.signedIn)) (userPreferencesIcon model)
         , Utility.visibleIf model.appState.signedIn (homepageIcon model)
 
         -- , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
