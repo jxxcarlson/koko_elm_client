@@ -142,6 +142,18 @@ suite =
 
                             _ ->
                                 Expect.fail "Wrong type"
+            , test "(LL2) parses a multiline input" <|
+                \_ ->
+                    let
+                        result =
+                            run latexList "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
+                    in
+                        case (result) of
+                            Ok v ->
+                                Expect.equal v { value = [ Word "An", Word "equation:", InlineMath { value = "\\alpha^2 + \\beta^2" }, Word "a", Word "b", Macro { name = "emph", args = [ "test." ] }, Environment { env = "theorem", body = " This is true: $a^n = 1$ has $n$ solutions. " }, Comment (), Word "Pythagoras:", InlineMath { value = " a^2 + b^2 = c^2" }, Word "Newton:", DisplayMath { value = " \\int_0^1 x^n dx = \\frac{1}{n+1} " } ] }
+
+                            _ ->
+                                Expect.fail "Wrong type"
             ]
         , describe "Render"
             [ test "(R W) renders a sequence of words" <|
@@ -158,7 +170,7 @@ suite =
                             "\\emph{foo} bar: $a^2 + b^2 = c^2$ \\begin{theorem} There are infinitely many primes.\\end{theorem} % This is a test.\n"
 
                         expectedOutput =
-                            "<it>foo</it> bar:  $a^2 + b^2 = c^2$  \n<strong>Theorem</strong>\n<it>\n There are infinitely many primes.\n</it>\n "
+                            "<b>foo</b> bar:  $a^2 + b^2 = c^2$  \n<strong>Theorem</strong>\n<it>\n There are infinitely many primes.\n</it>\n "
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             , test "(R Simple) render simple example" <|
@@ -174,8 +186,10 @@ Some physics: \\begin{equation}
 """
 
                         expectedOutput =
-                            " <it>Pythagoras</it> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n<strong>Equation</strong>\n<it>\n\n   E = mc^2\n\n</it>\n"
+                            " <b>Pythagoras</b> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n<strong>Equation</strong>\n<it>\n\n   E = mc^2\n\n</it>\n"
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
+
+        -- end describe Render
         ]

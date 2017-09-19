@@ -85,6 +85,10 @@ text1 =
     "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: \\[ \\int_0^1 x^n dx = \\frac{1}{n+1} \\]\n\n"
 
 
+text1b =
+    "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
+
+
 text2 =
     "An equation: $\\alpha^2 + \\beta^2$\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}\n\nPythagoras: $ a^2 + b^2 = c^2$\nNewton: \\[ \\int_0^1 x^n dx = \\frac{1}{n+1} \\]\n\n"
 

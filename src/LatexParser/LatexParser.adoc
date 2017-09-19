@@ -1,0 +1,12 @@
+
+== Notes on Latex Parser
+
+
+.Manual test
+----
+$ elm-repl
+> import Parser as P
+> import LatexParser.Parser as LP
+> t1 = "An equation: ... "
+> P.run LP.latexList t1
+----

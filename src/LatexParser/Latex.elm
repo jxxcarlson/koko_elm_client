@@ -87,7 +87,7 @@ words : Parser Words_
 words =
     inContext "words" <|
         succeed Words_
-            |. spaces
+            --|. spaces
             |= repeat zeroOrMore word
             |. oneOf [ symbol "\n", symbol "\\" ]
 
