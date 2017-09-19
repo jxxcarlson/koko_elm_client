@@ -10,7 +10,24 @@ import LatexParser.Render as Render exposing (transformText)
    > P.parseDocument "abc def\nghi jxl\n\nmno pqr"
    Ok ([["abc def","ghi jxl"],["mno pqr"]])
        : Result.Result Parser.Error (List (List String))
+
+
+   http://spec.commonmark.org/0.28/#appendix-a-parsing-strategy
+
+   Debug.log "a\nb\nc" ()
 -}
+--
+-- %  \emph{Test:}
+--
+--
+-- % \begin{theorem} This is true: $a^n = 1$ has $n$ solutions.
+-- % \end{theorem}
+--
+-- % A comment.  It should not appear in the rendered text
+-- % Neither should this.
+--
+--
+-- % Pythagoras says: $ a^2 + b^2 = c^2$
 
 
 formatParagraph1 : List String -> String
