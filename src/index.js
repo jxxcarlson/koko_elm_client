@@ -18,7 +18,7 @@ var mountNode = document.getElementById('main');
     );
 
   function typesetNow(){
-    console.log("** calling MathJax.Hub.Queue in index.js ... ")
+    console.log("** typesetNow: I am calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([
       "Typeset",
       MathJax.Hub,
@@ -47,6 +47,7 @@ var mountNode = document.getElementById('main');
    }
 
    var render_asciidoc_latex = function(content) {
+       console.log("render_asciidoc_latex ...")
        console.log("content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
@@ -61,6 +62,7 @@ var mountNode = document.getElementById('main');
     }
 
    var render_latex = function(content) {
+       console.log("render_latex ...")
        console.log("content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
@@ -68,6 +70,7 @@ var mountNode = document.getElementById('main');
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = content;
+             // app.ports.getRenderedText.send(content); // Send rendered text to Elm
              typesetNow()
              current_content = content
            }
