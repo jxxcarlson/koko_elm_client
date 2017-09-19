@@ -3,6 +3,7 @@ module Views.Editor exposing (..)
 import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Input as Input
 import Element.Events exposing (onInput, onClick)
 import Views.Basic as Basic
 import Views.Common as Common
@@ -50,7 +51,7 @@ contentPanel model =
     (Keyed.row None
         [ height (percent 100) ]
         [ ( (toString model.counter)
-          , (textArea Mono
+          , (Input.multiline Mono
                 [ width (percent 100)
                 , yScrollbar
                 , padding 20
@@ -111,7 +112,7 @@ deleteButton model =
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 10 6, spacing 12, justify ]
+        [ paddingXY 10 6, spacing 12, spread ]
         [ Common.printButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model

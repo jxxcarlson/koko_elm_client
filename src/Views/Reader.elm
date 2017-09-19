@@ -122,7 +122,7 @@ rhSidebar model =
 contentHeader : Model -> Element Styles variation Msg
 contentHeader model =
     row NavBar
-        [ justify ]
+        [ spread ]
         [ el TitleStyle [ paddingXY 10 8 ] (text model.current_document.title)
         , authorLink model
         ]
@@ -151,7 +151,7 @@ authorLink model =
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
-        [ paddingXY 20 6, justify ]
+        [ paddingXY 20 6, spread ]
         [ Common.printButton model.current_document
         , Common.recallLastSearchButton model
         , Common.searchOrderMenu model

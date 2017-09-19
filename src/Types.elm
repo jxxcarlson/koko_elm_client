@@ -159,6 +159,13 @@ type alias DocumentsRecord =
     }
 
 
+type AttachDocumentPosition
+    = AtTop
+    | AtBottom
+    | AboveCurrent
+    | BelowCurrent
+
+
 type SearchDomain
     = Private
     | Public

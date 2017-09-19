@@ -6,6 +6,7 @@ import Configuration
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
+import Element.Input as Input
 import FontAwesome
 import Json.Decode as Json
 import StyleSheet exposing (..)
@@ -30,7 +31,7 @@ navigation model =
 standardNavigation : Model -> Element Styles variation Msg
 standardNavigation model =
     row NavBar
-        [ justify, paddingXY 10 4 ]
+        [ spread, paddingXY 10 4 ]
         [ searchForm model
 
         --, menu model
@@ -72,16 +73,50 @@ onChange message =
     on "change" (Json.succeed message)
 
 
+
+-- searchOptionsMenu : Model -> Element Styles variation Msg
+-- searchOptionsMenu model =
+--     select "searchMode"
+--         LightGray
+--         [ height (px 25), EA.verticalCenter, onInput SelectSearchMode ]
+--         [ option "public" (model.searchState.domain == Public) (text "Public")
+--         , option "private" (model.searchState.domain == Private) (text "My docs")
+--         , option "all" (model.searchState.domain == All) (text "All")
+--         ]
+--
+-- selectAttachmentOption : Model -> Element Styles variation Msg
+-- selectAttachmentOption model =
+--     Input.radio
+--         TOC
+--         [ spacing 10, width (px 200), paddingXY 20 0 ]
+--         { label = Input.labelAbove <| text "Attach document"
+--         , onChange = AttachCurrentDocument
+--         , errors = Input.noErrors
+--         , disabled = Input.enabled
+--         , options =
+--             [ Input.option AtTop (text "At top")
+--             , Input.option AboveCurrent (text "Above current")
+--             , Input.option BelowCurrent (text "Below current")
+--             , Input.option AtBottom (text "At botom")
+--             ]
+--         }
+
+
 searchOptionsMenu : Model -> Element Styles variation Msg
 searchOptionsMenu model =
-    -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
-    select "searchMode"
+    Input.select
         LightGray
-        [ height (px 25), EA.verticalCenter, onInput SelectSearchMode ]
-        [ option "public" (model.searchState.domain == Public) (text "Public")
-        , option "private" (model.searchState.domain == Private) (text "My docs")
-        , option "all" (model.searchState.domain == All) (text "All")
-        ]
+        [ height (px 25), EA.verticalCenter ]
+        { with = SelectSearchMode
+        , label = Input.labelAbove (text "searchMode")
+        , errors = Input.noErrors
+        , disabled = Input.enabled
+        , options =
+            [ Input.option Public (text "Public")
+            , Input.option Private (text "My docs")
+            , Input.option All (text "All")
+            ]
+        }
 
 
 searchForm : Model -> Element Styles variation Msg
@@ -134,7 +169,8 @@ searchButton : Model -> Element Styles variation Msg
 searchButton model =
     el Zero
         [ EA.width (px 25)
-        , title "Search for my documents"
+
+        --, title "Search for my documents"
         , EA.alignRight
         , EE.onClick (DoSearch model.searchState.domain 13)
         , EA.height (px 30)

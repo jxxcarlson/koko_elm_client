@@ -44,7 +44,7 @@ footer model =
 standardFooter : Model -> Element Styles variation msg
 standardFooter model =
     (row Footer
-        [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
+        [ spread, paddingXY 30 4, alignBottom, width (percent 100) ]
         [ (messageBox model)
         , (publicLink model)
         , (warningMessage model)
@@ -56,7 +56,7 @@ standardFooter model =
 phoneFooter : Model -> Element Styles variation msg
 phoneFooter model =
     (row Footer
-        [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
+        [ spread, paddingXY 30 4, alignBottom, width (percent 100) ]
         [ (publicLink model)
         , (smallOnlineStatusIndicator model)
         ]

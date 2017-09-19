@@ -19,9 +19,17 @@ label text_ style attrs =
     (el style ([ verticalCenter, height (px 25) ] ++ attrs) (el style [ verticalCenter ] (text text_)))
 
 
-faIcon title_ icon attrs =
+
+-- 12:07:11 PM client.1 |      : String
+-- 12:07:11 PM client.1 |      -> (Color.Color -> number -> Html.Html msg)
+-- 12:07:11 PM client.1 |      -> List (Element.Internal.Model.Attribute variation msg)
+-- 12:07:11 PM client.1 |      -> Element Styles variation msg
+-- faIcon : String -> (Color.Color -> number -> Html.Html msg) -> List (Element.Internal.Model.Attribute variation msg) -> Element Styles variation msg
+
+
+faIcon title icon attrs =
     el NavBarActive
-        ([ height (px 25), width (px 20), alignBottom, title title_, verticalCenter ] ++ attrs)
+        ([ height (px 25), width (px 20), EA.attribute "title" title, alignBottom, verticalCenter ] ++ attrs)
         (iconWhite20 icon)
 
 

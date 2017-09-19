@@ -94,11 +94,22 @@ Styles only deal with properties that are not related to layout, position, or si
 Generally all properties only have one allowed unit, which is usually px.
 If you want to use something like em
 -}
+
+
+
+-- stylesheet : StyleSheet Styles variation
+
+
+basicFonts : List Font
+basicFonts =
+    [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
+
+
 stylesheet : StyleSheet Styles variation
 stylesheet =
-    Style.stylesheet
+    Style.styleSheet
         [ style None
-            [ Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            [ Font.typeface basicFonts
             , Color.background Color.lightGray
             ]
         , style Zero [ Font.lineHeight 0 ]
@@ -132,11 +143,11 @@ stylesheet =
         , style Logo
             [ Font.size 16
             , Color.text Color.white
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             ]
         , style NavOption
             [ Font.size 16
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             ]
         , style ClearButton
             [ Font.size 14
@@ -149,7 +160,6 @@ stylesheet =
             , Border.rounded 3
 
             -- round all borders to 3px
-            , paddingHint 20
             , hover
                 [ cursor "pointer"
                 ]
@@ -227,7 +237,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Border.rounded 6
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style ButtonReversed
@@ -236,7 +246,7 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Border.rounded 6
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             , pseudo "active" [ Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButton
@@ -244,7 +254,7 @@ stylesheet =
             , Color.background Color.charcoal
             , Font.size 14
             , Font.center
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             , pseudo "active" [ Transition.all, Color.background Color.lightCharcoal ]
             ]
         , style FlatButtonBlue
@@ -252,7 +262,7 @@ stylesheet =
             , Color.background Color.blue
             , Font.size 14
             , Font.center
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style HeaderLabel
@@ -260,13 +270,13 @@ stylesheet =
             , Color.background Color.lightCharcoal
             , Font.size 14
             , Font.center
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             ]
         , style ActiveFlatButton
             [ Color.text Color.white
             , Color.background Color.darkRed
             , Font.size 14
-            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , Font.typeface [ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
             , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style SearchField
@@ -302,7 +312,7 @@ stylesheet =
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
-        , style Mono [ Font.typeface [ "Lucida Sans Unicode" ] ]
+        , style Mono [ Font.typeface [ Font.font "Lucida Sans Unicode" ] ]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]
         , style Blue [ Color.background Color.blue, Color.text Color.white ]
@@ -320,9 +330,10 @@ stylesheet =
         ]
 
 
+navigation : Element Styles variation msg
 navigation =
     row None
-        [ justify, paddingXY 80 20 ]
+        [ spread, paddingXY 80 20 ]
         [ el Logo [] (text "Style Elements")
         , row None
             [ spacing 20 ]

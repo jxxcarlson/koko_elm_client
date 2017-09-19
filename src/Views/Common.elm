@@ -23,6 +23,7 @@ import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
+import Element.Input as Input
 import Element.Keyed as Keyed
 import FontAwesome
 import Json.Encode
@@ -169,12 +170,19 @@ tool model =
 
 searchOptionControl : Model -> Element Styles variation Msg
 searchOptionControl model =
-    radio "Search domain"
+    Input.radio
         Radio
         [ verticalCenter, padding 20, spacing 20, width (px 300) ]
-        [ option "My documents" (searchDomainChecked model Private) (el None [ onClick (UseSearchDomain Private) ] (text "My documents"))
-        , option "Public documents" (searchDomainChecked model Public) (el None [ onClick (UseSearchDomain Public) ] (text "Public documents"))
-        ]
+        { label = Input.labelAbove <| text "Search domain"
+        , onChange = UseSearchDomain
+        , errors = Input.noErrors
+        , disabled = Input.enabled
+        , options =
+            [ Input.option Private (text "My documents")
+            , Input.option Public (text "Public documents")
+            , Input.option All (text "All documents")
+            ]
+        }
 
 
 searchDomainChecked : Model -> SearchDomain -> Bool
@@ -221,14 +229,20 @@ newDocumentTable model =
 
 selectAttachmentOption : Model -> Element Styles variation Msg
 selectAttachmentOption model =
-    radio "Attach new document"
+    Input.radio
         TOC
         [ spacing 10, width (px 200), paddingXY 20 0 ]
-        [ option "top" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
-        , option "above" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "above") ] (text "Above current"))
-        , option "below" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "below") ] (text "Below current"))
-        , option "bottom" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))
-        ]
+        { label = Input.labelAbove <| text "Attach document"
+        , onChange = AttachCurrentDocument
+        , errors = Input.noErrors
+        , disabled = Input.enabled
+        , options =
+            [ Input.option AtTop (text "At top")
+            , Input.option AboveCurrent (text "Above current")
+            , Input.option BelowCurrent (text "Below current")
+            , Input.option AtBottom (text "At botom")
+            ]
+        }
 
 
 homepage : Model -> Element Styles variation Msg
@@ -262,7 +276,7 @@ editorTools model =
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
             [ spacing 4, height (px 130), alignLeft ]
-            [ textArea Field
+            [ Input.multiline Field
                 [ yScrollbar
                 , alignTop
                 , width (px 250)

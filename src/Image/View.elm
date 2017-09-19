@@ -15,18 +15,19 @@ import Image.FileReader exposing (parseSelectedFiles)
 imageEditor : Model -> List (Element Styles variation Msg)
 imageEditor model =
     [ namedGrid Container
-        { columns = [ px 300, fill 1, fill 1 ]
+        []
+        { columns = [ px 300, fill, fill ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "Header1", span 1 "Header2", span 1 "Header3" ]
-            , fill 1 => [ span 1 "Content1", span 1 "Content2", span 1 "Content3" ]
+            , fill => [ span 1 "Content1", span 1 "Content2", span 1 "Content3" ]
+            ]
+        , cells =
+            [ named "separator" (hairline Hairline)
+            , named "Content2" (imageUploadPane model)
+            , named "Content3" (html (fileUploadPanel model))
             ]
         }
-        []
-        [ named "separator" (hairline Hairline)
-        , named "Content2" (imageUploadPane model)
-        , named "Content3" (html (fileUploadPanel model))
-        ]
     ]
 
 

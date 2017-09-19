@@ -9,6 +9,7 @@ module Document.MasterDocument
 import Types
     exposing
         ( ActiveDocumentList(..)
+        , AttachDocumentPosition(..)
         , Document
         , Model
         , Msg(..)
@@ -17,8 +18,6 @@ import Types
         , SearchOrder(Alphabetical)
         , Tool(TableOfContents)
         )
-import Action.Document exposing (saveDocumentCmd, hasId)
-import Document.Search as Search exposing (dispatch)
 import Document.Stack as Stack
 import Request.Document
 import Task
@@ -123,10 +122,26 @@ addTo model =
 -- https://spin.atomicobject.com/2016/10/11/elm-chain-http-requests/
 
 
-attach : String -> Model -> String
-attach location model =
+positionString : AttachDocumentPosition -> String
+positionString position =
+    case position of
+        AtTop ->
+            "at-top"
+
+        AtBottom ->
+            "at-bottom"
+
+        AboveCurrent ->
+            "above"
+
+        BelowCurrent ->
+            "below"
+
+
+attach : AttachDocumentPosition -> Model -> String
+attach position model =
     "attach="
-        ++ location
+        ++ (positionString position)
         ++ "&child="
         ++ (toString model.current_document.id)
         ++ "&current="
