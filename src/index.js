@@ -17,6 +17,7 @@ var mountNode = document.getElementById('main');
       }
     );
 
+
   function typesetNow(){
     console.log("** calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([

@@ -3,7 +3,7 @@ module Document.Preprocess exposing (preprocess, preprocessSource)
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
 import Regex exposing (..)
-import LatexParser.Render
+import LatexParser.Paragraph
 import Types exposing (Document)
 import Configuration
 import String.Extra
@@ -46,7 +46,8 @@ preprocessLatex content =
     let
         content2 =
             content
-                |> LatexParser.Render.transformText
+                --|> LatexParser.Render.transformText
+                |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
     in
         content2
