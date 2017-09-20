@@ -35,23 +35,23 @@ import Views.TOC as TOC
 import Views.Utility as Utility
 
 
-renderedContent2 : Model -> Element Styles variation msg
-renderedContent2 model =
-    let
-        h =
-            (toFloat model.window.height) - 150
-    in
-        (el Zero
-            [ yScrollbar
-            , id "rendered_text2"
-            , paddingXY 50 50
-            , width (percent 100)
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.current_document.rendered_content)
-            ]
-            (text "")
-        )
+-- renderedContent2 : Model -> Element Styles variation msg
+-- renderedContent2 model =
+--     let
+--         h =
+--             (toFloat model.window.height) - 150
+--     in
+--         (el Zero
+--             [ yScrollbar
+--             , id "rendered_text2"
+--             , paddingXY 50 50
+--             , width (percent 100)
+--             , height (px h)
+--             , property "innerHTML"
+--                 (Json.Encode.string model.current_document.rendered_content)
+--             ]
+--             (text "")
+--         )
 
 
 renderedContent : Model -> Element Styles variation msg

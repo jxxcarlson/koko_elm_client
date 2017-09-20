@@ -17,12 +17,28 @@ var mountNode = document.getElementById('main');
       }
     );
 
+
+ MathJax.Hub.Register.MessageHook("New Math", function (message) {
+    var script = MathJax.Hub.getJaxFor(message[1]).SourceElement();
+    typeset();
+})
+
+
+
   function typesetNow(){
     console.log("** typesetNow: I am calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([
       "Typeset",
-      MathJax.Hub,
-      function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
+      MathJax.Hub
+      ,
+      // function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
+
+      
+      function(){
+          var rendered_text = document.getElementById('rendered_text2').innerHTML
+          console.log("::RENDERED TEXT::" + rendered_text + "::END::")
+          app.ports.getRenderedText.send(rendered_text)
+        }]);
   }
 
   var request_in_progress = false;
