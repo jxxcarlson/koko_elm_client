@@ -33,7 +33,7 @@ var mountNode = document.getElementById('main');
       ,
       // function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
 
-      
+
       function(){
           var rendered_text = document.getElementById('rendered_text2').innerHTML
           console.log("::RENDERED TEXT::" + rendered_text + "::END::")
@@ -47,9 +47,9 @@ var mountNode = document.getElementById('main');
   var asciidoctor = Asciidoctor();
 
   var render_asciidoc = function(content) {
-      console.log("content length = " + content.length)
+      console.log("** content length = " + content.length)
       request_in_progress = true;
-      console.log("Rendering ... ")
+      console.log("** Rendering ... ")
       var millisecondsToWait = 100;
       setTimeout(function() {
           console.log("RENDER AS ASCIIDOC " );
@@ -63,8 +63,8 @@ var mountNode = document.getElementById('main');
    }
 
    var render_asciidoc_latex = function(content) {
-       console.log("render_asciidoc_latex ...")
-       console.log("content length = " + content.length)
+       console.log("** render_asciidoc_latex ...")
+       console.log("** content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
@@ -78,8 +78,8 @@ var mountNode = document.getElementById('main');
     }
 
    var render_latex = function(content) {
-       console.log("render_latex ...")
-       console.log("content length = " + content.length)
+       console.log("** render_latex ...")
+       console.log("** content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
