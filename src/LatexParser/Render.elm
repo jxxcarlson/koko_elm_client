@@ -4,34 +4,10 @@ import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import List.Extra
 import String.Extra
 import Parser
-import Regex
 
 
-identityy text =
-    text
-
-
-transformText2 text =
-    Parser.run latexList text
-        |> latexListGet
-        |> List.map transformLatex
-        |> String.join (" ")
-
-
-identity text =
-    text
-
-
-remapBackslash =
-    String.Extra.replace "\\" "X"
-
-
-
--- String.Extra.replace "\\" "\\\\"
-
-
+transformText : String -> String
 transformText text =
-    -- Parser.run latexList (text |> remapBackslash)
     let
         _ =
             Debug.log "transformText" text
@@ -41,9 +17,6 @@ transformText text =
                 |> latexListGet
                 |> List.map transformLatex
                 |> String.join (" ")
-
-        -- _ =
-        --     Debug.log "transformed text" transformedText
     in
         transformedText
 
@@ -82,6 +55,7 @@ transformLatex latex =
 -- ENVIRONMENTS
 
 
+handleEnvironment : { a | body : String, env : String } -> String
 handleEnvironment v =
     let
         env =
@@ -91,10 +65,19 @@ handleEnvironment v =
             v.body
     in
         case env of
+            "equation" ->
+                handleEquationEnvironment body
+
             _ ->
                 handleDefaultEnvironment env body
 
 
+handleEquationEnvironment : String -> String
+handleEquationEnvironment body =
+    "\n\\begin{equation}\n" ++ body ++ "\n\\end{equation}\n"
+
+
+handleDefaultEnvironment : String -> String -> String
 handleDefaultEnvironment env body =
     "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<it>\n" ++ body ++ "\n</it>\n"
 
@@ -103,6 +86,7 @@ handleDefaultEnvironment env body =
 -- MACROS
 
 
+handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
     case v.name of
         "emph" ->
@@ -112,6 +96,7 @@ handleMacro v =
             "Macro <b>" ++ v.name ++ ":</b> not recognized"
 
 
+handleEmph : List String -> String
 handleEmph args =
     let
         arg =
