@@ -46,7 +46,8 @@ preprocessLatex content =
     let
         content2 =
             content
-                --|> LatexParser.Render.transformText
+                |> String.Extra.replace "\\]" "$$"
+                |> String.Extra.replace "\\[" "$$"
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
     in
