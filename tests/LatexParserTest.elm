@@ -186,7 +186,7 @@ Some physics: \\begin{equation}
 """
 
                         expectedOutput =
-                            " <b>Pythagoras</b> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n<strong>Equation</strong>\n<it>\n\n   E = mc^2\n\n</it>\n"
+                            " <b>Pythagoras</b> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n\\begin{equation}\n\n   E = mc^2\n\n\\end{equation}\n"
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
