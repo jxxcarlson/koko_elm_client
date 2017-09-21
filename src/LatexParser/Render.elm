@@ -65,14 +65,25 @@ handleEnvironment v =
             v.body
     in
         case env of
+            "center" ->
+                handleCenterEnvironment body
+
             "equation" ->
                 handleEquationEnvironment body
 
             "equationalign" ->
                 handleEquationAlignEnvironment body
 
+            "verbatim" ->
+                handleVerbatim body
+
             _ ->
                 handleDefaultEnvironment env body
+
+
+handleCenterEnvironment : String -> String
+handleCenterEnvironment body =
+    "\n<div class=\"center\">\n" ++ body ++ "\n</div>\n"
 
 
 handleEquationEnvironment : String -> String
@@ -90,18 +101,75 @@ handleDefaultEnvironment env body =
     "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<it>\n" ++ body ++ "\n</it>\n"
 
 
+handleVerbatim : String -> String
+handleVerbatim body =
+    "\n<pre>" ++ body ++ "</pre>\n"
+
+
 
 -- MACROS
 
 
 handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
-    case v.name of
-        "emph" ->
-            handleEmph v.args
+    let
+        _ =
+            Debug.log "macro name" v.name
 
-        _ ->
-            "Macro <b>" ++ v.name ++ ":</b> not recognized"
+        _ =
+            Debug.log "macro args" v.args
+    in
+        case v.name of
+            "code" ->
+                handleCode v.args
+
+            "emph" ->
+                handleEmph v.args
+
+            "hyperlink" ->
+                handleHyperlink v.args
+
+            "image" ->
+                handleImage v.args
+
+            "italic" ->
+                handleItalic v.args
+
+            "section" ->
+                handleSection v.args
+
+            "strong" ->
+                handleStrong v.args
+
+            "subsection" ->
+                handleSubSection v.args
+
+            "subsubsection" ->
+                handleSubSubSection v.args
+
+            "subsubsubsection" ->
+                handleSubSubSubSection v.args
+
+            _ ->
+                "Macro <b>" ++ v.name ++ ":</b> not recognized"
+
+
+handleBold : List String -> String
+handleBold args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<strong>" ++ arg ++ "</strong>"
+
+
+handleCode : List String -> String
+handleCode args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<code>" ++ arg ++ "</code>"
 
 
 handleEmph : List String -> String
@@ -111,3 +179,84 @@ handleEmph args =
             getAt 0 args
     in
         "<b>" ++ arg ++ "</b>"
+
+
+handleHyperlink : List String -> String
+handleHyperlink args =
+    let
+        url =
+            getAt 0 args
+
+        label =
+            getAt 1 args
+    in
+        "<a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>"
+
+
+handleImage : List String -> String
+handleImage args =
+    let
+        url =
+            getAt 0 args
+
+        label =
+            getAt 1 args
+
+        attributes =
+            getAt 2 args
+    in
+        "<image src=\"" ++ url ++ " " ++ attributes ++ " \">"
+
+
+handleItalic : List String -> String
+handleItalic args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<span class=italic>" ++ arg ++ "</span>"
+
+
+handleStrong : List String -> String
+handleStrong args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<strong>" ++ arg ++ "</strong>"
+
+
+handleSection : List String -> String
+handleSection args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h1>" ++ arg ++ "</h1>"
+
+
+handleSubSection : List String -> String
+handleSubSection args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h2>" ++ arg ++ "</h2>"
+
+
+handleSubSubSection : List String -> String
+handleSubSubSection args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h3>" ++ arg ++ "</h3>"
+
+
+handleSubSubSubSection : List String -> String
+handleSubSubSubSection args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h3>" ++ arg ++ "</h3>"

@@ -48,6 +48,8 @@ preprocessLatex content =
             content
                 |> String.Extra.replace "\\]" "$$"
                 |> String.Extra.replace "\\[" "$$"
+                |> String.Extra.replace "--" "–"
+                |> String.Extra.replace "---" "—"
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
     in
