@@ -11,6 +11,7 @@ module LatexParser.Latex
         , inlineMath
         , displayMath
         , displayMath2
+        , endWord
         , word
         , words
         , texComment
@@ -98,6 +99,25 @@ type alias Environment_ =
     }
 
 
+endWord : Parser String
+endWord =
+    inContext "endWord" <|
+        succeed identity
+            |. spaces
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
+            |. symbol "\\end"
+
+
+
+-- notEndWord : Parser String
+-- notEndWord =
+--     delayedCommit symbol "\\end" <|
+--         succeed identity
+--             |= keep zeroOrMore word (\c -> True)
+--             |. symbol "\\end"
+--
+
+
 {-| run environment "\begin{foo}Blah, blah ...\end{foo} "
 -}
 environment : Parser Environment_
@@ -109,8 +129,7 @@ environment =
                 |= keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"
                 |= keep zeroOrMore (\c -> c /= '\\')
-                |. symbol "\\"
-                |. (keyword "end")
+                |. (keyword "\\end")
                 |. symbol "{"
                 |. keep zeroOrMore (\c -> c /= '}')
                 |. symbol "}"

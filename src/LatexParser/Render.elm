@@ -68,6 +68,9 @@ handleEnvironment v =
             "equation" ->
                 handleEquationEnvironment body
 
+            "equationalign" ->
+                handleEquationAlignEnvironment body
+
             _ ->
                 handleDefaultEnvironment env body
 
@@ -75,6 +78,11 @@ handleEnvironment v =
 handleEquationEnvironment : String -> String
 handleEquationEnvironment body =
     "\n\\begin{equation}\n" ++ body ++ "\n\\end{equation}\n"
+
+
+handleEquationAlignEnvironment : String -> String
+handleEquationAlignEnvironment body =
+    "\n\\begin{equationalign}\n" ++ body ++ "\n\\end{equationalign}\n"
 
 
 handleDefaultEnvironment : String -> String -> String

@@ -190,6 +190,22 @@ Some physics: \\begin{equation}
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
+        , describe
+            "endWord"
+            -- Nest as many descriptions as you like.
+            [ test "(endWord) parses the word '\\end'" <|
+                \_ ->
+                    let
+                        result =
+                            run endWord "  \\end"
+                    in
+                        case (result) of
+                            Ok v ->
+                                Expect.equal v "\\end"
+
+                            _ ->
+                                Expect.fail "Error parsing endWord"
+            ]
 
         -- end describe Render
         ]
