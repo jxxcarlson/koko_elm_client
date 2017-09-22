@@ -359,17 +359,17 @@ selectDocument model document =
                 , textBufferDirty = False
             }
 
-        saveCmd =
-            if
-                document.author_id
-                    == model.current_user.id
-                    && document.attributes.docType
-                    /= "master"
-                -- do not let current text overwrite master document state
-            then
-                saveDocumentCmd "viewed_at=now" document model
-            else
-                Cmd.none
+        -- saveCmd =
+        --     if
+        --         document.author_id
+        --             == model.current_user.id
+        --             && document.attributes.docType
+        --             /= "master"
+        --         -- do not let current text overwrite master document state
+        --     then
+        --         saveDocumentCmd "viewed_at=now" document model
+        --     else
+        --         Cmd.none
     in
         ( { model
             | current_document = document
@@ -380,7 +380,8 @@ selectDocument model document =
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
             , RenderAsciidoc.put document
-            , saveCmd
+
+            -- , saveCmd
             ]
         )
 
