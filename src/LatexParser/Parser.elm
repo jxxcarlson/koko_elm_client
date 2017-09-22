@@ -34,7 +34,7 @@ type Latex
 
 defaultLatex : Latex
 defaultLatex =
-    Macro (Macro_ "uu" [])
+    Macro (Macro_ "Parse error" [])
 
 
 defaultLatexList =
@@ -57,10 +57,10 @@ latex =
             [ map Comment texComment
             , map Environment environment
             , map DisplayMath displayMath2
-            , map Macro macro
             , map DisplayMath displayMath
             , map InlineMath inlineMath
             , map Word word
+            , map Macro macro
             ]
 
 

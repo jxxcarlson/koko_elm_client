@@ -361,7 +361,7 @@ printUrl document =
 
 printTypeString : Document -> String
 printTypeString document =
-    case Debug.log "TEXT_TYPE" document.attributes.textType of
+    case document.attributes.textType of
         "plain" ->
             "text=plain"
 

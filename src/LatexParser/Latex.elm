@@ -12,6 +12,7 @@ module LatexParser.Latex
         , displayMath
         , displayMath2
         , endWord
+        , endWord_
         , word
         , words
         , texComment
@@ -48,6 +49,7 @@ Etc.
 import Char
 import Parser exposing (..)
 import Parser.LanguageKit exposing (variable)
+import Regex
 import Set
 
 
@@ -120,8 +122,8 @@ endWord =
 
 {-| run environment "\begin{foo}Blah, blah ...\end{foo} "
 -}
-environment : Parser Environment_
-environment =
+environment_ : Parser Environment_
+environment_ =
     inContext "environment" <|
         delayedCommit (keyword "\\begin") <|
             succeed Environment_
@@ -253,6 +255,83 @@ texComment =
 
 
 
+{- BEGIN ILIAS' CODE -}
+
+
+environment : Parser Environment_
+environment =
+    inContext "environment"
+        (beginWord |> andThen environmentOfType)
+
+
+environmentOfType : String -> Parser Environment_
+environmentOfType envType =
+    succeed (Environment_ envType)
+        |= stringExceptEnd
+        |. endWord_ envType
+
+
+beginWord : Parser String
+beginWord =
+    succeed identity
+        |. ignore zeroOrMore ((==) ' ')
+        |. symbol "\\begin{"
+        |= keep zeroOrMore (\c -> c /= '}')
+        |. symbol "}"
+
+
+endWord_ : String -> Parser ()
+endWord_ envType =
+    succeed ()
+        |. ignore zeroOrMore ((==) ' ')
+        |. keyword "\\end{"
+        |. keyword envType
+        |. symbol "}"
+
+
+
+-- word_ : Parser String
+-- word_ =
+--     succeed identity
+--         |. ignore zeroOrMore (\c -> c == ' ')
+--         |= keep oneOrMore (\c -> c /= ' ')
+
+
+word_ : Parser String
+word_ =
+    succeed (++)
+        |. ignore zeroOrMore (\c -> c == ' ')
+        |= keep (Exactly 1) (\c -> c /= ' ')
+        |= keep zeroOrMore (\c -> (c /= ' ') && (c /= '\\'))
+
+
+wordExceptEnd : Parser String
+wordExceptEnd =
+    delayedCommitMap always
+        (word_
+            |> andThen
+                (\s ->
+                    if Regex.contains (Regex.regex "\\end{.*}") s then
+                        fail "\\end is not allowed here"
+                    else
+                        succeed s
+                )
+        )
+        (succeed ())
+
+
+wordsExceptEnd : Parser (List String)
+wordsExceptEnd =
+    repeat zeroOrMore wordExceptEnd
+
+
+stringExceptEnd : Parser String
+stringExceptEnd =
+    map (String.join " ") wordsExceptEnd
+
+
+
+{- END ILIAS' CODE -}
 {- Below this line: stuff I might use -}
 
 

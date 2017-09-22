@@ -8,17 +8,10 @@ import Parser
 
 transformText : String -> String
 transformText text =
-    let
-        _ =
-            Debug.log "transformText" text
-
-        transformedText =
-            Parser.run latexList text
-                |> latexListGet
-                |> List.map transformLatex
-                |> String.join (" ")
-    in
-        transformedText
+    Parser.run latexList text
+        |> latexListGet
+        |> List.map transformLatex
+        |> String.join (" ")
 
 
 getAt : Int -> List String -> String
@@ -71,8 +64,11 @@ handleEnvironment v =
             "equation" ->
                 handleEquationEnvironment body
 
-            "equationalign" ->
-                handleEquationAlignEnvironment body
+            "align" ->
+                handleAlignEnvironment body
+
+            "macros" ->
+                handleMacros body
 
             "verbatim" ->
                 handleVerbatim body
@@ -91,14 +87,19 @@ handleEquationEnvironment body =
     "\n\\begin{equation}\n" ++ body ++ "\n\\end{equation}\n"
 
 
-handleEquationAlignEnvironment : String -> String
-handleEquationAlignEnvironment body =
-    "\n\\begin{equationalign}\n" ++ body ++ "\n\\end{equationalign}\n"
+handleAlignEnvironment : String -> String
+handleAlignEnvironment body =
+    "\n$$\n\\begin{align}\n" ++ body ++ "\n\\end{align}\n$$\n"
 
 
 handleDefaultEnvironment : String -> String -> String
 handleDefaultEnvironment env body =
     "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<it>\n" ++ body ++ "\n</it>\n"
+
+
+handleMacros : String -> String
+handleMacros body =
+    "\n$$\n" ++ body ++ "\n$$\n"
 
 
 handleVerbatim : String -> String
@@ -112,46 +113,39 @@ handleVerbatim body =
 
 handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
-    let
-        _ =
-            Debug.log "macro name" v.name
+    case v.name of
+        "code" ->
+            handleCode v.args
 
-        _ =
-            Debug.log "macro args" v.args
-    in
-        case v.name of
-            "code" ->
-                handleCode v.args
+        "emph" ->
+            handleEmph v.args
 
-            "emph" ->
-                handleEmph v.args
+        "hyperlink" ->
+            handleHyperlink v.args
 
-            "hyperlink" ->
-                handleHyperlink v.args
+        "image" ->
+            handleImage v.args
 
-            "image" ->
-                handleImage v.args
+        "italic" ->
+            handleItalic v.args
 
-            "italic" ->
-                handleItalic v.args
+        "section" ->
+            handleSection v.args
 
-            "section" ->
-                handleSection v.args
+        "strong" ->
+            handleStrong v.args
 
-            "strong" ->
-                handleStrong v.args
+        "subsection" ->
+            handleSubSection v.args
 
-            "subsection" ->
-                handleSubSection v.args
+        "subsubsection" ->
+            handleSubSubSection v.args
 
-            "subsubsection" ->
-                handleSubSubSection v.args
+        "subsubsubsection" ->
+            handleSubSubSubSection v.args
 
-            "subsubsubsection" ->
-                handleSubSubSubSection v.args
-
-            _ ->
-                "Macro <b>" ++ v.name ++ ":</b> not recognized"
+        _ ->
+            "Macro <b>" ++ v.name ++ " with args " ++ (toString v.args) ++ ":</b> not recognized"
 
 
 handleBold : List String -> String

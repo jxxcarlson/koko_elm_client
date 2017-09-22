@@ -56,6 +56,15 @@ preprocessLatex content =
         content2
 
 
+
+{-
+
+   https://ellie-app.com/8JGHb3gxGa1/1
+
+
+-}
+
+
 {-| xlink::public/123[label] => <http://www.knode.io##public/123[Labe]>
 xlink::public/123[label] => URL##public/123[Label]
 Example : <http://www.knode.io##public/113[Python> notes]
