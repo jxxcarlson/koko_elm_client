@@ -3,8 +3,7 @@ module Action.Document exposing (..)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Stack as Stack
-import External exposing (render)
-import External exposing (toJs)
+import External exposing (putTextToRender, toJs)
 import Request.Document
 import Task
 import Types exposing (..)
@@ -69,11 +68,11 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
-                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
                 ]
     in
@@ -252,7 +251,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , RenderAsciidoc.put current_document
+            , RenderAsciidoc.put model.appState.textBufferDirty current_document
             ]
         )
 
@@ -379,7 +378,7 @@ selectDocument model document =
           }
         , Cmd.batch
             [ toJs (windowData model (displayPage model))
-            , RenderAsciidoc.put document
+            , RenderAsciidoc.put model.appState.textBufferDirty document
 
             -- , saveCmd
             ]
@@ -395,7 +394,7 @@ selectNewDocument model document =
         , counter = model.counter + 1
         , documentStack = Stack.push document model.documentStack
       }
-    , RenderAsciidoc.put document
+    , RenderAsciidoc.put model.appState.textBufferDirty document
     )
 
 

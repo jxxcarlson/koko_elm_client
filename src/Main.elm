@@ -16,7 +16,7 @@ import Document.RenderAsciidoc
 import Document.Search
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import External exposing (render, toJs, fileUpload, fileUploaded)
+import External exposing (putTextToRender, toJs, fileUpload, fileUploaded)
 import Html exposing (..)
 import Image.Upload
 import Image.View

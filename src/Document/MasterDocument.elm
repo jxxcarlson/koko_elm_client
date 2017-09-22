@@ -17,8 +17,6 @@ import Types
         , SearchOrder(Alphabetical)
         , Tool(TableOfContents)
         )
-import Action.Document exposing (saveDocumentCmd, hasId)
-import Document.Search as Search exposing (dispatch)
 import Document.Stack as Stack
 import Request.Document
 import Task

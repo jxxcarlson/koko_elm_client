@@ -11,12 +11,16 @@ import String.Extra
 
 preprocess : String -> Document -> String
 preprocess content document =
-    if document.attributes.docType == "master" then
-        preprocessMaster content
-    else if document.attributes.textType == "latex" then
-        preprocessLatex content
-    else
-        basicPreprocess content
+    let
+        _ =
+            Debug.log "Master, in Document.Preprocessor I obey your command for" document.id
+    in
+        if document.attributes.docType == "master" then
+            preprocessMaster content
+        else if document.attributes.textType == "latex" then
+            preprocessLatex content
+        else
+            basicPreprocess content
 
 
 basicPreprocess : String -> String
