@@ -113,39 +113,46 @@ handleVerbatim body =
 
 handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
-    case v.name of
-        "code" ->
-            handleCode v.args
+    let
+        _ =
+            Debug.log "handleMacro" v
+    in
+        case v.name of
+            "code" ->
+                handleCode v.args
 
-        "emph" ->
-            handleEmph v.args
+            "emph" ->
+                handleEmph v.args
 
-        "hyperlink" ->
-            handleHyperlink v.args
+            "hyperlink" ->
+                handleHyperlink v.args
 
-        "image" ->
-            handleImage v.args
+            "image" ->
+                handleImage v.args
 
-        "italic" ->
-            handleItalic v.args
+            "italic" ->
+                handleItalic v.args
 
-        "section" ->
-            handleSection v.args
+            "newcommand" ->
+                handleNewCommand v.args
 
-        "strong" ->
-            handleStrong v.args
+            "section" ->
+                handleSection v.args
 
-        "subsection" ->
-            handleSubSection v.args
+            "strong" ->
+                handleStrong v.args
 
-        "subsubsection" ->
-            handleSubSubSection v.args
+            "subsection" ->
+                handleSubSection v.args
 
-        "subsubsubsection" ->
-            handleSubSubSubSection v.args
+            "subsubsection" ->
+                handleSubSubSection v.args
 
-        _ ->
-            "Macro <b>" ++ v.name ++ " with args " ++ (toString v.args) ++ ":</b> not recognized"
+            "subsubsubsection" ->
+                handleSubSubSubSection v.args
+
+            _ ->
+                "Macro <b>" ++ v.name ++ " with args " ++ (toString v.args) ++ ":</b> not recognized"
 
 
 handleBold : List String -> String
@@ -209,6 +216,18 @@ handleItalic args =
             getAt 0 args
     in
         "<span class=italic>" ++ arg ++ "</span>"
+
+
+handleNewCommand : List String -> String
+handleNewCommand args =
+    let
+        command =
+            getAt 0 args
+
+        definition =
+            getAt 1 args
+    in
+        "\\newcommand{" ++ command ++ "}{" ++ definition ++ "}"
 
 
 handleStrong : List String -> String
