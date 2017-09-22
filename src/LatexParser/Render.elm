@@ -152,7 +152,45 @@ handleMacro v =
                 handleSubSubSubSection v.args
 
             _ ->
-                "Macro <b>" ++ v.name ++ " with args " ++ (toString v.args) ++ ":</b> not recognized"
+                handleDefault v
+
+
+handleDefault v =
+    case (List.length v.args) of
+        0 ->
+            handleBareCommand v.name
+
+        1 ->
+            handleOneArgCommand v.name v.args
+
+        _ ->
+            handleTwoArgCommand v.name v.args
+
+
+handleBareCommand : String -> String
+handleBareCommand name =
+    name
+
+
+handleOneArgCommand : String -> List String -> String
+handleOneArgCommand name args =
+    let
+        arg =
+            getAt 0 args
+    in
+        name ++ "{" ++ arg ++ "}"
+
+
+handleTwoArgCommand : String -> List String -> String
+handleTwoArgCommand name args =
+    let
+        arg1 =
+            getAt 0 args
+
+        arg2 =
+            getAt 0 args
+    in
+        name ++ "{" ++ arg1 ++ "}" ++ "{" ++ arg2 ++ "}"
 
 
 handleBold : List String -> String
