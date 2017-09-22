@@ -37,8 +37,9 @@ encodeDocument textBufferDirty document =
             if textBufferDirty then
                 Document.Preprocess.preprocess document.content document
             else
-                document.rendered_content
+                Document.Preprocess.preprocess document.content document
 
+        -- document.rendered_content
         _ =
             Debug.log "... document encoded" document.id
     in
