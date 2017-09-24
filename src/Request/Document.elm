@@ -35,6 +35,9 @@ getDocuments route query message token =
     let
         url =
             api ++ route ++ "?" ++ parseQuery (query)
+
+        _ =
+            Debug.log "getDocuments with URL" url
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
@@ -47,6 +50,9 @@ getDocumentsTask route query token =
     let
         url =
             api ++ route ++ "?" ++ parseQuery (query)
+
+        _ =
+            Debug.log "getDocumentsTask with URL" url
 
         request =
             HB.get url
@@ -67,12 +73,16 @@ saveDocumentTask queryString document model =
         request =
             putDocumentRB queryString model.current_user.token document
                 |> HB.toRequest
+
+        _ =
+            Debug.log "saveDocumentTask with queryString" queryString
     in
         request |> Http.toTask
 
 
 getSpecialDocumentWithQuery : String -> Cmd Msg
 getSpecialDocumentWithQuery query =
+    -- _ = Debug.log "getSpecialDocumentWithQuery with queryString" query
     getDocuments "public/documents" query GetSpecialDocument ""
 
 

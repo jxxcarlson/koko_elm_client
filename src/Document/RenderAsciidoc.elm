@@ -5,19 +5,22 @@ import Types exposing (Model, Document, Msg)
 import Document.Preprocess exposing (preprocessSource)
 
 
-put : Document -> Cmd msg
-put document =
+put : Bool -> Document -> Cmd msg
+put textBufferDirty document =
     let
-        document2 =
-            { document | content = preprocessSource document.content }
+        -- document2 =
+        --     { document | content = preprocessSource document.content }
+        --
+        _ =
+            Debug.log "RenderAsciidoc.put" document.title
     in
-        External.render (External.encodeDocument document2)
+        External.putTextToRender (External.encodeDocument textBufferDirty document)
 
 
 putWithKey : Int -> Model -> ( Model, Cmd Msg )
 putWithKey key model =
     if key == 27 then
         -- 27: ESCAPE
-        ( model, put model.current_document )
+        ( model, put model.appState.textBufferDirty model.current_document )
     else
         ( model, Cmd.none )

@@ -17,6 +17,7 @@ var mountNode = document.getElementById('main');
       }
     );
 
+
   function typesetNow(){
     console.log("** calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([
@@ -31,7 +32,7 @@ var mountNode = document.getElementById('main');
   var asciidoctor = Asciidoctor();
 
   var render_asciidoc = function(content) {
-      console.log("content length = " + content.length)
+      console.log("render_asciidoc, ontent length = " + content.length)
       request_in_progress = true;
       console.log("Rendering ... ")
       var millisecondsToWait = 100;
@@ -47,7 +48,7 @@ var mountNode = document.getElementById('main');
    }
 
    var render_asciidoc_latex = function(content) {
-       console.log("content length = " + content.length)
+       console.log("render_asciidoc_latex, content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
@@ -61,7 +62,7 @@ var mountNode = document.getElementById('main');
     }
 
    var render_latex = function(content) {
-       console.log("content length = " + content.length)
+       console.log("render_latex, content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
@@ -75,7 +76,7 @@ var mountNode = document.getElementById('main');
     }
 
    var render_plain = function(content) {
-       console.log("plain content length = " + content.length)
+       console.log("rende_plain,  content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
@@ -87,7 +88,9 @@ var mountNode = document.getElementById('main');
        }  , millisecondsToWait);
     }
 
-  app.ports.render.subscribe(function(data) {
+  app.ports.putTextToRender.subscribe(function(data) {
+
+      console.log("JS-world: app.ports.putTextToRender")
 
       requestAnimationFrame(function() {
 

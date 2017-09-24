@@ -34,7 +34,7 @@ type Latex
 
 defaultLatex : Latex
 defaultLatex =
-    Macro (Macro_ "uu" [])
+    Macro (Macro_ "Parse error" [])
 
 
 defaultLatexList =
@@ -57,10 +57,10 @@ latex =
             [ map Comment texComment
             , map Environment environment
             , map DisplayMath displayMath2
-            , map Macro macro
             , map DisplayMath displayMath
             , map InlineMath inlineMath
             , map Word word
+            , map Macro macro
             ]
 
 
@@ -83,6 +83,10 @@ latexList =
 
 text1 =
     "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: \\[ \\int_0^1 x^n dx = \\frac{1}{n+1} \\]\n\n"
+
+
+text1b =
+    "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
 
 
 text2 =

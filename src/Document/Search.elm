@@ -132,7 +132,7 @@ dispatch searchState page model =
         ( updatedModel
         , Cmd.batch
             [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-            , RenderAsciidoc.put model.current_document
+            , RenderAsciidoc.put model.appState.textBufferDirty model.current_document
             ]
         )
 

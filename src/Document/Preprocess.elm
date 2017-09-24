@@ -3,7 +3,7 @@ module Document.Preprocess exposing (preprocess, preprocessSource)
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
 import Regex exposing (..)
-import LatexParser.Render
+import LatexParser.Paragraph
 import Types exposing (Document)
 import Configuration
 import String.Extra
@@ -11,12 +11,16 @@ import String.Extra
 
 preprocess : String -> Document -> String
 preprocess content document =
-    if document.attributes.docType == "master" then
-        preprocessMaster content
-    else if document.attributes.textType == "latex" then
-        preprocessLatex content
-    else
-        basicPreprocess content
+    let
+        _ =
+            Debug.log "Master, in Document.Preprocessor I obey your command for" document.id
+    in
+        if document.attributes.docType == "master" then
+            preprocessMaster content
+        else if document.attributes.textType == "latex" then
+            preprocessLatex content
+        else
+            basicPreprocess content
 
 
 basicPreprocess : String -> String
@@ -46,10 +50,23 @@ preprocessLatex content =
     let
         content2 =
             content
-                |> LatexParser.Render.transformText
+                |> String.Extra.replace "\\]" "$$"
+                |> String.Extra.replace "\\[" "$$"
+                |> String.Extra.replace "--" "–"
+                |> String.Extra.replace "---" "—"
+                |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
     in
         content2
+
+
+
+{-
+
+   https://ellie-app.com/8JGHb3gxGa1/1
+
+
+-}
 
 
 {-| xlink::public/123[label] => <http://www.knode.io##public/123[Labe]>
