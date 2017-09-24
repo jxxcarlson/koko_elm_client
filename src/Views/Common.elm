@@ -273,6 +273,8 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
+            , fixEquationsButton model
+            , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ (toString model.current_document.attributes.level)))
@@ -329,6 +331,12 @@ updateTagsButton model =
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
     Basic.button "Add to master" FlatButton [ onClick AddToMasterDocument, width (px 250) ]
+
+
+fixEquationsButton : Model -> Element Styles variation Msg
+fixEquationsButton model =
+    when (model.current_document.attributes.textType == "latex")
+        (Basic.button "Fix equations" FlatButtonBlue [ onClick FixEquations, width (px 250) ])
 
 
 publicCheckbox : Model -> Element Styles variation Msg

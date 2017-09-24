@@ -208,6 +208,9 @@ update msg model =
             in
                 Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
+        FixEquations ->
+            Action.Document.fixEquations model
+
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 

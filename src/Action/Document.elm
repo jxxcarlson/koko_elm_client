@@ -2,6 +2,7 @@ module Action.Document exposing (..)
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
+import Document.Edit
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import Request.Document
@@ -27,7 +28,8 @@ updateCurrentDocumentWithContent content model =
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
+            Debug.log "UCDWC, newDocument"
+                { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
     in
         updateCurrentDocument model newDocument
 
@@ -474,3 +476,19 @@ inputContent content model =
             { appState | textBuffer = content, textBufferDirty = True }
     in
         ( { model | appState = newAppState }, Cmd.none )
+
+
+fixEquations : Model -> ( Model, Cmd Msg )
+fixEquations model =
+    let
+        updatedText =
+            model.appState.textBuffer
+                |> Document.Edit.fixEquations
+
+        counter =
+            model.counter
+
+        newModel =
+            { model | counter = counter + 1 }
+    in
+        updateCurrentDocumentWithContent updatedText newModel

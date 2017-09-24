@@ -266,6 +266,7 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
+    | FixEquations
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
