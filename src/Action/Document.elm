@@ -478,8 +478,8 @@ inputContent content model =
         ( { model | appState = newAppState }, Cmd.none )
 
 
-fixEquations : Model -> ( Model, Cmd Msg )
-fixEquations model =
+migrateFromAsciidocLatex : Model -> ( Model, Cmd Msg )
+migrateFromAsciidocLatex model =
     let
         updatedText =
             model.appState.textBuffer

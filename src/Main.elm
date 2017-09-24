@@ -208,8 +208,8 @@ update msg model =
             in
                 Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
-        FixEquations ->
-            Action.Document.fixEquations model
+        MigrateFromAsciidocLatex ->
+            Action.Document.migrateFromAsciidocLatex model
 
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model

@@ -273,7 +273,7 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
-            , fixEquationsButton model
+            , migrateFromADLButton model
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
@@ -333,10 +333,10 @@ addToMasterDocumentButton model =
     Basic.button "Add to master" FlatButton [ onClick AddToMasterDocument, width (px 250) ]
 
 
-fixEquationsButton : Model -> Element Styles variation Msg
-fixEquationsButton model =
+migrateFromADLButton : Model -> Element Styles variation Msg
+migrateFromADLButton model =
     when (model.current_document.attributes.textType == "latex")
-        (Basic.button "Asciidoc-LaTeX > LaTeX" FlatButtonBlue [ onClick FixEquations, width (px 250) ])
+        (Basic.button "Migrate from Asciidoc-LaTeX" FlatButtonBlue [ onClick MigrateFromAsciidocLatex, width (px 250) ])
 
 
 publicCheckbox : Model -> Element Styles variation Msg

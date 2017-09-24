@@ -9,6 +9,18 @@ equationRegexString =
     "\\[env\\.equation\\]\n--\n(.+?)\n--\n"
 
 
+sectionRegexString =
+    "== (.+?)\n"
+
+
+subSectionRegexString =
+    "=== (.+?)\n"
+
+
+subSubSectionRegexString =
+    "==== (.+?)\n"
+
+
 testString =
     "foo\n[env.equation]\n--\nla di dah\n--\nbar\n[env.equation]\n--\nho ho ho\n--\nha ha ha\n"
 
@@ -82,7 +94,19 @@ makeReplacements regexString pre post text =
 
 
 fixEquations text =
-    makeReplacements equationRegexString "\n\\begin{equation}\n" "\n\\end{equation}\n" text
+    makeReplacements equationRegexString "\n\\begin{equation}\n" "\n\\end{equation}\n\n" text
+
+
+fixSections text =
+    makeReplacements sectionRegexString "\n\\section{" "}\n\n" text
+
+
+fixSubSections text =
+    makeReplacements subSectionRegexString "\n\\subsection{" "}\n\n" text
+
+
+fixSubSubSections text =
+    makeReplacements subSubSectionRegexString "\n\\subsubsection{" "}\n\n" text
 
 
 

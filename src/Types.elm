@@ -266,7 +266,7 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
-    | FixEquations
+    | MigrateFromAsciidocLatex
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
