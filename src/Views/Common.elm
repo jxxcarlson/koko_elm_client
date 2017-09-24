@@ -336,7 +336,7 @@ addToMasterDocumentButton model =
 fixEquationsButton : Model -> Element Styles variation Msg
 fixEquationsButton model =
     when (model.current_document.attributes.textType == "latex")
-        (Basic.button "Fix equations" FlatButtonBlue [ onClick FixEquations, width (px 250) ])
+        (Basic.button "Asciidoc-LaTeX > LaTeX" FlatButtonBlue [ onClick FixEquations, width (px 250) ])
 
 
 publicCheckbox : Model -> Element Styles variation Msg
