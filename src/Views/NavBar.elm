@@ -21,7 +21,7 @@ import Views.Utility as Utility
 navigation : Model -> Element Styles variation Msg
 navigation model =
     case model.device of
-        Phone ->
+          Phone ->
             phoneNavigation model
 
         _ ->
@@ -108,10 +108,10 @@ searchOptionsMenu model =
         LightGray
         [ height (px 25), EA.verticalCenter ]
         { with = SelectSearchMode
-        , label = Input.labelAbove (text "searchMode")
-        , errors = Input.noErrors
-        , disabled = Input.enabled
-        , options =
+         , max = 3
+         , label = "searchOptions Nenus"
+         , options = []
+        , menu = LightGray
             [ Input.option Public (text "Public")
             , Input.option Private (text "My docs")
             , Input.option All (text "All")
