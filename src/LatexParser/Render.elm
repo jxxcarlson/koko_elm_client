@@ -94,7 +94,7 @@ handleAlignEnvironment body =
 
 handleDefaultEnvironment : String -> String -> String
 handleDefaultEnvironment env body =
-    "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<it>\n" ++ body ++ "\n</it>\n"
+    "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<div class=\"italic\">\n" ++ body ++ "\n</div>\n"
 
 
 handleMacros : String -> String
