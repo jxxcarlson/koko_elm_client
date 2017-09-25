@@ -17,6 +17,7 @@ getAt k list_ =
 
 
 equationRegexString =
+    -- "\n\\[env\\.equation\\]\n--\n(.+?)\n--\n"
     "\n\\[env\\.equation\\]\n--\n(.+?)\n--\n"
 
 
@@ -58,6 +59,18 @@ testString =
 
 testString2 =
     "foo http://yada[bada] la di dah http://foo[bar] ho ho ho"
+
+
+testString3 =
+    """
+Consider next an operator $\\Omega$.  Write it as
+[env.equation]
+--
+\\Omega = \\left(\\sum_m  | m \\ket \\bra m |\\right) \\Omega \\left(\\sum_n  | n \\ket \\bra n | \\right) \\
+= \\sum_{m,n}  |m | \\ket \\bra m |  \\Omega | n \\ket \\bra n | = \\sum_m  | m\\ket   \\Omega_{m.n} \\bra n |
+--
+The operator  is determined by its
+"""
 
 
 matches =
@@ -198,12 +211,12 @@ fixHyperlinks text =
     makeReplacements2 hyperlinkRegexString "\\hyperlink{" "}" "{" "} " text
 
 
+fixEquations text =
+    makeReplacements equationRegexString "\n\n\\begin{equation}\n" "\n\\end{equation}\n\n" text
+
+
 fixLabeledEquations text =
     makeReplacements2 labeledEquationRegexString "\n\\begin{equation}\n\\label{" "}\n" "" "\n\\end{equation}\n\n" text
-
-
-fixEquations text =
-    makeReplacements equationRegexString "\n\\begin{equation}\n" "\n\\end{equation}\n\n" text
 
 
 fixAligns text =

@@ -90,7 +90,17 @@ handleEquationEnvironment body =
 
 handleAlignEnvironment : String -> String
 handleAlignEnvironment body =
-    "\n$$\n\\begin{align}\n" ++ body ++ "\n\\end{align}\n$$\n"
+    let
+        editedBody =
+            String.Extra.replace "\\ \\" "\\\\" body
+
+        -- NOTE: ^^^ temporary fix
+    in
+        "\n$$\n\\begin{align}\n" ++ editedBody ++ "\n\\end{align}\n$$\n"
+
+
+
+-- "\nA(i \\to f, t) &= (| U_0(t)U_I(t) | i ) \\ \\\n&=(U_0(t)^ \\dagger f | U_I(t) | i) \\ \\\n&= e^{-i \\omega_ft}( f | U_I(t) | i )\n"
 
 
 handleDefaultEnvironment : String -> String -> String

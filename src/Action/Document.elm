@@ -3,6 +3,7 @@ module Action.Document exposing (..)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Edit
+import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import Request.Document
@@ -28,8 +29,13 @@ updateCurrentDocumentWithContent content model =
 
         -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            Debug.log "UCDWC, newDocument"
-                { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
+            -- Debug.log "UCDWC"
+            case oldDocument.attributes.textType of
+                "latex" ->
+                    { oldDocument | content = content, rendered_content = Document.Preprocess.preprocessLatex content }
+
+                _ ->
+                    { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
     in
         updateCurrentDocument model newDocument
 

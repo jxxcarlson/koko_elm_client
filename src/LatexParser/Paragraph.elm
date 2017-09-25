@@ -22,7 +22,8 @@ formatParagraph : List String -> String
 formatParagraph lineList =
     let
         paragraph =
-            (String.join "\n" lineList) ++ "\n\n"
+            (String.join "\n" lineList)
+                ++ "\n\n"
     in
         "<p>\n" ++ (Render.transformText paragraph) ++ "\n</p>"
 

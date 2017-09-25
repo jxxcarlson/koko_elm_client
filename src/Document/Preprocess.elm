@@ -1,4 +1,4 @@
-module Document.Preprocess exposing (preprocess, preprocessSource)
+module Document.Preprocess exposing (preprocess, preprocessSource, preprocessLatex)
 
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
@@ -49,18 +49,23 @@ preprocessLatex : String -> String
 preprocessLatex content =
     let
         content2 =
-            content
+            Debug.log "ppl: content"
+                content
                 |> String.Extra.replace "\\]" "$$"
                 |> String.Extra.replace "\\[" "$$"
                 |> String.Extra.replace "--" "–"
                 |> String.Extra.replace "---" "—"
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
+
+        _ =
+            Debug.log "content2" content2
     in
         content2
 
 
 
+-- handleAlignEnvironment, body: "\nA(i \\to f, t) &= (| U_0(t)U_I(t) | i ) \\ \\\n&=(U_0(t)^ \\dagger f | U_I(t) | i) \\ \\\n&= e^{-i \\omega_ft}( f | U_I(t) | i )\n"
 {-
 
    https://ellie-app.com/8JGHb3gxGa1/1
