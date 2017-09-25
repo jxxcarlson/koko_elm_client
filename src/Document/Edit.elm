@@ -20,8 +20,16 @@ equationRegexString =
     "\n\\[env\\.equation\\]\n--\n(.+?)\n--\n"
 
 
+alignRegexString =
+    "\n\\[env\\.equationalign\\]\n--\n(.+?)\n--\n"
+
+
 labeledEquationRegexString =
     "\n\\[env\\.equation\\#(.+?)\\]\n--\n(.+?)\n--\n"
+
+
+labeledAlignRegexString =
+    "\n\\[env\\.equationalign\\#(.+?)\\]\n--\n(.+?)\n--\n"
 
 
 hyperlinkRegexString =
@@ -196,6 +204,14 @@ fixLabeledEquations text =
 
 fixEquations text =
     makeReplacements equationRegexString "\n\\begin{equation}\n" "\n\\end{equation}\n\n" text
+
+
+fixAligns text =
+    makeReplacements alignRegexString "\n\\begin{align}\n" "\n\\end{align}\n\n" text
+
+
+fixLabeledAligns text =
+    makeReplacements2 labeledAlignRegexString "\n\\begin{align}\n\\label{" "}\n" "" "\n\\end{align}\n\n" text
 
 
 fixSections text =
