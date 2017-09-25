@@ -20,6 +20,10 @@ equationRegexString =
     "\n\\[env\\.equation\\]\n--\n(.+?)\n--\n"
 
 
+labeledEquationRegexString =
+    "\n\\[env\\.equation\\#(.+?)\\]\n--\n(.+?)\n--\n"
+
+
 hyperlinkRegexString =
     "(http.+?)\\[(.*?)\\] "
 
@@ -186,6 +190,10 @@ fixHyperlinks text =
     makeReplacements2 hyperlinkRegexString "\\hyperlink{" "}" "{" "} " text
 
 
+fixLabeledEquations text =
+    makeReplacements2 labeledEquationRegexString "\n\\begin{equation}\n" "" "\n\\label{" "}\n\\end{equation}\n\n" text
+
+
 fixEquations text =
     makeReplacements equationRegexString "\n\\begin{equation}\n" "\n\\end{equation}\n\n" text
 
@@ -205,6 +213,7 @@ fixSubSubSections text =
 migrateTextFomAsciidocLaTeX text =
     text
         |> fixEquations
+        |> fixLabeledEquations
         |> fixSections
         |> fixSubSections
         |> fixSubSubSections
