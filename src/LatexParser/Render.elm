@@ -169,7 +169,7 @@ handleDefault v =
 
 handleBareCommand : String -> String
 handleBareCommand name =
-    name
+    "\\" ++ name
 
 
 handleOneArgCommand : String -> List String -> String
@@ -178,7 +178,7 @@ handleOneArgCommand name args =
         arg =
             getAt 0 args
     in
-        name ++ "{" ++ arg ++ "}"
+        "\\" ++ name ++ "{" ++ arg ++ "}"
 
 
 handleTwoArgCommand : String -> List String -> String
@@ -190,7 +190,7 @@ handleTwoArgCommand name args =
         arg2 =
             getAt 0 args
     in
-        name ++ "{" ++ arg1 ++ "}" ++ "{" ++ arg2 ++ "}"
+        "\\" ++ name ++ "{" ++ arg1 ++ "}" ++ "{" ++ arg2 ++ "}"
 
 
 handleBold : List String -> String
@@ -244,7 +244,19 @@ handleImage args =
         attributes =
             getAt 2 args
     in
-        "<image src=\"" ++ url ++ " " ++ attributes ++ " \">"
+        "<image src=\"" ++ url ++ "\" " ++ attributes ++ " >"
+
+
+
+-- parseAttributes str =
+--   String.split " "
+--
+-- captionedImage : String -> String -> String -> String
+-- captionedImage url label attributes =
+--   let
+--
+--
+--   in
 
 
 handleItalic : List String -> String

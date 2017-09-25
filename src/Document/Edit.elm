@@ -1,4 +1,8 @@
-module Document.Edit exposing (makeReplacements, fixEquations)
+module Document.Edit
+    exposing
+        ( makeReplacements
+        , migrateTextFomAsciidocLaTeX
+        )
 
 import Types exposing (Document)
 import Regex
@@ -10,15 +14,15 @@ equationRegexString =
 
 
 sectionRegexString =
-    "== (.+?)\n"
+    "\n== (.+?)\n\n"
 
 
 subSectionRegexString =
-    "=== (.+?)\n"
+    "\n=== (.+?)\n\n"
 
 
 subSubSectionRegexString =
-    "==== (.+?)\n"
+    "\n==== (.+?)\n\n"
 
 
 testString =
@@ -107,6 +111,14 @@ fixSubSections text =
 
 fixSubSubSections text =
     makeReplacements subSubSectionRegexString "\n\\subsubsection{" "}\n\n" text
+
+
+migrateTextFomAsciidocLaTeX text =
+    text
+        |> fixEquations
+        |> fixSections
+        |> fixSubSections
+        |> fixSubSubSections
 
 
 

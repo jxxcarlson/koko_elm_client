@@ -483,7 +483,7 @@ migrateFromAsciidocLatex model =
     let
         updatedText =
             model.appState.textBuffer
-                |> Document.Edit.fixEquations
+                |> Document.Edit.migrateTextFomAsciidocLaTeX
 
         counter =
             model.counter
