@@ -1,16 +1,31 @@
 module Document.Edit
     exposing
-        ( makeReplacements
-        , migrateTextFomAsciidocLaTeX
+        (-- makeReplacements
+         -- , migrateTextFomAsciidocLaTeX
+         ..
         )
 
 import Types exposing (Document)
+import List.Extra
 import Regex
 import String.Extra
 
 
+getAt : Int -> List String -> String
+getAt k list_ =
+    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+
+
 equationRegexString =
-    "\\[env\\.equation\\]\n--\n(.+?)\n--\n"
+    "\n\\[env\\.equation\\]\n--\n(.+?)\n--\n"
+
+
+hyperlinkRegexString =
+    "(http.+?)\\[(.*?)\\] "
+
+
+
+-- "(http:.+?) "
 
 
 sectionRegexString =
@@ -27,6 +42,10 @@ subSubSectionRegexString =
 
 testString =
     "foo\n[env.equation]\n--\nla di dah\n--\nbar\n[env.equation]\n--\nho ho ho\n--\nha ha ha\n"
+
+
+testString2 =
+    "foo http://yada[bada] la di dah http://foo[bar] ho ho ho"
 
 
 matches =
@@ -54,6 +73,12 @@ getSubMatches matchData =
         |> List.filterMap (\x -> x)
 
 
+getSubMatches2 matchData =
+    matchData
+        |> List.map (\x -> x.submatches)
+        |> List.map (List.filterMap (\x -> x))
+
+
 getMatchTuples regexString text =
     let
         matchData =
@@ -64,6 +89,23 @@ getMatchTuples regexString text =
 
         submatches =
             getSubMatches matchData
+
+        zip =
+            List.map2 (,)
+    in
+        zip matches submatches
+
+
+getMatchTuples2 regexString text =
+    let
+        matchData =
+            getMatchData regexString text
+
+        matches =
+            getMatches matchData
+
+        submatches =
+            getSubMatches2 matchData
 
         zip =
             List.map2 (,)
@@ -82,6 +124,41 @@ replaceWithTuple tuple pre post text =
         String.Extra.replace target replacement text
 
 
+type alias Tuple2 =
+    ( String, List String )
+
+
+replaceWithTuple2 : Tuple2 -> String -> String -> String -> String -> String -> String
+replaceWithTuple2 tuple2 pre1 post1 pre2 post2 text =
+    let
+        ( target, argList ) =
+            tuple2
+
+        args =
+            case List.length argList of
+                0 ->
+                    Nothing
+
+                1 ->
+                    Nothing
+
+                2 ->
+                    Just (List.take 2 argList)
+
+                _ ->
+                    Nothing
+
+        replacement =
+            case args of
+                Nothing ->
+                    target
+
+                Just aargs ->
+                    pre1 ++ (getAt 0 aargs) ++ post1 ++ pre2 ++ (getAt 1 aargs) ++ post2
+    in
+        String.Extra.replace target replacement text
+
+
 
 {-
 
@@ -95,6 +172,18 @@ makeReplacements regexString pre post text =
             getMatchTuples regexString text
     in
         tuples |> List.foldr (\tuple text -> replaceWithTuple tuple pre post text) text
+
+
+makeReplacements2 regexString pre1 post1 pre2 post2 text =
+    let
+        tuples =
+            getMatchTuples2 regexString text
+    in
+        tuples |> List.foldr (\tuple text -> replaceWithTuple2 tuple pre1 post1 pre2 post2 text) text
+
+
+fixHyperlinks text =
+    makeReplacements2 hyperlinkRegexString "\\hyperlink{" "}" "{" "} " text
 
 
 fixEquations text =
@@ -119,6 +208,7 @@ migrateTextFomAsciidocLaTeX text =
         |> fixSections
         |> fixSubSections
         |> fixSubSubSections
+        |> fixHyperlinks
 
 
 
