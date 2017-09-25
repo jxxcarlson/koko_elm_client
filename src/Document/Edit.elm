@@ -191,7 +191,7 @@ fixHyperlinks text =
 
 
 fixLabeledEquations text =
-    makeReplacements2 labeledEquationRegexString "\n\\begin{equation}\n" "" "\n\\label{" "}\n\\end{equation}\n\n" text
+    makeReplacements2 labeledEquationRegexString "\n\\begin{equation}\n\\label{" "}\n" "" "\n\\end{equation}\n\n" text
 
 
 fixEquations text =
