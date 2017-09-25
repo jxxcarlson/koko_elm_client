@@ -1,6 +1,7 @@
 module LatexParser.Render exposing (..)
 
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
+import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import String.Extra
 import Parser
@@ -241,10 +242,40 @@ handleImage args =
         label =
             getAt 1 args
 
-        attributes =
+        attributeString =
             getAt 2 args
+
+        parsedAttributes =
+            parseImageAttributes attributeString
     in
-        "<image src=\"" ++ url ++ "\" " ++ attributes ++ " >"
+        "<image src=\"" ++ url ++ "\" " ++ parsedAttributes ++ " >"
+
+
+parseImageAttributes : String -> String
+parseImageAttributes attributeString =
+    let
+        kvList =
+            LatexParser.Image.getKeyValueList attributeString
+
+        widthValue =
+            LatexParser.Image.getValue "width" kvList
+
+        floatValue =
+            LatexParser.Image.getValue "float" kvList
+
+        widthElement =
+            if widthValue /= "" then
+                "width=" ++ widthValue
+            else
+                ""
+
+        styleElement =
+            if floatValue /= "" then
+                "style=float:" ++ floatValue
+            else
+                ""
+    in
+        String.join " " [ styleElement, widthElement ]
 
 
 

@@ -1,4 +1,4 @@
-module LatexParser.Image exposing (..)
+module LatexParser.Image exposing (getKeyValueList, getValue)
 
 import Char
 import Parser exposing (..)
@@ -40,10 +40,12 @@ getKeyValueList str =
 
 
 
--- getValue : List KeyValuePair -> String -> List String
+-- getValue : List KeyValuePair -> String -> String
 
 
 getValue key kvpList =
     kvpList
         |> List.filter (\x -> (Tuple.first x) == key)
         |> List.map (\x -> Tuple.second x)
+        |> List.head
+        |> Maybe.withDefault ""
