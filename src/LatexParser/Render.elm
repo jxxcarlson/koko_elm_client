@@ -124,46 +124,46 @@ handleVerbatim body =
 
 handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
-    let
-        _ =
-            Debug.log "handleMacro" v
-    in
-        case v.name of
-            "code" ->
-                handleCode v.args
+    -- let
+    --     _ =
+    --         Debug.log "handleMacro" v
+    -- in
+    case v.name of
+        "code" ->
+            handleCode v.args
 
-            "emph" ->
-                handleEmph v.args
+        "emph" ->
+            handleEmph v.args
 
-            "hyperlink" ->
-                handleHyperlink v.args
+        "hyperlink" ->
+            handleHyperlink v.args
 
-            "image" ->
-                handleImage v.args
+        "image" ->
+            handleImage v.args
 
-            "italic" ->
-                handleItalic v.args
+        "italic" ->
+            handleItalic v.args
 
-            "newcommand" ->
-                handleNewCommand v.args
+        "newcommand" ->
+            handleNewCommand v.args
 
-            "section" ->
-                handleSection v.args
+        "section" ->
+            handleSection v.args
 
-            "strong" ->
-                handleStrong v.args
+        "strong" ->
+            handleStrong v.args
 
-            "subsection" ->
-                handleSubSection v.args
+        "subsection" ->
+            handleSubSection v.args
 
-            "subsubsection" ->
-                handleSubSubSection v.args
+        "subsubsection" ->
+            handleSubSubSection v.args
 
-            "subsubsubsection" ->
-                handleSubSubSubSection v.args
+        "subsubsubsection" ->
+            handleSubSubSubSection v.args
 
-            _ ->
-                handleDefault v
+        _ ->
+            handleDefault v
 
 
 handleDefault v =

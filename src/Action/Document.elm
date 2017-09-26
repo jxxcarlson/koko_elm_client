@@ -20,16 +20,10 @@ in the Editorl
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
     let
-        -- _ = Debug.log "updateCurrentDocumentWithContent" 1
-        -- _ = Debug.log "CONTENT" content
-        -- processed_content = Document.Preprocess.preprocessSource content
-        -- _ = Debug.log "Processed CONTENT" processed_content
         oldDocument =
             model.current_document
 
-        -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            -- Debug.log "UCDWC"
             case oldDocument.attributes.textType of
                 "latex" ->
                     { oldDocument | content = content, rendered_content = Document.Preprocess.preprocessLatex content }

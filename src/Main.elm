@@ -510,7 +510,7 @@ update msg model =
                 _ =
                     Debug.log "Refresh" "now"
             in
-                updateCurrentDocumentWithContent model.appState.textBuffer model
+                Action.Document.updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
@@ -716,7 +716,8 @@ view model =
                     (List.concat
                         [ page model ]
                     )
-            , screen (Footer.footer model)
+
+            --, screen (Footer.footer model)
             ]
 
 

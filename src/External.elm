@@ -39,7 +39,8 @@ encodeDocument textBufferDirty document =
         content_to_render =
             case ( textType, textBufferDirty ) of
                 ( "latex", True ) ->
-                    Document.Preprocess.preprocess document.content document
+                    -- Document.Preprocess.preprocess document.content document
+                    document.rendered_content
 
                 ( "latex", False ) ->
                     document.rendered_content

@@ -1,8 +1,9 @@
-module LatexParser.Paragraph exposing (..)
+module LatexParser.Paragraph exposing (replaceStrings, formatDocument, parseDocument, formatParagraphList)
 
 import Char
 import Parser exposing (..)
 import LatexParser.Render as Render exposing (transformText)
+import String.Extra
 
 
 {-
@@ -13,6 +14,15 @@ import LatexParser.Render as Render exposing (transformText)
 -}
 
 
+replaceStrings : String -> String
+replaceStrings text =
+    text
+        |> String.Extra.replace "\\]" "$$"
+        |> String.Extra.replace "\\[" "$$"
+        |> String.Extra.replace "--" "–"
+        |> String.Extra.replace "---" "—"
+
+
 formatParagraph1 : List String -> String
 formatParagraph1 lineList =
     "<p>\n" ++ (String.join "\n" lineList) ++ "\n</p>"
@@ -21,6 +31,9 @@ formatParagraph1 lineList =
 formatParagraph : List String -> String
 formatParagraph lineList =
     let
+        _ =
+            Debug.log "paragraph" "now"
+
         paragraph =
             (String.join "\n" lineList)
                 ++ "\n\n"

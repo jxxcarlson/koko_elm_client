@@ -48,18 +48,21 @@ replace search substitution string =
 preprocessLatex : String -> String
 preprocessLatex content =
     let
+        _ =
+            Debug.log "Enter preprocessLatex" 1
+
         content2 =
-            Debug.log "ppl: content"
-                content
-                |> String.Extra.replace "\\]" "$$"
-                |> String.Extra.replace "\\[" "$$"
-                |> String.Extra.replace "--" "–"
-                |> String.Extra.replace "---" "—"
+            content
+                -- |> String.Extra.replace "\\]" "$$"
+                -- |> String.Extra.replace "\\[" "$$"
+                -- |> String.Extra.replace "--" "–"
+                -- |> String.Extra.replace "---" "—"
+                |> LatexParser.Paragraph.replaceStrings
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
 
         _ =
-            Debug.log "content2" content2
+            Debug.log "Exit preprocessLatex" 1
     in
         content2
 

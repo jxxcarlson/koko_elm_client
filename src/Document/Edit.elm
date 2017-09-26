@@ -9,11 +9,66 @@ import Types exposing (Document)
 import List.Extra
 import Regex
 import String.Extra
+import Char
+import Parser exposing (..)
 
 
 getAt : Int -> List String -> String
 getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+
+
+
+-- type alias Equation =
+--     { content : String }
+--
+--
+-- equation : Parser Equation
+-- equation =
+--     inContext "equation" <|
+--         delayedCommit (symbol "\n--\n") <|
+--             succeed identity
+--                 |. symbol "[env.equation]\n--\n"
+--                 |= keep oneOrMore (\c -> c /= '\n')
+--                 |. symbol "\n--\n"
+
+
+test1 =
+    """
+[env.equation]
+--
+\\omega_j = 2\\omega_0 \\sin\\left( \\frac{j\\pi}{2N+2} \\right),
+\\qquad j = 1, \\ldots, N
+--
+"""
+
+
+test2 =
+    """
+[env.equation]
+--
+\\omega_j = 2\\omega_0 \\sin\\left( \\frac{j\\pi}{2N+2} \\right),
+--
+"""
+
+
+test3 =
+    """
+[env.equation]
+--
+abc = def
+--
+"""
+
+
+test4 =
+    """
+[env.equation]
+--
+abc = def ,
+ghi = klm
+--
+"""
 
 
 equationRegexString =
