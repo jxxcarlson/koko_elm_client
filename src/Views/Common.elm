@@ -18,7 +18,7 @@ module Views.Common
 import Action.UI as UI
 import Color
 import Configuration
-import Document.Document as Document
+import Document.Document as Document exposing (hasTag)
 import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)

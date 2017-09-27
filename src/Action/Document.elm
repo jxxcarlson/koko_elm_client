@@ -3,6 +3,7 @@ module Action.Document exposing (..)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Edit
+import Document.Document as Document exposing (defaultDocument, defaultMasterDocument)
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
@@ -439,7 +440,7 @@ deleteDocument serverReply model =
                     Utility.removeWhen (\doc -> doc.id == model.current_document.id) documentStack
 
                 newCurrentDocument =
-                    (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
+                    (List.head updatedDocuments) |> Maybe.withDefault Document.defaultDocument
             in
                 ( { model
                     | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))

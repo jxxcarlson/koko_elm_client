@@ -10,6 +10,7 @@ import Action.User
 import Views.Common as Common
 import Configuration
 import Date exposing (Date)
+import Document.Document as Document exposing (defaultDocument, defaultMasterDocument, emptyDocument, blankDocument, startDocument)
 import Dict
 import Document.MasterDocument
 import Document.RenderAsciidoc
@@ -367,7 +368,7 @@ update msg model =
                             document
 
                         Nothing ->
-                            emptyDocument
+                            Document.emptyDocument
             in
                 ( { model | specialDocument = specialDocument }, Cmd.none )
 
@@ -383,7 +384,7 @@ update msg model =
                             document
 
                         Nothing ->
-                            emptyDocument
+                            Document.emptyDocument
 
                 oldDocuments =
                     model.documents
@@ -423,9 +424,9 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    defaultDocument
+                    Document.defaultDocument
             in
-                createDocument model blankDocument
+                createDocument model Document.blankDocument
 
         AddToMasterDocument ->
             let
@@ -816,10 +817,10 @@ init flags location =
             , textInputBuffer = ""
             , warning = ""
             , current_user = current_user
-            , current_document = startDocument
-            , specialDocument = emptyDocument
-            , master_document = defaultMasterDocument
-            , documents = [ defaultDocument ]
+            , current_document = Document.startDocument
+            , specialDocument = Document.emptyDocument
+            , master_document = Document.defaultMasterDocument
+            , documents = [ Document.defaultDocument ]
             , documents2 = []
             , documentKey = "blurb"
             , documentDict = Dict.empty
