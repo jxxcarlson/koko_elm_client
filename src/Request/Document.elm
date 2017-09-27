@@ -99,6 +99,16 @@ getSpecialDocumentWithAuthenticatedQuery token query =
 
 
 
+-- getDocumentForDictionaryWithToken : String -> String -> String -> Cmd Msg
+-- getDocumentForDictionaryWithToken key token query =
+--     let
+--         url =
+--             documentsUrl ++ "?" ++ query
+--     in
+--         HB.get url
+--             |> HB.withHeader "Authorization" ("Bearer " ++ token)
+--             |> withExpect (Http.expectJson decodeDocumentsRecord)
+--             |> HB.send GetDocumentForDictionary
 -- Http.send GetSpecialDocument request
 
 
