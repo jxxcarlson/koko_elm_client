@@ -716,8 +716,7 @@ view model =
                     (List.concat
                         [ page model ]
                     )
-
-            --, screen (Footer.footer model)
+            , screen (Footer.footer model)
             ]
 
 

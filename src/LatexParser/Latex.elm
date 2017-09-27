@@ -4,14 +4,12 @@ module LatexParser.Latex
         , Macro_
         , InlineMath_
         , DisplayMath_
-        , BareMacro_
         , Words_
         , macro
         , environment
         , inlineMath
         , displayMath
         , displayMath2
-        , endWord
         , endWord_
         , word
         , words
@@ -19,10 +17,10 @@ module LatexParser.Latex
         , ws
         )
 
-{-| XParser parses an as-yet undetermined subset LaTeX
+{-| LatexParser parses an as-yet undetermined subset
 of LaTeX into elements like
 
-Macro1, e.g., a "\foo{bar} "
+"\foo{bar} " => Macro
 Macro2, e.g., a "\foo{bar}{baz}"
 Environment, e.g., a "\begin{ENV} BODY \end{ENV}"
 InlineMath, e.g., a "$ a^2 + b^2 + c^2 $"
@@ -72,25 +70,15 @@ word =
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
-
--- |. spaces
---  |= keep oneOrMore (\c -> c /= ' ')
-
-
-{-| Not currently used
--}
 type alias Words_ =
     { value : List String
     }
 
 
-{-| Not currently used
--}
 words : Parser Words_
 words =
     inContext "words" <|
         succeed Words_
-            --|. spaces
             |= repeat zeroOrMore word
             |. oneOf [ symbol "\n", symbol "\\" ]
 
@@ -99,50 +87,6 @@ type alias Environment_ =
     { env : String
     , body : String
     }
-
-
-endWord : Parser String
-endWord =
-    inContext "endWord" <|
-        succeed identity
-            |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
-            |. symbol "\\end"
-
-
-
--- notEndWord : Parser String
--- notEndWord =
---     delayedCommit symbol "\\end" <|
---         succeed identity
---             |= keep zeroOrMore word (\c -> True)
---             |. symbol "\\end"
---
-
-
-{-| run environment "\begin{foo}Blah, blah ...\end{foo} "
--}
-environment_ : Parser Environment_
-environment_ =
-    inContext "environment" <|
-        delayedCommit (keyword "\\begin") <|
-            succeed Environment_
-                |. symbol "{"
-                |= keep zeroOrMore (\c -> c /= '}')
-                |. symbol "}"
-                |= keep zeroOrMore (\c -> c /= '\\')
-                |. (keyword "\\end")
-                |. symbol "{"
-                |. keep zeroOrMore (\c -> c /= '}')
-                |. symbol "}"
-                --|. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-                |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
-
-
-
--- |. spaces
--- |. repeat zeroOrMore (oneOf [ symbol "\n" ])
--- spaces
 
 
 type alias InlineMath_ =
@@ -157,8 +101,6 @@ inlineMath =
             |. symbol "$"
             |= keep zeroOrMore (\c -> c /= '$')
             |. symbol "$"
-            -- |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-            -- |. spaces
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
@@ -175,13 +117,7 @@ displayMath =
                 DisplayMath_
                 |= keep zeroOrMore (\c -> c /= '$')
                 |. symbol "$$"
-                --|. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
-                --|. spaces
                 |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
-
-
-
--- \[ \int_0^1 x^n dx = \frac{1}{n+1} \]
 
 
 displayMath2 : Parser DisplayMath_
@@ -190,16 +126,16 @@ displayMath2 =
         delayedCommit (symbol "\\[") <|
             succeed
                 DisplayMath_
-                -- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
                 |= keep zeroOrMore (\c -> c /= '\\')
                 |. symbol "\\]"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
                 |. spaces
 
 
-
--- |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
--- |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
+type alias Macro_ =
+    { name : String
+    , args : List String
+    }
 
 
 arg : Parser String
@@ -208,12 +144,6 @@ arg =
         |. symbol "{"
         |= keep zeroOrMore (\c -> c /= '}')
         |. symbol "}"
-
-
-type alias Macro_ =
-    { name : String
-    , args : List String
-    }
 
 
 {-| run macro "\foo{bar} "
@@ -230,21 +160,6 @@ macro =
             |. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n'), Parser.end ]
             -- |. spaces
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
-
-
-type alias BareMacro_ =
-    { name : String
-    }
-
-
-{-| Not used yet
--}
-bareMacro : Parser BareMacro_
-bareMacro =
-    inContext "bare macro" <|
-        succeed BareMacro_
-            |. symbol "\\"
-            |= keep zeroOrMore (\c -> (c /= ' ' || c /= '\n') && (c /= '{'))
 
 
 texComment : Parser ()
@@ -289,14 +204,6 @@ endWord_ envType =
         |. symbol "}"
 
 
-
--- word_ : Parser String
--- word_ =
---     succeed identity
---         |. ignore zeroOrMore (\c -> c == ' ')
---         |= keep oneOrMore (\c -> c /= ' ')
-
-
 word_ : Parser String
 word_ =
     succeed (++)
@@ -332,28 +239,3 @@ stringExceptEnd =
 
 
 {- END ILIAS' CODE -}
-{- Below this line: stuff I might use -}
-
-
-lowVar : Parser String
-lowVar =
-    variable Char.isLower isVarChar keywords
-
-
-capVar : Parser String
-capVar =
-    variable Char.isUpper isVarChar keywords
-
-
-isVarChar : Char -> Bool
-isVarChar char =
-    Char.isLower char
-        || Char.isUpper char
-        || Char.isDigit char
-        || char
-        == '_'
-
-
-keywords : Set.Set String
-keywords =
-    Set.fromList [ "begin", "end" ]

@@ -10,9 +10,16 @@ import Parser
 transformText : String -> String
 transformText text =
     Parser.run latexList text
+        --|> Debug.log "latexList"
         |> latexListGet
+        --|> Debug.log "latexListGet"
         |> List.map transformLatex
+        --|> Debug.log "transformLatex"
         |> String.join (" ")
+
+
+
+-- |> Debug.log "String.join"
 
 
 getAt : Int -> List String -> String

@@ -1,6 +1,87 @@
 
-== Notes on Latex Parser
+== MiniLaTeX
 
+MiniLaTeX is a small but reasonably expressive
+subset of LaTeX which is designed with three goals
+in mind:
+
+   A.  MiniLaTeX documents can be displayed in the browser
+
+   B.  MiniLaTeX can be compiled by pdfLTeX
+
+   C.  MiniLaTeX is expressive enough to write
+       course notes, research articles, and even books.
+
+The implementation here at hand is preliminary
+and experimental: an optimistic test of concept.
+
+
+== Principles and Hopes
+
+. Mathematical text -- that of the form
+$ .. $, $$ .. $$, or \[ .. \] is processed
+as-is by MathJax.js (see http://www.mathjax.org).
+
+. MathJax also processes the `equation` and
+`align` environments.  However, these will
+have to be assisted by the MiniLaTeX parser-renderer
+for numbering and possibly cross-references.
+
+. Common constructs such as the theorem
+and verbatim environments are supported.  This is done
+by parsing them, then converting the parsed
+text into HTML.
+
+. Common macros, e.g., `\emph{foo}`,  are supported
+in the same way as are environments.
+
+. Trickier, doable, but not yet done: the `enumerate`
+and `itemize` environments. (Oops: this is not going
+to fit with chunking first into paragraphs, since
+different item will be in different paragraphs)
+
+. Not thought about yet: the parser is not recursive,
+and so is limited in what it can do.  Bad!!
+
+*Remark:* Despite its currently limited state, the
+MiniLaTeX parser can already render most of my
+quantum field theory course notes. Keep on truckin!
+
+
+== Technical details & Modus Operandi
+
+The modules LatexParser.* are
+
+Latex::      low level parser stuff
+
+Parser::     higher level parser stuff
+
+Render::     transform parsed LaTeX into HTML
+
+Paragraph::  chunk text into paragraphs, then
+             parse and render them.
+
+The overall flow:
+
+`Paragraph.formatDocument` takes a string as input and then
+
+1. parses it into paragraphs,
+
+2. applies the MiniLaTeX parser to the paragraphs (as strings),
+   and renders the result as HTML.
+
+3. the rendered paragRaphs are then concatenated into a long string.
+
+NOTE: In step (2), it is the function call `Render.transformText paragraph`
+in  `Paragraph.formatParagraph` that drives parsing and
+rendering of LaTeX.  `Render.transformText` in turn calls on `Parser.run latexList text`
+which parses a paragraph into a list of LaTeX elements.  This list is piped into
+`List.map transformLatex`, which dispatches each Latex element to handler which
+converts it HTML.  The result, a list of HTML strings, is then concatenated to
+form an HTML string.
+
+
+== Stuff
 
 .Manual test
 ----

@@ -28,14 +28,13 @@ suite =
     describe ""
         [ describe "Parse"
             [ benchmark1 "preprocessLatex" Document.Preprocess.preprocessLatex qftIntroText
+            , benchmark1 "formatDocument" LatexParser.Paragraph.formatDocument qftIntroText
+            , benchmark1 "parseDocument" LatexParser.Paragraph.parseDocument qftIntroText
+            , benchmark1 "replaceStrings" LatexParser.Paragraph.replaceStrings qftIntroText
 
-            -- , benchmark1 "formatDocument" LatexParser.Paragraph.formatDocument qftIntroText
-            -- , benchmark1 "parseDocument" LatexParser.Paragraph.parseDocument qftIntroText
-            -- , benchmark1 "replaceStrings" LatexParser.Paragraph.replaceStrings qftIntroText
-            --
-            -- -- , benchmark "latexList" (Parser.run latexList qftIntroText)
-            -- , benchmark1 "transformText" transformText qftIntroText
-            -- , benchmark1 "formatParagraphList" LatexParser.Paragraph.formatParagraphList (List.repeat 3 [ line1 ])
+            -- , benchmark "latexList" (Parser.run latexList qftIntroText)
+            , benchmark1 "transformText" transformText qftIntroText
+            , benchmark1 "formatParagraphList" LatexParser.Paragraph.formatParagraphList (List.repeat 3 [ line1 ])
             ]
 
         -- Benchmark.compare
