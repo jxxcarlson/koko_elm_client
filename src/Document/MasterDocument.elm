@@ -62,11 +62,6 @@ selectAux document_id document model =
                 Task.attempt GetDocuments (Request.Document.getDocumentsTask "documents" query token)
             else
                 Task.attempt GetDocuments (Request.Document.getDocumentsTask "public/documents" query token)
-
-        -- ( model1, cmd1 ) =
-        --     Search.dispatch updatedSearchState model.appState.page updatedModel
-        -- ( model2, cmd2 ) =
-        --     Action.Document.selectDocument model1 document
     in
         ( updatedModel, cmd )
 
