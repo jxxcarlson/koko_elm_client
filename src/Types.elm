@@ -104,6 +104,10 @@ type alias CredentialsWrapper =
     }
 
 
+type alias DocumentDict =
+    Dict.Dict String Document
+
+
 type alias DocumentAttributes =
     { public : Bool
     , textType : String

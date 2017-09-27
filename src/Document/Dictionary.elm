@@ -1,25 +1,29 @@
 module Document.Dictionary exposing (..)
 
-import Types exposing (Document)
-import Regex
-import String.Extra
+import Types exposing (Document, DocumentDict)
+import Dict
 
 
-insert key document model =
-    Dict.insert key document model.documentDict
+empty : DocumentDict
+empty =
+    Dict.empty
 
 
-update key document model =
-    Dict.update key document model.documentDict
+insert : String -> Document -> DocumentDict -> DocumentDict
+insert key document dict =
+    Dict.insert key document dict
 
 
-remove key model =
-    Dict.remove key model.documentDict
+remove : String -> DocumentDict -> DocumentDict
+remove key dict =
+    Dict.remove key dict
 
 
-member key model =
-    Dict.member key model.documentDict
+member : String -> DocumentDict -> Bool
+member key dict =
+    Dict.member key dict
 
 
-get key model =
-    Dict.get key model.documentDict
+get : String -> DocumentDict -> Maybe Document
+get key dict =
+    Dict.get key dict
