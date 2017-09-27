@@ -17,3 +17,5 @@ tmp
 bench.html
 benchmarks.html
 analysis.txt
+
+src/LatexParser/LatexParser.html
