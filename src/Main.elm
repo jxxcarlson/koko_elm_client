@@ -11,6 +11,7 @@ import Views.Common as Common
 import Configuration
 import Date exposing (Date)
 import Document.Document as Document exposing (defaultDocument, defaultMasterDocument, emptyDocument, blankDocument, startDocument)
+import Document.Dictionary
 import Dict
 import Document.MasterDocument
 import Document.RenderAsciidoc
@@ -374,6 +375,30 @@ update msg model =
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
+
+        SetDocumentInDict ( Ok documentsRecord, key ) ->
+            let
+                document =
+                    case List.head documentsRecord.documents of
+                        Just document ->
+                            document
+
+                        Nothing ->
+                            Document.emptyDocument
+
+                documentDict =
+                    model.documentDict
+
+                newDocumentDict =
+                    if document /= Document.emptyDocument then
+                        Document.Dictionary.set key document documentDict
+                    else
+                        documentDict
+            in
+                ( { model | documentDict = newDocumentDict }, Cmd.none )
+
+        SetDocumentInDict ( Err err, key ) ->
+            ( { model | message = "Error setting key = " ++ key ++ " in documentDict" }, Cmd.none )
 
         ---
         GetMasterDocument (Ok documentsRecord) ->
