@@ -44,6 +44,16 @@ get key dict =
     Dict.get key dict
 
 
+getContent : String -> DocumentDict -> String
+getContent key dict =
+    case (get key dict) of
+        Just doc ->
+            doc.content
+
+        Nothing ->
+            ""
+
+
 setItemInDict : String -> String -> String -> Platform.Cmd.Cmd Types.Msg
 setItemInDict query key token =
     let

@@ -870,6 +870,7 @@ init flags location =
             , Task.perform ReceiveDate Date.now
             , Task.perform ReceiveTime Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
+            , Document.Dictionary.setPublicItemInDict "title=texmacros&authorname=jxxcarlson" "texmacros"
             ]
 
         masterDocumentCommands =

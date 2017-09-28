@@ -3,6 +3,7 @@ module Action.Document exposing (..)
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
 import Document.Edit
+import Document.Dictionary as Dictionary
 import Document.Document as Document exposing (defaultDocument, defaultMasterDocument)
 import Document.Preprocess
 import Document.Stack as Stack
@@ -24,10 +25,19 @@ updateCurrentDocumentWithContent content model =
         oldDocument =
             model.current_document
 
+        texMacrosPresent =
+            Debug.log "texMacros" (Dictionary.member "texmacros" model.documentDict)
+
+        macros =
+            if texMacrosPresent then
+                Dictionary.getContent "texmacros" model.documentDict
+            else
+                ""
+
         newDocument =
             case oldDocument.attributes.textType of
                 "latex" ->
-                    { oldDocument | content = content, rendered_content = Document.Preprocess.preprocessLatex content }
+                    { oldDocument | content = content, rendered_content = Document.Preprocess.preprocessLatex macros content }
 
                 _ ->
                     { oldDocument | content = content, rendered_content = oldDocument.rendered_content }

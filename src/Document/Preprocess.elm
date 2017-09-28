@@ -18,7 +18,7 @@ preprocess content document =
         if document.attributes.docType == "master" then
             preprocessMaster content
         else if document.attributes.textType == "latex" then
-            preprocessLatex content
+            preprocessLatex "" content
         else
             basicPreprocess content
 
@@ -45,18 +45,14 @@ replace search substitution string =
         |> Regex.replace Regex.All (Regex.regex (Regex.escape search)) (\_ -> substitution)
 
 
-preprocessLatex : String -> String
-preprocessLatex content =
+preprocessLatex : String -> String -> String
+preprocessLatex macros content =
     let
         _ =
             Debug.log "Enter preprocessLatex" 1
 
         content2 =
-            content
-                -- |> String.Extra.replace "\\]" "$$"
-                -- |> String.Extra.replace "\\[" "$$"
-                -- |> String.Extra.replace "--" "–"
-                -- |> String.Extra.replace "---" "—"
+            (macros ++ "\n\n" ++ content)
                 |> LatexParser.Paragraph.replaceStrings
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
