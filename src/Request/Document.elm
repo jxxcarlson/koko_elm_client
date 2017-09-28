@@ -6,6 +6,7 @@ module Request.Document
         , deleteCurrentDocument
         , getDocuments
         , getDocumentsTask
+        , getPublicDocumentsTask
         , getDocumentWithAuthenticatedQuery
         , reloadMasterDocument
         , saveDocumentTask
@@ -57,6 +58,23 @@ getDocumentsTask route query token =
         request =
             HB.get url
                 |> HB.withHeader "Authorization" ("Bearer " ++ token)
+                |> withExpect (Http.expectJson decodeDocumentsRecord)
+                |> HB.toRequest
+    in
+        request |> Http.toTask
+
+
+getPublicDocumentsTask : String -> String -> Task.Task Http.Error DocumentsRecord
+getPublicDocumentsTask route query =
+    let
+        url =
+            api ++ route ++ "?" ++ parseQuery (query)
+
+        _ =
+            Debug.log "getDocumentsTask with URL" url
+
+        request =
+            HB.get url
                 |> withExpect (Http.expectJson decodeDocumentsRecord)
                 |> HB.toRequest
     in

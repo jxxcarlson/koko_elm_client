@@ -1,7 +1,10 @@
 module Document.Dictionary exposing (..)
 
-import Types exposing (Document, DocumentDict)
+import Types exposing (Document, DocumentDict, Msg(SetDocumentInDict))
 import Dict
+import Task
+import Request.Document
+import Platform.Cmd
 
 
 empty : DocumentDict
@@ -39,3 +42,39 @@ member key dict =
 get : String -> DocumentDict -> Maybe Document
 get key dict =
     Dict.get key dict
+
+
+setItemInDict : String -> String -> String -> Platform.Cmd.Cmd Types.Msg
+setItemInDict query key token =
+    let
+        _ =
+            Debug.log "setItemInDict" query
+
+        getDocsTask =
+            Request.Document.getDocumentsTask "documents" query token
+
+        setItemTask =
+            Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
+    in
+        -- Task.attempt Types.GetDocuments getDocsTask
+        Task.attempt SetDocumentInDict setItemTask
+
+
+setPublicItemInDict : String -> String -> Platform.Cmd.Cmd Types.Msg
+setPublicItemInDict query key =
+    let
+        _ =
+            Debug.log "setItemInDict" query
+
+        getDocsTask =
+            Request.Document.getPublicDocumentsTask "public/documents" query
+
+        setItemTask =
+            Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
+    in
+        -- Task.attempt Types.GetDocuments getDocsTask
+        Task.attempt SetDocumentInDict setItemTask
+
+
+
+-- Task.attempt Types.GetDocuments (Task.map (\x -> x) getDocsTask)

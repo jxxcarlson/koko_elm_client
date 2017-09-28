@@ -376,7 +376,7 @@ update msg model =
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
 
-        SetDocumentInDict ( Ok documentsRecord, key ) ->
+        SetDocumentInDict (Ok ( documentsRecord, key )) ->
             let
                 document =
                     case List.head documentsRecord.documents of
@@ -397,8 +397,8 @@ update msg model =
             in
                 ( { model | documentDict = newDocumentDict }, Cmd.none )
 
-        SetDocumentInDict ( Err err, key ) ->
-            ( { model | message = "Error setting key = " ++ key ++ " in documentDict" }, Cmd.none )
+        SetDocumentInDict (Err err) ->
+            ( { model | message = "Error setting key in documentDict" }, Cmd.none )
 
         ---
         GetMasterDocument (Ok documentsRecord) ->
@@ -869,6 +869,7 @@ init flags location =
             , External.askToReconnectUser "reconnectUser"
             , Task.perform ReceiveDate Date.now
             , Task.perform ReceiveTime Time.now
+            , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
             ]
 
         masterDocumentCommands =

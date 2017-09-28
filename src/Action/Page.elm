@@ -2,6 +2,7 @@ module Action.Page exposing (..)
 
 import Types exposing (..)
 import Action.UI
+import Document.Dictionary
 import External
 import Views.External
 import Time
@@ -37,7 +38,10 @@ goToPage p model =
                     { appState | page = HomePage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
+                , Cmd.batch
+                    [ Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
+                    , Document.Dictionary.setItemInDict "key=sidebarNotes" "sidebar" model.current_user.token
+                    ]
                 )
 
         ( HomePage, False ) ->
@@ -49,7 +53,10 @@ goToPage p model =
                     { appState | page = HomePage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getDocumentWithQuery GetSpecialDocument "2017-8-26@18-1-42.887330"
+                , Cmd.batch
+                    [ Request.Document.getDocumentWithQuery GetSpecialDocument "2017-8-26@18-1-42.887330"
+                    , Document.Dictionary.setItemInDict "ident=2017-8-26@18-1-42.887330" "welcome" model.current_user.token
+                    ]
                 )
 
         ( ReaderPage, True ) ->

@@ -323,7 +323,7 @@ type Msg
     | SendMessage
     | SendToJS String
     | SetDocType String
-    | SetDocumentInDict ( Result Http.Error DocumentsRecord, String )
+    | SetDocumentInDict (Result Http.Error ( DocumentsRecord, String ))
     | SetMessage String
     | SetParentId String
     | SetSearchTerm String
