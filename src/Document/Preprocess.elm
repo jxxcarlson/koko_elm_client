@@ -51,8 +51,12 @@ preprocessLatex macros content =
         _ =
             Debug.log "Enter preprocessLatex" 1
 
+        -- Squeeze multiple newlines into one.
+        macros2 =
+            Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n") macros
+
         content2 =
-            (macros ++ "\n\n" ++ content)
+            (macros2 ++ "\n\n" ++ content)
                 |> LatexParser.Paragraph.replaceStrings
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
