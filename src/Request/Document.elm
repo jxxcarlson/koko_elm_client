@@ -1,12 +1,12 @@
 module Request.Document
     exposing
-        ( getSpecialDocumentWithQuery
+        ( getDocumentWithQuery
         , put
         , createDocument
         , deleteCurrentDocument
         , getDocuments
         , getDocumentsTask
-        , getSpecialDocumentWithAuthenticatedQuery
+        , getDocumentWithAuthenticatedQuery
         , reloadMasterDocument
         , saveDocumentTask
         )
@@ -80,10 +80,21 @@ saveDocumentTask queryString document model =
         request |> Http.toTask
 
 
-getSpecialDocumentWithQuery : String -> Cmd Msg
-getSpecialDocumentWithQuery query =
-    -- _ = Debug.log "getSpecialDocumentWithQuery with queryString" query
-    getDocuments "public/documents" query GetSpecialDocument ""
+getDocumentWithQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocumentWithQuery processor query =
+    getDocuments "public/documents" query processor ""
+
+
+getDocumentWithAuthenticatedQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> String -> Cmd Msg
+getDocumentWithAuthenticatedQuery processor token query =
+    let
+        url =
+            documentsUrl ++ "?" ++ query
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send processor
 
 
 getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg

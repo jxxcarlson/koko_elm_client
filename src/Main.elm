@@ -224,7 +224,7 @@ update msg model =
                     { appState | page = HomePage, masterDocLoaded = False, authorizing = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+                , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
                 )
 
         RandomDocuments ->
@@ -853,7 +853,7 @@ init flags location =
             Document.Search.getRandomDocuments model
 
         startupPageCommands =
-            [ Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+            [ Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
             , command
             ]
 

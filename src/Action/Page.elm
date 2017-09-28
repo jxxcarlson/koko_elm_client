@@ -37,7 +37,7 @@ goToPage p model =
                     { appState | page = HomePage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes"
+                , Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
                 )
 
         ( HomePage, False ) ->
@@ -49,17 +49,17 @@ goToPage p model =
                     { appState | page = HomePage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getSpecialDocumentWithQuery "2017-8-26@18-1-42.887330"
+                , Request.Document.getDocumentWithQuery GetSpecialDocument "2017-8-26@18-1-42.887330"
                 )
 
         ( ReaderPage, True ) ->
             ( { model | appState = Action.UI.appStateWithPage model p }
-            , Request.Document.getSpecialDocumentWithAuthenticatedQuery model.current_user.token "key=sidebarNotes"
+            , Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
             )
 
         ( ReaderPage, False ) ->
             ( { model | appState = Action.UI.appStateWithPage model p }
-            , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-4@22-21-10.03ed17"
+            , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-4@22-21-10.03ed17"
             )
 
         ( _, _ ) ->
