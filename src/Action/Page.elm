@@ -18,6 +18,7 @@ goToPage p model =
             , Cmd.batch
                 [ External.toJs (Views.External.windowData model p)
                 , Task.perform ReceiveTime Time.now
+                , Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
                 ]
             )
 

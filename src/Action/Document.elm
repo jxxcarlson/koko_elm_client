@@ -378,7 +378,7 @@ selectDocument model document =
 
         additionalCommands =
             if model.appState.page == EditorPage && document.attributes.textType == "latex" then
-                [ Dictionary.setPublicItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" ]
+                [ Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token ]
             else
                 []
     in
