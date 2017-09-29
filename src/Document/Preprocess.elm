@@ -56,10 +56,11 @@ preprocessLatex macros content =
             Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n") macros
 
         content2 =
-            (macros2 ++ "\n\n" ++ content)
+            content
                 |> LatexParser.Paragraph.replaceStrings
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
+                |> (\x -> (macros2 ++ "\n\n" ++ x))
 
         _ =
             Debug.log "Exit preprocessLatex" 1
