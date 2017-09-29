@@ -34,7 +34,7 @@ textFormatMenu model =
                 [ padding 8, spacing 2 ]
                 [ setTextTypeButton "plain" "Plain" model
                 , setTextTypeButton "adoc" "Asciidoc" model
-                , setTextTypeButton "adoc_latex" "Asciidoc-Latex" model
+                , setTextTypeButton "adoc_latex" "Asciidoc+" model
                 , setTextTypeButton "latex" "MiniLatex" model
                 ]
             ]
