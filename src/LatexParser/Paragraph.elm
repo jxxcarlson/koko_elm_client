@@ -1,4 +1,4 @@
-module LatexParser.Paragraph exposing (formatDocument, parseDocument, replaceStrings)
+module LatexParser.Paragraph exposing (formatDocument, parseDocument, replaceStrings, formatParagraphList)
 
 import Char
 import Parser exposing (..)
