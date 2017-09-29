@@ -371,17 +371,16 @@ selectDocument model document =
                 , textBufferDirty = False
             }
 
-        -- saveCmd =
-        --     if
-        --         document.author_id
-        --             == model.current_user.id
-        --             && document.attributes.docType
-        --             /= "master"
-        --         -- do not let current text overwrite master document state
-        --     then
-        --         saveDocumentCmd "viewed_at=now" document model
-        --     else
-        --         Cmd.none
+        basicCommands =
+            [ toJs (windowData model (displayPage model))
+            , RenderAsciidoc.put model.appState.textBufferDirty document
+            ]
+
+        additionalCommands =
+            if model.appState.page == EditorPage && document.attributes.textType == "latex" then
+                [ Dictionary.setPublicItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" ]
+            else
+                []
     in
         ( { model
             | current_document = document
@@ -389,12 +388,7 @@ selectDocument model document =
             , appState = newAppState
             , counter = model.counter + 1
           }
-        , Cmd.batch
-            [ toJs (windowData model (displayPage model))
-            , RenderAsciidoc.put model.appState.textBufferDirty document
-
-            -- , saveCmd
-            ]
+        , Cmd.batch (basicCommands ++ additionalCommands)
         )
 
 
