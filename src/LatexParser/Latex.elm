@@ -35,7 +35,7 @@ Blah Blah
 Etc.
 -}
 
--- import Parser exposing (Parser, (|.), (|=), succeed, symbol, float, ignore, zeroOrMore)
+{- This version contains Ilias' improved code -}
 
 import Parser exposing (..)
 
