@@ -2,8 +2,6 @@ module LatexParser.Paragraph
     exposing
         ( formatDocument
         , paragraphify
-        , paragraphify2
-        , parseDocument
         , replaceStrings
         , formatParagraphList
         , qftIntroText
@@ -14,63 +12,6 @@ import Parser exposing (..)
 import LatexParser.Render as Render exposing (transformText)
 import Regex
 import String.Extra
-
-
-{-| PARSER: The function `parseDocument` takes a documument
-(string) as input and returns a `List (List String)`,
-where a `(List String)` represents a paragraph.
--}
-parseDocument : String -> Result Error (List (List String))
-parseDocument text =
-    let
-        _ =
-            Debug.log "parseDocument" "now"
-    in
-        Parser.run document (text ++ "\n\n")
-
-
-document : Parser (List (List String))
-document =
-    inContext "document" <|
-        succeed identity
-            |= repeat zeroOrMore paragraph
-
-
-paragraph : Parser (List String)
-paragraph =
-    inContext "paragraph" <|
-        succeed identity
-            |. ws
-            |= repeat zeroOrMore line
-            |. symbol "\n"
-            |. ws
-
-
-line : Parser String
-line =
-    inContext "line" <|
-        succeed identity
-            |= keep oneOrMore (\c -> c /= '\n')
-            |. symbol "\n"
-
-
-ws : Parser ()
-ws =
-    ignore zeroOrMore (\c -> c == ' ' || c == '\n')
-
-
-
-{- Examples:
-
-    > import LatexParser.Paragraph as P
-    > P.parseDocument "abc def\nghi jxl\n\nmno pqr"
-    Ok ([["abc def","ghi jxl"],["mno pqr"]])
-        : Result.Result Parser.Error (List (List String))
-
-   formatParagraph1 : List String -> String
-   formatParagraph1 lineList =
-       "<p>\n" ++ (String.join "\n" lineList) ++ "\n</p>"
--}
 
 
 {-| formatDocment takes a string as input and then
@@ -96,57 +37,27 @@ formatDocument text =
             Debug.log "formatDocument" "now"
 
         paragraphList =
-            parseDocument text
+            paragraphify text
     in
-        case paragraphList of
-            Ok paragraphList ->
-                formatParagraphList paragraphList
-
-            err ->
-                "There is a syntax error in your document."
+        formatParagraphList paragraphList
 
 
 paragraphify : String -> List String
 paragraphify text =
-    let
-        _ =
-            Debug.log "formatDocument" "now"
-
-        paragraphList =
-            parseDocument text
-    in
-        case paragraphList of
-            Ok paragraphList ->
-                paragraphList |> List.map (\x -> String.join "\n" x)
-
-            err ->
-                []
-
-
-paragraphify2 : String -> List String
-paragraphify2 text =
     Regex.split Regex.All (Regex.regex "\n\n+") text
         |> List.filter (\x -> String.length x /= 0)
 
 
-formatParagraphList : List (List String) -> String
+formatParagraphList : List String -> String
 formatParagraphList paragraphList =
-    let
-        _ =
-            Debug.log "formatParagraphList" "now"
-    in
-        String.join "\n\n" (List.map formatParagraph paragraphList)
+    String.join "\n\n" (List.map formatParagraph paragraphList)
 
 
-formatParagraph : List String -> String
-formatParagraph lineList =
+formatParagraph : String -> String
+formatParagraph paragraph =
     let
         _ =
             Debug.log "formatParagraph" "now"
-
-        paragraph =
-            (String.join "\n" lineList)
-                ++ "\n\n"
     in
         "<p>\n" ++ (Render.transformText paragraph) ++ "\n</p>"
 

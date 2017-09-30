@@ -50,6 +50,18 @@ latexListGet r =
     r |> Result.withDefault defaultLatexList |> .value
 
 
+{-| TEST of latex:
+
+      > str = "\\image{http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg}{Refraction}{width: 250, float: right}"
+      "\\image{http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg}{Refraction}{width: 250, float: right}"
+          : String
+      > import LatexParser.Parser as LP
+      > import Parser as P
+      > P.run LP.latex str
+      Ok (Macro { name = "image", args = ["http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg","Refraction","width: 250, float: right"] })
+          : Result.Result Parser.Error LatexParser.Parser.Latex
+
+-}
 latex : Parser Latex
 latex =
     inContext "latex" <|
