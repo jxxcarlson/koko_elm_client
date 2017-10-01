@@ -4,24 +4,43 @@ import Types exposing (..)
 import Action.UI
 import Document.Dictionary
 import External
+import LatexParser.Differ as Differ exposing (EditRecord)
 import Views.External
 import Time
 import Task
 import Request.Document
 
 
+setEditPage model =
+    let
+        appState =
+            Action.UI.appStateWithPage model EditorPage
+
+        newAppState =
+            { appState | textBuffer = model.current_document.content }
+    in
+        ( { model | appState = newAppState }
+        , Cmd.batch
+            [ External.toJs (Views.External.windowData model EditorPage)
+            , Task.perform ReceiveTime Time.now
+            , Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
+            ]
+        )
+
+
 goToPage : Page -> Model -> ( Model, Cmd Msg )
 goToPage p model =
     case ( p, model.appState.signedIn ) of
         ( EditorPage, True ) ->
-            ( { model | appState = Action.UI.appStateWithPage model p }
-            , Cmd.batch
-                [ External.toJs (Views.External.windowData model p)
-                , Task.perform ReceiveTime Time.now
-                , Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
-                ]
-            )
+            setEditPage model
 
+        -- ( { model | appState = Action.UI.appStateWithPage model p }
+        -- , Cmd.batch
+        --     [ External.toJs (Views.External.windowData model p)
+        --     , Task.perform ReceiveTime Time.now
+        --     , Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
+        --     ]
+        -- )
         ( EditorPage, False ) ->
             ( { model
                 | appState = Action.UI.appStateWithPage model HomePage

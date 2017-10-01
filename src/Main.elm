@@ -23,6 +23,7 @@ import Html exposing (..)
 import Image.Upload
 import Image.View
 import Jwt
+import LatexParser.Differ exposing (EditRecord)
 import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url
@@ -818,6 +819,7 @@ init flags location =
             , page = HomePage
             , tool = TableOfContents
             , textBuffer = ""
+            , editRecord = EditRecord [] []
             , tickInterval = Configuration.tickInterval
             , command = ""
             }

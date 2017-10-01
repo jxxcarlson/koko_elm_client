@@ -58,7 +58,7 @@ formatParagraph paragraph =
         _ =
             Debug.log "formatParagraph" "now"
     in
-        "<p>\n" ++ (Render.transformText paragraph) ++ "\n</p>"
+        "<p>\n" ++ (Render.transformText (paragraph ++ "\n")) ++ "\n</p>"
 
 
 {-| replaceStrings is used by the document prepreprocessor

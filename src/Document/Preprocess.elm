@@ -53,7 +53,7 @@ preprocessLatex macros content =
 
         -- Squeeze multiple newlines into one.
         macros2 =
-            Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n") macros
+            Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n") macros |> String.Extra.replace "$$" "\n$$\n"
 
         content2 =
             content
@@ -61,6 +61,7 @@ preprocessLatex macros content =
                 |> LatexParser.Paragraph.formatDocument
                 |> transformXLinks
                 |> (\x -> (macros2 ++ "\n\n" ++ x))
+                |> Debug.log "processed latex"
 
         _ =
             Debug.log "Exit preprocessLatex" 1

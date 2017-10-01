@@ -1,6 +1,7 @@
 module LatexParser.Differ exposing (..)
 
 import LatexParser.Paragraph as Paragraph exposing (paragraphify)
+import LatexParser.Render as Render
 
 
 commonInitialSegment : List String -> List String -> List String
@@ -46,13 +47,13 @@ type alias DiffRecord =
     }
 
 
-type alias EditorRecord =
+type alias EditRecord =
     { paragraphs : List String
     , renderedParagraphs : List String
     }
 
 
-initialize : (String -> String) -> String -> EditorRecord
+initialize : (String -> String) -> String -> EditRecord
 initialize transformer text =
     let
         paragraphs =
@@ -61,10 +62,15 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-        EditorRecord paragraphs renderedParagraphs
+        EditRecord paragraphs renderedParagraphs
 
 
-update : (String -> String) -> String -> EditorRecord -> EditorRecord
+initializeLatex : String -> EditRecord
+initializeLatex text =
+    initialize Render.transformText text
+
+
+update : (String -> String) -> String -> EditRecord -> EditRecord
 update transformer text editorRecord =
     let
         newParagraphs =
@@ -76,7 +82,12 @@ update transformer text editorRecord =
         newRenderedParagraphs =
             renderDiff transformer diffRecord editorRecord.renderedParagraphs
     in
-        EditorRecord newParagraphs newRenderedParagraphs
+        EditRecord newParagraphs newRenderedParagraphs
+
+
+updateLatex : String -> EditRecord -> EditRecord
+updateLatex text editorRecord =
+    update Render.transformText text editorRecord
 
 
 diff : List String -> List String -> DiffRecord

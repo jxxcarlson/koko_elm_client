@@ -8,6 +8,7 @@ import Document.Document as Document exposing (defaultDocument, defaultMasterDoc
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
+import LatexParser.Differ as Differ exposing (EditRecord)
 import Request.Document
 import Task
 import Types exposing (..)
@@ -362,9 +363,16 @@ selectDocument model document =
         appState =
             model.appState
 
+        -- newEditRecord =
+        --     if model.appState.page == EditorPage && document.attributes.textType == "latex" then
+        --         Differ.initializeLatex document.content
+        --     else
+        --         EditRecord [] []
         newAppState =
             { appState
                 | textBuffer = document.content
+
+                -- , editRecord = newEditRecord
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model

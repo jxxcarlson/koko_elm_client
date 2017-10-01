@@ -7,6 +7,7 @@ import Json.Encode as JsEncode
 import Date exposing (Date)
 import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
+import LatexParser.Differ exposing (EditRecord)
 
 
 type Device
@@ -204,6 +205,7 @@ type alias AppState =
     , page : Page
     , tool : Tool
     , textBuffer : String
+    , editRecord : EditRecord
     , tickInterval : Float
     , command : String
     }
