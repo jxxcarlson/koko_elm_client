@@ -48,7 +48,19 @@ updateCurrentDocumentWithContent content model =
     if model.current_document.attributes.textType == "latex" then
         updateCurrentLatexDocumentWithContent content model
     else
-        updateCurrentDocument model model.current_document
+        updateStandardDocumentWithContent content model
+
+
+updateStandardDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
+updateStandardDocumentWithContent content model =
+    let
+        document =
+            model.current_document
+
+        newDocument =
+            { document | content = content, rendered_content = document.rendered_content }
+    in
+        updateCurrentDocument model newDocument
 
 
 updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
