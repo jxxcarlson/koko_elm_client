@@ -3,8 +3,9 @@ module Action.Page exposing (..)
 import Types exposing (..)
 import Action.UI
 import Document.Dictionary
+import Action.Document
 import External
-import LatexParser.Differ as Differ exposing (EditRecord)
+import Document.Differ as Differ exposing (EditRecord)
 import Views.External
 import Time
 import Task
@@ -13,11 +14,10 @@ import Request.Document
 
 setEditPage model =
     let
-        appState =
-            Action.UI.appStateWithPage model EditorPage
-
         newAppState =
-            { appState | textBuffer = model.current_document.content }
+            Action.UI.appStateWithPage model EditorPage
+                |> Action.Document.clearEditRecord
+                |> (\appState -> { appState | textBuffer = model.current_document.content })
     in
         ( { model | appState = newAppState }
         , Cmd.batch
@@ -34,13 +34,6 @@ goToPage p model =
         ( EditorPage, True ) ->
             setEditPage model
 
-        -- ( { model | appState = Action.UI.appStateWithPage model p }
-        -- , Cmd.batch
-        --     [ External.toJs (Views.External.windowData model p)
-        --     , Task.perform ReceiveTime Time.now
-        --     , Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
-        --     ]
-        -- )
         ( EditorPage, False ) ->
             ( { model
                 | appState = Action.UI.appStateWithPage model HomePage

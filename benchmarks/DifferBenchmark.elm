@@ -2,10 +2,9 @@ module Main exposing (..)
 
 import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
-import LatexParser.Differ as Differ exposing (diff, renderDiff)
+import Document.Differ as Differ exposing (diff, renderDiff, paragraphify)
 import LatexParser.TextSample exposing (qftIntroText1, qftIntroText2)
 import LatexParser.Render as Render
-import LatexParser.Paragraph as Paragraph exposing (paragraphify)
 
 
 {-
@@ -33,11 +32,11 @@ suite =
 
 
 p1 =
-    Paragraph.paragraphify qftIntroText1
+    Differ.paragraphify qftIntroText1
 
 
 p2 =
-    Paragraph.paragraphify qftIntroText2
+    Differ.paragraphify qftIntroText2
 
 
 r1 =

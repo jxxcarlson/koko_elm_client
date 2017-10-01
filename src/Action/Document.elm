@@ -8,7 +8,8 @@ import Document.Document as Document exposing (defaultDocument, defaultMasterDoc
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
-import LatexParser.Differ as Differ exposing (EditRecord)
+import Document.Differ exposing (EditRecord)
+import Document.LatexDiffer as LatexDiffer
 import Request.Document
 import Task
 import Types exposing (..)
@@ -17,33 +18,64 @@ import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
 
 
+setEditRecord : Document -> AppState -> AppState
+setEditRecord document appState =
+    let
+        newEditRecord =
+            LatexDiffer.initialize document.content
+    in
+        { appState | editRecord = newEditRecord }
+
+
+clearEditRecord : AppState -> AppState
+clearEditRecord appState =
+    let
+        newEditRecord =
+            Document.Differ.clear
+    in
+        { appState | editRecord = newEditRecord }
+
+
+
+--|> Debug.log "processed latex"
+
+
 {-| This is the function called when the user changes the document content
 in the Editorl
 -}
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
+    if model.current_document.attributes.textType == "latex" then
+        updateCurrentLatexDocumentWithContent content model
+    else
+        updateCurrentDocument model model.current_document
+
+
+updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
+updateCurrentLatexDocumentWithContent content model =
     let
-        oldDocument =
+        document =
             model.current_document
 
-        texMacrosPresent =
-            Debug.log "texMacros" (Dictionary.member "texmacros" model.documentDict)
+        newEditRecord =
+            LatexDiffer.safeUpdate content model.appState.editRecord
 
-        macros =
-            if texMacrosPresent then
-                Dictionary.getContent "texmacros" model.documentDict
-            else
-                ""
+        rendered_content =
+            newEditRecord.renderedParagraphs |> String.join "\n\n"
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | editRecord = newEditRecord }
+
+        newModel =
+            { model | appState = newAppState }
 
         newDocument =
-            case oldDocument.attributes.textType of
-                "latex" ->
-                    { oldDocument | content = content, rendered_content = Document.Preprocess.preprocessLatex macros content }
-
-                _ ->
-                    { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
+            { document | rendered_content = rendered_content }
     in
-        updateCurrentDocument model newDocument
+        updateCurrentDocument newModel newDocument
 
 
 updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
@@ -361,13 +393,11 @@ selectDocument model document =
                 False
 
         appState =
-            model.appState
+            if (model.appState.page == EditorPage) && (document.attributes.textType == "latex") then
+                model.appState |> clearEditRecord
+            else
+                model.appState
 
-        -- newEditRecord =
-        --     if model.appState.page == EditorPage && document.attributes.textType == "latex" then
-        --         Differ.initializeLatex document.content
-        --     else
-        --         EditRecord [] []
         newAppState =
             { appState
                 | textBuffer = document.content

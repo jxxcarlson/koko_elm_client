@@ -7,7 +7,7 @@ import Json.Encode as JsEncode
 import Date exposing (Date)
 import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
-import LatexParser.Differ exposing (EditRecord)
+import Document.Differ exposing (EditRecord)
 
 
 type Device

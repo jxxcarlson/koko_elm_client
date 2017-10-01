@@ -1,4 +1,4 @@
-module Document.Preprocess exposing (preprocess, preprocessSource, preprocessLatex)
+module Document.Preprocess exposing (preprocess, preprocessSource, transformXLinks)
 
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
@@ -17,8 +17,6 @@ preprocess content document =
     in
         if document.attributes.docType == "master" then
             preprocessMaster content
-        else if document.attributes.textType == "latex" then
-            preprocessLatex "" content
         else
             basicPreprocess content
 
@@ -43,30 +41,6 @@ replace : String -> String -> String -> String
 replace search substitution string =
     string
         |> Regex.replace Regex.All (Regex.regex (Regex.escape search)) (\_ -> substitution)
-
-
-preprocessLatex : String -> String -> String
-preprocessLatex macros content =
-    let
-        _ =
-            Debug.log "Enter preprocessLatex" 1
-
-        -- Squeeze multiple newlines into one.
-        macros2 =
-            Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n") macros |> String.Extra.replace "$$" "\n$$\n"
-
-        content2 =
-            content
-                |> LatexParser.Paragraph.replaceStrings
-                |> LatexParser.Paragraph.formatDocument
-                |> transformXLinks
-                |> (\x -> (macros2 ++ "\n\n" ++ x))
-                |> Debug.log "processed latex"
-
-        _ =
-            Debug.log "Exit preprocessLatex" 1
-    in
-        content2
 
 
 
