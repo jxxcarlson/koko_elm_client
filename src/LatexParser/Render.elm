@@ -139,7 +139,7 @@ handleItemize body =
     body
         |> parseItems
         |> List.map (tagItem "li")
-        |> List.foldl (\x acc -> x ++ acc) ""
+        |> List.foldl (\x acc -> acc ++ x) ""
         |> tagItem "ul"
 
 
@@ -148,13 +148,14 @@ handleEnumerate body =
     body
         |> parseItems
         |> List.map (tagItem "li")
+        |> List.reverse
         |> List.foldl (\x acc -> x ++ acc) ""
         |> tagItem "ol"
 
 
 handleDefaultEnvironment : String -> String -> String
 handleDefaultEnvironment env body =
-    "\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<div class=\"italic\">\n" ++ body ++ "\n</div>\n"
+    "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<div class=\"italic\">\n" ++ body ++ "\n</div>\n</div>\n"
 
 
 handleMacros : String -> String
