@@ -165,7 +165,7 @@ handleMacros body =
 
 handleVerbatim : String -> String
 handleVerbatim body =
-    "\n<pre>" ++ body ++ "</pre>\n"
+    "\n<pre class=\"verbatim\">" ++ body ++ "</pre>\n"
 
 
 
