@@ -32,8 +32,6 @@ to normalize input to parseDocument.
 replaceStrings : String -> String
 replaceStrings text =
     text
-        |> String.Extra.replace "\\]" "$$"
-        |> String.Extra.replace "\\[" "$$"
         |> String.Extra.replace "--" "–"
         |> String.Extra.replace "---" "—"
 

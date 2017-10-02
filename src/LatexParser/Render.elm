@@ -1,5 +1,6 @@
 module LatexParser.Render exposing (..)
 
+import Configuration
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
@@ -188,6 +189,9 @@ handleMacro v =
         "hyperlink" ->
             handleHyperlink v.args
 
+        "bibhyperlink" ->
+            handleBibHyperlink v.args
+
         "image" ->
             handleImage v.args
 
@@ -215,8 +219,28 @@ handleMacro v =
         "subsubsubsection" ->
             handleSubSubSubSection v.args
 
+        "xlink" ->
+            handleXLink v.args
+
+        "xlinkPublic" ->
+            handleXLinkPublic v.args
+
         _ ->
             handleDefault v
+
+
+handleBibHyperlink args =
+    let
+        url =
+            getAt 0 args
+
+        label =
+            getAt 1 args
+
+        ref =
+            getAt 2 args
+    in
+        "\n<p class= \"bibhyperlink\">[" ++ ref ++ "] <a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>\n</p>\n"
 
 
 handleDefault v =
@@ -426,3 +450,27 @@ handleSubSubSubSection args =
             getAt 0 args
     in
         "<h3>" ++ arg ++ "</h3>"
+
+
+handleXLink : List String -> String
+handleXLink args =
+    let
+        id =
+            getAt 0 args
+
+        label =
+            getAt 1 args
+    in
+        "<a href=\"" ++ Configuration.client ++ "##document/" ++ id ++ "\">" ++ label ++ "</a>"
+
+
+handleXLinkPublic : List String -> String
+handleXLinkPublic args =
+    let
+        id =
+            getAt 0 args
+
+        label =
+            getAt 1 args
+    in
+        "<a href=\"" ++ Configuration.client ++ "##public/document/" ++ id ++ ">" ++ label ++ "</a>"
