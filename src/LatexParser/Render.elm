@@ -203,6 +203,9 @@ handleMacro v =
         "strong" ->
             handleStrong v.args
 
+        "subheading" ->
+            handleSubheading v.args
+
         "subsection" ->
             handleSubSection v.args
 
@@ -387,6 +390,15 @@ handleSection args =
             getAt 0 args
     in
         "<h1>" ++ arg ++ "</h1>"
+
+
+handleSubheading : List String -> String
+handleSubheading args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<div class=\"subheading\">" ++ arg ++ "</div>"
 
 
 handleSubSection : List String -> String
