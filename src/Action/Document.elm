@@ -2,9 +2,14 @@ module Action.Document exposing (..)
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.RenderAsciidoc as RenderAsciidoc
+import Document.Edit
+import Document.Dictionary as Dictionary
+import Document.Document as Document exposing (defaultDocument, defaultMasterDocument)
+import Document.Preprocess
 import Document.Stack as Stack
-import External exposing (render)
-import External exposing (toJs)
+import External exposing (putTextToRender, toJs)
+import Document.Differ exposing (EditRecord)
+import Document.LatexDiffer as LatexDiffer
 import Request.Document
 import Task
 import Types exposing (..)
@@ -13,24 +18,76 @@ import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
 
 
+setEditRecord : Document -> AppState -> AppState
+setEditRecord document appState =
+    let
+        newEditRecord =
+            LatexDiffer.initialize document.content
+    in
+        { appState | editRecord = newEditRecord }
+
+
+clearEditRecord : AppState -> AppState
+clearEditRecord appState =
+    let
+        newEditRecord =
+            Document.Differ.clear
+    in
+        { appState | editRecord = newEditRecord }
+
+
+
+--|> Debug.log "processed latex"
+
+
 {-| This is the function called when the user changes the document content
 in the Editorl
 -}
 updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentDocumentWithContent content model =
+    if model.current_document.attributes.textType == "latex" then
+        updateCurrentLatexDocumentWithContent content model
+    else
+        updateStandardDocumentWithContent content model
+
+
+updateStandardDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
+updateStandardDocumentWithContent content model =
     let
-        -- _ = Debug.log "updateCurrentDocumentWithContent" 1
-        -- _ = Debug.log "CONTENT" content
-        -- processed_content = Document.Preprocess.preprocessSource content
-        -- _ = Debug.log "Processed CONTENT" processed_content
-        oldDocument =
+        document =
             model.current_document
 
-        -- TEST: foobar = Debug.log "foo" model.current_document.id
         newDocument =
-            { oldDocument | content = content, rendered_content = oldDocument.rendered_content }
+            { document | content = content, rendered_content = document.rendered_content }
     in
         updateCurrentDocument model newDocument
+
+
+updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
+updateCurrentLatexDocumentWithContent content model =
+    let
+        document =
+            model.current_document
+
+        newEditRecord =
+            LatexDiffer.safeUpdate content model.appState.editRecord
+
+        rendered_content =
+            newEditRecord.renderedParagraphs |> String.join "\n\n"
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | editRecord = newEditRecord }
+
+        newModel =
+            { model | appState = newAppState }
+
+        newDocument =
+            { document | rendered_content = rendered_content }
+    in
+        updateCurrentDocument newModel newDocument
 
 
 updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
@@ -69,11 +126,11 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
-                [ RenderAsciidoc.put document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
                 ]
     in
@@ -252,7 +309,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , RenderAsciidoc.put current_document
+            , RenderAsciidoc.put model.appState.textBufferDirty current_document
             ]
         )
 
@@ -348,28 +405,32 @@ selectDocument model document =
                 False
 
         appState =
-            model.appState
+            if (model.appState.page == EditorPage) && (document.attributes.textType == "latex") then
+                model.appState |> clearEditRecord
+            else
+                model.appState
 
         newAppState =
             { appState
                 | textBuffer = document.content
+
+                -- , editRecord = newEditRecord
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model
                 , textBufferDirty = False
             }
 
-        saveCmd =
-            if
-                document.author_id
-                    == model.current_user.id
-                    && document.attributes.docType
-                    /= "master"
-                -- do not let current text overwrite master document state
-            then
-                saveDocumentCmd "viewed_at=now" document model
+        basicCommands =
+            [ toJs (windowData model (displayPage model))
+            , RenderAsciidoc.put model.appState.textBufferDirty document
+            ]
+
+        additionalCommands =
+            if model.appState.page == EditorPage && document.attributes.textType == "latex" then
+                [ Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token ]
             else
-                Cmd.none
+                []
     in
         ( { model
             | current_document = document
@@ -377,11 +438,7 @@ selectDocument model document =
             , appState = newAppState
             , counter = model.counter + 1
           }
-        , Cmd.batch
-            [ toJs (windowData model (displayPage model))
-            , RenderAsciidoc.put document
-            , saveCmd
-            ]
+        , Cmd.batch (basicCommands ++ additionalCommands)
         )
 
 
@@ -394,7 +451,7 @@ selectNewDocument model document =
         , counter = model.counter + 1
         , documentStack = Stack.push document model.documentStack
       }
-    , RenderAsciidoc.put document
+    , RenderAsciidoc.put model.appState.textBufferDirty document
     )
 
 
@@ -437,7 +494,7 @@ deleteDocument serverReply model =
                     Utility.removeWhen (\doc -> doc.id == model.current_document.id) documentStack
 
                 newCurrentDocument =
-                    (List.head updatedDocuments) |> Maybe.withDefault Types.defaultDocument
+                    (List.head updatedDocuments) |> Maybe.withDefault Document.defaultDocument
             in
                 ( { model
                     | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
@@ -474,3 +531,19 @@ inputContent content model =
             { appState | textBuffer = content, textBufferDirty = True }
     in
         ( { model | appState = newAppState }, Cmd.none )
+
+
+migrateFromAsciidocLatex : Model -> ( Model, Cmd Msg )
+migrateFromAsciidocLatex model =
+    let
+        updatedText =
+            model.appState.textBuffer
+                |> Document.Edit.migrateTextFomAsciidocLaTeX
+
+        counter =
+            model.counter
+
+        newModel =
+            { model | counter = counter + 1 }
+    in
+        updateCurrentDocumentWithContent updatedText newModel

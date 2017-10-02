@@ -1,7 +1,8 @@
 module Document.Stack exposing (push, top, sorted)
 
+import Document.Document
 import List.Extra
-import Types exposing (Document, DocumentStack, defaultDocument)
+import Types exposing (Document, DocumentStack)
 import Utility
 
 
@@ -40,4 +41,4 @@ titleCompare doc1 doc2 =
 
 top : Int -> DocumentStack -> Document
 top k docstack =
-    List.Extra.getAt k docstack |> Maybe.withDefault defaultDocument
+    List.Extra.getAt k docstack |> Maybe.withDefault Document.Document.defaultDocument

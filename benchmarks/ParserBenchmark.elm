@@ -1,164 +1,54 @@
-module LatexParser.Parser exposing (..)
+module Main exposing (..)
 
-{-| -}
-
-import Parser exposing (..)
-import LatexParser.Latex
-    exposing
-        ( Macro_
-        , Environment_
-        , InlineMath_
-        , DisplayMath_
-        , Words_
-        , texComment
-        , macro
-        , environment
-        , inlineMath
-        , displayMath
-        , displayMath2
-        , words
-        , word
-        , ws
-        )
-
-
-type Latex
-    = Macro Macro_
-    | Environment Environment_
-    | InlineMath InlineMath_
-    | DisplayMath DisplayMath_
-    | Words Words_
-    | Word String
-    | Comment ()
-
-
-defaultLatex : Latex
-defaultLatex =
-    Macro (Macro_ "Parse error" [])
-
-
-defaultLatexList =
-    LatexList [ defaultLatex ]
-
-
-latexGet r =
-    r |> Result.withDefault defaultLatex
-
-
-latexListGet : Result.Result Parser.Error LatexList -> List Latex
-latexListGet r =
-    r |> Result.withDefault defaultLatexList |> .value
-
-
-{-| TEST of latex:
-
-      > str = "\\image{http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg}{Refraction}{width: 250, float: right}"
-      "\\image{http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg}{Refraction}{width: 250, float: right}"
-          : String
-      > import LatexParser.Parser as LP
-      > import Parser as P
-      > P.run LP.latex str
-      Ok (Macro { name = "image", args = ["http://psurl.s3.amazonaws.com/images/jc/snell2-5b65.jpg","Refraction","width: 250, float: right"] })
-          : Result.Result Parser.Error LatexParser.Parser.Latex
-
--}
-latex : Parser Latex
-latex =
-    inContext "latex" <|
-        oneOf
-            [ map Comment texComment
-            , map Environment environment
-            , map DisplayMath displayMath2
-            , map DisplayMath displayMath
-            , map InlineMath inlineMath
-            , map Word word
-            , map Macro macro
-            ]
-
-
-type alias LatexList =
-    { value : List Latex
-    }
-
-
-latexList : Parser LatexList
-latexList =
-    inContext "latexList" <|
-        succeed LatexList
-            |= repeat zeroOrMore latex
-
-
-
--- |. repeat zeroOrMore (oneOf [ symbol "\n", symbol " " ])
--- |. oneOf [ symbol "\n" ]
-
-
-text1 =
-    "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: \\[ \\int_0^1 x^n dx = \\frac{1}{n+1} \\]\n\n"
-
-
-text1b =
-    "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
-
-
-text2 =
-    "An equation: $\\alpha^2 + \\beta^2$\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}\n\nPythagoras: $ a^2 + b^2 = c^2$\nNewton: \\[ \\int_0^1 x^n dx = \\frac{1}{n+1} \\]\n\n"
-
-
-text3 =
-    "An equation: $\\alpha^2 + \\beta^2$\n\\emph{Test.}\n\\begin{theorem}\n This is true: $a^n = 1$ has $n$ solutions.\n\\end{theorem}\n\nNewton: \\[\\int_0^1 x^n dx = \\frac{1}{n+1}\\]\nPythagoras: $ a^2 + b^2 = c^2$"
-
+import Benchmark exposing (..)
+import Benchmark.Runner exposing (BenchmarkProgram, program)
+import Document.Preprocess
+import LatexParser.Paragraph
+import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
+import LatexParser.Render exposing (transformText)
+import Parser
+import Regex
+import String.Extra
+import Dict
 
 
 {-
+   http://package.elm-lang.org/packages/BrianHicks/elm-benchmark/latest
 
-    Examples
-
-    NOTE: A terminal newline is required.
-
-    WORDS:
-    > Parser.run latexList "This is a test.\n"
-    Ok { value = [Word "This",Word "is",Word "a",Word "test."] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    NOTE: The parser stops after the first line.  BAD!
-    > Parser.run latexList "This is a test.\n\nAnd so is this.\n"
-    Ok { value = [Word "This",Word "is",Word "a",Word "test."] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    INLNE MATH $ ... $ with a comment.
-    > Parser.run latexList "This is it: $a^2 + b^2 = c^2$ % This is a comment.\n"
-    Ok { value = [Word "This",Word "is",Word "it:",InlineMath { value = "a^2 + b^2 = c^2" },Comment ()] }
-     : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    ENVIRONMENTS
-    > Parser.run latexList "\\begin{foo} yo yo \\end{foo}\n"
-    Ok { value = [Environment { env = "foo", body = " yo yo " }] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    MACRO
-    Parser.run latexList "This is \\foo{test}\n"
-    Ok { value = [Word "This",Word "is",Macro { name = "foo", args = ["test"] }] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    NOTE: Error because of "." after \\foo{test}.
-    Parser.run latexList "This is \\foo{test}.\n"
-    Err { row = 1, col = 19, source = "This is \\foo{test}.\n", problem = BadOneOf [BadRepeat,ExpectingEnd], context = [{ row = 1, col = 9, description = "macro" },{ row = 1, col = 9, description = "latex" },{ row = 1, col = 1, description = "latexList" }] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-    WORDS, MACRO AND DISPLAYMATH:
-    > Parser.run latexList "This is \\foo{test}\n\\[a^2 = 1\\]\n"
-    Ok { value = [Word "This",Word "is",Macro { name = "foo", args = ["test"] },DisplayMath { value = "a^2 = 1" }] }
-        : Result.Result Parser.Error LatexParser.Parser.LatexList
-
-   NOTE: I added `|. oneOf [ symbol "\n" ]` to `latexList : Parser LatexList`.
-   With this change, multiple lines are parsed.  However, the input text must end
-   with TWO newlines.
-
-   > Parser.run latexList "This is it: $a^2 + b^2 = c^2$ % This is a comment.\nho ho ho: $a^{p-1} \\equiv 1$\n\\[x^p = y^q\\]\n\n"
-   Ok { value = [Word "This",Word "is",Word "it:",InlineMath { value = "a^2 + b^2 = c^2" },Comment (),Word "ho",Word "ho",Word "ho:",InlineMath { value = "a^{p-1} \\equiv 1" },DisplayMath { value = "x^p = y^q" }] }
-     : Result.Result Parser.Error LatexParser.Parser.LatexList
 -}
+
+
+main : BenchmarkProgram
+main =
+    program suite
+
+
+suite : Benchmark
+suite =
+    describe ""
+        [ describe "Parse"
+            [ benchmark1 "preprocessLatex" Document.Preprocess.preprocessLatex qftIntroText
+            , benchmark1 "formatDocument" LatexParser.Paragraph.formatDocument qftIntroText
+            , benchmark1 "parseDocument" LatexParser.Paragraph.parseDocument qftIntroText
+            , benchmark1 "replaceStrings" LatexParser.Paragraph.replaceStrings qftIntroText
+
+            -- , benchmark "latexList" (Parser.run latexList qftIntroText)
+            , benchmark1 "transformText" transformText qftIntroText
+            , benchmark1 "formatParagraphList" LatexParser.Paragraph.formatParagraphList (List.repeat 3 [ line1 ])
+            ]
+
+        -- Benchmark.compare
+        -- "initialize"
+        -- -- compare the results of two benchmarks
+        -- (benchmark1 "convert" (convert mapping6) testString4)
+        -- (benchmark1 "convert2" convert6 testString4)
+        ]
+
+
+{-| 400 chars
+-}
+line1 =
+    "From the trajectory are defined the velocity ${\\bf v}(t) = d{\\bf r}(t)/dt$ and the acceleration ${\\bf a}(t) = d{\\bf v}(t)/dt$.  And once these are given, we have Newton's second law, ${\\bf F} = m{\\bf a}$, where a force ${\\bf F}$ is applied to a body of mass $m$. To set the stage for later developments, recall that the momentum of a body is ${\\bf p} = m{\\bf v}$, so that Newton's law can be written\n"
 
 
 qftIntroText : String

@@ -14,7 +14,7 @@ Use render (encodeDocument document) to send
 rendered_content to JS-world.
 
 -}
-port render : Encode.Value -> Cmd msg
+port putTextToRender : Encode.Value -> Cmd msg
 
 
 {-| Subscribe to rendereed text.
@@ -24,12 +24,37 @@ port getRenderedText : (String -> msg) -> Sub msg
 
 {-| encodeDocument is used to send rendered content to JS-world.
 -}
-encodeDocument : Document -> Encode.Value
-encodeDocument document =
-    [ ( "content", Encode.string (Document.Preprocess.preprocess document.content document) )
-    , ( "textType", Encode.string document.attributes.textType )
-    ]
-        |> Encode.object
+encodeDocument : Bool -> Document -> Encode.Value
+encodeDocument textBufferDirty document =
+    let
+        _ =
+            Debug.log "textBufferDirty" textBufferDirty
+
+        _ =
+            Debug.log "Master, I will now encode document" document.id
+
+        textType =
+            document.attributes.textType
+
+        content_to_render =
+            case ( textType, textBufferDirty ) of
+                ( "latex", True ) ->
+                    -- Document.Preprocess.preprocess document.content document
+                    document.rendered_content
+
+                ( "latex", False ) ->
+                    document.rendered_content
+
+                ( _, _ ) ->
+                    Document.Preprocess.preprocess document.content document
+
+        _ =
+            Debug.log "... document encoded" document.id
+    in
+        [ ( "content", Encode.string content_to_render )
+        , ( "textType", Encode.string document.attributes.textType )
+        ]
+            |> Encode.object
 
 
 port toJs : String -> Cmd msg

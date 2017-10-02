@@ -1,9 +1,8 @@
-module Document.Preprocess exposing (preprocess, preprocessSource)
+module Document.Preprocess exposing (preprocess, preprocessSource, transformXLinks)
 
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
 import Regex exposing (..)
-import LatexParser.Render
 import LatexParser.Paragraph
 import Types exposing (Document)
 import Configuration
@@ -14,12 +13,10 @@ preprocess : String -> Document -> String
 preprocess content document =
     let
         _ =
-            Debug.log "Entering preprocess ............. " "now"
+            Debug.log "Master, in Document.Preprocessor I obey your command for" document.id
     in
         if document.attributes.docType == "master" then
             preprocessMaster content
-        else if document.attributes.textType == "latex" then
-            preprocessLatex content
         else
             basicPreprocess content
 
@@ -46,19 +43,14 @@ replace search substitution string =
         |> Regex.replace Regex.All (Regex.regex (Regex.escape search)) (\_ -> substitution)
 
 
-preprocessLatex : String -> String
-preprocessLatex content =
-    let
-        _ =
-            Debug.log "Entering preprocessLatex" "now"
 
-        content2 =
-            content
-                -- |> LatexParser.Render.transformText
-                |> LatexParser.Paragraph.formatDocument
-                |> transformXLinks
-    in
-        content2
+-- handleAlignEnvironment, body: "\nA(i \\to f, t) &= (| U_0(t)U_I(t) | i ) \\ \\\n&=(U_0(t)^ \\dagger f | U_I(t) | i) \\ \\\n&= e^{-i \\omega_ft}( f | U_I(t) | i )\n"
+{-
+
+   https://ellie-app.com/8JGHb3gxGa1/1
+
+
+-}
 
 
 {-| xlink::public/123[label] => <http://www.knode.io##public/123[Labe]>

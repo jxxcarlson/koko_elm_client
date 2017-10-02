@@ -167,10 +167,10 @@ suite =
                 \_ ->
                     let
                         input =
-                            "\\emph{foo} bar: $a^2 + b^2 = c^2$ \\begin{theorem} There are infinitely many primes.\\end{theorem} % This is a test.\n"
+                            "\\emph{foo} bar:% This is a test.\n"
 
                         expectedOutput =
-                            "<b>foo</b> bar:  $a^2 + b^2 = c^2$  \n<strong>Theorem</strong>\n<it>\n There are infinitely many primes.\n</it>\n "
+                            "<b>foo</b>  bar:\n "
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             , test "(R Simple) render simple example" <|
@@ -186,7 +186,7 @@ Some physics: \\begin{equation}
 """
 
                         expectedOutput =
-                            " <b>Pythagoras</b> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n<strong>Equation</strong>\n<it>\n\n   E = mc^2\n\n</it>\n"
+                            " <b>Pythagoras</b> said: \n$$\n a^2 + b^2 = c^2 \n$$\n  Some physics: \n\\begin{equation}\n\n   E = mc^2\n\n\\end{equation}\n"
                     in
                         Expect.equal (LatexParser.Render.transformText input) expectedOutput
             ]
