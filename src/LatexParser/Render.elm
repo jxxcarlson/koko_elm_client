@@ -115,8 +115,11 @@ handleAlignEnvironment body =
 parseItems : String -> List String
 parseItems str =
     str
-        |> String.split "\\item"
+        |> String.split "\n"
         |> List.filter (\x -> (String.left 1 x) /= "%")
+        |> String.join "\n"
+        |> String.split "\\item"
+        |> List.map String.trim
         |> List.filter (\x -> x /= "")
 
 
