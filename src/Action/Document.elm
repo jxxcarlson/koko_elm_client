@@ -85,7 +85,7 @@ updateCurrentLatexDocumentWithContent content model =
             { model | appState = newAppState }
 
         newDocument =
-            { document | rendered_content = rendered_content }
+            { document | content = content, rendered_content = rendered_content }
     in
         updateCurrentDocument newModel newDocument
 
