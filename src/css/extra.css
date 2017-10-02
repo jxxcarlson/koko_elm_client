@@ -13,3 +13,6 @@
 
 #rendered_text2 .indent {margin-left: 2em!important}
 #rendered_text2 .italitc {font-style: oblique!important}
+
+#rendered_text2 ul { margin-top: 1em; margin-bottom: 1em;}
+#rendered_text2 ol { margin-top: 1em; margin-bottom: 1em;}

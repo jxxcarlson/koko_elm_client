@@ -75,6 +75,12 @@ handleEnvironment v =
             "align" ->
                 handleAlignEnvironment body
 
+            "itemize" ->
+                handleItemize body
+
+            "enumerate" ->
+                handleEnumerate body
+
             "macros" ->
                 handleMacros body
 
@@ -106,8 +112,41 @@ handleAlignEnvironment body =
         "\n$$\n\\begin{align}\n" ++ editedBody ++ "\n\\end{align}\n$$\n"
 
 
+parseItems : String -> List String
+parseItems str =
+    str
+        |> String.split "\\item"
+        |> List.filter (\x -> (String.left 1 x) /= "%")
+        |> List.filter (\x -> x /= "")
 
--- "\nA(i \\to f, t) &= (| U_0(t)U_I(t) | i ) \\ \\\n&=(U_0(t)^ \\dagger f | U_I(t) | i) \\ \\\n&= e^{-i \\omega_ft}( f | U_I(t) | i )\n"
+
+tagItem : String -> String -> String
+tagItem tag str =
+    "\n<" ++ tag ++ ">\n" ++ str ++ "</" ++ tag ++ ">\n"
+
+
+
+-- tagItems : String -> List String -> String
+-- tagItems tag stringList =
+--   stringList |> foldl "" (\x )
+
+
+handleItemize : String -> String
+handleItemize body =
+    body
+        |> parseItems
+        |> List.map (tagItem "li")
+        |> List.foldl (\x acc -> x ++ acc) ""
+        |> tagItem "ul"
+
+
+handleEnumerate : String -> String
+handleEnumerate body =
+    body
+        |> parseItems
+        |> List.map (tagItem "li")
+        |> List.foldl (\x acc -> x ++ acc) ""
+        |> tagItem "ol"
 
 
 handleDefaultEnvironment : String -> String -> String
