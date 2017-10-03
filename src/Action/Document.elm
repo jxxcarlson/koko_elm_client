@@ -298,7 +298,12 @@ updateDocuments model documentsRecord =
             model.appState
 
         updatedAppState =
-            { appState | page = page, tool = TableOfContents, masterDocLoaded = masterDocLoaded }
+            { appState
+                | page = page
+                , tool = TableOfContents
+                , masterDocLoaded = masterDocLoaded
+                , textBuffer = current_document.content
+            }
     in
         ( { model
             | documents = documentsRecord.documents
