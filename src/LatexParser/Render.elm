@@ -18,6 +18,7 @@ transformText text =
         |> List.map transformLatex
         --|> Debug.log "transformLatex"
         |> String.join ("")
+        |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
 
 
 
@@ -36,10 +37,10 @@ transformLatex latex =
             ""
 
         Word str ->
-            if Regex.contains (Regex.regex ".*[.,:;?!]") str then
-                str
+            if Regex.contains (Regex.regex "[.,:;?!]") str then
+                str ++ " "
             else
-                " " ++ str
+                " " ++ str ++ " "
 
         Macro v ->
             handleMacro v
@@ -48,7 +49,7 @@ transformLatex latex =
             handleEnvironment v
 
         InlineMath v ->
-            " $" ++ v.value ++ "$ "
+            "$" ++ v.value ++ "$"
 
         DisplayMath v ->
             "\n$$\n" ++ v.value ++ "\n$$\n"
