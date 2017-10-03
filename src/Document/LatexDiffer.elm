@@ -32,8 +32,8 @@ to normalize input to parseDocument.
 replaceStrings : String -> String
 replaceStrings text =
     text
-        |> String.Extra.replace "--" "–"
-        |> String.Extra.replace "---" "—"
+        |> String.Extra.replace "--" "\\ndash"
+        |> String.Extra.replace "---" "\\mdash"
 
 
 prepareContentForLatex : String -> DocumentDict -> String
@@ -49,7 +49,6 @@ prepareContentForLatex content documentDict =
     in
         content
             |> replaceStrings
-            |> Preprocess.transformXLinks
             |> (\x -> (macros ++ "\n\n" ++ x))
 
 
@@ -59,6 +58,6 @@ updateEditRecord content documentDict editRecord =
             prepareContentForLatex content documentDict
     in
         if Differ.isEmpty editRecord then
-            initialize content
+            initialize preparedContent
         else
-            update content editRecord
+            update preparedContent editRecord

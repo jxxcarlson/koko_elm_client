@@ -197,14 +197,23 @@ handleMacro v =
         "bibhyperlink" ->
             handleBibHyperlink v.args
 
+        "ellie" ->
+            handleEllie v.args
+
         "image" ->
             handleImage v.args
 
         "italic" ->
             handleItalic v.args
 
+        "mdash" ->
+            "&mdash;"
+
         "newcommand" ->
             handleNewCommand v.args
+
+        "ndash" ->
+            "&ndash;"
 
         "section" ->
             handleSection v.args
@@ -323,6 +332,21 @@ handleHyperlink args =
             getAt 1 args
     in
         " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
+
+
+handleEllie : List String -> String
+handleEllie args =
+    let
+        src =
+            "src =\"" ++ (getAt 0 args) ++ "\""
+
+        style =
+            " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
+
+        sandbox =
+            " sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\""
+    in
+        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>"
 
 
 handleImage : List String -> String
