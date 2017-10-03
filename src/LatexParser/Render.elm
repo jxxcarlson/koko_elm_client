@@ -473,4 +473,4 @@ handleXLinkPublic args =
         label =
             getAt 1 args
     in
-        "<a href=\"" ++ Configuration.client ++ "##public/document/" ++ id ++ ">" ++ label ++ "</a>"
+        "<a href=\"" ++ Configuration.client ++ "##public/" ++ id ++ "\">" ++ label ++ "</a>"
