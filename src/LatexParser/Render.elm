@@ -4,6 +4,7 @@ import Configuration
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
+import Regex
 import String.Extra
 import Parser
 
@@ -16,7 +17,7 @@ transformText text =
         --|> Debug.log "latexListGet"
         |> List.map transformLatex
         --|> Debug.log "transformLatex"
-        |> String.join (" ")
+        |> String.join ("")
 
 
 
@@ -35,7 +36,10 @@ transformLatex latex =
             ""
 
         Word str ->
-            str
+            if Regex.contains (Regex.regex ".*[.,:;?!]") str then
+                str
+            else
+                " " ++ str
 
         Macro v ->
             handleMacro v
@@ -305,7 +309,7 @@ handleEmph args =
         arg =
             getAt 0 args
     in
-        "<b>" ++ arg ++ "</b>"
+        " <b>" ++ arg ++ "</b>"
 
 
 handleHyperlink : List String -> String
@@ -317,7 +321,7 @@ handleHyperlink args =
         label =
             getAt 1 args
     in
-        "<a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>"
+        " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
 
 
 handleImage : List String -> String
@@ -383,7 +387,7 @@ handleItalic args =
         arg =
             getAt 0 args
     in
-        "<span class=italic>" ++ arg ++ "</span>"
+        " <span class=italic>" ++ arg ++ "</span>"
 
 
 handleNewCommand : List String -> String
@@ -404,7 +408,7 @@ handleStrong args =
         arg =
             getAt 0 args
     in
-        "<strong>" ++ arg ++ "</strong>"
+        " <span class=\"strong\">" ++ arg ++ "</span>"
 
 
 handleSection : List String -> String
@@ -461,7 +465,7 @@ handleXLink args =
         label =
             getAt 1 args
     in
-        "<a href=\"" ++ Configuration.client ++ "##document/" ++ id ++ "\">" ++ label ++ "</a>"
+        " <a href=\"" ++ Configuration.client ++ "##document/" ++ id ++ "\">" ++ label ++ "</a>"
 
 
 handleXLinkPublic : List String -> String
@@ -473,4 +477,4 @@ handleXLinkPublic args =
         label =
             getAt 1 args
     in
-        "<a href=\"" ++ Configuration.client ++ "##public/" ++ id ++ "\">" ++ label ++ "</a>"
+        " <a href=\"" ++ Configuration.client ++ "##public/" ++ id ++ "\">" ++ label ++ "</a>"
