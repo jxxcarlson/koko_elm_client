@@ -338,7 +338,10 @@ handleEllie : List String -> String
 handleEllie args =
     let
         src =
-            "src =\"" ++ (getAt 0 args) ++ "\""
+            "src =\"https://ellie-app.com/embed/" ++ (getAt 0 args) ++ "\""
+
+        url =
+            "https://ellie-app.com/" ++ (getAt 0 args)
 
         style =
             " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
@@ -346,7 +349,7 @@ handleEllie args =
         sandbox =
             " sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\""
     in
-        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>"
+        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>Link to Ellie</a></center>"
 
 
 handleImage : List String -> String

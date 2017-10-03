@@ -12,12 +12,22 @@ import Task
 import Request.Document
 
 
+{-| NOTE:
+
+I am disabling the line
+
+    (\appState -> { appState | textBuffer = model.current_document.content })
+
+for the moment. I believe that it is what is causing overwrites.
+
+-}
 setEditPage model =
     let
         newAppState =
             Action.UI.appStateWithPage model EditorPage
                 |> Action.Document.clearEditRecord
-                |> (\appState -> { appState | textBuffer = model.current_document.content })
+
+        --|> (\appState -> { appState | textBuffer = model.current_document.content })
     in
         ( { model | appState = newAppState }
         , Cmd.batch
