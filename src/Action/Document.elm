@@ -66,17 +66,17 @@ updateStandardDocumentWithContent content model =
 updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentLatexDocumentWithContent content model =
     let
+        appState =
+            model.appState
+
         document =
             model.current_document
 
         newEditRecord =
-            LatexDiffer.safeUpdate content model.appState.editRecord
+            LatexDiffer.safeUpdate content appState.editRecord
 
         rendered_content =
             newEditRecord.renderedParagraphs |> String.join "\n\n"
-
-        appState =
-            model.appState
 
         newAppState =
             { appState | editRecord = newEditRecord }
@@ -413,8 +413,7 @@ selectDocument model document =
         newAppState =
             { appState
                 | textBuffer = document.content
-
-                -- , editRecord = newEditRecord
+                , editRecord = EditRecord [] []
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model

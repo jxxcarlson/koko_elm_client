@@ -302,7 +302,7 @@ update msg model =
                     model.appState
 
                 newAppState =
-                    { appState | page = EditorPage }
+                    { appState | page = EditorPage, textBuffer = model.current_document.content }
             in
                 ( { model | current_document = model.specialDocument, appState = newAppState }
                 , Cmd.none
