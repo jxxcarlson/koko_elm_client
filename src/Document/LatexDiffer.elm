@@ -11,16 +11,24 @@ import Types exposing (DocumentDict)
 
 initialize : DocumentDict -> String -> EditRecord
 initialize documentDict text =
-    text
-        |> prepareContentForLatex
-        |> Differ.initialize (Render.transformText >> (prependMacros documentDict))
+    let
+        preamble =
+            macros documentDict
+    in
+        text
+            |> prepareContentForLatex
+            |> Differ.initialize Render.transformText preamble
 
 
 update : DocumentDict -> EditRecord -> String -> EditRecord
 update documentDict editorRecord text =
-    text
-        |> prepareContentForLatex
-        |> Differ.update (Render.transformText >> (prependMacros documentDict)) editorRecord
+    let
+        preamble =
+            macros documentDict
+    in
+        text
+            |> prepareContentForLatex
+            |> Differ.update Render.transformText preamble editorRecord
 
 
 safeUpdate documentDict editRecord content =
@@ -50,13 +58,14 @@ macros documentDict =
         ""
 
 
-prependMacros : DocumentDict -> String -> String
-prependMacros documentDict content =
-    let
-        macroDefinitions =
-            macros documentDict
-    in
-        macroDefinitions ++ "\n\n" ++ content
+
+-- prependMacros : DocumentDict -> String -> String
+-- prependMacros documentDict content =
+--     let
+--         macroDefinitions =
+--             macros documentDict
+--     in
+--         macroDefinitions ++ "\n\n" ++ content
 
 
 prepareContentForLatex : String -> String

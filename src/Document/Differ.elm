@@ -58,8 +58,8 @@ type alias EditRecord =
     }
 
 
-initialize : (String -> String) -> String -> EditRecord
-initialize transformer text =
+initialize : (String -> String) -> String -> String -> EditRecord
+initialize transformer preamble text =
     let
         paragraphs =
             paragraphify text
@@ -67,7 +67,7 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-        EditRecord paragraphs renderedParagraphs
+        EditRecord paragraphs ([ preamble ++ "\n\n\n" ] ++ renderedParagraphs)
 
 
 clear : EditRecord
@@ -80,8 +80,8 @@ isEmpty editRecord =
     editRecord.paragraphs == [] && editRecord.renderedParagraphs == []
 
 
-update : (String -> String) -> EditRecord -> String -> EditRecord
-update transformer editorRecord text =
+update : (String -> String) -> String -> EditRecord -> String -> EditRecord
+update transformer preamble editorRecord text =
     let
         newParagraphs =
             paragraphify text
@@ -92,7 +92,7 @@ update transformer editorRecord text =
         newRenderedParagraphs =
             renderDiff transformer diffRecord editorRecord.renderedParagraphs
     in
-        EditRecord newParagraphs newRenderedParagraphs
+        EditRecord newParagraphs ([ preamble ++ "\n\n\n" ] ++ newRenderedParagraphs)
 
 
 diff : List String -> List String -> DiffRecord
