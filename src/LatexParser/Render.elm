@@ -389,8 +389,10 @@ parseImageAttributes attributeString =
                 ""
 
         styleElement =
-            if floatValue /= "" then
-                "style=float:" ++ floatValue
+            if floatValue /= "right" then
+                "style=float:" ++ floatValue ++ " ;margin-left: 20px"
+            else if floatValue /= "left" then
+                "style=float:" ++ floatValue ++ " ;margin-right: 20px"
             else
                 ""
     in

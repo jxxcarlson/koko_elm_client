@@ -147,9 +147,11 @@ macro =
             |. symbol "\\"
             |= keep zeroOrMore (\c -> c /= '{')
             |= repeat zeroOrMore arg
+            |. ws
 
 
 
+--|. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n'), Parser.end ]
 -- |. oneOf [ ignore (Exactly 1) (\c -> c == ' ' || c == '\n' || c == ',' || c == '.' || c == ';' || c == '!' || c == '?'), Parser.end ]
 -- |. ws
 
