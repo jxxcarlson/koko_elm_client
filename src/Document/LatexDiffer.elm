@@ -9,21 +9,25 @@ import Regex
 import Types exposing (DocumentDict)
 
 
-initialize : String -> EditRecord
-initialize text =
-    Differ.initialize Render.transformText text
+initialize : DocumentDict -> String -> EditRecord
+initialize documentDict text =
+    text
+        |> prepareContentForLatex
+        |> Differ.initialize (Render.transformText >> (prependMacros documentDict))
 
 
-update : String -> EditRecord -> EditRecord
-update text editorRecord =
-    Differ.update Render.transformText text editorRecord
+update : DocumentDict -> EditRecord -> String -> EditRecord
+update documentDict editorRecord text =
+    text
+        |> prepareContentForLatex
+        |> Differ.update (Render.transformText >> (prependMacros documentDict)) editorRecord
 
 
-safeUpdate content editRecord =
+safeUpdate documentDict editRecord content =
     if Differ.isEmpty editRecord then
-        initialize content
+        initialize documentDict content
     else
-        update content editRecord
+        update documentDict editRecord content
 
 
 {-| replaceStrings is used by the document prepreprocessor
@@ -32,32 +36,43 @@ to normalize input to parseDocument.
 replaceStrings : String -> String
 replaceStrings text =
     text
-        |> String.Extra.replace "--" "\\ndash{}"
-        |> String.Extra.replace "---" "\\mdash{}"
+        |> String.Extra.replace "---" "\\ndash{}"
+        |> String.Extra.replace "--" "\\mdash{}"
 
 
-prepareContentForLatex : String -> DocumentDict -> String
-prepareContentForLatex content documentDict =
+macros : DocumentDict -> String
+macros documentDict =
+    if (Dictionary.member "texmacros" documentDict) then
+        Dictionary.getContent "texmacros" documentDict
+            |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
+            |> String.Extra.replace "$$" "\n$$\n"
+    else
+        ""
+
+
+prependMacros : DocumentDict -> String -> String
+prependMacros documentDict content =
     let
-        macros =
-            if (Dictionary.member "texmacros" documentDict) then
-                Dictionary.getContent "texmacros" documentDict
-                    |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
-                    |> String.Extra.replace "$$" "\n$$\n"
-            else
-                ""
+        macroDefinitions =
+            macros documentDict
     in
-        content
-            |> replaceStrings
-            |> (\x -> (macros ++ "\n\n" ++ x))
+        macroDefinitions ++ "\n\n" ++ content
 
 
-updateEditRecord content documentDict editRecord =
-    let
-        preparedContent =
-            prepareContentForLatex content documentDict
-    in
-        if Differ.isEmpty editRecord then
-            initialize preparedContent
-        else
-            update preparedContent editRecord
+prepareContentForLatex : String -> String
+prepareContentForLatex content =
+    content
+        |> replaceStrings
+
+
+
+--            |> (\x -> (macros ++ "\n\n\n\n" ++ x))
+-- updateEditRecord documentDict editRecord content =
+--     let
+--         preparedContent =
+--             prepareContentForLatex content documentDict
+--     in
+--         if Differ.isEmpty editRecord then
+--             initialize documentDict preparedContent
+--         else
+--             update documentDict editRecord preparedContent

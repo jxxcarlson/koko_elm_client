@@ -80,8 +80,8 @@ isEmpty editRecord =
     editRecord.paragraphs == [] && editRecord.renderedParagraphs == []
 
 
-update : (String -> String) -> String -> EditRecord -> EditRecord
-update transformer text editorRecord =
+update : (String -> String) -> EditRecord -> String -> EditRecord
+update transformer editorRecord text =
     let
         newParagraphs =
             paragraphify text

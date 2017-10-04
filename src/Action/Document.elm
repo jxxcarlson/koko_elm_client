@@ -18,15 +18,6 @@ import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
 
 
-setEditRecord : Document -> AppState -> AppState
-setEditRecord document appState =
-    let
-        newEditRecord =
-            LatexDiffer.initialize document.content
-    in
-        { appState | editRecord = newEditRecord }
-
-
 clearEditRecord : AppState -> AppState
 clearEditRecord appState =
     let
@@ -73,7 +64,7 @@ updateCurrentLatexDocumentWithContent content model =
             model.current_document
 
         newEditRecord =
-            LatexDiffer.safeUpdate content appState.editRecord
+            LatexDiffer.safeUpdate model.documentDict appState.editRecord content
 
         rendered_content =
             newEditRecord.renderedParagraphs |> String.join "\n\n"
