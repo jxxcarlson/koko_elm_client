@@ -32,8 +32,8 @@ to normalize input to parseDocument.
 replaceStrings : String -> String
 replaceStrings text =
     text
-        |> String.Extra.replace "--" "\\ndash"
-        |> String.Extra.replace "---" "\\mdash"
+        |> String.Extra.replace "--" "\\ndash{}"
+        |> String.Extra.replace "---" "\\mdash{}"
 
 
 prepareContentForLatex : String -> DocumentDict -> String
