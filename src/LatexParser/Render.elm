@@ -144,6 +144,7 @@ handleItemize : String -> String
 handleItemize body =
     body
         |> parseItems
+        |> List.map transformText
         |> List.map (tagItem "li")
         |> List.foldl (\x acc -> acc ++ x) ""
         |> tagItem "ul"
@@ -153,6 +154,7 @@ handleEnumerate : String -> String
 handleEnumerate body =
     body
         |> parseItems
+        |> List.map transformText
         |> List.map (tagItem "li")
         |> List.reverse
         |> List.foldl (\x acc -> x ++ acc) ""
