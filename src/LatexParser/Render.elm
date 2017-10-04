@@ -12,17 +12,10 @@ import Parser
 transformText : String -> String
 transformText text =
     Parser.run latexList text
-        --|> Debug.log "latexList"
         |> latexListGet
-        --|> Debug.log "latexListGet"
         |> List.map transformLatex
-        --|> Debug.log "transformLatex"
         |> String.join ("")
         |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
-
-
-
--- |> Debug.log "String.join"
 
 
 getAt : Int -> List String -> String
@@ -163,7 +156,11 @@ handleEnumerate body =
 
 handleDefaultEnvironment : String -> String -> String
 handleDefaultEnvironment env body =
-    "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<div class=\"italic\">\n" ++ body ++ "\n</div>\n</div>\n"
+    let
+        body2 =
+            body |> String.trim |> transformText
+    in
+        "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ "</strong>\n<div class=\"italic\">\n" ++ body2 ++ "\n</div>\n</div>\n"
 
 
 handleMacros : String -> String
@@ -182,10 +179,6 @@ handleVerbatim body =
 
 handleMacro : { a | args : List String, name : String } -> String
 handleMacro v =
-    -- let
-    --     _ =
-    --         Debug.log "handleMacro" v
-    -- in
     case v.name of
         "code" ->
             handleCode v.args

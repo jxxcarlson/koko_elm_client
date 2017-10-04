@@ -29,7 +29,6 @@ var mountNode = document.getElementById('main');
 
       function(){
           var rendered_text = document.getElementById('rendered_text2').innerHTML
-          console.log("::RENDERED TEXT::" + rendered_text + "::END::")
           app.ports.getRenderedText.send(rendered_text)
         }]);
   }
