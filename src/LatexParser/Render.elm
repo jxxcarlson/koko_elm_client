@@ -198,6 +198,9 @@ handleMacro v =
         "image" ->
             handleImage v.args
 
+        "index" ->
+            handleIndex v.args
+
         "italic" ->
             handleItalic v.args
 
@@ -397,16 +400,9 @@ parseImageAttributes attributeString =
         String.join " " [ styleElement, widthElement ]
 
 
-
--- parseAttributes str =
---   String.split " "
---
--- captionedImage : String -> String -> String -> String
--- captionedImage url label attributes =
---   let
---
---
---   in
+handleIndex : List String -> String
+handleIndex args =
+    ""
 
 
 handleItalic : List String -> String
