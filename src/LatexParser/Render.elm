@@ -30,7 +30,7 @@ transformLatex latex =
             ""
 
         Word str ->
-            if Regex.contains (Regex.regex "[.,:;?!]") str then
+            if List.member str [ ".", ",", ":", ";", "?", "!" ] then
                 str ++ " "
             else
                 " " ++ str ++ " "
