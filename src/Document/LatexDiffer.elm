@@ -9,33 +9,25 @@ import Regex
 import Types exposing (DocumentDict)
 
 
-initialize : DocumentDict -> String -> EditRecord
-initialize documentDict text =
-    let
-        preamble =
-            macros documentDict
-    in
-        text
-            |> prepareContentForLatex
-            |> Differ.initialize Render.transformText preamble
+initialize : String -> EditRecord
+initialize text =
+    text
+        |> prepareContentForLatex
+        |> Differ.initialize Render.transformText
 
 
-update : DocumentDict -> EditRecord -> String -> EditRecord
-update documentDict editorRecord text =
-    let
-        preamble =
-            macros documentDict
-    in
-        text
-            |> prepareContentForLatex
-            |> Differ.update Render.transformText preamble editorRecord
+update : EditRecord -> String -> EditRecord
+update editorRecord text =
+    text
+        |> prepareContentForLatex
+        |> Differ.update Render.transformText editorRecord
 
 
-safeUpdate documentDict editRecord content =
+safeUpdate editRecord content =
     if Differ.isEmpty editRecord then
-        initialize documentDict content
+        initialize content
     else
-        update documentDict editRecord content
+        update editRecord content
 
 
 {-| replaceStrings is used by the document prepreprocessor
@@ -48,40 +40,7 @@ replaceStrings text =
         |> String.Extra.replace "--" "\\mdash{}"
 
 
-macros : DocumentDict -> String
-macros documentDict =
-    if (Dictionary.member "texmacros" documentDict) then
-        Dictionary.getContent "texmacros" documentDict
-            |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
-            |> String.Extra.replace "$$" "\n$$\n"
-    else
-        ""
-
-
-
--- prependMacros : DocumentDict -> String -> String
--- prependMacros documentDict content =
---     let
---         macroDefinitions =
---             macros documentDict
---     in
---         macroDefinitions ++ "\n\n" ++ content
-
-
 prepareContentForLatex : String -> String
 prepareContentForLatex content =
     content
         |> replaceStrings
-
-
-
---            |> (\x -> (macros ++ "\n\n\n\n" ++ x))
--- updateEditRecord documentDict editRecord content =
---     let
---         preparedContent =
---             prepareContentForLatex content documentDict
---     in
---         if Differ.isEmpty editRecord then
---             initialize documentDict preparedContent
---         else
---             update documentDict editRecord preparedContent

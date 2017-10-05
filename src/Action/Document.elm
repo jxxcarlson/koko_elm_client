@@ -10,7 +10,9 @@ import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import Document.Differ exposing (EditRecord)
 import Document.LatexDiffer as LatexDiffer
+import Regex
 import Request.Document
+import String.Extra
 import Task
 import Types exposing (..)
 import Utility
@@ -54,6 +56,16 @@ updateStandardDocumentWithContent content model =
         updateCurrentDocument model newDocument
 
 
+macros : DocumentDict -> String
+macros documentDict =
+    if (Dictionary.member "texmacros" documentDict) then
+        Dictionary.getContent "texmacros" documentDict
+            |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
+            |> String.Extra.replace "$$" "\n$$\n"
+    else
+        ""
+
+
 updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
 updateCurrentLatexDocumentWithContent content model =
     let
@@ -63,11 +75,16 @@ updateCurrentLatexDocumentWithContent content model =
         document =
             model.current_document
 
+        macroDefinitions =
+            macros model.documentDict
+
         newEditRecord =
-            LatexDiffer.safeUpdate model.documentDict appState.editRecord content
+            LatexDiffer.safeUpdate appState.editRecord content
 
         rendered_content =
-            newEditRecord.renderedParagraphs |> String.join "\n\n"
+            newEditRecord.renderedParagraphs
+                |> String.join "\n\n"
+                |> (\x -> x ++ "\n\n" ++ macroDefinitions)
 
         newAppState =
             { appState | editRecord = newEditRecord }

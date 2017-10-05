@@ -1,6 +1,6 @@
 module DifferTest exposing (..)
 
-import LatexParser.Differ exposing (..)
+import Document.Differ exposing (..)
 
 
 -- http://package.elm-lang.org/packages/elm-community/elm-test/latest
@@ -43,4 +43,24 @@ suite =
                         renderDiff String.toUpper diffRecord r1
                 in
                     Expect.equal r2 [ "RED", "VERDE", "BLUE" ]
+        , test "(3) initialize generated the correct paragraph list" <|
+            \_ ->
+                let
+                    text =
+                        "a\n\nb\n\nc\n\nd\n\ne\n\nf\n\ng"
+
+                    editRecord =
+                        initialize String.toUpper "" text
+                in
+                    Expect.equal editRecord.paragraphs [ "a", "b", "c", "d", "e", "f", "g" ]
+        , test "(4) initialize generated the correct rendered paragraph list" <|
+            \_ ->
+                let
+                    text =
+                        "a\n\nb\n\nc\n\nd\n\ne\n\nf\n\ng"
+
+                    editRecord =
+                        initialize String.toUpper "" text
+                in
+                    Expect.equal editRecord.renderedParagraphs [ "A", "B", "C", "D", "E", "F", "G" ]
         ]
