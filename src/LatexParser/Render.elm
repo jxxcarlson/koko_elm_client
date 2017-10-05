@@ -366,14 +366,27 @@ handleImage args =
             getAt 2 args
 
         imageAttrs =
-            parseImageAttributes attributeString
+            Debug.log "imageAttrs" (parseImageAttributes attributeString)
     in
         if imageAttrs.float == "left" then
             handleFloatedImageLeft url label imageAttrs
         else if imageAttrs.float == "right" then
             handleFloatedImageRight url label imageAttrs
+        else if imageAttrs.align == "center" then
+            handleCenterImage url label imageAttrs
         else
             "<image src=\"" ++ url ++ "\" " ++ (imageAttributes imageAttrs attributeString) ++ " >"
+
+
+handleCenterImage url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageCenterLeftPart width =
+            "<div style=\"align: center; width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
+    in
+        (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
 
 
 handleFloatedImageRight url label imageAttributes =
@@ -399,7 +412,7 @@ handleFloatedImageLeft url label imageAttributes =
 
 
 type alias ImageAttributes =
-    { width : Int, float : String }
+    { width : Int, float : String, align : String }
 
 
 parseImageAttributes : String -> ImageAttributes
@@ -413,8 +426,11 @@ parseImageAttributes attributeString =
 
         floatValue =
             LatexParser.Image.getValue "float" kvList
+
+        alignValue =
+            LatexParser.Image.getValue "align" kvList
     in
-        ImageAttributes widthValue floatValue
+        ImageAttributes widthValue floatValue alignValue
 
 
 imageAttributes : ImageAttributes -> String -> String
