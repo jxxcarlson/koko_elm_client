@@ -368,10 +368,10 @@ handleImage args =
         imageAttrs =
             parseImageAttributes attributeString
     in
-        if imageAttributes.float == "left" then
-            handleFloatedImageLeft url label imageAttributes
-        else if imageAttributes.float == "right" then
-            handleFloatedImageRight url label imageAttributes
+        if imageAttrs.float == "left" then
+            handleFloatedImageLeft url label imageAttrs
+        else if imageAttrs.float == "right" then
+            handleFloatedImageRight url label imageAttrs
         else
             "<image src=\"" ++ url ++ "\" " ++ (imageAttributes imageAttrs attributeString) ++ " >"
 
@@ -382,9 +382,9 @@ handleFloatedImageRight url label imageAttributes =
             imageAttributes.width
 
         imageRightDivLeftPart width =
-            "div { float: right; width: " ++ (toString (width + 20)) ++ "px; margin: 0 0 15px 20px; padding: 15px; text-align: center;"
+            "<div style=\"float: right; width: " ++ (toString (width + 20)) ++ "px; margin: 0 0 7.5px 10px; text-align: center;\">"
     in
-        (imageRightDivLeftPart width) ++ "<img src=\"" ++ url ++ "width = \"" ++ (toString width) ++ "><br>" ++ label ++ "</div"
+        (imageRightDivLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
 
 
 handleFloatedImageLeft url label imageAttributes =
@@ -393,9 +393,9 @@ handleFloatedImageLeft url label imageAttributes =
             imageAttributes.width
 
         imageLeftDivLeftPart width =
-            "div { float: left; width: " ++ (toString (width + 20)) ++ "px; margin: 0 20px 15px 0; padding: 15px; text-align: center;"
+            "<div style=\"float: left; width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 0; text-align: center;\">"
     in
-        (imageLeftDivLeftPart width) ++ "<img src=\"" ++ url ++ "width = \"" ++ (toString width) ++ "><br>" ++ label ++ "</div"
+        (imageLeftDivLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
 
 
 type alias ImageAttributes =
@@ -429,7 +429,8 @@ imageAttributes imageAttrs attributeString =
             else
                 ""
     in
-        String.join " " [ styleElement, widthElement ]
+        -- String.join " " [ styleElement, widthElement ]
+        widthElement
 
 
 handleIndex : List String -> String
