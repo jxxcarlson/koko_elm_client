@@ -228,6 +228,9 @@ handleMacro v =
         "subsubsubsection" ->
             handleSubSubSubSection v.args
 
+        "term" ->
+            handleTerm v.args
+
         "xlink" ->
             handleXLink v.args
 
@@ -479,6 +482,15 @@ handleSubSubSubSection args =
             getAt 0 args
     in
         "<h3>" ++ arg ++ "</h3>"
+
+
+handleTerm : List String -> String
+handleTerm args =
+    let
+        arg =
+            getAt 0 args
+    in
+        " <span class=italic>" ++ arg ++ "</span>"
 
 
 handleXLink : List String -> String
