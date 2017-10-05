@@ -365,35 +365,67 @@ handleImage args =
         attributeString =
             getAt 2 args
 
-        parsedAttributes =
+        imageAttrs =
             parseImageAttributes attributeString
     in
-        "<image src=\"" ++ url ++ "\" " ++ parsedAttributes ++ " >"
+        if imageAttributes.float == "left" then
+            handleFloatedImageLeft url label imageAttributes
+        else if imageAttributes.float == "right" then
+            handleFloatedImageRight url label imageAttributes
+        else
+            "<image src=\"" ++ url ++ "\" " ++ (imageAttributes imageAttrs attributeString) ++ " >"
 
 
-parseImageAttributes : String -> String
+handleFloatedImageRight url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageRightDivLeftPart width =
+            "div { float: right; width: " ++ (toString (width + 20)) ++ "px; margin: 0 0 15px 20px; padding: 15px; text-align: center;"
+    in
+        (imageRightDivLeftPart width) ++ "<img src=\"" ++ url ++ "width = \"" ++ (toString width) ++ "><br>" ++ label ++ "</div"
+
+
+handleFloatedImageLeft url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageLeftDivLeftPart width =
+            "div { float: left; width: " ++ (toString (width + 20)) ++ "px; margin: 0 20px 15px 0; padding: 15px; text-align: center;"
+    in
+        (imageLeftDivLeftPart width) ++ "<img src=\"" ++ url ++ "width = \"" ++ (toString width) ++ "><br>" ++ label ++ "</div"
+
+
+type alias ImageAttributes =
+    { width : Int, float : String }
+
+
+parseImageAttributes : String -> ImageAttributes
 parseImageAttributes attributeString =
     let
         kvList =
             LatexParser.Image.getKeyValueList attributeString
 
         widthValue =
-            LatexParser.Image.getValue "width" kvList
+            LatexParser.Image.getValue "width" kvList |> String.toInt |> Result.withDefault 200
 
         floatValue =
             LatexParser.Image.getValue "float" kvList
+    in
+        ImageAttributes widthValue floatValue
+
+
+imageAttributes : ImageAttributes -> String -> String
+imageAttributes imageAttrs attributeString =
+    let
+        widthValue =
+            imageAttrs.width |> toString
 
         widthElement =
             if widthValue /= "" then
                 "width=" ++ widthValue
-            else
-                ""
-
-        styleElement =
-            if floatValue /= "right" then
-                "style=float:" ++ floatValue ++ " ;margin-left: 20px"
-            else if floatValue /= "left" then
-                "style=float:" ++ floatValue ++ " ;margin-right: 20px"
             else
                 ""
     in
