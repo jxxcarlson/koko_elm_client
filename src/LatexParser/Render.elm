@@ -9,6 +9,11 @@ import String.Extra
 import Parser
 
 
+parseParagraph text =
+    Parser.run latexList text
+        |> latexListGet
+
+
 transformText : String -> String
 transformText text =
     Parser.run latexList text
