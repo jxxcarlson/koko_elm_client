@@ -191,10 +191,10 @@ handleMacro v =
         "emph" ->
             handleEmph v.args
 
-        "hyperlink" ->
+        "href" ->
             handleHyperlink v.args
 
-        "bibhyperlink" ->
+        "bibhref" ->
             handleBibHyperlink v.args
 
         "ellie" ->
@@ -260,7 +260,7 @@ handleBibHyperlink args =
         ref =
             getAt 2 args
     in
-        "\n<p class= \"bibhyperlink\">[" ++ ref ++ "] <a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>\n</p>\n"
+        "\n<p class= \"bibhref\">[" ++ ref ++ "] <a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>\n</p>\n"
 
 
 handleDefault v =
