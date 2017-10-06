@@ -12,8 +12,6 @@ module Document.Search
 import Types
     exposing
         ( ActiveDocumentList(SearchResultList)
-        , defaultMasterDocument
-        , defaultDocument
         , Model
         , Msg(..)
         , Page(..)
@@ -23,6 +21,7 @@ import Types
         , Tool(..)
         )
 import Action.UI
+import Document.Document
 import Http
 import Request.Document
 import Document.QueryParser exposing (parseQuery)
@@ -124,7 +123,7 @@ dispatch searchState page model =
         updatedModel =
             { model
                 | appState = newAppState
-                , master_document = defaultMasterDocument
+                , master_document = Document.Document.defaultMasterDocument
                 , searchState = newSearchState
                 , documents2 = model.documents
             }
@@ -172,13 +171,13 @@ recallLastSearch model =
             model.appState
 
         newAppState =
-            { appState | masterDocLoaded = False, tool = TableOfContents }
+            { appState | masterDocLoaded = False, tool = TableOfContents, textBuffer = model.current_document.content }
     in
         ( { model
             | documents = model.documents2
-            , current_document = List.head model.documents2 |> Maybe.withDefault defaultDocument
+            , current_document = List.head model.documents2 |> Maybe.withDefault Document.Document.defaultDocument
             , appState = newAppState
-            , master_document = defaultMasterDocument
+            , master_document = Document.Document.defaultMasterDocument
             , message = "Set masterDocLoaded: False"
           }
         , Cmd.none

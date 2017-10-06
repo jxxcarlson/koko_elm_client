@@ -10,6 +10,8 @@ import Action.User
 import Views.Common as Common
 import Configuration
 import Date exposing (Date)
+import Document.Document as Document exposing (defaultDocument, defaultMasterDocument, emptyDocument, blankDocument, startDocument)
+import Document.Dictionary
 import Dict
 import Document.MasterDocument
 import Document.RenderAsciidoc
@@ -21,6 +23,7 @@ import Html exposing (..)
 import Image.Upload
 import Image.View
 import Jwt
+import Document.Differ exposing (EditRecord)
 import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url
@@ -208,6 +211,9 @@ update msg model =
             in
                 Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
+        MigrateFromAsciidocLatex ->
+            Action.Document.migrateFromAsciidocLatex model
+
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
@@ -220,7 +226,7 @@ update msg model =
                     { appState | page = HomePage, masterDocLoaded = False, authorizing = False }
             in
                 ( { model | appState = newAppState }
-                , Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+                , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
                 )
 
         RandomDocuments ->
@@ -296,7 +302,7 @@ update msg model =
                     model.appState
 
                 newAppState =
-                    { appState | page = EditorPage }
+                    { appState | page = EditorPage, textBuffer = model.current_document.content }
             in
                 ( { model | current_document = model.specialDocument, appState = newAppState }
                 , Cmd.none
@@ -364,12 +370,36 @@ update msg model =
                             document
 
                         Nothing ->
-                            emptyDocument
+                            Document.emptyDocument
             in
                 ( { model | specialDocument = specialDocument }, Cmd.none )
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
+
+        SetDocumentInDict (Ok ( documentsRecord, key )) ->
+            let
+                document =
+                    case List.head documentsRecord.documents of
+                        Just document ->
+                            document
+
+                        Nothing ->
+                            Document.emptyDocument
+
+                documentDict =
+                    model.documentDict
+
+                newDocumentDict =
+                    if document /= Document.emptyDocument then
+                        Document.Dictionary.set key document documentDict
+                    else
+                        documentDict
+            in
+                ( { model | documentDict = newDocumentDict }, Cmd.none )
+
+        SetDocumentInDict (Err err) ->
+            ( { model | message = "Error setting key in documentDict" }, Cmd.none )
 
         ---
         GetMasterDocument (Ok documentsRecord) ->
@@ -380,7 +410,7 @@ update msg model =
                             document
 
                         Nothing ->
-                            emptyDocument
+                            Document.emptyDocument
 
                 oldDocuments =
                     model.documents
@@ -420,9 +450,9 @@ update msg model =
         NewDocument ->
             let
                 newDocument =
-                    defaultDocument
+                    Document.defaultDocument
             in
-                createDocument model blankDocument
+                createDocument model Document.blankDocument
 
         AddToMasterDocument ->
             let
@@ -507,7 +537,7 @@ update msg model =
                 _ =
                     Debug.log "Refresh" "now"
             in
-                updateCurrentDocumentWithContent model.appState.textBuffer model
+                Action.Document.updateCurrentDocumentWithContent model.appState.textBuffer model
 
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
@@ -789,6 +819,7 @@ init flags location =
             , page = HomePage
             , tool = TableOfContents
             , textBuffer = ""
+            , editRecord = EditRecord [] []
             , tickInterval = Configuration.tickInterval
             , command = ""
             }
@@ -813,10 +844,10 @@ init flags location =
             , textInputBuffer = ""
             , warning = ""
             , current_user = current_user
-            , current_document = startDocument
-            , specialDocument = emptyDocument
-            , master_document = defaultMasterDocument
-            , documents = [ defaultDocument ]
+            , current_document = Document.startDocument
+            , specialDocument = Document.emptyDocument
+            , master_document = Document.defaultMasterDocument
+            , documents = [ Document.defaultDocument ]
             , documents2 = []
             , documentKey = "blurb"
             , documentDict = Dict.empty
@@ -840,6 +871,7 @@ init flags location =
             , External.askToReconnectUser "reconnectUser"
             , Task.perform ReceiveDate Date.now
             , Task.perform ReceiveTime Time.now
+            , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
             ]
 
         masterDocumentCommands =
@@ -849,7 +881,7 @@ init flags location =
             Document.Search.getRandomDocuments model
 
         startupPageCommands =
-            [ Request.Document.getSpecialDocumentWithQuery "ident=2017-8-26@18-1-42.887330"
+            [ Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
             , command
             ]
 

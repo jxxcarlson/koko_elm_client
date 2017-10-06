@@ -18,7 +18,7 @@ module Views.Common
 import Action.UI as UI
 import Color
 import Configuration
-import Document.Document as Document
+import Document.Document as Document exposing (hasTag)
 import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -36,23 +36,23 @@ import Views.TOC as TOC
 import Views.Utility as Utility
 
 
-renderedContent2 : Model -> Element Styles variation msg
-renderedContent2 model =
-    let
-        h =
-            (toFloat model.window.height) - 150
-    in
-        (el Zero
-            [ yScrollbar
-            , id "rendered_text2"
-            , paddingXY 50 50
-            , width (percent 100)
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.current_document.rendered_content)
-            ]
-            (text "")
-        )
+-- renderedContent2 : Model -> Element Styles variation msg
+-- renderedContent2 model =
+--     let
+--         h =
+--             (toFloat model.window.height) - 150
+--     in
+--         (el Zero
+--             [ yScrollbar
+--             , id "rendered_text2"
+--             , paddingXY 50 50
+--             , width (percent 100)
+--             , height (px h)
+--             , property "innerHTML"
+--                 (Json.Encode.string model.current_document.rendered_content)
+--             ]
+--             (text "")
+--         )
 
 
 renderedContent : Model -> Element Styles variation msg
@@ -287,6 +287,8 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
+            , migrateFromADLButton model
+            , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ (toString model.current_document.attributes.level)))
@@ -343,6 +345,12 @@ updateTagsButton model =
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
     Basic.button "Add to master" FlatButton [ onClick AddToMasterDocument, width (px 250) ]
+
+
+migrateFromADLButton : Model -> Element Styles variation Msg
+migrateFromADLButton model =
+    when (model.current_document.attributes.textType == "latex")
+        (Basic.button "Migrate from Asciidoc-LaTeX" FlatButtonBlue [ onClick MigrateFromAsciidocLatex, width (px 250) ])
 
 
 publicCheckbox : Model -> Element Styles variation Msg

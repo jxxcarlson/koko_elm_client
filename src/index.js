@@ -19,11 +19,18 @@ var mountNode = document.getElementById('main');
 
 
   function typesetNow(){
-    console.log("** calling MathJax.Hub.Queue in index.js ... ")
+    console.log("** typesetNow: I am calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([
       "Typeset",
-      MathJax.Hub,
-      function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
+      MathJax.Hub
+      ,
+      // function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
+
+
+      function(){
+          var rendered_text = document.getElementById('rendered_text2').innerHTML
+          app.ports.getRenderedText.send(rendered_text)
+        }]);
   }
 
   var request_in_progress = false;
@@ -34,7 +41,7 @@ var mountNode = document.getElementById('main');
   var render_asciidoc = function(content) {
       console.log("render_asciidoc, ontent length = " + content.length)
       request_in_progress = true;
-      console.log("Rendering ... ")
+      console.log("** Rendering ... ")
       var millisecondsToWait = 100;
       setTimeout(function() {
           console.log("RENDER AS ASCIIDOC " );
@@ -69,6 +76,7 @@ var mountNode = document.getElementById('main');
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = content;
+             // app.ports.getRenderedText.send(content); // Send rendered text to Elm
              typesetNow()
              current_content = content
            }

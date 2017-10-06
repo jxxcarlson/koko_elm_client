@@ -58,15 +58,13 @@ selectAux document_id document model =
         token =
             model.current_user.token
 
-        cmd1 =
-            Task.attempt GetDocuments (Request.Document.getDocumentsTask "documents" query token)
-
-        -- ( model1, cmd1 ) =
-        --     Search.dispatch updatedSearchState model.appState.page updatedModel
-        -- ( model2, cmd2 ) =
-        --     Action.Document.selectDocument model1 document
+        cmd =
+            if model.appState.signedIn then
+                Task.attempt GetDocuments (Request.Document.getDocumentsTask "documents" query token)
+            else
+                Task.attempt GetDocuments (Request.Document.getDocumentsTask "public/documents" query token)
     in
-        ( updatedModel, cmd1 )
+        ( updatedModel, cmd )
 
 
 setParentId : String -> Model -> ( Model, Cmd Msg )

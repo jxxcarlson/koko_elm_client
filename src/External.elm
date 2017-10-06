@@ -33,13 +33,21 @@ encodeDocument textBufferDirty document =
         _ =
             Debug.log "Master, I will now encode document" document.id
 
-        content_to_render =
-            if textBufferDirty then
-                Document.Preprocess.preprocess document.content document
-            else
-                Document.Preprocess.preprocess document.content document
+        textType =
+            document.attributes.textType
 
-        -- document.rendered_content
+        content_to_render =
+            case ( textType, textBufferDirty ) of
+                ( "latex", True ) ->
+                    -- Document.Preprocess.preprocess document.content document
+                    document.rendered_content
+
+                ( "latex", False ) ->
+                    document.rendered_content
+
+                ( _, _ ) ->
+                    Document.Preprocess.preprocess document.content document
+
         _ =
             Debug.log "... document encoded" document.id
     in

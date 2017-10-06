@@ -7,6 +7,7 @@ import Json.Encode as JsEncode
 import Date exposing (Date)
 import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
+import Document.Differ exposing (EditRecord)
 
 
 type Device
@@ -102,6 +103,10 @@ type alias CredentialsWrapper =
     { credentials : Credentials
     , url : String
     }
+
+
+type alias DocumentDict =
+    Dict.Dict String Document
 
 
 type alias DocumentAttributes =
@@ -207,6 +212,7 @@ type alias AppState =
     , page : Page
     , tool : Tool
     , textBuffer : String
+    , editRecord : EditRecord
     , tickInterval : Float
     , command : String
     }
@@ -273,6 +279,7 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
+    | MigrateFromAsciidocLatex
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
@@ -325,6 +332,7 @@ type Msg
     | SendMessage
     | SendToJS String
     | SetDocType String
+    | SetDocumentInDict (Result Http.Error ( DocumentsRecord, String ))
     | SetMessage String
     | SetParentId String
     | SetSearchTerm String
@@ -401,94 +409,4 @@ type Tool
 type alias Flags =
     { width : Int
     , height : Int
-    }
-
-
-defaultAttributes : DocumentAttributes
-defaultAttributes =
-    DocumentAttributes False "adoc" "standard" 0
-
-
-startDocument : Document
-startDocument =
-    { id = 0
-    , identifier = "nullDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Welcome"
-    , content = "Welcome to noteshare"
-    , rendered_content = "Welcome to noteshare"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
-
-
-blankDocument : Document
-blankDocument =
-    { id = 0
-    , identifier = "blank"
-    , author_id = 0
-    , author_name = ""
-    , title = "New Document"
-    , content = "Write content here"
-    , rendered_content = "Write content here"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
-
-
-emptyDocument : Document
-emptyDocument =
-    { id = 0
-    , identifier = "empty"
-    , author_id = 0
-    , author_name = ""
-    , title = ""
-    , content = ""
-    , rendered_content = ""
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
-
-
-defaultDocument : Document
-defaultDocument =
-    { id = 0
-    , identifier = "nullDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Oops!"
-    , content = "Page not found or access restricted"
-    , rendered_content = "Page not found or access restricted"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
-
-
-defaultMasterDocument : Document
-defaultMasterDocument =
-    { id = 0
-    , identifier = "nullMasterDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Null master document"
-    , content = "nothing"
-    , rendered_content = "nothing"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
     }

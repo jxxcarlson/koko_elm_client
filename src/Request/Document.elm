@@ -1,12 +1,13 @@
 module Request.Document
     exposing
-        ( getSpecialDocumentWithQuery
+        ( getDocumentWithQuery
         , put
         , createDocument
         , deleteCurrentDocument
         , getDocuments
         , getDocumentsTask
-        , getSpecialDocumentWithAuthenticatedQuery
+        , getPublicDocumentsTask
+        , getDocumentWithAuthenticatedQuery
         , reloadMasterDocument
         , saveDocumentTask
         )
@@ -63,6 +64,23 @@ getDocumentsTask route query token =
         request |> Http.toTask
 
 
+getPublicDocumentsTask : String -> String -> Task.Task Http.Error DocumentsRecord
+getPublicDocumentsTask route query =
+    let
+        url =
+            api ++ route ++ "?" ++ parseQuery (query)
+
+        _ =
+            Debug.log "getDocumentsTask with URL" url
+
+        request =
+            HB.get url
+                |> withExpect (Http.expectJson decodeDocumentsRecord)
+                |> HB.toRequest
+    in
+        request |> Http.toTask
+
+
 
 -- saveDocumentCmd : String -> Document -> Model -> Cmd Msg
 
@@ -80,10 +98,21 @@ saveDocumentTask queryString document model =
         request |> Http.toTask
 
 
-getSpecialDocumentWithQuery : String -> Cmd Msg
-getSpecialDocumentWithQuery query =
-    -- _ = Debug.log "getSpecialDocumentWithQuery with queryString" query
-    getDocuments "public/documents" query GetSpecialDocument ""
+getDocumentWithQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocumentWithQuery processor query =
+    getDocuments "public/documents" query processor ""
+
+
+getDocumentWithAuthenticatedQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> String -> Cmd Msg
+getDocumentWithAuthenticatedQuery processor token query =
+    let
+        url =
+            documentsUrl ++ "?" ++ query
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.send processor
 
 
 getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg
@@ -99,6 +128,16 @@ getSpecialDocumentWithAuthenticatedQuery token query =
 
 
 
+-- getDocumentForDictionaryWithToken : String -> String -> String -> Cmd Msg
+-- getDocumentForDictionaryWithToken key token query =
+--     let
+--         url =
+--             documentsUrl ++ "?" ++ query
+--     in
+--         HB.get url
+--             |> HB.withHeader "Authorization" ("Bearer " ++ token)
+--             |> withExpect (Http.expectJson decodeDocumentsRecord)
+--             |> HB.send GetDocumentForDictionary
 -- Http.send GetSpecialDocument request
 
 
