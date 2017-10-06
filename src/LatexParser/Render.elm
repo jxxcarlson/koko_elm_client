@@ -88,6 +88,9 @@ handleEnvironment v =
             "macros" ->
                 handleMacros body
 
+            "tabular" ->
+                handleTabular body
+
             "verbatim" ->
                 handleVerbatim body
 
@@ -171,6 +174,58 @@ handleDefaultEnvironment env body =
 handleMacros : String -> String
 handleMacros body =
     "\n$$\n" ++ body ++ "\n$$\n"
+
+
+
+-- \begin{center}
+-- \begin{tabular}{ |c|c|c| }
+--  \hline
+--  cell1 & cell2 & cell3 \\
+--  cell4 & cell5 & cell6 \\
+--  cell7 & cell8 & cell9 \\
+--  \hline
+-- \end{tabular}
+-- \end{center}
+
+
+{-| "cell1 & cell2 & cell3 \ \ncell1 & cell2 & cell3 \ "
+=> [["cell1","cell2","cell3"],["cell1","cell2","cell3"]]
+-}
+parseTabular : String -> List (List String)
+parseTabular str =
+    str
+        |> String.split "\n"
+        |> List.filter (\x -> x /= "")
+        |> List.map (String.Extra.replace "\\" "")
+        |> List.map (String.split "&")
+        |> List.map (List.map String.trim)
+
+
+renderTableCell : String -> String
+renderTableCell str =
+    "<td>" ++ str ++ "</td> "
+
+
+renderTableRow : List String -> String
+renderTableRow data =
+    data
+        |> List.foldr (\x acc -> renderTableCell x ++ acc) ""
+        |> (\x -> "<tr> " ++ x ++ "</tr>\n")
+
+
+renderTabular : List (List String) -> String
+renderTabular data =
+    data
+        |> List.foldr (\x acc -> (renderTableRow x) ++ acc) ""
+        |> (\x -> "<table>\n" ++ x ++ "</table>\n")
+        |> (\x -> "<center>\n" ++ x ++ "</center>\n\n")
+
+
+handleTabular : String -> String
+handleTabular body =
+    body
+        |> parseTabular
+        |> renderTabular
 
 
 handleVerbatim : String -> String
