@@ -41,7 +41,7 @@ documentListViewForPhone model =
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
     column None
-        [ height (percent 100), paddingBottom 20, paddingLeft 10 ]
+        [ height (percent 100), paddingBottom 20 ]
         [ documentListHeader model
         , documentListView1 model
         ]
