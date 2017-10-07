@@ -69,6 +69,7 @@ type Styles
     | Radio
     | SearchField
     | Small
+    | Smaller
     | StatusFailure
     | StatusSuccess
     | TOC
@@ -302,6 +303,7 @@ stylesheet =
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
+        , style Smaller [ Font.size 10 ]
         , style Mono [ Font.typeface [ "Lucida Sans Unicode" ] ]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]

@@ -41,7 +41,7 @@ documentListViewForPhone model =
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
     column None
-        [ height (percent 100), paddingBottom 20 ]
+        [ height (percent 100), paddingBottom 20, paddingLeft 10 ]
         [ documentListHeader model
         , documentListView1 model
         ]
@@ -85,7 +85,7 @@ documentStackView1 model =
 
 documentIndicator : Document -> Model -> Element Styles variation Msg
 documentIndicator document model =
-    el Transparent [ height (px 25), onClick (SelectMaster document) ] (documentIndicator1 document model)
+    el Transparent [ height (px 25), (moveDown 4), onClick (SelectMaster document) ] (documentIndicator1 document model)
 
 
 documentIndicator1 : Document -> Model -> Element style variation msg
@@ -133,15 +133,7 @@ documentIndentLevel document model =
                 ( _, _ ) ->
                     1
     in
-        8.0 + 15.0 * (toFloat (level - 1))
-
-
-viewTocItem : Child -> Element Styles variation Msg
-viewTocItem child =
-    el (None)
-        [ paddingXY 4 4
-        ]
-        (text child.title)
+        -12.0 + 16.0 * (toFloat (level - 1))
 
 
 documentListHeader : Model -> Element Styles variation Msg
@@ -162,7 +154,7 @@ numberOfDocumentInStack model =
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
     row Zero
-        [ verticalCenter, paddingXY (documentIndentLevel document model) 4 ]
+        [ verticalCenter, paddingXY (documentIndentLevel document model) 0 ]
         [ documentIndicator document model
         , titleDisplay model selectedDocument document
         ]
@@ -171,7 +163,7 @@ viewTitle model selectedDocument document =
 viewTitleInStack : Model -> Document -> Document -> Element Styles variation Msg
 viewTitleInStack model selectedDocument document =
     row Zero
-        [ verticalCenter, paddingXY 10 4 ]
+        [ verticalCenter, paddingXY 4 4 ]
         [ documentIndicator document model
         , titleDisplay model selectedDocument document
         ]
@@ -179,12 +171,22 @@ viewTitleInStack model selectedDocument document =
 
 titleDisplay : Model -> Document -> Document -> Element Styles variation Msg
 titleDisplay model selectedDocument document =
-    el (tocStyle selectedDocument document)
-        [ onClick (SelectDocument document)
-        , paddingXY 8 0
-        , height (px 20)
-        ]
-        (el None [ verticalCenter ] (text (Utility.shortString 25 document.title)))
+    let
+        windowDelta =
+            (toFloat (model.window.width - 1300))
+
+        scaledWindowDelta =
+            ((windowDelta / 25.0) |> round)
+
+        maxTitleCharacters =
+            (35 + scaledWindowDelta)
+    in
+        el (tocStyle selectedDocument document)
+            [ onClick (SelectDocument document)
+            , paddingXY 8 0
+            , height (px 20)
+            ]
+            (el Small [ verticalCenter ] (text (Utility.shortString maxTitleCharacters document.title)))
 
 
 tocStyle : Document -> Document -> Styles
