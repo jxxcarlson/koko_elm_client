@@ -1,20 +1,4 @@
-module LatexParser.Latex
-    exposing
-        ( DisplayMath_
-        , Environment_
-        , InlineMath_
-        , Macro_
-        , Words_
-        , displayMath
-        , displayMath2
-        , environment
-        , inlineMath
-        , macro
-        , texComment
-        , word
-        , words
-        , ws
-        )
+module LatexParser.Latex exposing (..)
 
 {-| LatexParser parses an as-yet undetermined subset
 of LaTeX into elements like
@@ -35,6 +19,19 @@ Blah Blah
 Etc.
 -}
 
+-- ( DisplayMath_
+-- , Environment_
+-- , InlineMath_
+-- , Macro_
+-- , displayMath
+-- , displayMath2
+-- , environment
+-- , inlineMath
+-- , macro
+-- , texComment
+-- , word
+-- , ws
+-- )
 {- This version contains Ilias' improved code -}
 
 import Parser exposing (..)
@@ -59,19 +56,6 @@ word =
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
-type alias Words_ =
-    { value : List String
-    }
-
-
-words : Parser Words_
-words =
-    inContext "words" <|
-        succeed Words_
-            |= repeat zeroOrMore word
-            |. oneOf [ symbol "\n", symbol "\\" ]
-
-
 type alias Environment_ =
     { env : String
     , body : String
@@ -83,6 +67,10 @@ type alias InlineMath_ =
     }
 
 
+{-| }
+Re "source", see the Parser documentation. It is defined and
+explained there.
+-}
 parseUntil : String -> Parser String
 parseUntil marker =
     ignoreUntil marker

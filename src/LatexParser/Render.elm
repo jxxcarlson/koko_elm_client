@@ -52,13 +52,6 @@ transformLatex latex =
         DisplayMath v ->
             "\n$$\n" ++ v.value ++ "\n$$\n"
 
-        _ ->
-            "ERR"
-
-
-
--- ENVIRONMENTS
-
 
 handleEnvironment : { a | body : String, env : String } -> String
 handleEnvironment v =
