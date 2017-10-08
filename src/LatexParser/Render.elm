@@ -288,6 +288,9 @@ handleMacro v =
         "term" ->
             handleTerm v.args
 
+        "title" ->
+            handleTitle v.args
+
         "xlink" ->
             handleXLink v.args
 
@@ -544,7 +547,7 @@ handleSection args =
         arg =
             getAt 0 args
     in
-        "<h1>" ++ arg ++ "</h1>"
+        "<h2>" ++ arg ++ "</h2>"
 
 
 handleSubheading : List String -> String
@@ -562,7 +565,7 @@ handleSubSection args =
         arg =
             getAt 0 args
     in
-        "<h2>" ++ arg ++ "</h2>"
+        "<h3>" ++ arg ++ "</h3>"
 
 
 handleSubSubSection : List String -> String
@@ -571,16 +574,16 @@ handleSubSubSection args =
         arg =
             getAt 0 args
     in
-        "<h3>" ++ arg ++ "</h3>"
+        "<h4>" ++ arg ++ "</h4>"
 
 
-handleSubSubSubSection : List String -> String
-handleSubSubSubSection args =
+handleTitle : List String -> String
+handleTitle args =
     let
         arg =
             getAt 0 args
     in
-        "<h3>" ++ arg ++ "</h3>"
+        "<h1>" ++ arg ++ "</h1>"
 
 
 handleTerm : List String -> String
