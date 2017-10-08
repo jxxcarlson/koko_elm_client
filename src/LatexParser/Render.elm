@@ -270,6 +270,9 @@ handleMacro v =
         "section" ->
             handleSection v.args
 
+        "setcounter" ->
+            ""
+
         "strong" ->
             handleStrong v.args
 
