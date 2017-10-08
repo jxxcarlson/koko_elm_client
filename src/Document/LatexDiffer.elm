@@ -1,5 +1,6 @@
 module Document.LatexDiffer exposing (..)
 
+import LatexParser.Accumulator as Accumulator
 import Document.Dictionary as Dictionary
 import Document.Differ as Differ exposing (EditRecord)
 import Document.Preprocess as Preprocess
@@ -16,6 +17,13 @@ initialize text =
         |> Differ.initialize Render.transformText
 
 
+initialize2 : String -> EditRecord
+initialize2 text =
+    text
+        |> prepareContentForLatex
+        |> Differ.initialize2 Accumulator.transformParagraphs
+
+
 update : EditRecord -> String -> EditRecord
 update editorRecord text =
     text
@@ -25,7 +33,7 @@ update editorRecord text =
 
 safeUpdate editRecord content =
     if Differ.isEmpty editRecord then
-        initialize content
+        initialize2 content
     else
         update editRecord content
 

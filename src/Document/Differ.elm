@@ -70,6 +70,18 @@ initialize transformer text =
         EditRecord paragraphs renderedParagraphs
 
 
+initialize2 : (List String -> List String) -> String -> EditRecord
+initialize2 transformParagraphs text =
+    let
+        paragraphs =
+            paragraphify text
+
+        renderedParagraphs =
+            transformParagraphs paragraphs
+    in
+        EditRecord paragraphs renderedParagraphs
+
+
 clear : EditRecord
 clear =
     EditRecord [] []
