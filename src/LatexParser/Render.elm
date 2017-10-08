@@ -9,6 +9,7 @@ import String.Extra
 import Parser
 
 
+parseParagraph : String -> List LatexParser.Parser.Latex
 parseParagraph text =
     Parser.run latexList text
         |> latexListGet
