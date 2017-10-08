@@ -282,9 +282,6 @@ handleMacro v =
         "subsubsection" ->
             handleSubSubSection v.args
 
-        "subsubsubsection" ->
-            handleSubSubSubSection v.args
-
         "term" ->
             handleTerm v.args
 

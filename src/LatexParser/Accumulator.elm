@@ -1,4 +1,4 @@
-module LatexParser.Accumulator exposing (transformText, transformParagraphs, accumulator, processParagraph, processParagraph2, sectionCounter)
+module LatexParser.Accumulator exposing (getSectionNumber, transformText, transformParagraphs, accumulator, processParagraph, processParagraph2, sectionCounter)
 
 import LatexParser.Render as Render
 import LatexParser.Parser
@@ -6,14 +6,11 @@ import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render
 import LatexParser.Parser
+import Regex
 
 
 type alias LatexState =
     { s1 : Int, s2 : Int, s3 : Int }
-
-
-
--- transformText : String -> String
 
 
 transformText : String -> List String
@@ -55,15 +52,25 @@ transformer f g x acc =
 
 
 sectionCounter : String -> LatexState -> LatexState
-sectionCounter paragraph latexState =
-    if String.contains "\\section" paragraph then
-        { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
-    else if String.contains "\\subsection" paragraph then
-        { latexState | s2 = latexState.s2 + 1, s3 = 0 }
-    else if String.contains "\\subsubsection" paragraph then
-        { latexState | s3 = latexState.s3 + 1 }
-    else
-        latexState
+sectionCounter paragraph latexState_ =
+    let
+        initialSectionNumber =
+            (getSectionNumber paragraph)
+
+        latexState =
+            if initialSectionNumber > -1 then
+                { latexState_ | s1 = (initialSectionNumber - 1), s2 = 0, s3 = 0 }
+            else
+                latexState_
+    in
+        if String.contains "\\section" paragraph then
+            { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
+        else if String.contains "\\subsection" paragraph then
+            { latexState | s2 = latexState.s2 + 1, s3 = 0 }
+        else if String.contains "\\subsubsection" paragraph then
+            { latexState | s3 = latexState.s3 + 1 }
+        else
+            latexState
 
 
 processParagraph : String -> LatexState -> List LatexParser.Parser.Latex
@@ -78,6 +85,30 @@ processParagraph2 paragraph latexState =
     paragraph
         |> (updateSection latexState)
         |> Render.transformText
+
+
+getSectionNumber text =
+    let
+        rx =
+            (Regex.regex "\\\\setcounter{section}{(.*)}")
+
+        result =
+            Regex.find (Regex.AtMost 1) rx text
+                |> List.map .submatches
+                |> List.head
+                |> Maybe.withDefault [ Just "-1" ]
+                |> List.head
+                |> Maybe.withDefault (Just "-1")
+
+        index =
+            case result of
+                Just n ->
+                    String.toInt n |> Result.withDefault -1
+
+                Nothing ->
+                    -1
+    in
+        index
 
 
 updateSection : LatexState -> String -> String
