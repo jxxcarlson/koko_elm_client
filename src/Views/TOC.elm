@@ -186,7 +186,7 @@ titleDisplay model selectedDocument document =
             , paddingXY 8 0
             , height (px 20)
             ]
-            (el Small [ verticalCenter ] (text (Utility.shortString maxTitleCharacters document.title)))
+            (el TOCTitle [ verticalCenter ] (text (Utility.shortString maxTitleCharacters document.title)))
 
 
 tocStyle : Document -> Document -> Styles

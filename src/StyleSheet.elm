@@ -79,6 +79,7 @@ type Styles
     | TOCItemMaster
     | TOCItemMasterSelected
     | TOCItemSelected
+    | TOCTitle
     | TitleStyle
     | RHSidebar
     | RHSidebarHeader
@@ -290,6 +291,8 @@ stylesheet =
             [ Color.text Color.white, Color.background Color.blue ]
         , style TOCItemMasterSelected
             [ Color.text (Color.rgb 255 130 130), Color.background Color.blue, Font.weight 100 ]
+        , style TOCTitle
+            [ Font.size 13 ]
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote
