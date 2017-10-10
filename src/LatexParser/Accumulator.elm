@@ -7,6 +7,7 @@ import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render exposing (LatexState)
 import LatexParser.Latex as Latex
+import List.Extra
 import Regex
 
 
@@ -53,6 +54,11 @@ type alias LatexInfo =
     { typ : String, name : String, value : List String }
 
 
+getAt : Int -> List String -> String
+getAt k list_ =
+    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+
+
 info : LatexParser.Parser.Latex -> LatexInfo
 info latexElement =
     case latexElement of
@@ -88,6 +94,29 @@ handleEquationNumbers latexState headElement =
         { latexState | eqno = newEqno, dict = newDict }
 
 
+
+-- sectionCounter : String -> LatexState -> LatexState
+-- sectionCounter paragraph latexState_ =
+--     let
+--         initialSectionNumber =
+--             (getSectionNumber paragraph)
+--
+--         latexState =
+--             if initialSectionNumber > -1 then
+--                 { latexState_ | s1 = (initialSectionNumber - 1), s2 = 0, s3 = 0 }
+--             else
+--                 latexState_
+--     in
+--         if String.contains "\\section" paragraph then
+--             { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
+--         else if String.contains "\\subsection" paragraph then
+--             { latexState | s2 = latexState.s2 + 1, s3 = 0 }
+--         else if String.contains "\\subsubsection" paragraph then
+--             { latexState | s3 = latexState.s3 + 1 }
+--         else
+--             latexState
+
+
 updateState : List LatexParser.Parser.Latex -> LatexState -> LatexState
 updateState parsedParagraph latexState =
     let
@@ -99,6 +128,28 @@ updateState parsedParagraph latexState =
 
         newLatexState =
             case ( headElement.typ, headElement.name ) of
+                ( "macro", "setcounter" ) ->
+                    let
+                        args =
+                            headElement.value
+
+                        arg1 =
+                            getAt 0 args
+
+                        arg2 =
+                            getAt 1 args
+
+                        initialSectionNumber =
+                            if arg1 == "section" then
+                                arg2 |> String.toInt |> Result.withDefault 0
+                            else
+                                -1
+                    in
+                        if initialSectionNumber > -1 then
+                            { latexState | s1 = initialSectionNumber, s2 = 0, s3 = 0 }
+                        else
+                            latexState
+
                 ( "macro", "section" ) ->
                     { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
 
