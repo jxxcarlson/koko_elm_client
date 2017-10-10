@@ -37,6 +37,15 @@ Etc.
 import Parser exposing (..)
 
 
+getLabel str =
+    case (Parser.run macro str) of
+        Ok record ->
+            record.args |> List.head |> Maybe.withDefault ""
+
+        _ ->
+            ""
+
+
 spaces : Parser ()
 spaces =
     ignore zeroOrMore (\c -> c == ' ')

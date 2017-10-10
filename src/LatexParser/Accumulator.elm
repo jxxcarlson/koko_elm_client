@@ -1,10 +1,12 @@
 module LatexParser.Accumulator exposing (getSectionNumber, transformParagraphs, processParagraph, processParagraph2)
 
+import Dict
 import LatexParser.Render as Render
 import LatexParser.Parser
 import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render exposing (LatexState)
+import LatexParser.Latex as Latex
 import Regex
 
 
@@ -23,7 +25,7 @@ accumulator :
     -> ( List b, LatexState )
 accumulator preprocessor processor stateUpdater inputList =
     inputList
-        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], { s1 = 0, s2 = 0, s3 = 0, eqno = 0 } )
+        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], { s1 = 0, s2 = 0, s3 = 0, eqno = 0, dict = Render.emptyDict } )
 
 
 transformer :
@@ -85,16 +87,56 @@ updateState parsedParagraph latexState =
                     { latexState | s3 = latexState.s3 + 1 }
 
                 ( "env", "equation" ) ->
-                    { latexState | eqno = latexState.eqno + 1 }
+                    let
+                        label =
+                            headElement.value
+                                |> List.head
+                                |> Maybe.withDefault ""
+                                |> String.trim
+                                |> Latex.getLabel
+
+                        newEqno =
+                            if label /= "" then
+                                latexState.eqno + 1
+                            else
+                                latexState.eqno
+
+                        newDict =
+                            if label /= "" then
+                                Dict.insert label (toString newEqno) latexState.dict
+                            else
+                                latexState.dict
+                    in
+                        { latexState | eqno = newEqno, dict = newDict }
 
                 ( "env", "align" ) ->
-                    { latexState | eqno = latexState.eqno + 1 }
+                    let
+                        label =
+                            headElement.value
+                                |> List.head
+                                |> Maybe.withDefault ""
+                                |> String.trim
+                                |> Latex.getLabel
+
+                        newEqno =
+                            if label /= "" then
+                                latexState.eqno + 1
+                            else
+                                latexState.eqno
+
+                        newDict =
+                            if label /= "" then
+                                Dict.insert label (toString newEqno) latexState.dict
+                            else
+                                latexState.dict
+                    in
+                        { latexState | eqno = newEqno, dict = newDict }
 
                 _ ->
                     latexState
 
         _ =
-            Debug.log "parsedParagraph" headElement
+            Debug.log "parsedParagraph" parsedParagraph
 
         _ =
             Debug.log "newLatexState" newLatexState

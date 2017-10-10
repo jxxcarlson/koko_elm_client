@@ -1,5 +1,6 @@
 module LatexParser.Render exposing (..)
 
+import Dict
 import Configuration
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import LatexParser.Image exposing (getKeyValueList, getValue)
@@ -9,12 +10,20 @@ import String.Extra
 import Parser
 
 
+type alias CrossReferences =
+    Dict.Dict String String
+
+
+emptyDict =
+    Dict.empty
+
+
 type alias LatexState =
-    { s1 : Int, s2 : Int, s3 : Int, eqno : Int }
+    { s1 : Int, s2 : Int, s3 : Int, eqno : Int, dict : CrossReferences }
 
 
 emptyLatexState =
-    { s1 = 0, s2 = 0, s3 = 0, eqno = 0 }
+    { s1 = 0, s2 = 0, s3 = 0, eqno = 0, dict = Dict.empty }
 
 
 parseParagraph : String -> List LatexParser.Parser.Latex
@@ -270,6 +279,9 @@ handleMacro latexState v =
         "code" ->
             handleCode v.args
 
+        "eqref" ->
+            handleEqRef latexState v.args
+
         "emph" ->
             handleEmph v.args
 
@@ -299,6 +311,9 @@ handleMacro latexState v =
 
         "ndash" ->
             "&ndash;"
+
+        "ref" ->
+            handleRef latexState v.args
 
         "section" ->
             handleSection latexState v.args
@@ -574,6 +589,27 @@ handleNewCommand args =
         "\\newcommand{" ++ command ++ "}{" ++ definition ++ "}"
 
 
+handleRef : LatexState -> List String -> String
+handleRef latexState args =
+    let
+        key =
+            getAt 0 args
+    in
+        Dict.get key latexState.dict |> Maybe.withDefault "??"
+
+
+handleEqRef : LatexState -> List String -> String
+handleEqRef latexState args =
+    let
+        key =
+            getAt 0 args
+
+        value =
+            Dict.get key latexState.dict |> Maybe.withDefault "??"
+    in
+        "$(" ++ value ++ ")$"
+
+
 handleStrong : List String -> String
 handleStrong args =
     let
@@ -648,7 +684,7 @@ handleSubSubSection latexState args =
 
         addendum =
             if latexState.s1 > 0 then
-                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3)
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3) ++ " "
             else
                 ""
     in
