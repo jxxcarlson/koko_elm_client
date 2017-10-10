@@ -1,76 +1,105 @@
-module LatexParser.Accumulator exposing (getSectionNumber, transformText, transformParagraphs, accumulator, processParagraph, processParagraph2, sectionCounter)
+module LatexParser.Accumulator exposing (getSectionNumber, transformParagraphs, processParagraph, processParagraph2)
 
 import LatexParser.Render as Render
 import LatexParser.Parser
 import String.Extra
 import Document.Differ as Differ
-import LatexParser.Render as Render
-import LatexParser.Parser
+import LatexParser.Render as Render exposing (LatexState)
 import Regex
-
-
-type alias LatexState =
-    { s1 : Int, s2 : Int, s3 : Int }
-
-
-transformText : String -> List String
-transformText text =
-    text
-        |> Differ.paragraphify
-        |> accumulator processParagraph2 sectionCounter
-        |> Tuple.first
 
 
 transformParagraphs : List String -> List String
 transformParagraphs paragraphs =
     paragraphs
-        |> accumulator processParagraph2 sectionCounter
+        |> accumulator Render.parseParagraph renderParagraph updateState
         |> Tuple.first
 
 
-
--- > List.map (LatexParser.Parser.latexListGet >> List.map Render.transformLatex)
--- |> latexListGet
--- |> List.map transformLatex
--- |> List.map (List.map Render.transformLatex)
--- |> String.join ("")
--- |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
-
-
-accumulator : (a -> LatexState -> b) -> (a -> LatexState -> LatexState) -> List a -> ( List b, LatexState )
-accumulator processor stateUpdater inputList =
+accumulator :
+    (a -> List LatexParser.Parser.Latex)
+    -> (List LatexParser.Parser.Latex -> LatexState -> b)
+    -> (List LatexParser.Parser.Latex -> LatexState -> LatexState)
+    -> List a
+    -> ( List b, LatexState )
+accumulator preprocessor processor stateUpdater inputList =
     inputList
-        |> List.foldl (transformer processor stateUpdater) ( [], { s1 = 0, s2 = 0, s3 = 0 } )
+        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], { s1 = 0, s2 = 0, s3 = 0, eqno = 0 } )
 
 
-transformer f g x acc =
+transformer :
+    (a -> b)
+    -> (b -> c -> d)
+    -> (b -> c -> c)
+    -> a
+    -> ( List d, c )
+    -> ( List d, c )
+transformer pp f g x acc =
     let
         ( a, b ) =
             acc
+
+        y =
+            pp x
+
+        z =
+            g y b
     in
-        ( a ++ [ f x b ], g x b )
+        ( a ++ [ f y z ], z )
 
 
-sectionCounter : String -> LatexState -> LatexState
-sectionCounter paragraph latexState_ =
+type alias LatexInfo =
+    { typ : String, name : String, value : List String }
+
+
+info : LatexParser.Parser.Latex -> LatexInfo
+info latexElement =
+    case latexElement of
+        LatexParser.Parser.Macro v ->
+            { typ = "macro", name = v.name, value = v.args }
+
+        LatexParser.Parser.Environment v ->
+            { typ = "env", name = v.env, value = [ v.body ] }
+
+        _ ->
+            { typ = "null", name = "null", value = [] }
+
+
+updateState : List LatexParser.Parser.Latex -> LatexState -> LatexState
+updateState parsedParagraph latexState =
     let
-        initialSectionNumber =
-            (getSectionNumber paragraph)
+        headElement =
+            parsedParagraph
+                |> List.head
+                |> Maybe.map info
+                |> Maybe.withDefault (LatexInfo "null" "null" [])
 
-        latexState =
-            if initialSectionNumber > -1 then
-                { latexState_ | s1 = (initialSectionNumber - 1), s2 = 0, s3 = 0 }
-            else
-                latexState_
+        newLatexState =
+            case ( headElement.typ, headElement.name ) of
+                ( "macro", "section" ) ->
+                    { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
+
+                ( "macro", "subsection" ) ->
+                    { latexState | s2 = latexState.s2 + 1, s3 = 0 }
+
+                ( "macro", "subsubsection" ) ->
+                    { latexState | s3 = latexState.s3 + 1 }
+
+                ( "env", "equation" ) ->
+                    { latexState | eqno = latexState.eqno + 1 }
+
+                ( "env", "align" ) ->
+                    { latexState | eqno = latexState.eqno + 1 }
+
+                _ ->
+                    latexState
+
+        _ =
+            Debug.log "parsedParagraph" headElement
+
+        _ =
+            Debug.log "newLatexState" newLatexState
     in
-        if String.contains "\\section" paragraph then
-            { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
-        else if String.contains "\\subsection" paragraph then
-            { latexState | s2 = latexState.s2 + 1, s3 = 0 }
-        else if String.contains "\\subsubsection" paragraph then
-            { latexState | s3 = latexState.s3 + 1 }
-        else
-            latexState
+        newLatexState
 
 
 processParagraph : String -> LatexState -> List LatexParser.Parser.Latex
@@ -124,3 +153,8 @@ updateSection latexState paragraph =
             |> String.Extra.replace "\\subsubsection{" ("\\subsubsection{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString (latexState.s3 + 1)) ++ " ")
     else
         paragraph
+
+
+renderParagraph : List LatexParser.Parser.Latex -> LatexState -> String
+renderParagraph parsedParagraph latexState =
+    parsedParagraph |> (Render.render latexState)

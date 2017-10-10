@@ -9,17 +9,38 @@ import String.Extra
 import Parser
 
 
+type alias LatexState =
+    { s1 : Int, s2 : Int, s3 : Int, eqno : Int }
+
+
+emptyLatexState =
+    { s1 = 0, s2 = 0, s3 = 0, eqno = 0 }
+
+
 parseParagraph : String -> List LatexParser.Parser.Latex
 parseParagraph text =
     Parser.run latexList text
         |> latexListGet
 
 
+render : LatexState -> List LatexParser.Parser.Latex -> String
+render latexState latexList =
+    latexList
+        |> List.map (transformLatex latexState)
+        |> String.join ("")
+        |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
+
+
+{-| NB:
+
+transformText str = str |> parseParagraph |> render
+
+-}
 transformText : String -> String
 transformText text =
     Parser.run latexList text
         |> latexListGet
-        |> List.map transformLatex
+        |> List.map (transformLatex emptyLatexState)
         |> String.join ("")
         |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
 
@@ -29,8 +50,8 @@ getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
-transformLatex : Latex -> String
-transformLatex latex =
+transformLatex : LatexState -> Latex -> String
+transformLatex latexState latex =
     case latex of
         Comment () ->
             ""
@@ -42,10 +63,10 @@ transformLatex latex =
                 " " ++ str ++ " "
 
         Macro v ->
-            handleMacro v
+            handleMacro latexState v
 
         Environment v ->
-            handleEnvironment v
+            handleEnvironment latexState v
 
         InlineMath v ->
             "$" ++ v.value ++ "$"
@@ -54,8 +75,8 @@ transformLatex latex =
             "\n$$\n" ++ v.value ++ "\n$$\n"
 
 
-handleEnvironment : { a | body : String, env : String } -> String
-handleEnvironment v =
+handleEnvironment : LatexState -> { a | body : String, env : String } -> String
+handleEnvironment latexState v =
     let
         env =
             v.env
@@ -68,10 +89,10 @@ handleEnvironment v =
                 handleCenterEnvironment body
 
             "equation" ->
-                handleEquationEnvironment body
+                handleEquationEnvironment latexState body
 
             "align" ->
-                handleAlignEnvironment body
+                handleAlignEnvironment latexState body
 
             "itemize" ->
                 handleItemize body
@@ -97,20 +118,32 @@ handleCenterEnvironment body =
     "\n<div class=\"center\">\n" ++ body ++ "\n</div>\n"
 
 
-handleEquationEnvironment : String -> String
-handleEquationEnvironment body =
-    "\n\\begin{equation}\n" ++ body ++ "\n\\end{equation}\n"
+handleEquationEnvironment : LatexState -> String -> String
+handleEquationEnvironment latexState body =
+    let
+        addendum =
+            if latexState.eqno > 0 then
+                "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+            else
+                ""
+    in
+        Debug.log "EQUATION" "\n\\begin{equation}\n" ++ addendum ++ body ++ "\n\\end{equation}\n"
 
 
-handleAlignEnvironment : String -> String
-handleAlignEnvironment body =
+handleAlignEnvironment : LatexState -> String -> String
+handleAlignEnvironment latexState body =
     let
         editedBody =
             String.Extra.replace "\\ \\" "\\\\" body
 
         -- NOTE: ^^^ temporary fix
+        addendum =
+            if latexState.eqno > 0 then
+                "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+            else
+                ""
     in
-        "\n$$\n\\begin{align}\n" ++ editedBody ++ "\n\\end{align}\n$$\n"
+        "\n$$\n\\begin{align}\n" ++ addendum ++ editedBody ++ "\n\\end{align}\n$$\n"
 
 
 parseItems : String -> List String
@@ -231,8 +264,8 @@ handleVerbatim body =
 -- MACROS
 
 
-handleMacro : { a | args : List String, name : String } -> String
-handleMacro v =
+handleMacro : LatexState -> { a | args : List String, name : String } -> String
+handleMacro latexState v =
     case v.name of
         "code" ->
             handleCode v.args
@@ -268,7 +301,7 @@ handleMacro v =
             "&ndash;"
 
         "section" ->
-            handleSection v.args
+            handleSection latexState v.args
 
         "section*" ->
             handleSectionStar v.args
@@ -283,13 +316,13 @@ handleMacro v =
             handleSubheading v.args
 
         "subsection" ->
-            handleSubSection v.args
+            handleSubSection latexState v.args
 
         "subsection*" ->
             handleSubSectionStar v.args
 
         "subsubsection" ->
-            handleSubSubSection v.args
+            handleSubSubSection latexState v.args
 
         "subsubsection*" ->
             handleSubSubSectionStar v.args
@@ -550,13 +583,19 @@ handleStrong args =
         " <span class=\"strong\">" ++ arg ++ "</span>"
 
 
-handleSection : List String -> String
-handleSection args =
+handleSection : LatexState -> List String -> String
+handleSection latexState args =
     let
         arg =
             getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ " "
+            else
+                ""
     in
-        "<h2>" ++ arg ++ "</h2>"
+        "<h2>" ++ addendum ++ arg ++ "</h2>"
 
 
 handleSectionStar : List String -> String
@@ -577,13 +616,19 @@ handleSubheading args =
         "<div class=\"subheading\">" ++ arg ++ "</div>"
 
 
-handleSubSection : List String -> String
-handleSubSection args =
+handleSubSection : LatexState -> List String -> String
+handleSubSection latexState args =
     let
         arg =
             getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ " "
+            else
+                ""
     in
-        "<h3>" ++ arg ++ "</h3>"
+        "<h3>" ++ addendum ++ arg ++ "</h3>"
 
 
 handleSubSectionStar : List String -> String
@@ -595,13 +640,19 @@ handleSubSectionStar args =
         "<h3>" ++ arg ++ "</h3>"
 
 
-handleSubSubSection : List String -> String
-handleSubSubSection args =
+handleSubSubSection : LatexState -> List String -> String
+handleSubSubSection latexState args =
     let
         arg =
             getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3)
+            else
+                ""
     in
-        "<h4>" ++ arg ++ "</h4>"
+        "<h4>" ++ addendum ++ arg ++ "</h4>"
 
 
 handleSubSubSectionStar : List String -> String
