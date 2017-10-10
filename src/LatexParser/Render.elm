@@ -78,7 +78,7 @@ transformLatex latexState latex =
             handleEnvironment latexState v
 
         InlineMath v ->
-            "$" ++ v.value ++ "$"
+            " $" ++ v.value ++ "$"
 
         DisplayMath v ->
             "\n$$\n" ++ v.value ++ "\n$$\n"
