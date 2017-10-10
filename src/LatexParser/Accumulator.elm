@@ -66,6 +66,28 @@ info latexElement =
             { typ = "null", name = "null", value = [] }
 
 
+handleEquationNumbers : LatexState -> LatexInfo -> LatexState
+handleEquationNumbers latexState headElement =
+    let
+        label =
+            headElement.value
+                |> List.head
+                |> Maybe.withDefault ""
+                |> String.trim
+                |> Latex.getLabel
+
+        newEqno =
+            latexState.eqno + 1
+
+        newDict =
+            if label /= "" then
+                Dict.insert label (toString newEqno) latexState.dict
+            else
+                latexState.dict
+    in
+        { latexState | eqno = newEqno, dict = newDict }
+
+
 updateState : List LatexParser.Parser.Latex -> LatexState -> LatexState
 updateState parsedParagraph latexState =
     let
@@ -87,50 +109,10 @@ updateState parsedParagraph latexState =
                     { latexState | s3 = latexState.s3 + 1 }
 
                 ( "env", "equation" ) ->
-                    let
-                        label =
-                            headElement.value
-                                |> List.head
-                                |> Maybe.withDefault ""
-                                |> String.trim
-                                |> Latex.getLabel
-
-                        newEqno =
-                            if label /= "" then
-                                latexState.eqno + 1
-                            else
-                                latexState.eqno
-
-                        newDict =
-                            if label /= "" then
-                                Dict.insert label (toString newEqno) latexState.dict
-                            else
-                                latexState.dict
-                    in
-                        { latexState | eqno = newEqno, dict = newDict }
+                    handleEquationNumbers latexState headElement
 
                 ( "env", "align" ) ->
-                    let
-                        label =
-                            headElement.value
-                                |> List.head
-                                |> Maybe.withDefault ""
-                                |> String.trim
-                                |> Latex.getLabel
-
-                        newEqno =
-                            if label /= "" then
-                                latexState.eqno + 1
-                            else
-                                latexState.eqno
-
-                        newDict =
-                            if label /= "" then
-                                Dict.insert label (toString newEqno) latexState.dict
-                            else
-                                latexState.dict
-                    in
-                        { latexState | eqno = newEqno, dict = newDict }
+                    handleEquationNumbers latexState headElement
 
                 _ ->
                     latexState
