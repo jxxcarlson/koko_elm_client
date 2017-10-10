@@ -92,8 +92,8 @@ type alias DisplayMath_ =
     }
 
 
-displayMath : Parser DisplayMath_
-displayMath =
+displayMathOLD : Parser DisplayMath_
+displayMathOLD =
     inContext "display math" <|
         delayedCommit (symbol "$$") <|
             succeed DisplayMath_
@@ -101,14 +101,32 @@ displayMath =
                 |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
 
 
-displayMath2 : Parser DisplayMath_
-displayMath2 =
+displayMath : Parser DisplayMath_
+displayMath =
+    inContext "display math" <|
+        succeed DisplayMath_
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "$$"
+            |= parseUntil "$$"
+
+
+displayMath2OLD : Parser DisplayMath_
+displayMath2OLD =
     inContext "display math" <|
         delayedCommit (symbol "\\[") <|
             succeed DisplayMath_
                 |= parseUntil "\\]"
                 |. ignore (Exactly 1) (\c -> c == ' ' || c == '\n')
                 |. spaces
+
+
+displayMath2 : Parser DisplayMath_
+displayMath2 =
+    inContext "display math" <|
+        succeed DisplayMath_
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "\\["
+            |= parseUntil "\\]"
 
 
 type alias Macro_ =

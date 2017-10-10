@@ -270,6 +270,9 @@ handleMacro v =
         "section" ->
             handleSection v.args
 
+        "section*" ->
+            handleSectionStar v.args
+
         "setcounter" ->
             ""
 
@@ -282,8 +285,14 @@ handleMacro v =
         "subsection" ->
             handleSubSection v.args
 
+        "subsection*" ->
+            handleSubSectionStar v.args
+
         "subsubsection" ->
             handleSubSubSection v.args
+
+        "subsubsection*" ->
+            handleSubSubSectionStar v.args
 
         "term" ->
             handleTerm v.args
@@ -550,6 +559,15 @@ handleSection args =
         "<h2>" ++ arg ++ "</h2>"
 
 
+handleSectionStar : List String -> String
+handleSectionStar args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h2>" ++ arg ++ "</h2>"
+
+
 handleSubheading : List String -> String
 handleSubheading args =
     let
@@ -568,8 +586,26 @@ handleSubSection args =
         "<h3>" ++ arg ++ "</h3>"
 
 
+handleSubSectionStar : List String -> String
+handleSubSectionStar args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h3>" ++ arg ++ "</h3>"
+
+
 handleSubSubSection : List String -> String
 handleSubSubSection args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h4>" ++ arg ++ "</h4>"
+
+
+handleSubSubSectionStar : List String -> String
+handleSubSubSectionStar args =
     let
         arg =
             getAt 0 args
