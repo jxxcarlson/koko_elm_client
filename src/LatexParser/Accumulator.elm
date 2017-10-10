@@ -146,7 +146,7 @@ updateState parsedParagraph latexState =
                                 -1
                     in
                         if initialSectionNumber > -1 then
-                            { latexState | s1 = initialSectionNumber, s2 = 0, s3 = 0 }
+                            { latexState | s1 = initialSectionNumber - 1, s2 = 0, s3 = 0 }
                         else
                             latexState
 
