@@ -132,7 +132,10 @@ handleEquationEnvironment latexState body =
     let
         addendum =
             if latexState.eqno > 0 then
-                "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
             else
                 ""
     in
@@ -148,7 +151,10 @@ handleAlignEnvironment latexState body =
         -- NOTE: ^^^ temporary fix
         addendum =
             if latexState.eqno > 0 then
-                "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
             else
                 ""
     in
@@ -200,20 +206,23 @@ handleEnumerate body =
 
 handleDefaultEnvironment : LatexState -> String -> String -> String
 handleDefaultEnvironment latexState env body =
-    if List.member env [ "theorem", "proposition", "corollary", "lemma", "definiton" ] then
-        handleThoeremLikeEnvironment latexState env body
+    if List.member env [ "theorem", "proposition", "corollary", "lemma", "definition" ] then
+        handleTheoremLikeEnvironment latexState env body
     else
         handleDefaultEnvironment2 env body
 
 
-handleThoeremLikeEnvironment : LatexState -> String -> String -> String
-handleThoeremLikeEnvironment latexState env body =
+handleTheoremLikeEnvironment : LatexState -> String -> String -> String
+handleTheoremLikeEnvironment latexState env body =
     let
         body2 =
             body |> String.trim |> transformText
 
         tnoString =
-            " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+            if latexState.s1 > 0 then
+                " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+            else
+                " " ++ (toString latexState.tno)
     in
         "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ body2 ++ "\n</div>\n</div>\n"
 
@@ -518,7 +527,7 @@ handleCenterImage url label imageAttributes =
             imageAttributes.width
 
         imageCenterLeftPart width =
-            "<div style=\"align: center; width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
+            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
     in
         (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
 
