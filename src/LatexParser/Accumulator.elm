@@ -167,7 +167,7 @@ updateState parsedParagraph latexState =
                 ( "env", "lemma" ) ->
                     handleTheoremNumbers latexState headElement
 
-                ( "env", "defintion" ) ->
+                ( "env", "definition" ) ->
                     handleTheoremNumbers latexState headElement
 
                 ( "env", "corollary" ) ->
