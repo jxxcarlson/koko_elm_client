@@ -26,7 +26,7 @@ accumulator :
     -> ( List b, LatexState )
 accumulator preprocessor processor stateUpdater inputList =
     inputList
-        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], { s1 = 0, s2 = 0, s3 = 0, eqno = 0, dict = Render.emptyDict } )
+        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], Render.emptyLatexState )
 
 
 transformer :
@@ -87,34 +87,33 @@ handleEquationNumbers latexState headElement =
 
         newDict =
             if label /= "" then
-                Dict.insert label (toString newEqno) latexState.dict
+                Dict.insert label ((toString latexState.s1) ++ "." ++ (toString newEqno)) latexState.dict
             else
                 latexState.dict
     in
         { latexState | eqno = newEqno, dict = newDict }
 
 
+handleTheoremNumbers : LatexState -> LatexInfo -> LatexState
+handleTheoremNumbers latexState headElement =
+    let
+        label =
+            headElement.value
+                |> List.head
+                |> Maybe.withDefault ""
+                |> String.trim
+                |> Latex.getLabel
 
--- sectionCounter : String -> LatexState -> LatexState
--- sectionCounter paragraph latexState_ =
---     let
---         initialSectionNumber =
---             (getSectionNumber paragraph)
---
---         latexState =
---             if initialSectionNumber > -1 then
---                 { latexState_ | s1 = (initialSectionNumber - 1), s2 = 0, s3 = 0 }
---             else
---                 latexState_
---     in
---         if String.contains "\\section" paragraph then
---             { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
---         else if String.contains "\\subsection" paragraph then
---             { latexState | s2 = latexState.s2 + 1, s3 = 0 }
---         else if String.contains "\\subsubsection" paragraph then
---             { latexState | s3 = latexState.s3 + 1 }
---         else
---             latexState
+        newTno =
+            latexState.tno + 1
+
+        newDict =
+            if label /= "" then
+                Dict.insert label ((toString latexState.s1) ++ "." ++ (toString newTno)) latexState.dict
+            else
+                latexState.dict
+    in
+        { latexState | tno = newTno, dict = newDict }
 
 
 updateState : List LatexParser.Parser.Latex -> LatexState -> LatexState
@@ -158,6 +157,21 @@ updateState parsedParagraph latexState =
 
                 ( "macro", "subsubsection" ) ->
                     { latexState | s3 = latexState.s3 + 1 }
+
+                ( "env", "theorem" ) ->
+                    handleTheoremNumbers latexState headElement
+
+                ( "env", "proposition" ) ->
+                    handleTheoremNumbers latexState headElement
+
+                ( "env", "lemma" ) ->
+                    handleTheoremNumbers latexState headElement
+
+                ( "env", "defintion" ) ->
+                    handleTheoremNumbers latexState headElement
+
+                ( "env", "corollary" ) ->
+                    handleTheoremNumbers latexState headElement
 
                 ( "env", "equation" ) ->
                     handleEquationNumbers latexState headElement

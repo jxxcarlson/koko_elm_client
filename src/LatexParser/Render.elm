@@ -19,11 +19,11 @@ emptyDict =
 
 
 type alias LatexState =
-    { s1 : Int, s2 : Int, s3 : Int, eqno : Int, dict : CrossReferences }
+    { s1 : Int, s2 : Int, s3 : Int, tno : Int, eqno : Int, dict : CrossReferences }
 
 
 emptyLatexState =
-    { s1 = 0, s2 = 0, s3 = 0, eqno = 0, dict = Dict.empty }
+    { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
 
 
 parseParagraph : String -> List LatexParser.Parser.Latex
@@ -119,7 +119,7 @@ handleEnvironment latexState v =
                 handleVerbatim body
 
             _ ->
-                handleDefaultEnvironment env body
+                handleDefaultEnvironment latexState env body
 
 
 handleCenterEnvironment : String -> String
@@ -132,7 +132,7 @@ handleEquationEnvironment latexState body =
     let
         addendum =
             if latexState.eqno > 0 then
-                "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+                "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
             else
                 ""
     in
@@ -148,7 +148,7 @@ handleAlignEnvironment latexState body =
         -- NOTE: ^^^ temporary fix
         addendum =
             if latexState.eqno > 0 then
-                "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+                "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
             else
                 ""
     in
@@ -198,8 +198,28 @@ handleEnumerate body =
         |> tagItem "ol"
 
 
-handleDefaultEnvironment : String -> String -> String
-handleDefaultEnvironment env body =
+handleDefaultEnvironment : LatexState -> String -> String -> String
+handleDefaultEnvironment latexState env body =
+    if List.member env [ "theorem", "proposition", "corollary", "lemma", "definiton" ] then
+        handleThoeremLikeEnvironment latexState env body
+    else
+        handleDefaultEnvironment2 env body
+
+
+handleThoeremLikeEnvironment : LatexState -> String -> String -> String
+handleThoeremLikeEnvironment latexState env body =
+    let
+        body2 =
+            body |> String.trim |> transformText
+
+        tnoString =
+            " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+    in
+        "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ body2 ++ "\n</div>\n</div>\n"
+
+
+handleDefaultEnvironment2 : String -> String -> String
+handleDefaultEnvironment2 env body =
     let
         body2 =
             body |> String.trim |> transformText
