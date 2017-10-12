@@ -113,6 +113,8 @@ toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 12, justify ]
         [ Common.printButton model.current_document
+
+        --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
         , Common.exportButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model

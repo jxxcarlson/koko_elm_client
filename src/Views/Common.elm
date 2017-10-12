@@ -352,7 +352,7 @@ printUrl document =
 exportButton : Document -> Element Styles variation Msg
 exportButton document =
     link (exportUrl document) <|
-        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.print Color.white 25))
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
 
 
 exportUrl : Document -> String

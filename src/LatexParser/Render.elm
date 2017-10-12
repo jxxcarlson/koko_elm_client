@@ -241,18 +241,6 @@ handleMacros body =
     "\n$$\n" ++ body ++ "\n$$\n"
 
 
-
--- \begin{center}
--- \begin{tabular}{ |c|c|c| }
---  \hline
---  cell1 & cell2 & cell3 \\
---  cell4 & cell5 & cell6 \\
---  cell7 & cell8 & cell9 \\
---  \hline
--- \end{tabular}
--- \end{center}
-
-
 {-| "cell1 & cell2 & cell3 \ \ncell1 & cell2 & cell3 \ "
 => [["cell1","cell2","cell3"],["cell1","cell2","cell3"]]
 -}
