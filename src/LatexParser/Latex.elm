@@ -37,6 +37,10 @@ Etc.
 import Parser exposing (..)
 
 
+args str =
+    Parser.run (Parser.repeat Parser.zeroOrMore arg) str
+
+
 getLabel str =
     case (Parser.run macro str) of
         Ok record ->
@@ -149,6 +153,12 @@ arg =
     succeed identity
         |. symbol "{"
         |= parseUntil "}"
+
+
+
+-- argOrNothing : Parser String
+-- argOrNothing =
+--     oneOf [ arg, succeed ]
 
 
 {-| run macro "\foo{bar} "

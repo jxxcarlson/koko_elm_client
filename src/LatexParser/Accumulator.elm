@@ -181,12 +181,6 @@ updateState parsedParagraph latexState =
 
                 _ ->
                     latexState
-
-        _ =
-            Debug.log "parsedParagraph" parsedParagraph
-
-        _ =
-            Debug.log "newLatexState" newLatexState
     in
         newLatexState
 

@@ -2,6 +2,7 @@ module LatexParser.Render exposing (..)
 
 import Dict
 import Configuration
+import LatexParser.Latex as Latex
 import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
@@ -152,9 +153,9 @@ handleAlignEnvironment latexState body =
         addendum =
             if latexState.eqno > 0 then
                 if latexState.s1 > 0 then
-                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}"
                 else
-                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}"
             else
                 ""
     in
@@ -246,12 +247,27 @@ handleMacros body =
 -}
 parseTabular : String -> List (List String)
 parseTabular str =
-    str
-        |> String.split "\n"
-        |> List.filter (\x -> x /= "")
-        |> List.map (String.Extra.replace "\\" "")
-        |> List.map (String.split "&")
-        |> List.map (List.map String.trim)
+    let
+        argResult =
+            Debug.log "args" (Latex.args str)
+
+        argString =
+            case argResult of
+                Ok args ->
+                    args
+                        |> String.join ("}{")
+                        |> \x -> "{" ++ x ++ "}"
+
+                _ ->
+                    ""
+    in
+        str
+            |> String.Extra.replace argString ""
+            |> String.split "\n"
+            |> List.filter (\x -> x /= "")
+            |> List.map (String.Extra.replace "\\" "")
+            |> List.map (String.split "&")
+            |> List.map (List.map String.trim)
 
 
 renderTableCell : String -> String
