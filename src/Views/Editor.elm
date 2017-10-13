@@ -21,7 +21,7 @@ import Views.Common as Common
 editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 2, fill 2 ]
+        { columns = [ fill 1, fill 3, fill 3 ]
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
@@ -118,7 +118,6 @@ toolSelectorPanel model =
         , Common.exportButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model
-        , Common.searchOrderMenu model
         , Common.recallLastSearchButton model
         , selectEditTools model
         ]

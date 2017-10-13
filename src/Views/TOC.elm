@@ -38,11 +38,25 @@ documentListViewForPhone model =
         ]
 
 
+searchOrderMenu : Model -> Element Styles variation Msg
+searchOrderMenu model =
+    -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
+    select "searchOrder"
+        LightGray
+        [ height (px 25), verticalCenter, onInput SelectSearchOrder ]
+        [ option "viewed" True (text "Viewed")
+        , option "updated" False (text "Updated")
+        , option "created" False (text "Created")
+        , option "alpha" False (text "Alpha")
+        ]
+
+
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
     column None
         [ height (percent 100), paddingBottom 20 ]
         [ documentListHeader model
+        , searchOrderMenu model
         , documentListView1 model
         ]
 
@@ -72,6 +86,7 @@ documentStackView model =
     column None
         [ height (percent 100), minWidth (px 200) ]
         [ documentStackHeader model
+        , searchOrderMenu model
         , documentStackView1 model
         ]
 
