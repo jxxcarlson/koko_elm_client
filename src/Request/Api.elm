@@ -41,3 +41,8 @@ printUrl =
 exportUrl : String
 exportUrl =
     host ++ "/export/documents"
+
+
+imageCatalogueUrl : String
+imageCatalogueUrl =
+    host ++ "/imagecatalogue/documents"

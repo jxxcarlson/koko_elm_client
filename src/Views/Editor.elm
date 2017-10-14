@@ -108,6 +108,10 @@ deleteButton model =
     Basic.faIcon "Delete document" FontAwesome.trash [ onClick (DeleteCurrentDocument) ]
 
 
+
+-- , Common.searchOrderMenu model
+
+
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
@@ -116,6 +120,7 @@ toolSelectorPanel model =
 
         --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
         , Common.exportButton model.current_document
+        , Common.imageCatalogueButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model
         , Common.recallLastSearchButton model

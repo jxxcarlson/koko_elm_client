@@ -2,6 +2,7 @@ module Views.Common
     exposing
         ( exportButton
         , getDevice
+        , imageCatalogueButton
         , tool
         , selectTableOfContents
         , publicCheckbox
@@ -358,6 +359,17 @@ exportButton document =
 exportUrl : Document -> String
 exportUrl document =
     Request.Api.exportUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+
+
+imageCatalogueUrl : Document -> String
+imageCatalogueUrl document =
+    Request.Api.imageCatalogueUrl ++ "/" ++ (toString document.id)
+
+
+imageCatalogueButton : Document -> Element Styles variation Msg
+imageCatalogueButton document =
+    link (imageCatalogueUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
 
 
 printTypeString : Document -> String
