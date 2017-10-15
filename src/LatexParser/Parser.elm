@@ -15,7 +15,7 @@ import LatexParser.Latex
         , inlineMath
         , displayMath
         , displayMath2
-        , word
+        , words
         , ws
         )
 
@@ -25,7 +25,7 @@ type Latex
     | Environment Environment_
     | InlineMath InlineMath_
     | DisplayMath DisplayMath_
-    | Word String
+    | Words String
     | Comment ()
 
 
@@ -68,8 +68,8 @@ latex =
             , map DisplayMath displayMath2
             , map DisplayMath displayMath
             , map InlineMath inlineMath
-            , map Word word
             , map Macro macro
+            , map Words words
             ]
 
 

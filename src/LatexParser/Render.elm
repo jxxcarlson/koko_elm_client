@@ -66,7 +66,7 @@ transformLatex latexState latex =
         Comment () ->
             ""
 
-        Word str ->
+        Words str ->
             if List.member str [ ".", ",", ":", ";", "?", "!" ] then
                 str ++ " "
             else

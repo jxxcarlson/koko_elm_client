@@ -65,8 +65,25 @@ word =
     inContext "word" <|
         succeed identity
             |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
+
+
+
+-- words : Parser (List String)
+-- words =
+--     inContext "words" <|
+--         succeed identity
+--             |= repeat oneOrMore word
+
+
+words : Parser String
+words =
+    inContext "words" <|
+        (succeed identity
+            |= repeat oneOrMore word
+            |> map (String.join (" "))
+        )
 
 
 type alias Environment_ =
