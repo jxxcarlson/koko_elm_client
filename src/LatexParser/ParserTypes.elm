@@ -6,7 +6,7 @@ module LatexParser.ParserTypes exposing (..)
 
 type alias Environment_ =
     { env : String
-    , body : String
+    , body : ParserItem
     }
 
 
@@ -38,5 +38,5 @@ type Latex
 
 
 type ParserItem
-    = String
-    | List Latex
+    = StringValue String
+    | LatexList (List Latex)

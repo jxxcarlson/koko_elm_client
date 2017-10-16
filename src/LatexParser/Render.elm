@@ -4,7 +4,7 @@ import Dict
 import Configuration
 import LatexParser.Latex as Latex
 import LatexParser.Parser exposing (latex, latexParser, defaultLatexList)
-import LatexParser.ParserTypes exposing (Latex(..))
+import LatexParser.ParserTypes exposing (Latex(..), ParserItem(..))
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import Regex
@@ -86,14 +86,19 @@ transformLatex latexState latex =
             "\n$$\n" ++ v.value ++ "\n$$\n"
 
 
-handleEnvironment : LatexState -> { a | body : String, env : String } -> String
+handleEnvironment : LatexState -> { a | body : ParserItem, env : String } -> String
 handleEnvironment latexState v =
     let
         env =
             v.env
 
         body =
-            v.body
+            case v.body of
+                StringValue str ->
+                    str
+
+                LatexList ll ->
+                    "latexList"
     in
         case env of
             "center" ->

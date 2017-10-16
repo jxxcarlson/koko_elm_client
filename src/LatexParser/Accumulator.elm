@@ -2,11 +2,11 @@ module LatexParser.Accumulator exposing (getSectionNumber, transformParagraphs, 
 
 import Dict
 import LatexParser.Render as Render
-import LatexParser.Parser
+import LatexParser.Parser exposing (defaultLatexList)
 import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render exposing (LatexState)
-import LatexParser.ParserTypes exposing (Latex(..))
+import LatexParser.ParserTypes exposing (Latex(..), ParserItem(..))
 import LatexParser.Latex as Latex
 import List.Extra
 import Regex
@@ -67,7 +67,12 @@ info latexElement =
             { typ = "macro", name = v.name, value = v.args }
 
         Environment v ->
-            { typ = "env", name = v.env, value = [ v.body ] }
+            case v.body of
+                StringValue str ->
+                    { typ = "env", name = v.env, value = [ str ] }
+
+                LatexList ll ->
+                    { typ = "env", name = v.env, value = [ "latexList" ] }
 
         _ ->
             { typ = "null", name = "null", value = [] }

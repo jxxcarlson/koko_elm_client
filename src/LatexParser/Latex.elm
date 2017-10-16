@@ -35,7 +35,7 @@ Etc.
 {- This version contains Ilias' improved code -}
 
 import Parser exposing (..)
-import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_)
+import LatexParser.ParserTypes exposing (ParserItem(..), InlineMath_, DisplayMath_, Macro_, Environment_)
 
 
 args str =
@@ -203,6 +203,7 @@ environmentOfType envType =
         ignoreUntil endWord
             |> source
             |> map (String.dropRight (String.length endWord))
+            |> map StringValue
             |> map (Environment_ envType)
 
 
