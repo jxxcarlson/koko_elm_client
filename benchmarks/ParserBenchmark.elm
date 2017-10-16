@@ -4,7 +4,7 @@ import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
 import Document.Preprocess
 import LatexParser.Paragraph
-import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
+import LatexParser.Parser exposing (Latex(..), latex, latexParser, latexListGet)
 import LatexParser.Render exposing (transformText)
 import Parser
 import Regex
@@ -32,7 +32,7 @@ suite =
             , benchmark1 "parseDocument" LatexParser.Paragraph.parseDocument qftIntroText
             , benchmark1 "replaceStrings" LatexParser.Paragraph.replaceStrings qftIntroText
 
-            -- , benchmark "latexList" (Parser.run latexList qftIntroText)
+            -- , benchmark "latexParser" (Parser.run latexParser qftIntroText)
             , benchmark1 "transformText" transformText qftIntroText
             , benchmark1 "formatParagraphList" LatexParser.Paragraph.formatParagraphList (List.repeat 3 [ line1 ])
             ]

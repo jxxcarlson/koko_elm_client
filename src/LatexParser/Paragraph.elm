@@ -23,7 +23,7 @@ yada foo =
 --
 --     NOTE: In step (2), it is the function call `LatexParser.Render.transformText paragraph`
 --     in  `LatexParser.Paragraph.formatParagraph` that drives parsing and
---     rendering of LaTeX.  `Render.transformText` in turn calls on `Parser.run latexList text`
+--     rendering of LaTeX.  `Render.transformText` in turn calls on `Parser.run latexParser text`
 --     which parses a paragraph into a list of LaTeX elements.  This list is piped into
 --     `List.map transformLatex`, which dispatches each Latex element to handler which
 --     converts it HTML.  The result, a list of HTML strings, is then concatenated to

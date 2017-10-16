@@ -30328,9 +30328,9 @@ var _user$project$LatexParser_Parser$latex = A2(
 				}
 			}
 		}));
-var _user$project$LatexParser_Parser$latexList = A2(
+var _user$project$LatexParser_Parser$latexParser = A2(
 	_elm_tools$parser$Parser$inContext,
-	'latexList',
+	'latexParser',
 	A2(
 		_elm_tools$parser$Parser_ops['|='],
 		_elm_tools$parser$Parser$succeed(_user$project$LatexParser_Parser$LatexList),
@@ -30420,7 +30420,7 @@ var _user$project$LatexParser_Render$transformText = function (text) {
 			_elm_lang$core$List$map,
 			_user$project$LatexParser_Render$transformLatex,
 			_user$project$LatexParser_Parser$latexListGet(
-				A2(_elm_tools$parser$Parser$run, _user$project$LatexParser_Parser$latexList, text))));
+				A2(_elm_tools$parser$Parser$run, _user$project$LatexParser_Parser$latexParser, text))));
 	var _p3 = A2(_elm_lang$core$Debug$log, 'transformText', text);
 	return transformedText;
 };
@@ -30436,7 +30436,7 @@ var _user$project$LatexParser_Render$transformText2 = function (text) {
 			_elm_lang$core$List$map,
 			_user$project$LatexParser_Render$transformLatex,
 			_user$project$LatexParser_Parser$latexListGet(
-				A2(_elm_tools$parser$Parser$run, _user$project$LatexParser_Parser$latexList, text))));
+				A2(_elm_tools$parser$Parser$run, _user$project$LatexParser_Parser$latexParser, text))));
 };
 var _user$project$LatexParser_Render$identityy = function (text) {
 	return text;

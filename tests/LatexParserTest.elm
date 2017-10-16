@@ -110,7 +110,7 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "\\emph{foo}"
+                            run latexParser "\\emph{foo}"
                     in
                         case (result) of
                             Ok v ->
@@ -122,7 +122,7 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "\\emph{foo} \\yada{1}{2}"
+                            run latexParser "\\emph{foo} \\yada{1}{2}"
                     in
                         case (result) of
                             Ok v ->
@@ -134,7 +134,7 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "ho ho ho \\emph{foo} ha ha ha \\yada{1}{2}\n"
+                            run latexParser "ho ho ho \\emph{foo} ha ha ha \\yada{1}{2}\n"
                     in
                         case (result) of
                             Ok v ->
@@ -146,7 +146,7 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
+                            run latexParser "An equation: $\\alpha^2 + \\beta^2$\n\na b \\emph{test.} \\begin{theorem} This is true: $a^n = 1$ has $n$ solutions. \\end{theorem}  \n\n% (2) \n\nPythagoras: $ a^2 + b^2 = c^2$\n\n\nNewton: $$ \\int_0^1 x^n dx = \\frac{1}{n+1} $$\n\n"
                     in
                         case (result) of
                             Ok v ->
@@ -160,7 +160,7 @@ suite =
                 \_ ->
                     let
                         result =
-                            run latexList "ho ho ho " |> latexListGet |> List.map LatexParser.Render.transformLatex
+                            run latexParser "ho ho ho " |> latexListGet |> List.map LatexParser.Render.transformLatex
                     in
                         Expect.equal result [ "ho", "ho", "ho" ]
             , test "(R C) renders commments -- i.e., doesn't show them." <|
