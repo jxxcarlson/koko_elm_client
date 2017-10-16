@@ -85,6 +85,13 @@ latexList =
             |= repeat zeroOrMore latex
 
 
+latexList1 : Parser (List Latex)
+latexList1 =
+    inContext "latexList" <|
+        succeed identity
+            |= repeat zeroOrMore latex
+
+
 
 -- |. repeat zeroOrMore (oneOf [ symbol "\n", symbol " " ])
 -- |. oneOf [ symbol "\n" ]
