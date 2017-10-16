@@ -35,6 +35,7 @@ Etc.
 {- This version contains Ilias' improved code -}
 
 import Parser exposing (..)
+import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_)
 
 
 args str =
@@ -86,17 +87,6 @@ words =
         )
 
 
-type alias Environment_ =
-    { env : String
-    , body : String
-    }
-
-
-type alias InlineMath_ =
-    { value : String
-    }
-
-
 {-| }
 Re "source", see the Parser documentation. It is defined and
 explained there.
@@ -115,11 +105,6 @@ inlineMath =
             |. symbol "$"
             |= parseUntil "$"
             |. ws
-
-
-type alias DisplayMath_ =
-    { value : String
-    }
 
 
 displayMathOLD : Parser DisplayMath_
@@ -157,12 +142,6 @@ displayMath2 =
             |. ignore zeroOrMore ((==) ' ')
             |. symbol "\\["
             |= parseUntil "\\]"
-
-
-type alias Macro_ =
-    { name : String
-    , args : List String
-    }
 
 
 arg : Parser String

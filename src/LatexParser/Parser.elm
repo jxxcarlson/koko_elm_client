@@ -3,13 +3,10 @@ module LatexParser.Parser exposing (..)
 {-| -}
 
 import Parser exposing (..)
+import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_, Latex(..))
 import LatexParser.Latex
     exposing
-        ( Macro_
-        , Environment_
-        , InlineMath_
-        , DisplayMath_
-        , texComment
+        ( texComment
         , macro
         , environment
         , inlineMath
@@ -18,15 +15,6 @@ import LatexParser.Latex
         , words
         , ws
         )
-
-
-type Latex
-    = Macro Macro_
-    | Environment Environment_
-    | InlineMath InlineMath_
-    | DisplayMath DisplayMath_
-    | Words String
-    | Comment ()
 
 
 defaultLatexList =

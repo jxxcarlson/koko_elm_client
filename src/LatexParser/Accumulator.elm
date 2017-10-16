@@ -6,6 +6,7 @@ import LatexParser.Parser
 import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render exposing (LatexState)
+import LatexParser.ParserTypes exposing (Latex(..))
 import LatexParser.Latex as Latex
 import List.Extra
 import Regex
@@ -19,9 +20,9 @@ transformParagraphs paragraphs =
 
 
 accumulator :
-    (a -> List LatexParser.Parser.Latex)
-    -> (List LatexParser.Parser.Latex -> LatexState -> b)
-    -> (List LatexParser.Parser.Latex -> LatexState -> LatexState)
+    (a -> List Latex)
+    -> (List Latex -> LatexState -> b)
+    -> (List Latex -> LatexState -> LatexState)
     -> List a
     -> ( List b, LatexState )
 accumulator preprocessor processor stateUpdater inputList =
@@ -59,13 +60,13 @@ getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
-info : LatexParser.Parser.Latex -> LatexInfo
+info : Latex -> LatexInfo
 info latexElement =
     case latexElement of
-        LatexParser.Parser.Macro v ->
+        Macro v ->
             { typ = "macro", name = v.name, value = v.args }
 
-        LatexParser.Parser.Environment v ->
+        Environment v ->
             { typ = "env", name = v.env, value = [ v.body ] }
 
         _ ->
@@ -116,7 +117,7 @@ handleTheoremNumbers latexState headElement =
         { latexState | tno = newTno, dict = newDict }
 
 
-updateState : List LatexParser.Parser.Latex -> LatexState -> LatexState
+updateState : List Latex -> LatexState -> LatexState
 updateState parsedParagraph latexState =
     let
         headElement =
@@ -185,7 +186,7 @@ updateState parsedParagraph latexState =
         newLatexState
 
 
-processParagraph : String -> LatexState -> List LatexParser.Parser.Latex
+processParagraph : String -> LatexState -> List Latex
 processParagraph paragraph latexState =
     paragraph
         |> (updateSection latexState)
@@ -238,6 +239,6 @@ updateSection latexState paragraph =
         paragraph
 
 
-renderParagraph : List LatexParser.Parser.Latex -> LatexState -> String
+renderParagraph : List Latex -> LatexState -> String
 renderParagraph parsedParagraph latexState =
     parsedParagraph |> (Render.render latexState)

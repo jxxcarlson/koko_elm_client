@@ -3,7 +3,8 @@ module LatexParser.Render exposing (..)
 import Dict
 import Configuration
 import LatexParser.Latex as Latex
-import LatexParser.Parser exposing (Latex(..), latex, latexParser, defaultLatexList)
+import LatexParser.Parser exposing (latex, latexParser, defaultLatexList)
+import LatexParser.ParserTypes exposing (Latex(..))
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import Regex
