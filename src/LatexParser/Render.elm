@@ -3,7 +3,7 @@ module LatexParser.Render exposing (..)
 import Dict
 import Configuration
 import LatexParser.Latex as Latex
-import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
+import LatexParser.Parser exposing (Latex(..), latex, latexList, defaultLatexList)
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import Regex
@@ -30,7 +30,7 @@ emptyLatexState =
 parseParagraph : String -> List LatexParser.Parser.Latex
 parseParagraph text =
     Parser.run latexList text
-        |> latexListGet
+        |> Result.withDefault defaultLatexList
 
 
 render : LatexState -> List LatexParser.Parser.Latex -> String
@@ -49,7 +49,7 @@ transformText str = str |> parseParagraph |> render
 transformText : String -> String
 transformText text =
     Parser.run latexList text
-        |> latexListGet
+        |> Result.withDefault defaultLatexList
         |> List.map (transformLatex emptyLatexState)
         |> String.join ("")
         |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")

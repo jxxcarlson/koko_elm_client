@@ -29,22 +29,8 @@ type Latex
     | Comment ()
 
 
-defaultLatex : Latex
-defaultLatex =
-    Macro (Macro_ "Parse error" [])
-
-
 defaultLatexList =
-    LatexList [ defaultLatex ]
-
-
-latexGet r =
-    r |> Result.withDefault defaultLatex
-
-
-latexListGet : Result.Result Parser.Error LatexList -> List Latex
-latexListGet r =
-    r |> Result.withDefault defaultLatexList |> .value
+    [ Macro (Macro_ "Parse error" []) ]
 
 
 {-| TEST of latex:
@@ -73,20 +59,8 @@ latex =
             ]
 
 
-type alias LatexList =
-    { value : List Latex
-    }
-
-
-latexList : Parser LatexList
+latexList : Parser (List Latex)
 latexList =
-    inContext "latexList" <|
-        succeed LatexList
-            |= repeat zeroOrMore latex
-
-
-latexList1 : Parser (List Latex)
-latexList1 =
     inContext "latexList" <|
         succeed identity
             |= repeat zeroOrMore latex
