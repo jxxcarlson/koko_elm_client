@@ -492,13 +492,22 @@ handleEllie args =
         url =
             "https://ellie-app.com/" ++ (getAt 0 args)
 
+        title_ =
+            getAt 1 args
+
+        title =
+            if title_ == "xxx" then
+                "Link to Ellie"
+            else
+                title_
+
         style =
             " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
 
         sandbox =
             " sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\""
     in
-        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>Link to Ellie</a></center>"
+        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
 
 
 handleImage : List String -> String
