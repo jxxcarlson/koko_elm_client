@@ -328,6 +328,9 @@ handleMacro latexState v =
         "ellie" ->
             handleEllie v.args
 
+        "iframe" ->
+            handleIFrame v.args
+
         "image" ->
             handleImage v.args
 
@@ -483,6 +486,42 @@ handleHyperlink args =
         " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
 
 
+handleIFrame : List String -> String
+handleIFrame args =
+    let
+        url =
+            getAt 0 args
+
+        src =
+            "src =\"" ++ url ++ "\""
+
+        title_ =
+            getAt 1 args
+
+        title =
+            if title_ == "xxx" then
+                "Link"
+            else
+                title_
+
+        height_ =
+            getAt 2 args
+
+        height =
+            if (title_ == "xxx" || height_ == "xxx") then
+                "400px"
+            else
+                height_
+
+        sandbox =
+            " sandbox=\"allow-pointer-lock\""
+
+        style =
+            " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
+    in
+        "<iframe " ++ src ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
+
+
 handleEllie : List String -> String
 handleEllie args =
     let
@@ -494,6 +533,9 @@ handleEllie args =
 
         title_ =
             getAt 1 args
+
+        foo =
+            27.99
 
         title =
             if title_ == "xxx" then
