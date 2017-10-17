@@ -520,7 +520,7 @@ handleIFrame args =
         style =
             " style = \"width:90%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
     in
-        "<iframe " ++ src ++ sandbox ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
+        "<iframe scrolling=\"yes\" " ++ src ++ sandbox ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
 
 
 handleEllie : List String -> String
