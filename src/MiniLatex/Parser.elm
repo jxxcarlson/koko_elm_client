@@ -6,7 +6,8 @@ import Parser exposing (..)
 {-| Types
 -}
 type LatexExpression
-    = LXString String
+    = Comment ()
+    | LXString String
     | InlineMath String
     | DisplayMath String
     | Macro String (List String)
@@ -20,7 +21,8 @@ parseElement : Parser LatexExpression
 parseElement =
     inContext "parseElement" <|
         oneOf
-            [ environment
+            [ texComment
+            , environment
             , displayMathDollar
             , displayMathBrackets
             , inlineMath
@@ -36,9 +38,12 @@ parseListHelper =
             |= repeat zeroOrMore parseElement
 
 
-parseList : Parser LatexExpression
-parseList =
-    parseListHelper |> map Nested
+
+{-
+   parseList : Parser LatexExpression
+   parseList =
+     ?? parseListHelper ??
+-}
 
 
 {-| Parser helpers
@@ -69,6 +74,14 @@ arg =
 
 {-| Parsers
 -}
+texComment : Parser LatexExpression
+texComment =
+    symbol "%"
+        |. ignoreUntil "\n"
+        |> source
+        |> map LXString
+
+
 word : Parser String
 word =
     inContext "word" <|
@@ -163,6 +176,10 @@ lxstring2 =
     run parseElement "This is a test."
 
 
+comment =
+    run parseElement "% This is a comment\n"
+
+
 inlineMathExpr =
     InlineMath "a^2 = 7"
 
@@ -212,7 +229,3 @@ env2 =
 
 ll =
     [ lxstring, envExpr ]
-
-
-ll2 =
-    run parseList "This is a test: $a^2 = 7$"
