@@ -6,44 +6,35 @@ import Parser exposing (..)
 {-| Types
 -}
 type LatexExpression
-    = Comment ()
-    | LXString String
+    = LXString String
+    | Comment String
     | InlineMath String
     | DisplayMath String
     | Macro String (List String)
     | Environment String LatexExpression
-    | Nested (List LatexExpression)
+    | LatexList (List LatexExpression)
 
 
 {-| Parser top level
 -}
-parseElement : Parser LatexExpression
-parseElement =
-    inContext "parseElement" <|
-        oneOf
-            [ texComment
-            , environment
-            , displayMathDollar
-            , displayMathBrackets
-            , inlineMath
-            , macro
-            , words
-            ]
+parse : Parser LatexExpression
+parse =
+    oneOf
+        [ texComment
+        , environment
+        , displayMathDollar
+        , displayMathBrackets
+        , inlineMath
+        , macro
+        , words
+        ]
 
 
-parseListHelper : Parser (List LatexExpression)
-parseListHelper =
-    inContext "parseList" <|
-        succeed identity
-            |= repeat zeroOrMore parseElement
-
-
-
-{-
-   parseList : Parser LatexExpression
-   parseList =
-     ?? parseListHelper ??
--}
+latexList : Parser LatexExpression
+latexList =
+    succeed identity
+        |= repeat oneOrMore parse
+        |> map LatexList
 
 
 {-| Parser helpers
@@ -74,14 +65,6 @@ arg =
 
 {-| Parsers
 -}
-texComment : Parser LatexExpression
-texComment =
-    symbol "%"
-        |. ignoreUntil "\n"
-        |> source
-        |> map LXString
-
-
 word : Parser String
 word =
     inContext "word" <|
@@ -89,6 +72,18 @@ word =
             |. spaces
             |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
+
+
+texComment : Parser LatexExpression
+texComment =
+    symbol "%"
+        |. ignoreUntil "\n"
+        |> source
+        |> map Comment
+
+
+
+-- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 words : Parser LatexExpression
@@ -164,68 +159,3 @@ beginWord =
         |. ignore zeroOrMore ((==) ' ')
         |. symbol "\\begin{"
         |= parseUntil "}"
-
-
-{-| Examples
--}
-lxstring =
-    LXString "foo"
-
-
-lxstring2 =
-    run parseElement "This is a test."
-
-
-comment =
-    run parseElement "% This is a comment\n"
-
-
-inlineMathExpr =
-    InlineMath "a^2 = 7"
-
-
-inlineMathExpr2 =
-    run parseElement "$a^2 = 7$"
-
-
-displayMathExpr =
-    InlineMath "b^2 = 3"
-
-
-displayMathExpr2 =
-    run parseElement "$$b^2 = 3$$"
-
-
-displayMathExpr3 =
-    run parseElement "\\[b^2 = 3\\]"
-
-
-macroExpr =
-    Macro "image" [ "http://foo.io/bird.jpg", "Bird" ]
-
-
-macroExpr2 =
-    run parseElement "\\image{http://foo.io/bird.jpg}{Bird}"
-
-
-envExpr =
-    Environment "theorem" (LXString "Infinity is very large")
-
-
-envExpr2 =
-    run parseElement "\\begin{theorem}\nInfinity is very large\\end{theorem}"
-
-
-env2 =
-    Environment "theorem" <|
-        Nested
-            [ LXString "An equation of the form"
-            , InlineMath "a^n = 1"
-            , LXString "has"
-            , InlineMath "n"
-            , LXString "distinct complex solutions"
-            ]
-
-
-ll =
-    [ lxstring, envExpr ]
