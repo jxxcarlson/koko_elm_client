@@ -50,7 +50,7 @@ suite =
                         "a\n\nb\n\nc\n\nd\n\ne\n\nf\n\ng"
 
                     editRecord =
-                        initialize String.toUpper "" text
+                        initialize String.toUpper text
                 in
                     Expect.equal editRecord.paragraphs [ "a", "b", "c", "d", "e", "f", "g" ]
         , test "(4) initialize generated the correct rendered paragraph list" <|
@@ -60,7 +60,7 @@ suite =
                         "a\n\nb\n\nc\n\nd\n\ne\n\nf\n\ng"
 
                     editRecord =
-                        initialize String.toUpper "" text
+                        initialize String.toUpper text
                 in
                     Expect.equal editRecord.renderedParagraphs [ "A", "B", "C", "D", "E", "F", "G" ]
         ]

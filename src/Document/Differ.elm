@@ -7,6 +7,7 @@ paragraphify : String -> List String
 paragraphify text =
     Regex.split Regex.All (Regex.regex "\n\n+") text
         |> List.filter (\x -> String.length x /= 0)
+        |> List.map ((String.trim) >> (\x -> x ++ "\n\n"))
 
 
 commonInitialSegment : List String -> List String -> List String
@@ -66,6 +67,18 @@ initialize transformer text =
 
         renderedParagraphs =
             List.map transformer paragraphs
+    in
+        EditRecord paragraphs renderedParagraphs
+
+
+initialize2 : (List String -> List String) -> String -> EditRecord
+initialize2 transformParagraphs text =
+    let
+        paragraphs =
+            paragraphify text
+
+        renderedParagraphs =
+            transformParagraphs paragraphs
     in
         EditRecord paragraphs renderedParagraphs
 

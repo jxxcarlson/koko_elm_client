@@ -130,7 +130,7 @@ searchForm model =
                 , Utility.onKeyUp (DoSearch model.searchState.domain)
                 , placeholder "Search: title, k:keyword .."
                 , height (px 29)
-                , minWidth (px 180)
+                , width (px 300)
                 ]
                 (model.searchQueryInputBuffer)
             , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")

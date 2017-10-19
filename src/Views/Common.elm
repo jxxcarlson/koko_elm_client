@@ -1,6 +1,8 @@
 module Views.Common
     exposing
-        ( getDevice
+        ( exportButton
+        , getDevice
+        , imageCatalogueButton
         , tool
         , selectTableOfContents
         , publicCheckbox
@@ -34,25 +36,6 @@ import Views.Basic as Basic
 import Views.Component as Component
 import Views.TOC as TOC
 import Views.Utility as Utility
-
-
--- renderedContent2 : Model -> Element Styles variation msg
--- renderedContent2 model =
---     let
---         h =
---             (toFloat model.window.height) - 150
---     in
---         (el Zero
---             [ yScrollbar
---             , id "rendered_text2"
---             , paddingXY 50 50
---             , width (percent 100)
---             , height (px h)
---             , property "innerHTML"
---                 (Json.Encode.string model.current_document.rendered_content)
---             ]
---             (text "")
---         )
 
 
 renderedContent : Model -> Element Styles variation msg
@@ -379,6 +362,28 @@ printButton document =
 printUrl : Document -> String
 printUrl document =
     Request.Api.printUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+
+
+exportButton : Document -> Element Styles variation Msg
+exportButton document =
+    link (exportUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
+
+
+exportUrl : Document -> String
+exportUrl document =
+    Request.Api.exportUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+
+
+imageCatalogueUrl : Document -> String
+imageCatalogueUrl document =
+    Request.Api.imageCatalogueUrl ++ "/" ++ (toString document.id)
+
+
+imageCatalogueButton : Document -> Element Styles variation Msg
+imageCatalogueButton document =
+    link (imageCatalogueUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
 
 
 printTypeString : Document -> String

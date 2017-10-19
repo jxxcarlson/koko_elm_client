@@ -13,6 +13,7 @@ import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
+import Element.Input as Input
 import FontAwesome
 import StyleSheet exposing (..)
 import Types exposing (..)
@@ -38,11 +39,32 @@ documentListViewForPhone model =
         ]
 
 
+searchOrderMenu : Model -> Element Styles variation Msg
+searchOrderMenu model =
+    Input.select
+        LightGray
+        [ height (px 25), verticalCenter, onInput SelectSearchOrder ]
+        { label = Input.labelAbove <| text "Search Order"
+        , with = model.searchState.order
+        , max = 4
+        , options = []
+        , menu =
+            Input.menu None
+                []
+                [ Input.choice Viewed (text "Viewed")
+                , Input.choice Updated (text "Updated")
+                , Input.choice Created (text "Created")
+                , Input.choice Alphabetical (text "Alpha")
+                ]
+        }
+
+
 documentListView0 : Model -> Element Styles variation Msg
 documentListView0 model =
     column None
         [ height (percent 100), paddingBottom 20 ]
         [ documentListHeader model
+        , searchOrderMenu model
         , documentListView1 model
         ]
 
@@ -50,7 +72,7 @@ documentListView0 model =
 documentListView1 : Model -> Element Styles variation Msg
 documentListView1 model =
     column PaleBlue
-        [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
+        [ yScrollbar, paddingTop 15, paddingLeft 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
         (List.map (viewTitle model model.current_document) model.documents)
 
 
@@ -72,6 +94,7 @@ documentStackView model =
     column None
         [ height (percent 100), minWidth (px 200) ]
         [ documentStackHeader model
+        , searchOrderMenu model
         , documentStackView1 model
         ]
 
@@ -85,7 +108,7 @@ documentStackView1 model =
 
 documentIndicator : Document -> Model -> Element Styles variation Msg
 documentIndicator document model =
-    el Transparent [ height (px 25), onClick (SelectMaster document) ] (documentIndicator1 document model)
+    el Transparent [ height (px 25), (moveDown 4), onClick (SelectMaster document) ] (documentIndicator1 document model)
 
 
 documentIndicator1 : Document -> Model -> Element style variation msg
@@ -133,15 +156,7 @@ documentIndentLevel document model =
                 ( _, _ ) ->
                     1
     in
-        8.0 + 15.0 * (toFloat (level - 1))
-
-
-viewTocItem : Child -> Element Styles variation Msg
-viewTocItem child =
-    el (None)
-        [ paddingXY 4 4
-        ]
-        (text child.title)
+        -12.0 + 16.0 * (toFloat (level - 1))
 
 
 documentListHeader : Model -> Element Styles variation Msg
@@ -162,7 +177,7 @@ numberOfDocumentInStack model =
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
 viewTitle model selectedDocument document =
     row Zero
-        [ verticalCenter, paddingXY (documentIndentLevel document model) 4 ]
+        [ verticalCenter, paddingXY (documentIndentLevel document model) 0 ]
         [ documentIndicator document model
         , titleDisplay model selectedDocument document
         ]
@@ -171,7 +186,7 @@ viewTitle model selectedDocument document =
 viewTitleInStack : Model -> Document -> Document -> Element Styles variation Msg
 viewTitleInStack model selectedDocument document =
     row Zero
-        [ verticalCenter, paddingXY 10 4 ]
+        [ verticalCenter, paddingXY 4 4 ]
         [ documentIndicator document model
         , titleDisplay model selectedDocument document
         ]
@@ -179,12 +194,22 @@ viewTitleInStack model selectedDocument document =
 
 titleDisplay : Model -> Document -> Document -> Element Styles variation Msg
 titleDisplay model selectedDocument document =
-    el (tocStyle selectedDocument document)
-        [ onClick (SelectDocument document)
-        , paddingXY 8 0
-        , height (px 20)
-        ]
-        (el None [ verticalCenter ] (text (Utility.shortString 25 document.title)))
+    let
+        windowDelta =
+            (toFloat (model.window.width - 1300))
+
+        scaledWindowDelta =
+            ((windowDelta / 25.0) |> round)
+
+        maxTitleCharacters =
+            (35 + scaledWindowDelta)
+    in
+        el (tocStyle selectedDocument document)
+            [ onClick (SelectDocument document)
+            , paddingXY 8 0
+            , height (px 20)
+            ]
+            (el TOCTitle [ verticalCenter ] (text (Utility.shortString maxTitleCharacters document.title)))
 
 
 tocStyle : Document -> Document -> Styles

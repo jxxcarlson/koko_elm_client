@@ -12,17 +12,7 @@ websocketHost : String
 websocketHost = "ws://localhost:4000/socket/websocket"
 
 tickInterval : Float
-<<<<<<< HEAD
-tickInterval =
-    60.0
-
-
-tabletWidth : Int
-tabletWidth =
-    800
-=======
 tickInterval = 1000.0
->>>>>>> master
 
 tabletWidth: Int
 tabletWidth = 800

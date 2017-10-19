@@ -76,7 +76,11 @@ updateCurrentLatexDocumentWithContent content model =
             model.current_document
 
         macroDefinitions =
-            macros model.documentDict
+            let
+                macrosString =
+                    macros model.documentDict
+            in
+                macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
             LatexDiffer.safeUpdate appState.editRecord content

@@ -1,20 +1,4 @@
-module LatexParser.Latex
-    exposing
-        ( DisplayMath_
-        , Environment_
-        , InlineMath_
-        , Macro_
-        , Words_
-        , displayMath
-        , displayMath2
-        , environment
-        , inlineMath
-        , macro
-        , texComment
-        , word
-        , words
-        , ws
-        )
+module LatexParser.Latex exposing (..)
 
 {-| LatexParser parses an as-yet undetermined subset
 of LaTeX into elements like
@@ -35,9 +19,36 @@ Blah Blah
 Etc.
 -}
 
+-- ( DisplayMath_
+-- , Environment_
+-- , InlineMath_
+-- , Macro_
+-- , displayMath
+-- , displayMath2
+-- , environment
+-- , inlineMath
+-- , macro
+-- , texComment
+-- , word
+-- , ws
+-- )
 {- This version contains Ilias' improved code -}
 
 import Parser exposing (..)
+import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_)
+
+
+args str =
+    Parser.run (Parser.repeat Parser.zeroOrMore arg) str
+
+
+getLabel str =
+    case (Parser.run macro str) of
+        Ok record ->
+            record.args |> List.head |> Maybe.withDefault ""
+
+        _ ->
+            ""
 
 
 spaces : Parser ()
@@ -55,34 +66,31 @@ word =
     inContext "word" <|
         succeed identity
             |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\'))
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
-type alias Words_ =
-    { value : List String
-    }
+
+-- words : Parser (List String)
+-- words =
+--     inContext "words" <|
+--         succeed identity
+--             |= repeat oneOrMore word
 
 
-words : Parser Words_
+words : Parser String
 words =
     inContext "words" <|
-        succeed Words_
-            |= repeat zeroOrMore word
-            |. oneOf [ symbol "\n", symbol "\\" ]
+        (succeed identity
+            |= repeat oneOrMore word
+            |> map (String.join (" "))
+        )
 
 
-type alias Environment_ =
-    { env : String
-    , body : String
-    }
-
-
-type alias InlineMath_ =
-    { value : String
-    }
-
-
+{-| }
+Re "source", see the Parser documentation. It is defined and
+explained there.
+-}
 parseUntil : String -> Parser String
 parseUntil marker =
     ignoreUntil marker
@@ -99,13 +107,8 @@ inlineMath =
             |. ws
 
 
-type alias DisplayMath_ =
-    { value : String
-    }
-
-
-displayMath : Parser DisplayMath_
-displayMath =
+displayMathOLD : Parser DisplayMath_
+displayMathOLD =
     inContext "display math" <|
         delayedCommit (symbol "$$") <|
             succeed DisplayMath_
@@ -113,8 +116,17 @@ displayMath =
                 |. ignore oneOrMore (\c -> c == ' ' || c == '\n')
 
 
-displayMath2 : Parser DisplayMath_
-displayMath2 =
+displayMath : Parser DisplayMath_
+displayMath =
+    inContext "display math" <|
+        succeed DisplayMath_
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "$$"
+            |= parseUntil "$$"
+
+
+displayMath2OLD : Parser DisplayMath_
+displayMath2OLD =
     inContext "display math" <|
         delayedCommit (symbol "\\[") <|
             succeed DisplayMath_
@@ -123,10 +135,13 @@ displayMath2 =
                 |. spaces
 
 
-type alias Macro_ =
-    { name : String
-    , args : List String
-    }
+displayMath2 : Parser DisplayMath_
+displayMath2 =
+    inContext "display math" <|
+        succeed DisplayMath_
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "\\["
+            |= parseUntil "\\]"
 
 
 arg : Parser String
@@ -134,6 +149,12 @@ arg =
     succeed identity
         |. symbol "{"
         |= parseUntil "}"
+
+
+
+-- argOrNothing : Parser String
+-- argOrNothing =
+--     oneOf [ arg, succeed ]
 
 
 {-| run macro "\foo{bar} "

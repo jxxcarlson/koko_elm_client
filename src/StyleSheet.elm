@@ -69,6 +69,7 @@ type Styles
     | Radio
     | SearchField
     | Small
+    | Smaller
     | StatusFailure
     | StatusSuccess
     | TOC
@@ -78,6 +79,7 @@ type Styles
     | TOCItemMaster
     | TOCItemMasterSelected
     | TOCItemSelected
+    | TOCTitle
     | TitleStyle
     | RHSidebar
     | RHSidebarHeader
@@ -299,6 +301,8 @@ stylesheet =
             [ Color.text Color.white, Color.background Color.blue ]
         , style TOCItemMasterSelected
             [ Color.text (Color.rgb 255 130 130), Color.background Color.blue, Font.weight 100 ]
+        , style TOCTitle
+            [ Font.size 13 ]
         , style Menu
             [ Color.background Color.charcoal ]
         , style FooterNote
@@ -312,6 +316,9 @@ stylesheet =
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
         , style Small [ Font.size 12 ]
+        , style Smaller [ Font.size 10 ]
+
+        --[ Font.font "helvetica", Font.font "arial", Font.sansSerif ]
         , style Mono [ Font.typeface [ Font.font "Lucida Sans Unicode" ] ]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]
         , style BluishCharcoal [ Color.background (Color.rgb 100 100 120), Color.text Color.white ]

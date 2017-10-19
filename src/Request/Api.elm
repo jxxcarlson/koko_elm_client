@@ -36,3 +36,13 @@ registerUserUrl =
 printUrl : String
 printUrl =
     host ++ "/print/documents"
+
+
+exportUrl : String
+exportUrl =
+    host ++ "/export/documents"
+
+
+imageCatalogueUrl : String
+imageCatalogueUrl =
+    host ++ "/imagecatalogue/documents"

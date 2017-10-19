@@ -22,7 +22,7 @@ import Views.Common as Common
 editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 2, fill 2 ]
+        { columns = [ fill 1, fill 3, fill 3 ]
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
@@ -109,14 +109,21 @@ deleteButton model =
     Basic.faIcon "Delete document" FontAwesome.trash [ onClick (DeleteCurrentDocument) ]
 
 
+
+-- , Common.searchOrderMenu model
+
+
 toolSelectorPanel : Model -> Element Styles variation Msg
 toolSelectorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 12, spread ]
         [ Common.printButton model.current_document
+
+        --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
+        , Common.exportButton model.current_document
+        , Common.imageCatalogueButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model
-        , Common.searchOrderMenu model
         , Common.recallLastSearchButton model
         , selectEditTools model
         ]

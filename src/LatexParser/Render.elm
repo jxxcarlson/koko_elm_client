@@ -1,7 +1,10 @@
 module LatexParser.Render exposing (..)
 
+import Dict
 import Configuration
-import LatexParser.Parser exposing (Latex(..), latex, latexList, latexListGet)
+import LatexParser.Latex as Latex
+import LatexParser.Parser exposing (latex, latexParser, defaultLatexList)
+import LatexParser.ParserTypes exposing (Latex(..))
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import Regex
@@ -9,16 +12,46 @@ import String.Extra
 import Parser
 
 
+type alias CrossReferences =
+    Dict.Dict String String
+
+
+emptyDict =
+    Dict.empty
+
+
+type alias LatexState =
+    { s1 : Int, s2 : Int, s3 : Int, tno : Int, eqno : Int, dict : CrossReferences }
+
+
+emptyLatexState =
+    { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
+
+
+parseParagraph : String -> List Latex
 parseParagraph text =
-    Parser.run latexList text
-        |> latexListGet
+    Parser.run latexParser text
+        |> Result.withDefault defaultLatexList
 
 
+render : LatexState -> List Latex -> String
+render latexState latexParser =
+    latexParser
+        |> List.map (transformLatex latexState)
+        |> String.join ("")
+        |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
+
+
+{-| NB:
+
+transformText str = str |> parseParagraph |> render
+
+-}
 transformText : String -> String
 transformText text =
-    Parser.run latexList text
-        |> latexListGet
-        |> List.map transformLatex
+    Parser.run latexParser text
+        |> Result.withDefault defaultLatexList
+        |> List.map (transformLatex emptyLatexState)
         |> String.join ("")
         |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
 
@@ -28,40 +61,33 @@ getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
-transformLatex : Latex -> String
-transformLatex latex =
+transformLatex : LatexState -> Latex -> String
+transformLatex latexState latex =
     case latex of
         Comment () ->
             ""
 
-        Word str ->
+        Words str ->
             if List.member str [ ".", ",", ":", ";", "?", "!" ] then
                 str ++ " "
             else
                 " " ++ str ++ " "
 
         Macro v ->
-            handleMacro v
+            handleMacro latexState v
 
         Environment v ->
-            handleEnvironment v
+            handleEnvironment latexState v
 
         InlineMath v ->
-            "$" ++ v.value ++ "$"
+            " $" ++ v.value ++ "$"
 
         DisplayMath v ->
             "\n$$\n" ++ v.value ++ "\n$$\n"
 
-        _ ->
-            "ERR"
 
-
-
--- ENVIRONMENTS
-
-
-handleEnvironment : { a | body : String, env : String } -> String
-handleEnvironment v =
+handleEnvironment : LatexState -> { a | body : String, env : String } -> String
+handleEnvironment latexState v =
     let
         env =
             v.env
@@ -74,10 +100,10 @@ handleEnvironment v =
                 handleCenterEnvironment body
 
             "equation" ->
-                handleEquationEnvironment body
+                handleEquationEnvironment latexState body
 
             "align" ->
-                handleAlignEnvironment body
+                handleAlignEnvironment latexState body
 
             "itemize" ->
                 handleItemize body
@@ -88,11 +114,14 @@ handleEnvironment v =
             "macros" ->
                 handleMacros body
 
+            "tabular" ->
+                handleTabular body
+
             "verbatim" ->
                 handleVerbatim body
 
             _ ->
-                handleDefaultEnvironment env body
+                handleDefaultEnvironment latexState env body
 
 
 handleCenterEnvironment : String -> String
@@ -100,20 +129,38 @@ handleCenterEnvironment body =
     "\n<div class=\"center\">\n" ++ body ++ "\n</div>\n"
 
 
-handleEquationEnvironment : String -> String
-handleEquationEnvironment body =
-    "\n\\begin{equation}\n" ++ body ++ "\n\\end{equation}\n"
+handleEquationEnvironment : LatexState -> String -> String
+handleEquationEnvironment latexState body =
+    let
+        addendum =
+            if latexState.eqno > 0 then
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+            else
+                ""
+    in
+        Debug.log "EQUATION" "\n\\begin{equation}\n" ++ addendum ++ body ++ "\n\\end{equation}\n"
 
 
-handleAlignEnvironment : String -> String
-handleAlignEnvironment body =
+handleAlignEnvironment : LatexState -> String -> String
+handleAlignEnvironment latexState body =
     let
         editedBody =
             String.Extra.replace "\\ \\" "\\\\" body
 
         -- NOTE: ^^^ temporary fix
+        addendum =
+            if latexState.eqno > 0 then
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}"
+            else
+                ""
     in
-        "\n$$\n\\begin{align}\n" ++ editedBody ++ "\n\\end{align}\n$$\n"
+        "\n$$\n\\begin{align}\n" ++ addendum ++ editedBody ++ "\n\\end{align}\n$$\n"
 
 
 parseItems : String -> List String
@@ -159,8 +206,31 @@ handleEnumerate body =
         |> tagItem "ol"
 
 
-handleDefaultEnvironment : String -> String -> String
-handleDefaultEnvironment env body =
+handleDefaultEnvironment : LatexState -> String -> String -> String
+handleDefaultEnvironment latexState env body =
+    if List.member env [ "theorem", "proposition", "corollary", "lemma", "definition" ] then
+        handleTheoremLikeEnvironment latexState env body
+    else
+        handleDefaultEnvironment2 env body
+
+
+handleTheoremLikeEnvironment : LatexState -> String -> String -> String
+handleTheoremLikeEnvironment latexState env body =
+    let
+        body2 =
+            body |> String.trim |> transformText
+
+        tnoString =
+            if latexState.s1 > 0 then
+                " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+            else
+                " " ++ (toString latexState.tno)
+    in
+        "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase env) ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ body2 ++ "\n</div>\n</div>\n"
+
+
+handleDefaultEnvironment2 : String -> String -> String
+handleDefaultEnvironment2 env body =
     let
         body2 =
             body |> String.trim |> transformText
@@ -173,6 +243,61 @@ handleMacros body =
     "\n$$\n" ++ body ++ "\n$$\n"
 
 
+{-| "cell1 & cell2 & cell3 \ \ncell1 & cell2 & cell3 \ "
+=> [["cell1","cell2","cell3"],["cell1","cell2","cell3"]]
+-}
+parseTabular : String -> List (List String)
+parseTabular str =
+    let
+        argResult =
+            Debug.log "args" (Latex.args str)
+
+        argString =
+            case argResult of
+                Ok args ->
+                    args
+                        |> String.join ("}{")
+                        |> \x -> "{" ++ x ++ "}"
+
+                _ ->
+                    ""
+    in
+        str
+            |> String.Extra.replace argString ""
+            |> String.split "\n"
+            |> List.filter (\x -> x /= "")
+            |> List.map (String.Extra.replace "\\" "")
+            |> List.map (String.split "&")
+            |> List.map (List.map String.trim)
+
+
+renderTableCell : String -> String
+renderTableCell str =
+    "<td>" ++ str ++ "</td> "
+
+
+renderTableRow : List String -> String
+renderTableRow data =
+    data
+        |> List.foldr (\x acc -> renderTableCell x ++ acc) ""
+        |> (\x -> "<tr> " ++ x ++ "</tr>\n")
+
+
+renderTabular : List (List String) -> String
+renderTabular data =
+    data
+        |> List.foldr (\x acc -> (renderTableRow x) ++ acc) ""
+        |> (\x -> "<table>\n" ++ x ++ "</table>\n")
+        |> (\x -> "<center>\n" ++ x ++ "</center>\n\n")
+
+
+handleTabular : String -> String
+handleTabular body =
+    body
+        |> parseTabular
+        |> renderTabular
+
+
 handleVerbatim : String -> String
 handleVerbatim body =
     "\n<pre class=\"verbatim\">" ++ body ++ "</pre>\n"
@@ -182,23 +307,29 @@ handleVerbatim body =
 -- MACROS
 
 
-handleMacro : { a | args : List String, name : String } -> String
-handleMacro v =
+handleMacro : LatexState -> { a | args : List String, name : String } -> String
+handleMacro latexState v =
     case v.name of
         "code" ->
             handleCode v.args
 
+        "eqref" ->
+            handleEqRef latexState v.args
+
         "emph" ->
             handleEmph v.args
 
-        "hyperlink" ->
+        "href" ->
             handleHyperlink v.args
 
-        "bibhyperlink" ->
+        "bibhref" ->
             handleBibHyperlink v.args
 
         "ellie" ->
             handleEllie v.args
+
+        "iframe" ->
+            handleIFrame v.args
 
         "image" ->
             handleImage v.args
@@ -218,8 +349,17 @@ handleMacro v =
         "ndash" ->
             "&ndash;"
 
+        "ref" ->
+            handleRef latexState v.args
+
         "section" ->
-            handleSection v.args
+            handleSection latexState v.args
+
+        "section*" ->
+            handleSectionStar v.args
+
+        "setcounter" ->
+            ""
 
         "strong" ->
             handleStrong v.args
@@ -228,16 +368,22 @@ handleMacro v =
             handleSubheading v.args
 
         "subsection" ->
-            handleSubSection v.args
+            handleSubSection latexState v.args
+
+        "subsection*" ->
+            handleSubSectionStar v.args
 
         "subsubsection" ->
-            handleSubSubSection v.args
+            handleSubSubSection latexState v.args
 
-        "subsubsubsection" ->
-            handleSubSubSubSection v.args
+        "subsubsection*" ->
+            handleSubSubSectionStar v.args
 
         "term" ->
             handleTerm v.args
+
+        "title" ->
+            handleTitle v.args
 
         "xlink" ->
             handleXLink v.args
@@ -260,7 +406,7 @@ handleBibHyperlink args =
         ref =
             getAt 2 args
     in
-        "\n<p class= \"bibhyperlink\">[" ++ ref ++ "] <a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>\n</p>\n"
+        "\n<p class= \"bibhref\">[" ++ ref ++ "] <a href=\"" ++ url ++ " target=_blank\">" ++ label ++ "</a>\n</p>\n"
 
 
 handleDefault v =
@@ -340,6 +486,43 @@ handleHyperlink args =
         " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
 
 
+handleIFrame : List String -> String
+handleIFrame args =
+    let
+        url =
+            getAt 0 args
+
+        src =
+            "src =\"" ++ url ++ "\""
+
+        title_ =
+            getAt 1 args
+
+        title =
+            if title_ == "xxx" then
+                "Link"
+            else
+                title_
+
+        height_ =
+            getAt 2 args
+
+        height =
+            if (title_ == "xxx" || height_ == "xxx") then
+                "400px"
+            else
+                height_
+
+        sandbox =
+            ""
+
+        --" sandbox=\"allow-pointer-lock\" "
+        style =
+            " style = \"width:90%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
+    in
+        "<iframe scrolling=\"yes\" " ++ src ++ sandbox ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
+
+
 handleEllie : List String -> String
 handleEllie args =
     let
@@ -349,13 +532,25 @@ handleEllie args =
         url =
             "https://ellie-app.com/" ++ (getAt 0 args)
 
+        title_ =
+            getAt 1 args
+
+        foo =
+            27.99
+
+        title =
+            if title_ == "xxx" then
+                "Link to Ellie"
+            else
+                title_
+
         style =
             " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
 
         sandbox =
             " sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\""
     in
-        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>Link to Ellie</a></center>"
+        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
 
 
 handleImage : List String -> String
@@ -389,7 +584,7 @@ handleCenterImage url label imageAttributes =
             imageAttributes.width
 
         imageCenterLeftPart width =
-            "<div style=\"align: center; width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
+            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
     in
         (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
 
@@ -480,6 +675,27 @@ handleNewCommand args =
         "\\newcommand{" ++ command ++ "}{" ++ definition ++ "}"
 
 
+handleRef : LatexState -> List String -> String
+handleRef latexState args =
+    let
+        key =
+            getAt 0 args
+    in
+        Dict.get key latexState.dict |> Maybe.withDefault "??"
+
+
+handleEqRef : LatexState -> List String -> String
+handleEqRef latexState args =
+    let
+        key =
+            getAt 0 args
+
+        value =
+            Dict.get key latexState.dict |> Maybe.withDefault "??"
+    in
+        "$(" ++ value ++ ")$"
+
+
 handleStrong : List String -> String
 handleStrong args =
     let
@@ -489,13 +705,28 @@ handleStrong args =
         " <span class=\"strong\">" ++ arg ++ "</span>"
 
 
-handleSection : List String -> String
-handleSection args =
+handleSection : LatexState -> List String -> String
+handleSection latexState args =
+    let
+        arg =
+            getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ " "
+            else
+                ""
+    in
+        "<h2>" ++ addendum ++ arg ++ "</h2>"
+
+
+handleSectionStar : List String -> String
+handleSectionStar args =
     let
         arg =
             getAt 0 args
     in
-        "<h1>" ++ arg ++ "</h1>"
+        "<h2>" ++ arg ++ "</h2>"
 
 
 handleSubheading : List String -> String
@@ -507,17 +738,23 @@ handleSubheading args =
         "<div class=\"subheading\">" ++ arg ++ "</div>"
 
 
-handleSubSection : List String -> String
-handleSubSection args =
+handleSubSection : LatexState -> List String -> String
+handleSubSection latexState args =
     let
         arg =
             getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ " "
+            else
+                ""
     in
-        "<h2>" ++ arg ++ "</h2>"
+        "<h3>" ++ addendum ++ arg ++ "</h3>"
 
 
-handleSubSubSection : List String -> String
-handleSubSubSection args =
+handleSubSectionStar : List String -> String
+handleSubSectionStar args =
     let
         arg =
             getAt 0 args
@@ -525,13 +762,37 @@ handleSubSubSection args =
         "<h3>" ++ arg ++ "</h3>"
 
 
-handleSubSubSubSection : List String -> String
-handleSubSubSubSection args =
+handleSubSubSection : LatexState -> List String -> String
+handleSubSubSection latexState args =
+    let
+        arg =
+            getAt 0 args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3) ++ " "
+            else
+                ""
+    in
+        "<h4>" ++ addendum ++ arg ++ "</h4>"
+
+
+handleSubSubSectionStar : List String -> String
+handleSubSubSectionStar args =
     let
         arg =
             getAt 0 args
     in
-        "<h3>" ++ arg ++ "</h3>"
+        "<h4>" ++ arg ++ "</h4>"
+
+
+handleTitle : List String -> String
+handleTitle args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<h1>" ++ arg ++ "</h1>"
 
 
 handleTerm : List String -> String
