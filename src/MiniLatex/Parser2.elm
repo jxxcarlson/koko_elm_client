@@ -1,11 +1,36 @@
-module MiniLatex.Parser exposing (..)
+module MiniLatex.Parser2 exposing (..)
 
+import Html exposing (Html, div, p, pre, text)
+import Html.Attributes exposing (style)
 import Parser exposing (..)
 
 
-{- ELLIE: https://ellie-app.com/kPQKXWySba1/1
+{- VARIANT environment parser: parser the body
+   ELLIE: https://ellie-app.com/33kWJWZCca1/5
 
 -}
+
+
+{-| Examples
+-}
+body =
+    "An equation of the form $a^n = 1$ has $n$ solutions"
+
+
+test x =
+    p [] [ text (toString (run parse x)) ]
+
+
+testRed x =
+    p [ style [ ( "color", "red" ) ] ] [ text (toString (run parse x)) ]
+
+
+testBlue x =
+    p [ style [ ( "color", "blue" ) ] ] [ text (toString (run parse x)) ]
+
+
+
+{- WORKING VERSION -}
 
 
 {-| Types
@@ -31,6 +56,19 @@ parse =
         , displayMathBrackets
         , inlineMath
         , macro
+        , words
+        ]
+
+
+innerParse : Parser LatexExpression
+innerParse =
+    oneOf
+        [ texComment
+        , displayMathDollar
+        , displayMathBrackets
+        , inlineMath
+
+        --, macro
         , words
         ]
 
@@ -85,6 +123,10 @@ texComment =
         |. ignoreUntil "\n"
         |> source
         |> map Comment
+
+
+
+-- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
 words : Parser LatexExpression
@@ -147,10 +189,12 @@ environmentOfType envType =
         endWord =
             "\\end{" ++ envType ++ "}"
     in
-        ignoreUntil endWord
-            |> source
-            |> map (String.dropRight (String.length endWord))
-            |> map LXString
+        succeed identity
+            |. ignore zeroOrMore ((==) '\n')
+            |= repeat zeroOrMore innerParse
+            |. ignore zeroOrMore ((==) '\n')
+            |. symbol endWord
+            |> map LatexList
             |> map (Environment envType)
 
 
