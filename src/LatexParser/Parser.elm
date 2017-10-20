@@ -3,7 +3,7 @@ module LatexParser.Parser exposing (..)
 {-| -}
 
 import Parser exposing (..)
-import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_, Latex(..))
+import LatexParser.ParserTypes exposing (InlineMath_, DisplayMath_, Macro_, Environment_, LatexItem(..))
 import LatexParser.Latex
     exposing
         ( texComment
@@ -33,7 +33,7 @@ defaultLatexList =
           : Result.Result Parser.Error LatexParser.Parser.Latex
 
 -}
-latex : Parser Latex
+latex : Parser LatexItem
 latex =
     inContext "latex" <|
         oneOf
@@ -47,7 +47,7 @@ latex =
             ]
 
 
-latexParser : Parser (List Latex)
+latexParser : Parser (List LatexItem)
 latexParser =
     inContext "latexParser" <|
         succeed identity

@@ -28,7 +28,7 @@ type alias Macro_ =
 
 {-| For Parser
 -}
-type Latex
+type LatexItem
     = Macro Macro_
     | Environment Environment_
     | InlineMath InlineMath_
@@ -39,4 +39,4 @@ type Latex
 
 type ParserItem
     = StringValue String
-    | LatexList (List Latex)
+    | LatexList (List LatexItem)

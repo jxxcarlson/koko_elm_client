@@ -4,7 +4,7 @@ import Dict
 import Configuration
 import LatexParser.Latex as Latex
 import LatexParser.Parser exposing (latex, latexParser, defaultLatexList)
-import LatexParser.ParserTypes exposing (Latex(..), ParserItem(..))
+import LatexParser.ParserTypes exposing (LatexItem(..), ParserItem(..))
 import LatexParser.Image exposing (getKeyValueList, getValue)
 import List.Extra
 import Regex
@@ -28,13 +28,13 @@ emptyLatexState =
     { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
 
 
-parseParagraph : String -> List Latex
+parseParagraph : String -> List LatexItem
 parseParagraph text =
     Parser.run latexParser text
         |> Result.withDefault defaultLatexList
 
 
-render : LatexState -> List Latex -> String
+render : LatexState -> List LatexItem -> String
 render latexState latexParser =
     latexParser
         |> List.map (transformLatex latexState)
@@ -61,7 +61,7 @@ getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
-transformLatex : LatexState -> Latex -> String
+transformLatex : LatexState -> LatexItem -> String
 transformLatex latexState latex =
     case latex of
         Comment () ->

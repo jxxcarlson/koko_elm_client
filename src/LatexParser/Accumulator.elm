@@ -6,7 +6,7 @@ import LatexParser.Parser exposing (defaultLatexList)
 import String.Extra
 import Document.Differ as Differ
 import LatexParser.Render as Render exposing (LatexState)
-import LatexParser.ParserTypes exposing (Latex(..), ParserItem(..))
+import LatexParser.ParserTypes exposing (LatexItem(..), ParserItem(..))
 import LatexParser.Latex as Latex
 import List.Extra
 import Regex
@@ -20,9 +20,9 @@ transformParagraphs paragraphs =
 
 
 accumulator :
-    (a -> List Latex)
-    -> (List Latex -> LatexState -> b)
-    -> (List Latex -> LatexState -> LatexState)
+    (a -> List LatexItem)
+    -> (List LatexItem -> LatexState -> b)
+    -> (List LatexItem -> LatexState -> LatexState)
     -> List a
     -> ( List b, LatexState )
 accumulator preprocessor processor stateUpdater inputList =
@@ -60,7 +60,7 @@ getAt k list_ =
     List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
-info : Latex -> LatexInfo
+info : LatexItem -> LatexInfo
 info latexElement =
     case latexElement of
         Macro v ->
@@ -122,7 +122,7 @@ handleTheoremNumbers latexState headElement =
         { latexState | tno = newTno, dict = newDict }
 
 
-updateState : List Latex -> LatexState -> LatexState
+updateState : List LatexItem -> LatexState -> LatexState
 updateState parsedParagraph latexState =
     let
         headElement =
@@ -191,7 +191,7 @@ updateState parsedParagraph latexState =
         newLatexState
 
 
-processParagraph : String -> LatexState -> List Latex
+processParagraph : String -> LatexState -> List LatexItem
 processParagraph paragraph latexState =
     paragraph
         |> (updateSection latexState)
@@ -244,6 +244,6 @@ updateSection latexState paragraph =
         paragraph
 
 
-renderParagraph : List Latex -> LatexState -> String
+renderParagraph : List LatexItem -> LatexState -> String
 renderParagraph parsedParagraph latexState =
     parsedParagraph |> (Render.render latexState)

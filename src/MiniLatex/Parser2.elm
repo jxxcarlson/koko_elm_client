@@ -7,30 +7,9 @@ import Parser exposing (..)
 
 {- VARIANT environment parser: parser the body
    ELLIE: https://ellie-app.com/33kWJWZCca1/5
+   ELLIE: https://ellie-app.com/33kWJWZCca1/6
 
 -}
-
-
-{-| Examples
--}
-body =
-    "An equation of the form $a^n = 1$ has $n$ solutions"
-
-
-test x =
-    p [] [ text (toString (run parse x)) ]
-
-
-testRed x =
-    p [ style [ ( "color", "red" ) ] ] [ text (toString (run parse x)) ]
-
-
-testBlue x =
-    p [ style [ ( "color", "blue" ) ] ] [ text (toString (run parse x)) ]
-
-
-
-{- WORKING VERSION -}
 
 
 {-| Types
@@ -172,7 +151,7 @@ macro =
         succeed Macro
             |. spaces
             |. symbol "\\"
-            |= keep zeroOrMore (\c -> c /= '{')
+            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
             |= repeat zeroOrMore arg
             |. ws
 
