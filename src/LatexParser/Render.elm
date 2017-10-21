@@ -589,9 +589,9 @@ handleCenterImage url label imageAttributes =
             imageAttributes.width
 
         imageCenterLeftPart width =
-            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 10px; text-align: center;\">"
+            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin-left:auto, margin-right:auto; text-align: center;\">"
     in
-        (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
+        (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ " ><br>" ++ label ++ "</div>"
 
 
 handleFloatedImageRight url label imageAttributes =
