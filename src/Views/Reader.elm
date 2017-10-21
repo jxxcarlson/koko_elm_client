@@ -27,7 +27,7 @@ reader model =
 standardReader : Model -> List (Element Styles variation Msg)
 standardReader model =
     [ namedGrid Container
-        { columns = [ fill 2, fill 4, fill 3 ]
+        { columns = [ fill 2, fill 5, fill 3 ]
         , rows =
             [ px 1 => [ spanAll "separator" ]
             , px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sidebarHeader" ]

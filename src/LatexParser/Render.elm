@@ -523,7 +523,7 @@ handleIFrame args =
 
         --" sandbox=\"allow-pointer-lock\" "
         style =
-            " style = \"width:90%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
+            " style = \"width:100%; height:400px; border:1; border-radius: 3px; overflow:scroll;\""
     in
         "<iframe scrolling=\"yes\" " ++ src ++ sandbox ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
 
