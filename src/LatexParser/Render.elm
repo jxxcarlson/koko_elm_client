@@ -323,6 +323,9 @@ handleVerbatim body =
 handleMacro : LatexState -> { a | args : List String, name : String } -> String
 handleMacro latexState v =
     case v.name of
+        "cite" ->
+            handleCite v.args
+
         "code" ->
             handleCode v.args
 
@@ -468,6 +471,17 @@ handleTwoArgCommand name args =
 
 handleBold : List String -> String
 handleBold args =
+    let
+        arg =
+            getAt 0 args
+    in
+        "<strong>" ++ arg ++ "</strong>"
+
+
+{-| INCOMPLETE
+-}
+handleCite : List String -> String
+handleCite args =
     let
         arg =
             getAt 0 args
