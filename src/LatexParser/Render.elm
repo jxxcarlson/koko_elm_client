@@ -110,6 +110,9 @@ handleEnvironment latexState v =
             "align" ->
                 handleAlignEnvironment latexState body
 
+            "eqnarray" ->
+                handleEqnArray latexState body
+
             "itemize" ->
                 handleItemize body
 
@@ -166,6 +169,11 @@ handleAlignEnvironment latexState body =
                 ""
     in
         "\n$$\n\\begin{align}\n" ++ addendum ++ editedBody ++ "\n\\end{align}\n$$\n"
+
+
+handleEqnArray : LatexState -> String -> String
+handleEqnArray latexState body =
+    "\n$$\n" ++ body ++ "\n$$\n"
 
 
 parseItems : String -> List String
