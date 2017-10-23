@@ -341,6 +341,9 @@ handleMacro latexState v =
         "ellie" ->
             handleEllie v.args
 
+        "hyphenation" ->
+            ""
+
         "iframe" ->
             handleIFrame v.args
 
