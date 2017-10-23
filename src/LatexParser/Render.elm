@@ -345,6 +345,9 @@ handleMacro latexState v =
         "italic" ->
             handleItalic v.args
 
+        "label" ->
+            handleLabel v.args
+
         "mdash" ->
             "&mdash;"
 
@@ -666,6 +669,11 @@ handleItalic args =
             getAt 0 args
     in
         " <span class=italic>" ++ arg ++ "</span>"
+
+
+handleLabel : List String -> String
+handleLabel args =
+    ""
 
 
 handleNewCommand : List String -> String
