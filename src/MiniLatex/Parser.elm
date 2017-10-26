@@ -3,7 +3,37 @@ module MiniLatex.Parser exposing (..)
 import Parser exposing (..)
 
 
-{- ELLIE: https://ellie-app.com/kPQKXWySba1/1
+{- ELLIE: https://ellie-app.com/pcB5b3BPfa1/0
+
+   https://ellie-app.com/pcB5b3BPfa1/1
+
+-}
+{- From Ilias
+
+   there is, but it ain't pretty...
+   ```mustFail : Parser a -> Parser ()
+   mustFail parser =
+     oneOf
+       [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
+       , succeed (Ok ())
+       ]
+       |> andThen (\res ->
+         case res of
+           Err e -> fail e
+           Ok _ -> succeed ()
+       )
+   ```
+
+
+   [5:49]
+   (didn't type that in an editor so no idea if it's syntactically correct, but should be close enough)
+
+
+   [5:50]
+   using that, something like `succeed identity |. mustFail reservedWork |. macroName`.
+   To make _that_ entire thing backtrack on failure,
+   you can wrap that with another `delayedCommitMap` thing.
+    Beware, though, backtracking is expensive :
 
 -}
 
@@ -31,6 +61,20 @@ parse =
         , displayMathBrackets
         , inlineMath
         , macro
+        , words
+        ]
+
+
+innerParse : Parser LatexExpression
+innerParse =
+    oneOf
+        [ texComment
+        , displayMathDollar
+        , displayMathBrackets
+        , inlineMath
+        , lazy (\_ -> environment)
+
+        --, macro
         , words
         ]
 
@@ -87,6 +131,10 @@ texComment =
         |> map Comment
 
 
+
+-- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
+
+
 words : Parser LatexExpression
 words =
     inContext "words" <|
@@ -124,21 +172,35 @@ displayMathBrackets =
             |= parseUntil "\\]"
 
 
+endMacro : Parser LatexExpression
+endMacro =
+    fail "\\end{"
+
+
+macroName : Parser String
+macroName =
+    inContext "macroName" <|
+        succeed identity
+            |. spaces
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
+
+
+{-| NOTE: macro sequences should be of the form "" followed by alphabetic characterS,
+but not equal to certain reserved words, e.g., "\begin", "\end", "\item"
+-}
 macro : Parser LatexExpression
 macro =
     inContext "macro" <|
         succeed Macro
-            |. spaces
-            |. symbol "\\"
-            |= keep zeroOrMore (\c -> c /= '{')
+            |= macroName
             |= repeat zeroOrMore arg
             |. ws
 
 
 environment : Parser LatexExpression
 environment =
-    inContext "environment"
-        (beginWord |> andThen environmentOfType)
+    lazy (\_ -> beginWord |> andThen environmentOfType)
 
 
 environmentOfType : String -> Parser LatexExpression
@@ -147,10 +209,12 @@ environmentOfType envType =
         endWord =
             "\\end{" ++ envType ++ "}"
     in
-        ignoreUntil endWord
-            |> source
-            |> map (String.dropRight (String.length endWord))
-            |> map LXString
+        succeed identity
+            |. ws
+            |= repeat zeroOrMore innerParse
+            |. ws
+            |. symbol endWord
+            |> map LatexList
             |> map (Environment envType)
 
 
