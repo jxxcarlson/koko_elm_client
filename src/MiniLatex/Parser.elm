@@ -50,6 +50,53 @@ type LatexExpression
     | LatexList (List LatexExpression)
 
 
+{-| BEGIN PARSER DEFINITINS
+-}
+macroName : Parser String
+macroName =
+    allOrNothing <|
+        succeed identity
+            |. mustFail reservedWord
+            |= innerMacroName
+
+
+innerMacroName : Parser String
+innerMacroName =
+    inContext "macroName" <|
+        succeed identity
+            |. spaces
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
+
+
+allOrNothing : Parser a -> Parser a
+allOrNothing parser =
+    delayedCommitMap always parser (succeed ())
+
+
+mustFail : Parser a -> Parser ()
+mustFail parser =
+    oneOf
+        [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
+        , succeed (Ok ())
+        ]
+        |> andThen
+            (\res ->
+                case Debug.log "res" res of
+                    Err e ->
+                        fail e
+
+                    Ok _ ->
+                        succeed ()
+            )
+
+
+reservedWord : Parser ()
+reservedWord =
+    succeed identity
+        |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
+
+
 {-| Parser top level
 -}
 parse : Parser LatexExpression
@@ -73,8 +120,7 @@ innerParse =
         , displayMathBrackets
         , inlineMath
         , lazy (\_ -> environment)
-
-        --, macro
+        , macro
         , words
         ]
 
@@ -158,9 +204,9 @@ displayMathDollar : Parser LatexExpression
 displayMathDollar =
     inContext "display math" <|
         succeed DisplayMath
-            |. ignore zeroOrMore ((==) ' ')
             |. symbol "$$"
             |= parseUntil "$$"
+            |. ws
 
 
 displayMathBrackets : Parser LatexExpression
@@ -175,15 +221,6 @@ displayMathBrackets =
 endMacro : Parser LatexExpression
 endMacro =
     fail "\\end{"
-
-
-macroName : Parser String
-macroName =
-    inContext "macroName" <|
-        succeed identity
-            |. spaces
-            |. symbol "\\"
-            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
 
 
 {-| NOTE: macro sequences should be of the form "" followed by alphabetic characterS,
@@ -214,6 +251,7 @@ environmentOfType envType =
             |= repeat zeroOrMore innerParse
             |. ws
             |. symbol endWord
+            |. ws
             |> map LatexList
             |> map (Environment envType)
 
