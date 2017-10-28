@@ -43,58 +43,13 @@ import Parser exposing (..)
 type LatexExpression
     = LXString String
     | Comment String
+    | Item String
+    | ItemItem String
     | InlineMath String
     | DisplayMath String
     | Macro String (List String)
     | Environment String LatexExpression
     | LatexList (List LatexExpression)
-
-
-{-| BEGIN PARSER DEFINITINS
--}
-macroName : Parser String
-macroName =
-    allOrNothing <|
-        succeed identity
-            |. mustFail reservedWord
-            |= innerMacroName
-
-
-innerMacroName : Parser String
-innerMacroName =
-    inContext "macroName" <|
-        succeed identity
-            |. spaces
-            |. symbol "\\"
-            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
-
-
-allOrNothing : Parser a -> Parser a
-allOrNothing parser =
-    delayedCommitMap always parser (succeed ())
-
-
-mustFail : Parser a -> Parser ()
-mustFail parser =
-    oneOf
-        [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
-        , succeed (Ok ())
-        ]
-        |> andThen
-            (\res ->
-                case Debug.log "res" res of
-                    Err e ->
-                        fail e
-
-                    Ok _ ->
-                        succeed ()
-            )
-
-
-reservedWord : Parser ()
-reservedWord =
-    succeed identity
-        |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
 
 
 {-| Parser top level
@@ -103,23 +58,10 @@ parse : Parser LatexExpression
 parse =
     oneOf
         [ texComment
-        , environment
-        , displayMathDollar
-        , displayMathBrackets
-        , inlineMath
-        , macro
-        , words
-        ]
-
-
-innerParse : Parser LatexExpression
-innerParse =
-    oneOf
-        [ texComment
-        , displayMathDollar
-        , displayMathBrackets
-        , inlineMath
         , lazy (\_ -> environment)
+        , displayMathDollar
+        , displayMathBrackets
+        , inlineMath
         , macro
         , words
         ]
@@ -177,6 +119,28 @@ texComment =
         |> map Comment
 
 
+item : Parser LatexExpression
+item =
+    symbol "\\item"
+        |. ignoreUntil "\n"
+        |. ws
+        |> source
+        |> map (String.dropLeft <| String.length "\\item")
+        |> map String.trim
+        |> map Item
+
+
+itemitem : Parser LatexExpression
+itemitem =
+    symbol "\\itemitem"
+        |. ignoreUntil "\n"
+        |. ws
+        |> source
+        |> map (String.dropLeft <| String.length "\\itemitem")
+        |> map String.trim
+        |> map ItemItem
+
+
 
 -- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
@@ -218,6 +182,51 @@ displayMathBrackets =
             |= parseUntil "\\]"
 
 
+macroName : Parser String
+macroName =
+    allOrNothing <|
+        succeed identity
+            |. mustFail reservedWord
+            |= innerMacroName
+
+
+innerMacroName : Parser String
+innerMacroName =
+    inContext "macroName" <|
+        succeed identity
+            |. spaces
+            |. symbol "\\"
+            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
+
+
+allOrNothing : Parser a -> Parser a
+allOrNothing parser =
+    delayedCommitMap always parser (succeed ())
+
+
+mustFail : Parser a -> Parser ()
+mustFail parser =
+    oneOf
+        [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
+        , succeed (Ok ())
+        ]
+        |> andThen
+            (\res ->
+                case Debug.log "res" res of
+                    Err e ->
+                        fail e
+
+                    Ok _ ->
+                        succeed ()
+            )
+
+
+reservedWord : Parser ()
+reservedWord =
+    succeed identity
+        |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
+
+
 endMacro : Parser LatexExpression
 endMacro =
     fail "\\end{"
@@ -246,14 +255,37 @@ environmentOfType envType =
         endWord =
             "\\end{" ++ envType ++ "}"
     in
-        succeed identity
-            |. ws
-            |= repeat zeroOrMore innerParse
-            |. ws
-            |. symbol endWord
-            |. ws
-            |> map LatexList
-            |> map (Environment envType)
+        case envType of
+            "enumerate" ->
+                itemEnvironmentBody endWord envType
+
+            "itemize" ->
+                itemEnvironmentBody endWord envType
+
+            _ ->
+                standardEnvironmentBody endWord envType
+
+
+standardEnvironmentBody endWord envType =
+    succeed identity
+        |. ws
+        |= repeat zeroOrMore parse
+        |. ws
+        |. symbol endWord
+        |. ws
+        |> map LatexList
+        |> map (Environment envType)
+
+
+itemEnvironmentBody endWord envType =
+    succeed identity
+        |. ws
+        |= repeat zeroOrMore (oneOf [ itemitem, item ])
+        |. ws
+        |. symbol endWord
+        |. ws
+        |> map LatexList
+        |> map (Environment envType)
 
 
 beginWord : Parser String
