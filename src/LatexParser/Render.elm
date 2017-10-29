@@ -362,6 +362,9 @@ handleMacro latexState v =
         "label" ->
             handleLabel v.args
 
+        "maketitle" ->
+            ""
+
         "mdash" ->
             "&mdash;"
 
