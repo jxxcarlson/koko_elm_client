@@ -8,34 +8,6 @@ import Parser exposing (..)
    https://ellie-app.com/pcB5b3BPfa1/1
 
 -}
-{- From Ilias
-
-   there is, but it ain't pretty...
-   ```mustFail : Parser a -> Parser ()
-   mustFail parser =
-     oneOf
-       [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
-       , succeed (Ok ())
-       ]
-       |> andThen (\res ->
-         case res of
-           Err e -> fail e
-           Ok _ -> succeed ()
-       )
-   ```
-
-
-   [5:49]
-   (didn't type that in an editor so no idea if it's syntactically correct, but should be close enough)
-
-
-   [5:50]
-   using that, something like `succeed identity |. mustFail reservedWork |. macroName`.
-   To make _that_ entire thing backtrack on failure,
-   you can wrap that with another `delayedCommitMap` thing.
-    Beware, though, backtracking is expensive :
-
--}
 
 
 {-| Types
@@ -43,8 +15,7 @@ import Parser exposing (..)
 type LatexExpression
     = LXString String
     | Comment String
-    | Item String
-    | ItemItem String
+    | Item Int LatexExpression
     | InlineMath String
     | DisplayMath String
     | Macro String (List String)
@@ -52,8 +23,17 @@ type LatexExpression
     | LatexList (List LatexExpression)
 
 
-{-| Parser top level
--}
+
+{- PARSER: TOP LEVEL -}
+
+
+latexList : Parser LatexExpression
+latexList =
+    succeed identity
+        |= repeat oneOrMore parse
+        |> map LatexList
+
+
 parse : Parser LatexExpression
 parse =
     oneOf
@@ -67,15 +47,10 @@ parse =
         ]
 
 
-latexList : Parser LatexExpression
-latexList =
-    succeed identity
-        |= repeat oneOrMore parse
-        |> map LatexList
+
+{- PARSER HELPERS -}
 
 
-{-| Parser helpers
--}
 spaces : Parser ()
 spaces =
     ignore zeroOrMore (\c -> c == ' ')
@@ -100,8 +75,10 @@ arg =
         |= parseUntil "}"
 
 
-{-| Parsers
--}
+
+{- PARSE WORDS -}
+
+
 word : Parser String
 word =
     inContext "word" <|
@@ -111,38 +88,15 @@ word =
             |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
 
 
-texComment : Parser LatexExpression
-texComment =
-    symbol "%"
-        |. ignoreUntil "\n"
-        |> source
-        |> map Comment
-
-
-item : Parser LatexExpression
-item =
-    symbol "\\item"
-        |. ignoreUntil "\n"
-        |. ws
-        |> source
-        |> map (String.dropLeft <| String.length "\\item")
-        |> map String.trim
-        |> map Item
-
-
-itemitem : Parser LatexExpression
-itemitem =
-    symbol "\\itemitem"
-        |. ignoreUntil "\n"
-        |. ws
-        |> source
-        |> map (String.dropLeft <| String.length "\\itemitem")
-        |> map String.trim
-        |> map ItemItem
-
-
-
--- |. ignore zeroOrMore (\c -> c == ' ' || c == '\n')
+{-| Like `word`, but after a word is recognized spaces, not spaces + newlines are consumed
+-}
+word2 : Parser String
+word2 =
+    inContext "word" <|
+        succeed identity
+            |. spaces
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
+            |. spaces
 
 
 words : Parser LatexExpression
@@ -155,6 +109,58 @@ words =
         )
 
 
+{-| Like `words`, but after a word is recognized spaces, not spaces + newlines are consumed
+-}
+words2 : Parser LatexExpression
+words2 =
+    inContext "words2" <|
+        (succeed identity
+            |= repeat oneOrMore word2
+            |> map (String.join " ")
+            |> map LXString
+        )
+
+
+texComment : Parser LatexExpression
+texComment =
+    symbol "%"
+        |. ignoreUntil "\n"
+        |> source
+        |> map Comment
+
+
+
+{- ITEMIZED LISTS -}
+
+
+item : Parser LatexExpression
+item =
+    succeed identity
+        |. ws
+        |. keyword "\\item"
+        |. spaces
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, macro2 ])
+        |. symbol "\n"
+        |. spaces
+        |> map (\x -> Item 1 (LatexList x))
+
+
+itemitem : Parser LatexExpression
+itemitem =
+    succeed identity
+        |. ws
+        |. keyword "\\itemitem"
+        |. spaces
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, macro2 ])
+        |. symbol "\n"
+        |. spaces
+        |> map (\x -> Item 2 (LatexList x))
+
+
+
+{- MATHEMATICAL TEXT -}
+
+
 inlineMath : Parser LatexExpression
 inlineMath =
     inContext "inline math" <|
@@ -162,6 +168,17 @@ inlineMath =
             |. symbol "$"
             |= parseUntil "$"
             |. ws
+
+
+{-| Like `inlineMath`, but only spaces, note spaces + newlines, are consumed after recognizing an element
+-}
+inlineMath2 : Parser LatexExpression
+inlineMath2 =
+    inContext "inline math" <|
+        succeed InlineMath
+            |. symbol "$"
+            |= parseUntil "$"
+            |. spaces
 
 
 displayMathDollar : Parser LatexExpression
@@ -180,6 +197,33 @@ displayMathBrackets =
             |. ignore zeroOrMore ((==) ' ')
             |. symbol "\\["
             |= parseUntil "\\]"
+
+
+
+{- MACROS -}
+{- NOTE: macro sequences should be of the form "" followed by alphabetic characterS,
+   but not equal to certain reserved words, e.g., "\begin", "\end", "\item"
+-}
+
+
+macro : Parser LatexExpression
+macro =
+    inContext "macro" <|
+        succeed Macro
+            |= macroName
+            |= repeat zeroOrMore arg
+            |. ws
+
+
+{-| Like macro, but only spaces, not spaces + nelines are consumed after recognition
+-}
+macro2 : Parser LatexExpression
+macro2 =
+    inContext "macro" <|
+        succeed Macro
+            |= macroName
+            |= repeat zeroOrMore arg
+            |. spaces
 
 
 macroName : Parser String
@@ -212,7 +256,7 @@ mustFail parser =
         ]
         |> andThen
             (\res ->
-                case Debug.log "res" res of
+                case res of
                     Err e ->
                         fail e
 
@@ -227,21 +271,8 @@ reservedWord =
         |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
 
 
-endMacro : Parser LatexExpression
-endMacro =
-    fail "\\end{"
 
-
-{-| NOTE: macro sequences should be of the form "" followed by alphabetic characterS,
-but not equal to certain reserved words, e.g., "\begin", "\end", "\item"
--}
-macro : Parser LatexExpression
-macro =
-    inContext "macro" <|
-        succeed Macro
-            |= macroName
-            |= repeat zeroOrMore arg
-            |. ws
+{- ENVIRONMENTS -}
 
 
 environment : Parser LatexExpression
