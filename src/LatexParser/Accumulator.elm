@@ -29,11 +29,11 @@ transformParagraphs paragraphs =
 
 
 accumulator :
-    (a -> List LatexItem)
-    -> (List LatexItem -> LatexState -> b)
+    (String -> List LatexItem)
+    -> (List LatexItem -> LatexState -> String)
     -> (List LatexItem -> LatexState -> LatexState)
-    -> List a
-    -> ( List b, LatexState )
+    -> List String
+    -> ( List String, LatexState )
 accumulator parse render updateState inputList =
     inputList
         |> List.foldl (transformer parse render updateState) ( [], Render.emptyLatexState )
