@@ -4,6 +4,7 @@ import LatexParser.Accumulator exposing (..)
 import LatexParser.Render as Render
 import Document.Differ as Differ
 import Data
+import Dict
 
 
 -- http://package.elm-lang.org/packages/elm-community/elm-test/latest
@@ -35,16 +36,22 @@ suite =
                     data =
                         Data.qftIntroText
                             |> Differ.paragraphify
-                            |> accumulator processParagraph sectionCounter
+                            |> accumulator Render.parseParagraph renderParagraph updateState
+
+                    d =
+                        Dict.fromList [ ( "1", "4.14" ), ( "GE", "4.16" ), ( "\\hbar", "3.3" ), ( "\\sin \\theta_1", "4.21" ), ( "\\sin\\theta_2", "4.17" ), ( "d{\\bf p", "2.2" ), ( "h\\nu", "4.20" ) ]
+
+                    expectedOutput =
+                        { s1 = 4, s2 = 4, s3 = 0, tno = 0, eqno = 21, dict = d }
                 in
-                    Expect.equal (Tuple.second data) { s1 = 4, s2 = 4, s3 = 0 }
+                    Expect.equal (Tuple.second data) expectedOutput
         , test "(4) check that accumulator produces a list of the correct length" <|
             \_ ->
                 let
                     data =
                         Data.qftIntroText
                             |> Differ.paragraphify
-                            |> accumulator processParagraph sectionCounter
+                            |> accumulator Render.parseParagraph renderParagraph updateState
                 in
                     Expect.equal (Tuple.first data |> List.length) 93
         , test "(5) transformText" <|

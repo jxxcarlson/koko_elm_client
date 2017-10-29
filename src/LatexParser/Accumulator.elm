@@ -1,4 +1,13 @@
-module LatexParser.Accumulator exposing (getSectionNumber, transformParagraphs, processParagraph, processParagraph2)
+module LatexParser.Accumulator
+    exposing
+        ( accumulator
+        , updateState
+        , renderParagraph
+        , getSectionNumber
+        , transformParagraphs
+        , processParagraph
+        , processParagraph2
+        )
 
 import Dict
 import LatexParser.Render as Render

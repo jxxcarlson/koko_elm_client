@@ -27,13 +27,10 @@ render latexState latexExpression =
             renderComment str
 
         Macro name args ->
-            renderMacro name args
+            renderMacro latexState name args
 
-        Item str ->
-            "DUMMY"
-
-        ItemItem str ->
-            "DUMMY"
+        Item level latexExpression ->
+            renderItem latexState level latexExpression
 
         InlineMath str ->
             "$" ++ str ++ "$"
@@ -51,8 +48,13 @@ render latexState latexExpression =
             str
 
 
-renderMacro : String -> List String -> String
-renderMacro name args =
+renderItem : LatexState -> Int -> LatexExpression -> String
+renderItem latexState level latexExpression =
+    ""
+
+
+renderMacro : LatexState -> String -> List String -> String
+renderMacro latexState name args =
     case name of
         "italic" ->
             renderItalic args

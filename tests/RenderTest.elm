@@ -152,9 +152,9 @@ suite =
                             (LatexList
                                 ([ Environment "itemize"
                                     (LatexList
-                                        ([ Item "aaa."
-                                         , Item "bbb."
-                                         , ItemItem "xx"
+                                        ([ Item 1 (LatexList ([ LXString "aaa." ]))
+                                         , Item 1 (LatexList ([ LXString "bbb." ]))
+                                         , Item 2 (LatexList ([ LXString "xx" ]))
                                          ]
                                         )
                                     )
