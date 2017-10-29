@@ -34,30 +34,30 @@ accumulator :
     -> (List LatexItem -> LatexState -> LatexState)
     -> List a
     -> ( List b, LatexState )
-accumulator preprocessor processor stateUpdater inputList =
+accumulator parse render updateState inputList =
     inputList
-        |> List.foldl (transformer preprocessor processor stateUpdater) ( [], Render.emptyLatexState )
+        |> List.foldl (transformer parse render updateState) ( [], Render.emptyLatexState )
 
 
 transformer :
-    (a -> b)
-    -> (b -> c -> d)
-    -> (b -> c -> c)
-    -> a
-    -> ( List d, c )
-    -> ( List d, c )
-transformer pp f g x acc =
+    (input -> parsedInput) -- parse
+    -> (parsedInput -> state -> renderedInput) -- render
+    -> (parsedInput -> state -> state) -- updateState
+    -> input -- Here is it a string
+    -> ( List renderedInput, state ) -- acc
+    -> ( List renderedInput, state ) -- acc
+transformer parse render updateState input acc =
     let
-        ( a, b ) =
+        ( outputList, state ) =
             acc
 
-        y =
-            pp x
+        parsedInput =
+            parse input
 
-        z =
-            g y b
+        newState =
+            updateState parsedInput state
     in
-        ( a ++ [ f y z ], z )
+        ( outputList ++ [ render parsedInput newState ], newState )
 
 
 type alias LatexInfo =
