@@ -134,7 +134,7 @@ handleEnvironment latexState v =
 
 handleCenterEnvironment : String -> String
 handleCenterEnvironment body =
-    "\n<div class=\"center\">\n" ++ body ++ "\n</div>\n"
+    "\n<div class=\"center\" style=\"margin-left: auto; margin-right:auto;\">\n" ++ body ++ "\n</div>\n"
 
 
 handleEquationEnvironment : LatexState -> String -> String
