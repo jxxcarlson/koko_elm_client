@@ -79,7 +79,7 @@ arg : Parser LatexExpression
 arg =
     succeed identity
         |. keyword "{"
-        |= repeat zeroOrMore (oneOf [ words2, inlineMath2 ])
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, (lazy (\_ -> macro)) ])
         |. symbol "}"
         |> map LatexList
 
