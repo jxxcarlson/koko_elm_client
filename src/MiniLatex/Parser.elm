@@ -68,22 +68,6 @@ parseUntil marker =
         |> map (String.dropRight <| String.length marker)
 
 
-arg2 : Parser String
-arg2 =
-    succeed identity
-        |. symbol "{"
-        |= parseUntil "}"
-
-
-arg : Parser LatexExpression
-arg =
-    succeed identity
-        |. keyword "{"
-        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, (lazy (\_ -> macro)) ])
-        |. symbol "}"
-        |> map LatexList
-
-
 
 {- PARSE WORDS -}
 
@@ -233,6 +217,17 @@ macro2 =
             |= macroName
             |= repeat zeroOrMore arg
             |. spaces
+
+
+{-| Use to parse arguments for macros
+-}
+arg : Parser LatexExpression
+arg =
+    succeed identity
+        |. keyword "{"
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, (lazy (\_ -> macro)) ])
+        |. symbol "}"
+        |> map LatexList
 
 
 macroName : Parser String
