@@ -62,7 +62,18 @@ suite =
                         run latexList "a b \\foo \\bar{1} \\baz{1}{2}"
 
                     expectedOutput =
-                        Ok (LatexList ([ LXString "a b", Macro "foo" [], Macro "bar" [ "1" ], Macro "baz" [ "1", "2" ] ]))
+                        -- Ok (LatexList ([ LXString "a b", Macro "foo" [], Macro "bar" [ "1" ], Macro "baz" [ "1", "2" ] ]))
+                        Ok
+                            (LatexList
+                                ([ LXString "a b"
+                                 , Macro "foo" []
+                                 , Macro "bar"
+                                    ([ LatexList ([ LXString "1" ]) ])
+                                 , Macro "baz"
+                                    ([ LatexList ([ LXString "1" ]), LatexList ([ LXString "2" ]) ])
+                                 ]
+                                )
+                            )
                 in
                     Expect.equal parsedInput expectedOutput
         , test "(6) Environment" <|
@@ -76,7 +87,7 @@ suite =
                             (Environment "theorem"
                                 (LatexList
                                     ([ LXString "Infinity is"
-                                     , Macro "emph" [ "very" ]
+                                     , Macro "emph" ([ LatexList ([ LXString "very" ]) ])
                                      , LXString "large:"
                                      , InlineMath "\\infinity^2 = \\infinity"
                                      , LXString "."
