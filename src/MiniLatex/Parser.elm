@@ -1,6 +1,7 @@
 module MiniLatex.Parser exposing (..)
 
 import Parser exposing (..)
+import Dict
 
 
 {- ELLIE: https://ellie-app.com/pcB5b3BPfa1/0

@@ -12,22 +12,6 @@ import Fuzz exposing (Fuzzer, list, int, string)
 import Test exposing (..)
 
 
-renderHelper parser str =
-    let
-        parserOutput =
-            run parse str
-
-        renderOutput =
-            case parserOutput of
-                Ok latexExpression ->
-                    render emptyLatexState latexExpression
-
-                Err _ ->
-                    "PARSE ERROR"
-    in
-        renderOutput
-
-
 suite : Test
 suite =
     describe "MiniLatex Parser"
@@ -36,7 +20,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        renderHelper parse "This is a test."
+                        renderString parse "This is a test."
 
                     expectedOutput =
                         "This is a test."
@@ -46,7 +30,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        renderHelper parse "% This is a comment\n"
+                        renderString parse "% This is a comment\n"
 
                     expectedOutput =
                         ""
@@ -56,7 +40,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        renderHelper parse "$a^2 = 7$"
+                        renderString parse "$a^2 = 7$"
 
                     expectedOutput =
                         "$a^2 = 7$"
@@ -66,7 +50,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        renderHelper parse "$$b^2 = 3$$"
+                        renderString parse "$$b^2 = 3$$"
 
                     expectedOutput =
                         "$$b^2 = 3$$"
@@ -76,22 +60,64 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        renderHelper parse "\\[b^2 = 3\\]"
+                        renderString parse "\\[b^2 = 3\\]"
 
                     expectedOutput =
                         "$$b^2 = 3$$"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(5) latexList words and macros" <|
+        , test "(5.1) parse words" <|
             \_ ->
                 let
-                    parsedInput =
-                        run latexList "a b \\foo \\bar{1} \\baz{1}{2}"
+                    renderOutput =
+                        Debug.log "RENDERED OUTPUT"
+                            renderString
+                            parse
+                            "a b c"
 
                     expectedOutput =
-                        Ok (LatexList ([ LXString "a b", Macro "foo" [], Macro "bar" [ "1" ], Macro "baz" [ "1", "2" ] ]))
+                        "a b c"
                 in
-                    Expect.equal parsedInput expectedOutput
+                    Expect.equal renderOutput expectedOutput
+        , test "(5.2) parse words and unimplemented macros" <|
+            \_ ->
+                let
+                    renderOutput =
+                        Debug.log "RENDERED OUTPUT"
+                            renderString
+                            parse
+                            "a b c \\foo \\bar{1} \\baz{1}{2}"
+
+                    expectedOutput =
+                        "a b c"
+                in
+                    Expect.equal renderOutput expectedOutput
+        , test "(5.3) parse \\italicv{a b c}" <|
+            \_ ->
+                let
+                    renderOutput =
+                        Debug.log "RENDERED OUTPUT"
+                            renderString
+                            parse
+                            "\\italic{a b c}"
+
+                    expectedOutput =
+                        "<it>a b c</it>"
+                in
+                    Expect.equal renderOutput expectedOutput
+        , test "(5.4) parse \\italic{a b $c==d$}" <|
+            \_ ->
+                let
+                    renderOutput =
+                        Debug.log "RENDERED OUTPUT"
+                            renderString
+                            parse
+                            "\\italic{a b $c==d$}"
+
+                    expectedOutput =
+                        "<it>a b $c==d$</it>"
+                in
+                    Expect.equal renderOutput expectedOutput
         , test "(6) Environment" <|
             \_ ->
                 let
@@ -103,7 +129,11 @@ suite =
                             (Environment "theorem"
                                 (LatexList
                                     ([ LXString "Infinity is"
-                                     , Macro "emph" [ "very" ]
+                                     , Macro "emph"
+                                        ([ LatexList
+                                            ([ LXString "very" ])
+                                         ]
+                                        )
                                      , LXString "large:"
                                      , InlineMath "\\infinity^2 = \\infinity"
                                      , LXString "."
