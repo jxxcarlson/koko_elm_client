@@ -18,7 +18,7 @@ type LatexExpression
     | Item Int LatexExpression
     | InlineMath String
     | DisplayMath String
-    | Macro String (List String)
+    | Macro String (List LatexExpression)
     | Environment String LatexExpression
     | LatexList (List LatexExpression)
 
@@ -68,11 +68,20 @@ parseUntil marker =
         |> map (String.dropRight <| String.length marker)
 
 
-arg : Parser String
-arg =
+arg2 : Parser String
+arg2 =
     succeed identity
         |. symbol "{"
         |= parseUntil "}"
+
+
+arg : Parser LatexExpression
+arg =
+    succeed identity
+        |. keyword "{"
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2 ])
+        |. symbol "}"
+        |> map LatexList
 
 
 
@@ -95,7 +104,7 @@ word2 =
     inContext "word" <|
         succeed identity
             |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}'))
             |. spaces
 
 
