@@ -16,7 +16,7 @@ suite : Test
 suite =
     describe "MiniLatex Parser"
         -- Nest as many descriptions as you like.
-        [ test "(0) Words (plain text)" <|
+        [ test "(1) Words (plain text)" <|
             \_ ->
                 let
                     renderOutput =
@@ -26,7 +26,7 @@ suite =
                         "This is a test."
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(1) Comment" <|
+        , test "(2) Comment" <|
             \_ ->
                 let
                     renderOutput =
@@ -36,7 +36,7 @@ suite =
                         ""
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(2) InlineMath" <|
+        , test "(3.1) InlineMath" <|
             \_ ->
                 let
                     renderOutput =
@@ -46,7 +46,7 @@ suite =
                         "$a^2 = 7$"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(3) DisplayMath" <|
+        , test "(3.2) DisplayMath" <|
             \_ ->
                 let
                     renderOutput =
@@ -56,7 +56,7 @@ suite =
                         "$$b^2 = 3$$"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(4) DisplayMath (Brackets)" <|
+        , test "(3.3) DisplayMath (Brackets)" <|
             \_ ->
                 let
                     renderOutput =
@@ -66,20 +66,7 @@ suite =
                         "$$b^2 = 3$$"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(5.1) parse words" <|
-            \_ ->
-                let
-                    renderOutput =
-                        Debug.log "RENDERED OUTPUT"
-                            renderString
-                            parse
-                            "a b c"
-
-                    expectedOutput =
-                        "a b c"
-                in
-                    Expect.equal renderOutput expectedOutput
-        , test "(5.2) parse words and unimplemented macros" <|
+        , test "(4.1) parse words and unimplemented macros" <|
             \_ ->
                 let
                     renderOutput =
@@ -92,7 +79,7 @@ suite =
                         "a b c"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(5.3) parse \\italicv{a b c}" <|
+        , test "(4.2) parse \\italic{a b c}" <|
             \_ ->
                 let
                     renderOutput =
@@ -105,12 +92,11 @@ suite =
                         "<it>a b c</it>"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(5.4) parse \\italic{a b $c==d$}" <|
+        , test "(4.3) parse \\italic{a b $c==d$}" <|
             \_ ->
                 let
                     renderOutput =
-                        Debug.log "RENDERED OUTPUT"
-                            renderString
+                        renderString
                             parse
                             "\\italic{a b $c==d$}"
 
@@ -118,79 +104,40 @@ suite =
                         "<it>a b $c==d$</it>"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(6) Environment" <|
+        , test "(5.1) Environment" <|
             \_ ->
                 let
-                    parsedInput =
-                        run parse "\\begin{theorem}\nInfinity is \\emph{very} large: $\\infinity^2 = \\infinity$. \\end{theorem}"
+                    renderOutput =
+                        renderString
+                            parse
+                            "\\begin{theorem}\nInfinity is \\emph{very} large: $\\infinity^2 = \\infinity$. \\end{theorem}"
 
                     expectedOutput =
-                        Ok
-                            (Environment "theorem"
-                                (LatexList
-                                    ([ LXString "Infinity is"
-                                     , Macro "emph"
-                                        ([ LatexList
-                                            ([ LXString "very" ])
-                                         ]
-                                        )
-                                     , LXString "large:"
-                                     , InlineMath "\\infinity^2 = \\infinity"
-                                     , LXString "."
-                                     ]
-                                    )
-                                )
-                            )
+                        "\n<div class=\"environment\">\n<strong>Theorem 0</strong>\n<div class=\"italic\">\nInfinity is <it>very</it> large: $\\infinity^2 = \\infinity$ .\n</div>\n</div>\n"
                 in
-                    Expect.equal parsedInput expectedOutput
-        , test "(7) Nested Environment" <|
+                    Expect.equal renderOutput expectedOutput
+        , test "(5.2) Nested Environment" <|
             \_ ->
                 let
-                    parsedInput =
-                        run parse " \\begin{th}  \\begin{a}$$hahah$$\\begin{x}yy\\end{x}\\end{a}\\begin{a} a{1}{2} b c yoko{1} $foo$ yada $$bar$$ a b c \\begin{u}yy\\end{u} \\end{a}\n\\end{th}"
+                    renderOutput =
+                        renderString
+                            parse
+                            "\\begin{theorem}\n\\begin{a}x y z\\end{a}\\end{theorem}"
 
                     expectedOutput =
-                        Ok
-                            (Environment "th"
-                                (LatexList
-                                    ([ Environment "a" (LatexList ([ DisplayMath "hahah", Environment "x" (LatexList ([ LXString "yy" ])) ]))
-                                     , Environment "a"
-                                        (LatexList
-                                            ([ LXString "a{1}{2} b c yoko{1}"
-                                             , InlineMath "foo"
-                                             , LXString "yada"
-                                             , DisplayMath "bar"
-                                             , LXString "a b c"
-                                             , Environment "u" (LatexList ([ LXString "yy" ]))
-                                             ]
-                                            )
-                                        )
-                                     ]
-                                    )
-                                )
-                            )
+                        "\n<div class=\"environment\">\n<strong>Theorem 0</strong>\n<div class=\"italic\">\n\n<div class=\"environment\">\n<strong>A</strong>\n<div class=\"italic\">\nx y z\n</div>\n</div>\n\n</div>\n</div>\n"
                 in
-                    Expect.equal parsedInput expectedOutput
-        , test "(8) Itemized List" <|
+                    Expect.equal renderOutput expectedOutput
+        , test "(5.3) Equation Environment" <|
             \_ ->
                 let
-                    parsedInput =
-                        run latexList "\\begin{itemize} \\item aaa.\n \\item bbb.\n \\itemitem xx\n\\end{itemize}"
+                    renderOutput =
+                        renderString
+                            parse
+                            "\\begin{equation}\n\\int_0^1 x^n dx = \\frac{1}{n+1}\n\\end{equation}"
 
                     expectedOutput =
-                        Ok
-                            (LatexList
-                                ([ Environment "itemize"
-                                    (LatexList
-                                        ([ Item 1 (LatexList ([ LXString "aaa." ]))
-                                         , Item 1 (LatexList ([ LXString "bbb." ]))
-                                         , Item 2 (LatexList ([ LXString "xx" ]))
-                                         ]
-                                        )
-                                    )
-                                 ]
-                                )
-                            )
+                        "\n$$\n\\begin{equation}\n\\int_0^1 x^n dx = \\frac{1}{n+1}\n\\end{equation}\n$$\n"
                 in
-                    Expect.equal parsedInput expectedOutput
+                    Expect.equal renderOutput expectedOutput
         ]

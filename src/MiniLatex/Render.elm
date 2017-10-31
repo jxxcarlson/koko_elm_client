@@ -1,25 +1,14 @@
 module MiniLatex.Render exposing (..)
 
 import MiniLatex.Parser exposing (LatexExpression(..))
+import MiniLatex.Image
 import Dict
 import List.Extra
 import Parser
+import String.Extra
 
 
-type alias CrossReferences =
-    Dict.Dict String String
-
-
-emptyDict =
-    Dict.empty
-
-
-type alias LatexState =
-    { s1 : Int, s2 : Int, s3 : Int, tno : Int, eqno : Int, dict : CrossReferences }
-
-
-emptyLatexState =
-    { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
+{- FUNCTIONS FOR TESTING THINGS -}
 
 
 parseString parser str =
@@ -42,6 +31,33 @@ renderString parser str =
         renderOutput
 
 
+
+{- TYPES AND DEFAULT VALJUES -}
+
+
+type alias CrossReferences =
+    Dict.Dict String String
+
+
+emptyDict =
+    Dict.empty
+
+
+type alias LatexState =
+    { s1 : Int, s2 : Int, s3 : Int, tno : Int, eqno : Int, dict : CrossReferences }
+
+
+emptyLatexState =
+    { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
+
+
+getElement : Int -> List LatexExpression -> LatexExpression
+getElement k list =
+    List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
+
+
+{-| THE MAIN RENDING FUNCTION
+-}
 render : LatexState -> LatexExpression -> String
 render latexState latexExpression =
     case latexExpression of
@@ -61,18 +77,27 @@ render latexState latexExpression =
             "$$" ++ str ++ "$$"
 
         Environment name args ->
-            "DUMMY"
+            renderEnvironment latexState name args
 
         LatexList args ->
-            args |> List.map (render latexState) |> String.join (" ")
+            renderLatexList latexState args
 
         LXString str ->
             str
 
 
-getElement : Int -> List LatexExpression -> LatexExpression
-getElement k list =
-    List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
+
+{- RENDER ELEMENTS -}
+
+
+renderLatexList : LatexState -> List LatexExpression -> String
+renderLatexList latexState args =
+    args |> List.map (render latexState) |> String.join (" ")
+
+
+renderArgList : LatexState -> List LatexExpression -> String
+renderArgList latexState args =
+    args |> List.map (render latexState) |> List.map (\x -> "{" ++ x ++ "}") |> String.join ("")
 
 
 renderItem : LatexState -> Int -> LatexExpression -> String
@@ -80,28 +105,440 @@ renderItem latexState level latexExpression =
     ""
 
 
-renderMacro : LatexState -> String -> List LatexExpression -> String
-renderMacro latexState name args =
-    case name of
-        "italic" ->
-            renderItalic latexState args
-
-        _ ->
-            "Unresolved macro: " ++ name
-
-
 renderComment : String -> String
 renderComment str =
     ""
 
 
-renderItalic : LatexState -> List LatexExpression -> String
-renderItalic latexState args =
+
+{- ENVIROMENTS -}
+
+
+renderEnvironment : LatexState -> String -> LatexExpression -> String
+renderEnvironment latexState name body =
+    case name of
+        "center" ->
+            renderCenterEnvironment latexState body
+
+        "equation" ->
+            renderEquationEnvironment latexState body
+
+        "align" ->
+            renderAlignEnvironment latexState body
+
+        "eqnarray" ->
+            renderEqnArray latexState body
+
+        "itemize" ->
+            renderItemize body
+
+        "enumerate" ->
+            renderEnumerate body
+
+        "macros" ->
+            renderMacros body
+
+        "tabular" ->
+            renderTabular body
+
+        "verbatim" ->
+            renderVerbatim body
+
+        _ ->
+            renderDefaultEnvironment latexState name body
+
+
+renderDefaultEnvironment : LatexState -> String -> LatexExpression -> String
+renderDefaultEnvironment latexState name body =
+    if List.member name [ "theorem", "proposition", "corollary", "lemma", "definition" ] then
+        renderTheoremLikeEnvironment latexState name body
+    else
+        renderDefaultEnvironment2 latexState name body
+
+
+renderTheoremLikeEnvironment : LatexState -> String -> LatexExpression -> String
+renderTheoremLikeEnvironment latexState name body =
     let
-        arg =
-            getElement 0 args
+        r =
+            render latexState body
+
+        tnoString =
+            if latexState.s1 > 0 then
+                " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+            else
+                " " ++ (toString latexState.tno)
+    in
+        "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase name) ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ r ++ "\n</div>\n</div>\n"
+
+
+renderDefaultEnvironment2 : LatexState -> String -> LatexExpression -> String
+renderDefaultEnvironment2 latexState name body =
+    let
+        r =
+            render latexState body
+    in
+        "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase name) ++ "</strong>\n<div class=\"italic\">\n" ++ r ++ "\n</div>\n</div>\n"
+
+
+renderCenterEnvironment latexState body =
+    let
+        r =
+            render latexState body
+    in
+        "\n<div class=\"center\" >\n" ++ r ++ "\n</div>\n"
+
+
+renderEquationEnvironment latexState body =
+    let
+        addendum =
+            if latexState.eqno > 0 then
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+            else
+                ""
 
         r =
-            render latexState arg
+            render latexState body
     in
-        "<it>" ++ r ++ "</it>"
+        "\n$$\n\\begin{equation}\n" ++ addendum ++ r ++ "\n\\end{equation}\n$$\n"
+
+
+renderAlignEnvironment latexState body =
+    ""
+
+
+renderEqnArray latexState body =
+    ""
+
+
+renderItemize body =
+    ""
+
+
+renderEnumerate body =
+    ""
+
+
+renderMacros body =
+    ""
+
+
+renderTabular body =
+    ""
+
+
+renderVerbatim body =
+    ""
+
+
+
+{- MACROS: DISPATCHERS AND HELPERS -}
+
+
+renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String)
+renderMacroDict =
+    Dict.fromList
+        [ ( "cite", \x y -> renderCite x y )
+        , ( "code", \x y -> renderCode x y )
+        , ( "ellie", \x y -> renderEllie x y )
+        , ( "emph", \x y -> renderItalic x y )
+        , ( "eqref", \x y -> renderEqRef x y )
+        , ( "href", \x y -> renderHRef x y )
+        , ( "iframe", \x y -> renderIFrame x y )
+        , ( "image", \x y -> renderImage x y )
+        , ( "index", \x y -> "" )
+        , ( "italic", \x y -> renderItalic x y )
+        , ( "label", \x y -> "" )
+        , ( "maketitle", \x y -> "" )
+        , ( "mdash", \x y -> "&mdash;" )
+        , ( "ndash", \x y -> "&ndash;" )
+        , ( "newcommand", \x y -> renderNewCommand x y )
+        , ( "ref", \x y -> renderRef x y )
+        , ( "section", \x y -> renderSection x y )
+        , ( "section*", \x y -> renderSectionStar x y )
+        , ( "strong", \x y -> renderStrong x y )
+        ]
+
+
+renderer : String -> (LatexState -> List LatexExpression -> String)
+renderer name =
+    case Dict.get name renderMacroDict of
+        Just f ->
+            f
+
+        Nothing ->
+            reproduceMacro name
+
+
+reproduceMacro : String -> LatexState -> List LatexExpression -> String
+reproduceMacro name latexState args =
+    "\\" ++ name ++ (renderArgList emptyLatexState args)
+
+
+renderMacro : LatexState -> String -> List LatexExpression -> String
+renderMacro latexState name args =
+    (renderer name) latexState args
+
+
+renderArg : Int -> LatexState -> List LatexExpression -> String
+renderArg k latexState args =
+    render latexState (getElement k args)
+
+
+
+{- INDIVIDUAL MACRO RENDERERS -}
+
+
+{-| Needs work
+-}
+renderCite : LatexState -> List LatexExpression -> String
+renderCite latexState args =
+    "<strong>" ++ (renderArg 0 latexState args) ++ "</strong>"
+
+
+renderCode : LatexState -> List LatexExpression -> String
+renderCode latexState args =
+    "<code>" ++ (renderArg 0 latexState args) ++ "</code>"
+
+
+renderEllie : LatexState -> List LatexExpression -> String
+renderEllie latexState args =
+    let
+        src =
+            "src =\"https://ellie-app.com/embed/" ++ (renderArg 0 latexState args) ++ "\""
+
+        url =
+            "https://ellie-app.com/" ++ (renderArg 0 latexState args)
+
+        title_ =
+            renderArg 1 latexState args
+
+        foo =
+            27.99
+
+        title =
+            if title_ == "xxx" then
+                "Link to Ellie"
+            else
+                title_
+
+        style =
+            " style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\""
+
+        sandbox =
+            " sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\""
+    in
+        "<iframe " ++ src ++ style ++ sandbox ++ " ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
+
+
+renderEqRef : LatexState -> List LatexExpression -> String
+renderEqRef latexState args =
+    let
+        key =
+            renderArg 0 emptyLatexState args
+
+        value =
+            Dict.get key latexState.dict |> Maybe.withDefault "??"
+    in
+        "$(" ++ value ++ ")$"
+
+
+renderHRef : LatexState -> List LatexExpression -> String
+renderHRef latexState args =
+    let
+        url =
+            renderArg 0 emptyLatexState args
+
+        label =
+            renderArg 1 emptyLatexState args
+    in
+        " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
+
+
+renderIFrame : LatexState -> List LatexExpression -> String
+renderIFrame latexState args =
+    let
+        url =
+            renderArg 0 emptyLatexState args
+
+        src =
+            "src =\"" ++ url ++ "\""
+
+        title_ =
+            renderArg 1 emptyLatexState args
+
+        title =
+            if title_ == "xxx" then
+                "Link"
+            else
+                title_
+
+        height_ =
+            renderArg 2 emptyLatexState args
+
+        height =
+            if (title_ == "xxx" || height_ == "xxx") then
+                "400px"
+            else
+                height_
+
+        sandbox =
+            ""
+
+        style =
+            " style = \"width:100%; height:" ++ height ++ "; border:1; border-radius: 3px; overflow:scroll;\""
+    in
+        "<iframe scrolling=\"yes\" " ++ src ++ sandbox ++ style ++ " ></iframe>\n<center style=\"margin-top: 0px;\"><a href=\"" ++ url ++ "\" target=_blank>" ++ title ++ "</a></center>"
+
+
+renderImage : LatexState -> List LatexExpression -> String
+renderImage latexState args =
+    let
+        url =
+            renderArg 0 latexState args
+
+        label =
+            renderArg 1 latexState args
+
+        attributeString =
+            renderArg 2 latexState args
+
+        imageAttrs =
+            Debug.log "imageAttrs" (parseImageAttributes attributeString)
+    in
+        if imageAttrs.float == "left" then
+            handleFloatedImageLeft url label imageAttrs
+        else if imageAttrs.float == "right" then
+            handleFloatedImageRight url label imageAttrs
+        else if imageAttrs.align == "center" then
+            handleCenterImage url label imageAttrs
+        else
+            "<image src=\"" ++ url ++ "\" " ++ (imageAttributes imageAttrs attributeString) ++ " >"
+
+
+renderItalic : LatexState -> List LatexExpression -> String
+renderItalic latexState args =
+    "<it>" ++ (renderArg 0 latexState args) ++ "</it>"
+
+
+renderNewCommand : LatexState -> List LatexExpression -> String
+renderNewCommand latexState args =
+    let
+        command =
+            renderArg 0 latexState args
+
+        definition =
+            renderArg 1 latexState args
+    in
+        "\\newcommand{" ++ command ++ "}{" ++ definition ++ "}"
+
+
+renderRef : LatexState -> List LatexExpression -> String
+renderRef latexState args =
+    let
+        key =
+            renderArg 0 latexState args
+    in
+        Dict.get key latexState.dict |> Maybe.withDefault "??"
+
+
+renderSection : LatexState -> List LatexExpression -> String
+renderSection latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ " "
+            else
+                ""
+    in
+        "<h2>" ++ addendum ++ arg ++ "</h2>"
+
+
+renderSectionStar : LatexState -> List LatexExpression -> String
+renderSectionStar latexState args =
+    "<h2>" ++ (renderArg 0 latexState args) ++ "</h2>"
+
+
+renderStrong : LatexState -> List LatexExpression -> String
+renderStrong latexState args =
+    " <span class=\"strong\">" ++ (renderArg 0 latexState args) ++ "</span>"
+
+
+
+{- IMAGE HELPERS -}
+
+
+handleCenterImage url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageCenterLeftPart width =
+            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin-left:auto, margin-right:auto; text-align: center;\">"
+    in
+        (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ " ><br>" ++ label ++ "</div>"
+
+
+handleFloatedImageRight url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageRightDivLeftPart width =
+            "<div style=\"float: right; width: " ++ (toString (width + 20)) ++ "px; margin: 0 0 7.5px 10px; text-align: center;\">"
+    in
+        (imageRightDivLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
+
+
+handleFloatedImageLeft url label imageAttributes =
+    let
+        width =
+            imageAttributes.width
+
+        imageLeftDivLeftPart width =
+            "<div style=\"float: left; width: " ++ (toString (width + 20)) ++ "px; margin: 0 10px 7.5px 0; text-align: center;\">"
+    in
+        (imageLeftDivLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ "><br>" ++ label ++ "</div>"
+
+
+type alias ImageAttributes =
+    { width : Int, float : String, align : String }
+
+
+parseImageAttributes : String -> ImageAttributes
+parseImageAttributes attributeString =
+    let
+        kvList =
+            MiniLatex.Image.getKeyValueList attributeString
+
+        widthValue =
+            MiniLatex.Image.getValue "width" kvList |> String.toInt |> Result.withDefault 200
+
+        floatValue =
+            MiniLatex.Image.getValue "float" kvList
+
+        alignValue =
+            MiniLatex.Image.getValue "align" kvList
+    in
+        ImageAttributes widthValue floatValue alignValue
+
+
+imageAttributes : ImageAttributes -> String -> String
+imageAttributes imageAttrs attributeString =
+    let
+        widthValue =
+            imageAttrs.width |> toString
+
+        widthElement =
+            if widthValue /= "" then
+                "width=" ++ widthValue
+            else
+                ""
+    in
+        -- String.join " " [ styleElement, widthElement ]
+        widthElement

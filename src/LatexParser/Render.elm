@@ -149,7 +149,7 @@ handleEquationEnvironment latexState body =
             else
                 ""
     in
-        Debug.log "EQUATION" "\n\\begin{equation}\n" ++ addendum ++ body ++ "\n\\end{equation}\n"
+        Debug.log "EQUATION" "\n$$\n\\begin{equation}\n" ++ addendum ++ body ++ "\n\\end{equation}\n$$\n"
 
 
 handleAlignEnvironment : LatexState -> String -> String
