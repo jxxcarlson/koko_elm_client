@@ -2,6 +2,7 @@ module MiniLatex.Render exposing (..)
 
 import MiniLatex.Parser exposing (LatexExpression(..))
 import MiniLatex.Image
+import Configuration
 import Dict
 import List.Extra
 import Parser
@@ -114,42 +115,38 @@ renderComment str =
 {- ENVIROMENTS -}
 
 
+renderEnvironmentDict : Dict.Dict String (LatexState -> LatexExpression -> String)
+renderEnvironmentDict =
+    Dict.fromList
+        [ ( "align", \x y -> renderAlignEnvironment x y )
+        , ( "center", \x y -> renderCenterEnvironment x y )
+        , ( "enumerate", \x y -> renderEnumerate x y )
+        , ( "eqnarray", \x y -> renderEqnArray x y )
+        , ( "equation", \x y -> renderEquationEnvironment x y )
+        , ( "itemize", \x y -> renderEqnArray x y )
+        , ( "macros", \x y -> renderMacros x y )
+        , ( "tabular", \x y -> renderTabular x y )
+        , ( "verbatim", \x y -> renderVerbatim x y )
+        ]
+
+
+environmentRenderer : String -> (LatexState -> LatexExpression -> String)
+environmentRenderer name =
+    case Dict.get name renderEnvironmentDict of
+        Just f ->
+            f
+
+        Nothing ->
+            renderDefaultEnvironment name
+
+
 renderEnvironment : LatexState -> String -> LatexExpression -> String
 renderEnvironment latexState name body =
-    case name of
-        "center" ->
-            renderCenterEnvironment latexState body
-
-        "equation" ->
-            renderEquationEnvironment latexState body
-
-        "align" ->
-            renderAlignEnvironment latexState body
-
-        "eqnarray" ->
-            renderEqnArray latexState body
-
-        "itemize" ->
-            renderItemize body
-
-        "enumerate" ->
-            renderEnumerate body
-
-        "macros" ->
-            renderMacros body
-
-        "tabular" ->
-            renderTabular body
-
-        "verbatim" ->
-            renderVerbatim body
-
-        _ ->
-            renderDefaultEnvironment latexState name body
+    (environmentRenderer name) latexState body
 
 
-renderDefaultEnvironment : LatexState -> String -> LatexExpression -> String
-renderDefaultEnvironment latexState name body =
+renderDefaultEnvironment : String -> LatexState -> LatexExpression -> String
+renderDefaultEnvironment name latexState body =
     if List.member name [ "theorem", "proposition", "corollary", "lemma", "definition" ] then
         renderTheoremLikeEnvironment latexState name body
     else
@@ -213,23 +210,23 @@ renderEqnArray latexState body =
     ""
 
 
-renderItemize body =
+renderItemize latexState body =
     ""
 
 
-renderEnumerate body =
+renderEnumerate latexState body =
     ""
 
 
-renderMacros body =
+renderMacros latexState body =
     ""
 
 
-renderTabular body =
+renderTabular latexState body =
     ""
 
 
-renderVerbatim body =
+renderVerbatim latexState body =
     ""
 
 
@@ -259,11 +256,20 @@ renderMacroDict =
         , ( "section", \x y -> renderSection x y )
         , ( "section*", \x y -> renderSectionStar x y )
         , ( "strong", \x y -> renderStrong x y )
+        , ( "subheading", \x y -> renderSubheading x y )
+        , ( "subsection", \x y -> renderSubsection x y )
+        , ( "subsection*", \x y -> renderSubsectionStar x y )
+        , ( "subsubsection", \x y -> renderSubSubsection x y )
+        , ( "subsubsection*", \x y -> renderSubSubsectionStar x y )
+        , ( "title", \x y -> renderTitle x y )
+        , ( "term", \x y -> renderTerm x y )
+        , ( "xlink", \x y -> renderXLink x y )
+        , ( "xlinkPublic", \x y -> renderXLinkPublic x y )
         ]
 
 
-renderer : String -> (LatexState -> List LatexExpression -> String)
-renderer name =
+macroRenderer : String -> (LatexState -> List LatexExpression -> String)
+macroRenderer name =
     case Dict.get name renderMacroDict of
         Just f ->
             f
@@ -279,7 +285,7 @@ reproduceMacro name latexState args =
 
 renderMacro : LatexState -> String -> List LatexExpression -> String
 renderMacro latexState name args =
-    (renderer name) latexState args
+    (macroRenderer name) latexState args
 
 
 renderArg : Int -> LatexState -> List LatexExpression -> String
@@ -467,6 +473,101 @@ renderSectionStar latexState args =
 renderStrong : LatexState -> List LatexExpression -> String
 renderStrong latexState args =
     " <span class=\"strong\">" ++ (renderArg 0 latexState args) ++ "</span>"
+
+
+renderSubheading : LatexState -> List LatexExpression -> String
+renderSubheading latexState args =
+    "<div class=\"subheading\">" ++ (renderArg 0 latexState args) ++ "</div>"
+
+
+renderSubsection : LatexState -> List LatexExpression -> String
+renderSubsection latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ " "
+            else
+                ""
+    in
+        "<h3>" ++ addendum ++ arg ++ "</h3>"
+
+
+renderSubsectionStar : LatexState -> List LatexExpression -> String
+renderSubsectionStar latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+    in
+        "<h3>" ++ arg ++ "</h3>"
+
+
+renderSubSubsection : LatexState -> List LatexExpression -> String
+renderSubSubsection latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+
+        addendum =
+            if latexState.s1 > 0 then
+                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3) ++ " "
+            else
+                ""
+    in
+        "<h4>" ++ addendum ++ arg ++ "</h4>"
+
+
+renderSubSubsectionStar : LatexState -> List LatexExpression -> String
+renderSubSubsectionStar latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+    in
+        "<h4>" ++ arg ++ "</h4>"
+
+
+renderTitle : LatexState -> List LatexExpression -> String
+renderTitle latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+    in
+        "<h1>" ++ arg ++ "</h1>"
+
+
+renderTerm : LatexState -> List LatexExpression -> String
+renderTerm latexState args =
+    let
+        arg =
+            renderArg 0 latexState args
+    in
+        " <span class=italic>" ++ arg ++ "</span>"
+
+
+renderXLink : LatexState -> List LatexExpression -> String
+renderXLink latexState args =
+    let
+        id =
+            renderArg 0 latexState args
+
+        label =
+            renderArg 1 latexState args
+    in
+        " <a href=\"" ++ Configuration.client ++ "##document/" ++ id ++ "\">" ++ label ++ "</a>"
+
+
+renderXLinkPublic : LatexState -> List LatexExpression -> String
+renderXLinkPublic latexState args =
+    let
+        id =
+            renderArg 0 latexState args
+
+        label =
+            renderArg 1 latexState args
+    in
+        " <a href=\"" ++ Configuration.client ++ "##public/" ++ id ++ "\">" ++ label ++ "</a>"
 
 
 
