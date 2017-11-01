@@ -147,4 +147,30 @@ suite =
                             )
                 in
                     Expect.equal parsedInput expectedOutput
+        , test "(9) table" <|
+            \_ ->
+                let
+                    parsedInput =
+                        run parse "\\begin{tabular}\n1 & 2 \\\\\n 3 & 4 \\\\\n\\end{tabular}"
+
+                    expectedOutput =
+                        Ok
+                            (Environment "tabular"
+                                (LatexList
+                                    ([ LatexList
+                                        ([ LXString "1"
+                                         , LXString "2"
+                                         ]
+                                        )
+                                     , LatexList
+                                        ([ LXString "3"
+                                         , LXString "4"
+                                         ]
+                                        )
+                                     ]
+                                    )
+                                )
+                            )
+                in
+                    Expect.equal parsedInput expectedOutput
         ]

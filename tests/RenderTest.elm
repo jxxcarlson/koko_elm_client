@@ -140,4 +140,40 @@ suite =
                         "\n$$\n\\begin{equation}\n\\int_0^1 x^n dx = \\frac{1}{n+1}\n\\end{equation}\n$$\n"
                 in
                     Expect.equal renderOutput expectedOutput
+        , test "(6.1) Itemize" <|
+            \_ ->
+                let
+                    renderOutput =
+                        renderString
+                            latexList
+                            "\\begin{itemize} \\item aaa.\n \\item bbb.\n \\itemitem xx\n\\end{itemize}"
+
+                    expectedOutput =
+                        "\n<ul>\n<li class=\"item1\">aaa.</li>\n <li class=\"item1\">bbb.</li>\n <li class=\"item2\">xx</li>\n\n</ul>\n"
+                in
+                    Expect.equal renderOutput expectedOutput
+        , test "(6.2) Tablular" <|
+            \_ ->
+                let
+                    renderOutput =
+                        renderString
+                            parse
+                            "\\begin{tabular}\n1 & 2 \\\\\n 3 & 4 \\\\\n\\end{tabular}"
+
+                    expectedOutput =
+                        "<table>\n <tr>  <td>1</td> <td>2</td> </tr>\n <tr>  <td>3</td> <td>4</td> </tr>\n</table>\n"
+                in
+                    Expect.equal renderOutput expectedOutput
+        , test "(X.1) Yada" <|
+            \_ ->
+                let
+                    renderOutput =
+                        renderString
+                            latexList
+                            "This is MiniLaTeX:\n\\begin{theorem}\nThis is a test: $\\alpha^2 = 7$ \\foo{1}\n\\begin{a}\nla di dah\n\\end{a}\n\\end{theorem}"
+
+                    expectedOutput =
+                        "This is MiniLaTeX: \n<div class=\"environment\">\n<strong>Theorem 0</strong>\n<div class=\"italic\">\nThis is a test: $\\alpha^2 = 7$ \\foo{1} \n<div class=\"environment\">\n<strong>A</strong>\n<div class=\"italic\">\nla di dah\n</div>\n</div>\n\n</div>\n</div>\n"
+                in
+                    Expect.equal renderOutput expectedOutput
         ]

@@ -57,6 +57,16 @@ getElement k list =
     List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
 
 
+extractList : LatexExpression -> List LatexExpression
+extractList latexExpression =
+    case latexExpression of
+        LatexList a ->
+            a
+
+        _ ->
+            []
+
+
 {-| THE MAIN RENDING FUNCTION
 -}
 render : LatexState -> LatexExpression -> String
@@ -101,9 +111,14 @@ renderArgList latexState args =
     args |> List.map (render latexState) |> List.map (\x -> "{" ++ x ++ "}") |> String.join ("")
 
 
+itemClass : Int -> String
+itemClass level =
+    "item" ++ (toString level)
+
+
 renderItem : LatexState -> Int -> LatexExpression -> String
 renderItem latexState level latexExpression =
-    ""
+    "<li class=\"" ++ (itemClass level) ++ "\">" ++ (render latexState latexExpression) ++ "</li>\n"
 
 
 renderComment : String -> String
@@ -123,7 +138,7 @@ renderEnvironmentDict =
         , ( "enumerate", \x y -> renderEnumerate x y )
         , ( "eqnarray", \x y -> renderEqnArray x y )
         , ( "equation", \x y -> renderEquationEnvironment x y )
-        , ( "itemize", \x y -> renderEqnArray x y )
+        , ( "itemize", \x y -> renderItemize x y )
         , ( "macros", \x y -> renderMacros x y )
         , ( "tabular", \x y -> renderTabular x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
@@ -203,31 +218,79 @@ renderEquationEnvironment latexState body =
 
 
 renderAlignEnvironment latexState body =
-    ""
+    let
+        r =
+            (render latexState body) |> String.Extra.replace "\\ \\" "\\\\"
+
+        -- NOTE:                         ^^^ temporary fix
+        addendum =
+            if latexState.eqno > 0 then
+                if latexState.s1 > 0 then
+                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}"
+                else
+                    "\\tag{" ++ (toString latexState.eqno) ++ "}"
+            else
+                ""
+    in
+        "\n$$\n\\begin{align}\n" ++ addendum ++ r ++ "\n\\end{align}\n$$\n"
 
 
 renderEqnArray latexState body =
-    ""
-
-
-renderItemize latexState body =
-    ""
+    "\n$$\n" ++ (render latexState body) ++ "\n$$\n"
 
 
 renderEnumerate latexState body =
-    ""
+    "\n<ol>\n" ++ (render latexState body) ++ "\n</ol>\n"
+
+
+renderItemize latexState body =
+    "\n<ul>\n" ++ (render latexState body) ++ "\n</ul>\n"
 
 
 renderMacros latexState body =
-    ""
+    "\n$$\n" ++ (render latexState body) ++ "\n$$\n"
 
 
 renderTabular latexState body =
-    ""
+    renderTableBody body
+
+
+renderCell cell =
+    case cell of
+        LXString s ->
+            "<td>" ++ s ++ "</td>"
+
+        InlineMath s ->
+            "<td>$" ++ s ++ "$</td>"
+
+        _ ->
+            "<td>-</td>"
+
+
+renderRow row =
+    case row of
+        LatexList row_ ->
+            row_
+                |> List.foldl (\cell acc -> acc ++ " " ++ (renderCell cell)) ""
+                |> \row -> "<tr> " ++ row ++ " </tr>\n"
+
+        _ ->
+            "<tr>-</tr>"
+
+
+renderTableBody body =
+    case body of
+        LatexList body_ ->
+            body_
+                |> List.foldl (\row acc -> acc ++ " " ++ (renderRow row)) ""
+                |> \body -> "<table>\n" ++ body ++ "</table>\n"
+
+        _ ->
+            "<table>-</table>"
 
 
 renderVerbatim latexState body =
-    ""
+    "\n<pre class=\"verbatim\">" ++ (render latexState body) ++ "</pre>\n"
 
 
 

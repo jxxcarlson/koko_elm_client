@@ -86,6 +86,15 @@ word =
 -}
 word2 : Parser String
 word2 =
+    inContext "word2" <|
+        succeed identity
+            |. spaces
+            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}' || c == '&'))
+            |. spaces
+
+
+word2a : Parser String
+word2a =
     inContext "word" <|
         succeed identity
             |. spaces
@@ -298,6 +307,9 @@ environmentOfType envType =
             "itemize" ->
                 itemEnvironmentBody endWord envType
 
+            "tabular" ->
+                tabularEnvironmentBody endWord envType
+
             _ ->
                 standardEnvironmentBody endWord envType
 
@@ -322,6 +334,66 @@ itemEnvironmentBody endWord envType =
         |. ws
         |> map LatexList
         |> map (Environment envType)
+
+
+tabularEnvironmentBody endWord envType =
+    succeed identity
+        |. ws
+        |= tableBody
+        |. ws
+        |. symbol endWord
+        |. ws
+        |> map (Environment envType)
+
+
+
+{- TABLE -}
+
+
+tableCell : Parser LatexExpression
+tableCell =
+    succeed identity
+        |. spaces
+        |= oneOf [ inlineMath2, words2 ]
+
+
+tableRow : Parser LatexExpression
+tableRow =
+    succeed identity
+        |. spaces
+        |= andThen (\c -> tableCellHelp [ c ]) tableCell
+        |. spaces
+        |. oneOf [ symbol "\n", symbol "\\\\\n" ]
+        |> map LatexList
+
+
+tableCellHelp : List LatexExpression -> Parser (List LatexExpression)
+tableCellHelp revCells =
+    oneOf
+        [ nextCell
+            |> andThen (\c -> tableCellHelp (c :: revCells))
+        , succeed (List.reverse revCells)
+        ]
+
+
+nextCell : Parser LatexExpression
+nextCell =
+    delayedCommit spaces <|
+        succeed identity
+            |. symbol "&"
+            |. spaces
+            |= tableCell
+
+
+tableBody : Parser LatexExpression
+tableBody =
+    succeed identity
+        |= repeat oneOrMore tableRow
+        |> map LatexList
+
+
+
+{- XXXX -}
 
 
 beginWord : Parser String
