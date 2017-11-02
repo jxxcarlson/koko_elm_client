@@ -3,6 +3,7 @@ module MiniLatex.Render exposing (..)
 import MiniLatex.Parser exposing (LatexExpression(..))
 import MiniLatex.Image
 import MiniLatex.LatexState exposing (..)
+import MiniLatex.ParserTools as PT
 import Configuration
 import Dict
 import List.Extra
@@ -11,6 +12,11 @@ import String.Extra
 
 
 {- FUNCTIONS FOR TESTING THINGS -}
+
+
+getElement : Int -> List LatexExpression -> LatexExpression
+getElement k list =
+    List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
 
 
 parseString parser str =
@@ -35,11 +41,6 @@ renderString parser str =
 
 
 {- TYPES AND DEFAULT VALJUES -}
-
-
-getElement : Int -> List LatexExpression -> LatexExpression
-getElement k list =
-    List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
 
 
 extractList : LatexExpression -> List LatexExpression

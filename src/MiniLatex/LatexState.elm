@@ -51,6 +51,28 @@ incrementCounter name latexState =
         { latexState | counters = newCounters }
 
 
+updateCounter name value latexState =
+    let
+        maybeSet =
+            Maybe.map (\x -> value)
+
+        newCounters =
+            Dict.update name maybeSet latexState.counters
+    in
+        { latexState | counters = newCounters }
+
+
+setCrossReference label value latexState =
+    let
+        crossReferences =
+            latexState.crossReferences
+
+        newCrossReferences =
+            Dict.insert label value crossReferences
+    in
+        { latexState | crossReferences = newCrossReferences }
+
+
 initialCounters =
     Dict.fromList [ ( "s1", 0 ), ( "s2", 0 ), ( "s3", 0 ), ( "tno", 0 ), ( "eqno", 0 ) ]
 

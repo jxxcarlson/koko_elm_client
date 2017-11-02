@@ -2,6 +2,7 @@ module MiniLatex.Parser exposing (..)
 
 import Parser exposing (..)
 import Dict
+import List.Extra
 
 
 {- ELLIE: https://ellie-app.com/pcB5b3BPfa1/0
@@ -24,32 +25,32 @@ type LatexExpression
     | LatexList (List LatexExpression)
 
 
-isMacro : String -> LatexExpression -> Bool
-isMacro name latexExpression =
-    case latexExpression of
-        Macro name _ ->
-            True
-
-        _ ->
-            False
-
-
-getMacros : String -> List LatexExpression -> List LatexExpression
-getMacros macroName expressionList =
-    expressionList
-        |> List.filter (\expr -> isMacro macroName expr)
-
-
+defaultLatexList : LatexExpression
 defaultLatexList =
     LatexList ([ LXString "Parse Error" ])
 
 
-parseParagraph : String -> LatexExpression
+defaultLatexExpression : List LatexExpression
+defaultLatexExpression =
+    [ Macro "NULL" [] ]
+
+
+parseParagraph : String -> List LatexExpression
 parseParagraph text =
-    Parser.run parse text |> Result.withDefault defaultLatexList
+    let
+        expr =
+            Parser.run latexList text
+    in
+        case expr of
+            Ok (LatexList list) ->
+                list
+
+            _ ->
+                []
 
 
 
+-- |> Result.withDefault defaultLatexExpression
 {- PARSER: TOP LEVEL -}
 
 

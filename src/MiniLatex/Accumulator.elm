@@ -10,12 +10,29 @@ module MiniLatex.Accumulator
         )
 
 import Dict
-import MiniLatex.Parser as Parser exposing (defaultLatexList, parseParagraph, LatexExpression(..))
+import MiniLatex.Parser as Parser exposing (macro, defaultLatexList, parseParagraph, LatexExpression(..))
 import String.Extra
 import Document.Differ as Differ
-import MiniLatex.Render as Render exposing (LatexState)
+import MiniLatex.Render as Render exposing (render, renderLatexList)
+import MiniLatex.LatexState exposing (..)
+import MiniLatex.ParserTools as PT
 import List.Extra
 import Regex
+import Parser as P
+
+
+getElement : Int -> List LatexExpression -> String
+getElement k list =
+    let
+        lxString =
+            List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
+    in
+        case lxString of
+            LXString str ->
+                str
+
+            _ ->
+                "yyy"
 
 
 transformParagraphs : List String -> List String
@@ -33,7 +50,7 @@ accumulator :
     -> ( List String, LatexState )
 accumulator parse render updateState inputList =
     inputList
-        |> List.foldl (transformer parse render updateState) ( [], Render.emptyLatexState )
+        |> List.foldl (transformer parse render updateState) ( [], emptyLatexState )
 
 
 transformer :
@@ -58,7 +75,7 @@ transformer parse render updateState input acc =
 
 
 type alias LatexInfo =
-    { typ : String, name : String, value : List String }
+    { typ : String, name : String, value : List LatexExpression }
 
 
 getAt : Int -> List String -> String
@@ -72,70 +89,103 @@ info latexExpression =
         Macro name args ->
             { typ = "macro", name = name, value = args }
 
-        Environment v ->
-            case v.body of
-                StringValue str ->
-                    { typ = "env", name = v.env, value = [ str ] }
-
-                LatexList ll ->
-                    { typ = "env", name = v.env, value = [ "latexList" ] }
+        Environment name body ->
+            { typ = "env", name = name, value = [ body ] }
 
         _ ->
             { typ = "null", name = "null", value = [] }
 
 
-handleEquationNumbers : LatexState -> LatexInfo -> LatexState
-handleEquationNumbers latexState headElement =
+getLabel2 str =
     let
-        label =
-            headElement.value
-                |> List.head
-                |> Maybe.withDefault ""
+        maybeMacro =
+            str
                 |> String.trim
-                |> Latex.getLabel
-
-        newEqno =
-            latexState.eqno + 1
-
-        newDict =
-            if label /= "" then
-                Dict.insert label ((toString latexState.s1) ++ "." ++ (toString newEqno)) latexState.dict
-            else
-                latexState.dict
+                |> P.run Parser.macro
     in
-        { latexState | eqno = newEqno, dict = newDict }
+        case maybeMacro of
+            Ok macro ->
+                macro |> PT.getFirstMacroArg "label"
+
+            _ ->
+                ""
+
+
+handleEquationNumbers : LatexState -> LatexInfo -> LatexState
+handleEquationNumbers latexState info =
+    let
+        {- label =
+           info.value
+               |> List.head
+               |> Maybe.withDefault (Macro "NULL" [])
+               |> PT.getFirstMacroArg "label"
+        -}
+        data =
+            info.value
+                |> List.head
+                |> Maybe.withDefault (Macro "NULL" [])
+
+        label =
+            case data of
+                LXString str ->
+                    getLabel2 str
+
+                _ ->
+                    ""
+
+        latexState1 =
+            incrementCounter "eqno" latexState
+
+        eqno =
+            getCounter "eqno" latexState1
+
+        s1 =
+            getCounter "s1" latexState1
+
+        latexState2 =
+            if label /= "" then
+                setCrossReference label ((toString s1) ++ "." ++ (toString eqno)) latexState1
+            else
+                latexState1
+    in
+        latexState2
 
 
 handleTheoremNumbers : LatexState -> LatexInfo -> LatexState
-handleTheoremNumbers latexState headElement =
+handleTheoremNumbers latexState info =
     let
         label =
-            headElement.value
+            info.value
                 |> List.head
-                |> Maybe.withDefault ""
-                |> String.trim
-                |> Latex.getLabel
+                |> Maybe.withDefault (Macro "NULL" [])
+                |> PT.getFirstMacroArg "label"
 
-        newTno =
-            latexState.tno + 1
+        latexState1 =
+            incrementCounter "tno" latexState
 
-        newDict =
+        tno =
+            getCounter "tno" latexState1
+
+        s1 =
+            getCounter "s1" latexState1
+
+        latexState2 =
             if label /= "" then
-                Dict.insert label ((toString latexState.s1) ++ "." ++ (toString newTno)) latexState.dict
+                setCrossReference label ((toString s1) ++ "." ++ (toString tno)) latexState1
             else
-                latexState.dict
+                latexState1
     in
-        { latexState | tno = newTno, dict = newDict }
+        latexState2
 
 
-updateState : List LatexItem -> LatexState -> LatexState
+updateState : List LatexExpression -> LatexState -> LatexState
 updateState parsedParagraph latexState =
     let
         headElement =
             parsedParagraph
                 |> List.head
                 |> Maybe.map info
-                |> Maybe.withDefault (LatexInfo "null" "null" [])
+                |> Maybe.withDefault (LatexInfo "null" "null" [ (Macro "null" []) ])
 
         newLatexState =
             case ( headElement.typ, headElement.name ) of
@@ -145,10 +195,10 @@ updateState parsedParagraph latexState =
                             headElement.value
 
                         arg1 =
-                            getAt 0 args
+                            getElement 0 args
 
                         arg2 =
-                            getAt 1 args
+                            getElement 1 args
 
                         initialSectionNumber =
                             if arg1 == "section" then
@@ -157,18 +207,27 @@ updateState parsedParagraph latexState =
                                 -1
                     in
                         if initialSectionNumber > -1 then
-                            { latexState | s1 = initialSectionNumber - 1, s2 = 0, s3 = 0 }
+                            latexState
+                                |> updateCounter "s1" (initialSectionNumber - 1)
+                                |> updateCounter "s2" 0
+                                |> updateCounter "s3" 0
                         else
                             latexState
 
                 ( "macro", "section" ) ->
-                    { latexState | s1 = latexState.s1 + 1, s2 = 0, s3 = 0 }
+                    latexState
+                        |> incrementCounter "s1"
+                        |> updateCounter "s2" 0
+                        |> updateCounter "s3" 0
 
                 ( "macro", "subsection" ) ->
-                    { latexState | s2 = latexState.s2 + 1, s3 = 0 }
+                    latexState
+                        |> incrementCounter "s2"
+                        |> updateCounter "s3" 0
 
                 ( "macro", "subsubsection" ) ->
-                    { latexState | s3 = latexState.s3 + 1 }
+                    latexState
+                        |> incrementCounter "s3"
 
                 ( "env", "theorem" ) ->
                     handleTheoremNumbers latexState headElement
@@ -197,18 +256,19 @@ updateState parsedParagraph latexState =
         newLatexState
 
 
-processParagraph : String -> LatexState -> List LatexItem
+processParagraph : String -> LatexState -> List LatexExpression
 processParagraph paragraph latexState =
     paragraph
         |> (updateSection latexState)
-        |> Render.parseParagraph
+        |> parseParagraph
 
 
 processParagraph2 : String -> LatexState -> String
 processParagraph2 paragraph latexState =
     paragraph
         |> (updateSection latexState)
-        |> Render.transformText
+        |> parseParagraph
+        |> renderLatexList latexState
 
 
 getSectionNumber text =
@@ -237,19 +297,29 @@ getSectionNumber text =
 
 updateSection : LatexState -> String -> String
 updateSection latexState paragraph =
-    if String.contains "\\section" paragraph then
-        paragraph
-            |> String.Extra.replace "\\section{" ("\\section{" ++ (toString (latexState.s1 + 1)) ++ " ")
-    else if String.contains "\\subsection" paragraph then
-        paragraph
-            |> String.Extra.replace "\\subsection{" ("\\subsection{" ++ (toString latexState.s1) ++ "." ++ (toString (latexState.s2 + 1)) ++ " ")
-    else if String.contains "\\subsubsection" paragraph then
-        paragraph
-            |> String.Extra.replace "\\subsubsection{" ("\\subsubsection{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString (latexState.s3 + 1)) ++ " ")
-    else
-        paragraph
+    let
+        s1 =
+            getCounter "s1" latexState
+
+        s2 =
+            getCounter "s2" latexState
+
+        s3 =
+            getCounter "s3" latexState
+    in
+        if String.contains "\\section" paragraph then
+            paragraph
+                |> String.Extra.replace "\\section{" ("\\section{" ++ (toString (s1 + 1)) ++ " ")
+        else if String.contains "\\subsection" paragraph then
+            paragraph
+                |> String.Extra.replace "\\subsection{" ("\\subsection{" ++ (toString s1) ++ "." ++ (toString (s2 + 1)) ++ " ")
+        else if String.contains "\\subsubsection" paragraph then
+            paragraph
+                |> String.Extra.replace "\\subsubsection{" ("\\subsubsection{" ++ (toString s1) ++ "." ++ (toString s2) ++ "." ++ (toString (s3 + 1)) ++ " ")
+        else
+            paragraph
 
 
-renderParagraph : List LatexItem -> LatexState -> String
+renderParagraph : List LatexExpression -> LatexState -> String
 renderParagraph parsedParagraph latexState =
-    parsedParagraph |> (Render.render latexState)
+    renderLatexList latexState parsedParagraph

@@ -27,6 +27,7 @@ There is a second branch of the optics storyline.  It begins with Huygens' wave 
 In classical mechanics, which successfully deals with objects such as arrows, baseballs, airplanes, and planets, we are accustomed to the idea of a body moving along a trajectory
 
 \\begin{equation}
+\\label{foo}
 {\\bf r}(t) = (x,y,z)(t)
 \\end{equation}
 
