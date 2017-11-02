@@ -312,6 +312,7 @@ reservedWord =
 
 
 {- ENVIRONMENTS -}
+{- Dispatcher code -}
 
 
 environment : Parser LatexExpression
@@ -344,12 +345,16 @@ environmentOfType envType =
             "\\end{" ++ envType ++ "}"
 
         envKind =
-            if List.member envType [ "equation", "align" ] then
+            if List.member envType [ "equation", "align", "eqnarray" ] then
                 "mathJax"
             else
                 envType
     in
         (environmentParser envKind) endWord envType
+
+
+
+{- Subparsers -}
 
 
 standardEnvironmentBody endWord envType =
@@ -384,6 +389,8 @@ tabularEnvironmentBody endWord envType =
         |> map (Environment envType)
 
 
+{-| The body of the environment is parsed as an LXString
+-}
 mathJaxBody endWord envType =
     succeed identity
         |= parseUntil endWord

@@ -2,6 +2,7 @@ module MiniLatex.Render exposing (..)
 
 import MiniLatex.Parser exposing (LatexExpression(..))
 import MiniLatex.Image
+import MiniLatex.LatexState exposing (..)
 import Configuration
 import Dict
 import List.Extra
@@ -34,22 +35,6 @@ renderString parser str =
 
 
 {- TYPES AND DEFAULT VALJUES -}
-
-
-type alias CrossReferences =
-    Dict.Dict String String
-
-
-emptyDict =
-    Dict.empty
-
-
-type alias LatexState =
-    { s1 : Int, s2 : Int, s3 : Int, tno : Int, eqno : Int, dict : CrossReferences }
-
-
-emptyLatexState =
-    { s1 = 0, s2 = 0, s3 = 0, tno = 0, eqno = 0, dict = Dict.empty }
 
 
 getElement : Int -> List LatexExpression -> LatexExpression
@@ -174,11 +159,20 @@ renderTheoremLikeEnvironment latexState name body =
         r =
             render latexState body
 
+        eqno =
+            getCounter "eqno" latexState
+
+        s1 =
+            getCounter "s1" latexState
+
+        tno =
+            getCounter "tno" latexState
+
         tnoString =
-            if latexState.s1 > 0 then
-                " " ++ (toString latexState.s1) ++ "." ++ (toString latexState.tno)
+            if s1 > 0 then
+                " " ++ (toString s1) ++ "." ++ (toString tno)
             else
-                " " ++ (toString latexState.tno)
+                " " ++ (toString tno)
     in
         "\n<div class=\"environment\">\n<strong>" ++ (String.Extra.toSentenceCase name) ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ r ++ "\n</div>\n</div>\n"
 
@@ -202,12 +196,18 @@ renderCenterEnvironment latexState body =
 
 renderEquationEnvironment latexState body =
     let
+        eqno =
+            getCounter "eqno" latexState
+
+        s1 =
+            getCounter "s1" latexState
+
         addendum =
-            if latexState.eqno > 0 then
-                if latexState.s1 > 0 then
-                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}\n"
+            if eqno > 0 then
+                if s1 > 0 then
+                    "\\tag{" ++ (toString s1) ++ "." ++ (toString eqno) ++ "}\n"
                 else
-                    "\\tag{" ++ (toString latexState.eqno) ++ "}\n"
+                    "\\tag{" ++ (toString eqno) ++ "}\n"
             else
                 ""
 
@@ -222,13 +222,18 @@ renderAlignEnvironment latexState body =
         r =
             (render latexState body) |> String.Extra.replace "\\ \\" "\\\\"
 
-        -- NOTE:                         ^^^ temporary fix
+        eqno =
+            getCounter "eqno" latexState
+
+        s1 =
+            getCounter "s1" latexState
+
         addendum =
-            if latexState.eqno > 0 then
-                if latexState.s1 > 0 then
-                    "\\tag{" ++ (toString latexState.s1) ++ "." ++ (toString latexState.eqno) ++ "}"
+            if eqno > 0 then
+                if s1 > 0 then
+                    "\\tag{" ++ (toString s1) ++ "." ++ (toString eqno) ++ "}"
                 else
-                    "\\tag{" ++ (toString latexState.eqno) ++ "}"
+                    "\\tag{" ++ (toString eqno) ++ "}"
             else
                 ""
     in
@@ -408,10 +413,10 @@ renderEqRef latexState args =
         key =
             renderArg 0 emptyLatexState args
 
-        value =
-            Dict.get key latexState.dict |> Maybe.withDefault "??"
+        ref =
+            getCrossReference key latexState
     in
-        "$(" ++ value ++ ")$"
+        "$(" ++ ref ++ ")$"
 
 
 renderHRef : LatexState -> List LatexExpression -> String
@@ -510,7 +515,7 @@ renderRef latexState args =
         key =
             renderArg 0 latexState args
     in
-        Dict.get key latexState.dict |> Maybe.withDefault "??"
+        getCrossReference key latexState
 
 
 renderSection : LatexState -> List LatexExpression -> String
@@ -519,9 +524,12 @@ renderSection latexState args =
         arg =
             renderArg 0 latexState args
 
+        s1 =
+            getCounter "s1" latexState
+
         addendum =
-            if latexState.s1 > 0 then
-                (toString latexState.s1) ++ " "
+            if s1 > 0 then
+                (toString s1) ++ " "
             else
                 ""
     in
@@ -549,9 +557,15 @@ renderSubsection latexState args =
         arg =
             renderArg 0 latexState args
 
+        s1 =
+            getCounter "s1" latexState
+
+        s2 =
+            getCounter "s2" latexState
+
         addendum =
-            if latexState.s1 > 0 then
-                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ " "
+            if s1 > 0 then
+                (toString s1) ++ "." ++ (toString s2) ++ " "
             else
                 ""
     in
@@ -573,9 +587,18 @@ renderSubSubsection latexState args =
         arg =
             renderArg 0 latexState args
 
+        s1 =
+            getCounter "s1" latexState
+
+        s2 =
+            getCounter "s2" latexState
+
+        s3 =
+            getCounter "s3" latexState
+
         addendum =
-            if latexState.s1 > 0 then
-                (toString latexState.s1) ++ "." ++ (toString latexState.s2) ++ "." ++ (toString latexState.s3) ++ " "
+            if s1 > 0 then
+                (toString s1) ++ "." ++ (toString s2) ++ "." ++ (toString s3) ++ " "
             else
                 ""
     in
