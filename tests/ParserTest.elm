@@ -180,20 +180,7 @@ suite =
                         run parse "\\begin{equation}\n\\label{uncertaintyPrinciple}\n\\left[ \\hat p, x\\right] = -i \\hbar\n\\end{equation}"
 
                     expectedOutput =
-                        Ok
-                            (Environment "equation"
-                                (LatexList
-                                    ([ Macro "label" ([ LatexList ([ LXString "uncertaintyPrinciple" ]) ])
-                                     , Macro "left[" []
-                                     , Macro "hat" []
-                                     , LXString "p, x"
-                                     , Macro "right]" []
-                                     , LXString "= -i"
-                                     , Macro "hbar" []
-                                     ]
-                                    )
-                                )
-                            )
+                        Ok (Environment "equation" (LXString "\n\\label{uncertaintyPrinciple}\n\\left[ \\hat p, x\\right] = -i \\hbar\n"))
                 in
                     Expect.equal parsedInput expectedOutput
         ]

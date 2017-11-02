@@ -319,24 +319,37 @@ environment =
     lazy (\_ -> beginWord |> andThen environmentOfType)
 
 
+parseEnvirnomentDict =
+    Dict.fromList
+        [ ( "enumerate", \endWord envType -> itemEnvironmentBody endWord envType )
+        , ( "itemize", \endWord envType -> itemEnvironmentBody endWord envType )
+        , ( "tabular", \endWord envType -> tabularEnvironmentBody endWord envType )
+        , ( "mathJax", \endWord envType -> mathJaxBody endWord envType )
+        ]
+
+
+environmentParser name =
+    case Dict.get name parseEnvirnomentDict of
+        Just p ->
+            p
+
+        Nothing ->
+            standardEnvironmentBody
+
+
 environmentOfType : String -> Parser LatexExpression
 environmentOfType envType =
     let
         endWord =
             "\\end{" ++ envType ++ "}"
+
+        envKind =
+            if List.member envType [ "equation", "align" ] then
+                "mathJax"
+            else
+                envType
     in
-        case envType of
-            "enumerate" ->
-                itemEnvironmentBody endWord envType
-
-            "itemize" ->
-                itemEnvironmentBody endWord envType
-
-            "tabular" ->
-                tabularEnvironmentBody endWord envType
-
-            _ ->
-                standardEnvironmentBody endWord envType
+        (environmentParser envKind) endWord envType
 
 
 standardEnvironmentBody endWord envType =
@@ -368,6 +381,15 @@ tabularEnvironmentBody endWord envType =
         |. ws
         |. symbol endWord
         |. ws
+        |> map (Environment envType)
+
+
+mathJaxBody endWord envType =
+    succeed identity
+        |= parseUntil endWord
+        -- |. symbol endWord
+        |. ws
+        |> map LXString
         |> map (Environment envType)
 
 
