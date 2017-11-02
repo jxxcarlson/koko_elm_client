@@ -24,6 +24,31 @@ type LatexExpression
     | LatexList (List LatexExpression)
 
 
+isMacro : String -> LatexExpression -> Bool
+isMacro name latexExpression =
+    case latexExpression of
+        Macro name _ ->
+            True
+
+        _ ->
+            False
+
+
+getMacros : String -> List LatexExpression -> List LatexExpression
+getMacros macroName expressionList =
+    expressionList
+        |> List.filter (\expr -> isMacro macroName expr)
+
+
+defaultLatexList =
+    LatexList ([ LXString "Parse Error" ])
+
+
+parseParagraph : String -> LatexExpression
+parseParagraph text =
+    Parser.run parse text |> Result.withDefault defaultLatexList
+
+
 
 {- PARSER: TOP LEVEL -}
 
@@ -254,7 +279,7 @@ innerMacroName =
         succeed identity
             |. spaces
             |. symbol "\\"
-            |= keep zeroOrMore (\c -> not (c == '{' || c == ' '))
+            |= keep zeroOrMore (\c -> not (c == '{' || c == ' ' || c == '\n'))
 
 
 allOrNothing : Parser a -> Parser a

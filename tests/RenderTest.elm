@@ -164,6 +164,18 @@ suite =
                         "<table>\n <tr>  <td>1</td> <td>2</td> </tr>\n <tr>  <td>3</td> <td>4</td> </tr>\n</table>\n"
                 in
                     Expect.equal renderOutput expectedOutput
+        , test "(7.1) Equation Label" <|
+            \_ ->
+                let
+                    renderOutput =
+                        renderString
+                            parse
+                            "\\begin{equation}\n\\label{uncertaintyPrinciple}\n\\left[\\hat p, x\\right] = -i \\hbar\n\\end{equation}"
+
+                    expectedOutput =
+                        "YUUK"
+                in
+                    Expect.equal renderOutput expectedOutput
         , test "(X.1) Yada" <|
             \_ ->
                 let
