@@ -173,7 +173,7 @@ suite =
                             "\\begin{equation}\n\\label{uncertaintyPrinciple}\n\\left[\\hat p, x\\right] = -i \\hbar\n\\end{equation}"
 
                     expectedOutput =
-                        "YUUK"
+                        "\n$$\n\\begin{equation}\n\\label{uncertaintyPrinciple}\n\\left[\\hat p, x\\right] = -i \\hbar\n\\end{equation}\n$$\n"
                 in
                     Expect.equal renderOutput expectedOutput
         , test "(X.1) Yada" <|

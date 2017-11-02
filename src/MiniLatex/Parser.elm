@@ -387,7 +387,6 @@ tabularEnvironmentBody endWord envType =
 mathJaxBody endWord envType =
     succeed identity
         |= parseUntil endWord
-        -- |. symbol endWord
         |. ws
         |> map LXString
         |> map (Environment envType)

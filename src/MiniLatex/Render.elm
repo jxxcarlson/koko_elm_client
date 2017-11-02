@@ -214,7 +214,7 @@ renderEquationEnvironment latexState body =
         r =
             render latexState body
     in
-        "\n$$\n\\begin{equation}\n" ++ addendum ++ r ++ "\n\\end{equation}\n$$\n"
+        "\n$$\n\\begin{equation}" ++ addendum ++ r ++ "\\end{equation}\n$$\n"
 
 
 renderAlignEnvironment latexState body =
