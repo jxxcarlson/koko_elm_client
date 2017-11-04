@@ -9,7 +9,7 @@ import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import Document.Differ exposing (EditRecord)
-import Document.LatexDiffer as LatexDiffer
+import Document.MiniLatexDiffer as MiniLatexDiffer
 import Regex
 import Request.Document
 import String.Extra
@@ -83,7 +83,7 @@ updateCurrentLatexDocumentWithContent content model =
                 macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            LatexDiffer.safeUpdate appState.editRecord content
+            MiniLatexDiffer.safeUpdate appState.editRecord content
 
         rendered_content =
             newEditRecord.renderedParagraphs

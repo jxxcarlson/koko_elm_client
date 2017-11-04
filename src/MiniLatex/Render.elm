@@ -1,14 +1,30 @@
 module MiniLatex.Render exposing (..)
 
-import MiniLatex.Parser exposing (LatexExpression(..))
+import MiniLatex.Parser exposing (LatexExpression(..), latexList, defaultLatexList)
 import MiniLatex.Image
 import MiniLatex.LatexState exposing (..)
-import MiniLatex.ParserTools as PT
 import Configuration
 import Dict
 import List.Extra
 import Parser
 import String.Extra
+
+
+{-
+   transformText : String -> String
+   transformText text =
+       Parser.run latexList text
+           |> Result.withDefault defaultLatexList
+           |> List.map (render emptyLatexState)
+           |> String.join ("")
+           |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
+-}
+
+
+transformText : String -> String
+transformText text =
+    renderString latexList text
+
 
 
 {- FUNCTIONS FOR TESTING THINGS -}
