@@ -346,7 +346,7 @@ environmentOfType envType =
             "\\end{" ++ envType ++ "}"
 
         envKind =
-            if List.member envType [ "equation", "align", "eqnarray" ] then
+            if List.member envType [ "equation", "align", "eqnarray", "verbatim" ] then
                 "mathJax"
             else
                 envType
@@ -372,7 +372,7 @@ standardEnvironmentBody endWord envType =
 itemEnvironmentBody endWord envType =
     succeed identity
         |. ws
-        |= repeat zeroOrMore (oneOf [ itemitem, item ])
+        |= repeat zeroOrMore (oneOf [ itemitem, item, texComment ])
         |. ws
         |. symbol endWord
         |. ws
@@ -390,7 +390,10 @@ tabularEnvironmentBody endWord envType =
         |> map (Environment envType)
 
 
-{-| The body of the environment is parsed as an LXString
+{-| The body of the environment is parsed as an LXString.
+This parser is used for envronments whose body is to be
+passed to MathJax for processing and also for the verbatim
+environment.
 -}
 mathJaxBody endWord envType =
     succeed identity
