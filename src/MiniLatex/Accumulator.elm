@@ -323,3 +323,4 @@ updateSection latexState paragraph =
 renderParagraph : List LatexExpression -> LatexState -> String
 renderParagraph parsedParagraph latexState =
     renderLatexList latexState parsedParagraph
+        |> \paragraph -> "<p>" ++ paragraph ++ "</p>"
