@@ -14,7 +14,7 @@ import Test exposing (..)
 
 suite : Test
 suite =
-    describe "MiniLatex Parser"
+    describe "MiniLatex Render"
         -- Nest as many descriptions as you like.
         [ test "(1) Words (plain text)" <|
             \_ ->
@@ -186,6 +186,18 @@ suite =
 
                     expectedOutput =
                         "This is MiniLaTeX: \n<div class=\"environment\">\n<strong>Theorem 0</strong>\n<div class=\"italic\">\nThis is a test: $\\alpha^2 = 7$ \\foo{1} \n<div class=\"environment\">\n<strong>A</strong>\n<div class=\"italic\">\nla di dah\n</div>\n</div>\n\n</div>\n</div>\n"
+                in
+                    Expect.equal renderOutput expectedOutput
+        , test "(P.1) Yada" <|
+            \_ ->
+                let
+                    renderOutput =
+                        parseString
+                            latexList
+                            "test \\code{foo}."
+
+                    expectedOutput =
+                        ""
                 in
                     Expect.equal renderOutput expectedOutput
         ]

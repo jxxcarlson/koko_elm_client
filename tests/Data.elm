@@ -1,6 +1,16 @@
 module Data exposing (..)
 
 
+labeTestDoc : String
+labeTestDoc =
+    """
+\\begin{equation}
+\\label{foo}
+{\\bf r}(t) = (x,y,z)(t)
+\\end{equation}
+"""
+
+
 qftIntroText : String
 qftIntroText =
     """

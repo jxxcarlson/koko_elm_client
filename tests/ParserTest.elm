@@ -183,4 +183,14 @@ suite =
                         Ok (Environment "equation" (LXString "\n\\label{uncertaintyPrinciple}\n\\left[ \\hat p, x\\right] = -i \\hbar\n"))
                 in
                     Expect.equal parsedInput expectedOutput
+        , test "(P.1) punctuation" <|
+            \_ ->
+                let
+                    parsedInput =
+                        run latexList "test \\code{foo}."
+
+                    expectedOutput =
+                        Ok (Environment "equation" (LXString "\n\\label{uncertaintyPrinciple}\n\\left[ \\hat p, x\\right] = -i \\hbar\n"))
+                in
+                    Expect.equal parsedInput expectedOutput
         ]

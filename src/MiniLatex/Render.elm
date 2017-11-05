@@ -744,5 +744,4 @@ imageAttributes imageAttrs attributeString =
             else
                 ""
     in
-        -- String.join " " [ styleElement, widthElement ]
         widthElement
