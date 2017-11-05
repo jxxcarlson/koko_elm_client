@@ -10,17 +10,6 @@ import Parser
 import String.Extra
 
 
-{-
-   transformText : String -> String
-   transformText text =
-       Parser.run latexList text
-           |> Result.withDefault defaultLatexList
-           |> List.map (render emptyLatexState)
-           |> String.join ("")
-           |> (\x -> "\n<p>\n" ++ x ++ "\n</p>\n")
--}
-
-
 transformText : String -> String
 transformText text =
     renderString latexList text
@@ -84,7 +73,7 @@ render latexState latexExpression =
             renderItem latexState level latexExpression
 
         InlineMath str ->
-            "$" ++ str ++ "$"
+            " $" ++ str ++ "$ "
 
         DisplayMath str ->
             "$$" ++ str ++ "$$"
@@ -96,7 +85,23 @@ render latexState latexExpression =
             renderLatexList latexState args
 
         LXString str ->
+            xRenderString str
+
+
+xRenderString str =
+    let
+        lastChar =
+            String.right 1 str
+
+        firstChar =
+            String.left 1 str
+    in
+        if List.member str [ ".", ",", "?", "!", ";", ":" ] then
             str
+        else if List.member firstChar [ ".", ",", "?", "!", ";", ":" ] then
+            str
+        else
+            " " ++ str
 
 
 
@@ -105,7 +110,7 @@ render latexState latexExpression =
 
 renderLatexList : LatexState -> List LatexExpression -> String
 renderLatexList latexState args =
-    args |> List.map (render latexState) |> String.join (" ")
+    args |> List.map (render latexState) |> String.join ("")
 
 
 renderArgList : LatexState -> List LatexExpression -> String
@@ -386,12 +391,12 @@ renderArg k latexState args =
 -}
 renderCite : LatexState -> List LatexExpression -> String
 renderCite latexState args =
-    "<strong>" ++ (renderArg 0 latexState args) ++ "</strong>"
+    " <strong>" ++ (renderArg 0 latexState args) ++ "</strong>"
 
 
 renderCode : LatexState -> List LatexExpression -> String
 renderCode latexState args =
-    "<code>" ++ (renderArg 0 latexState args) ++ "</code>"
+    " <span class=\"code\">" ++ (renderArg 0 latexState args) ++ "</span>"
 
 
 renderEllie : LatexState -> List LatexExpression -> String
@@ -511,7 +516,7 @@ renderImage latexState args =
 
 renderItalic : LatexState -> List LatexExpression -> String
 renderItalic latexState args =
-    "<it>" ++ (renderArg 0 latexState args) ++ "</it>"
+    " <it>" ++ (renderArg 0 latexState args) ++ "</it>"
 
 
 renderNewCommand : LatexState -> List LatexExpression -> String
@@ -560,7 +565,7 @@ renderSectionStar latexState args =
 
 renderStrong : LatexState -> List LatexExpression -> String
 renderStrong latexState args =
-    " <span class=\"strong\">" ++ (renderArg 0 latexState args) ++ "</span>"
+    " <span class=\"strong\">" ++ (renderArg 0 latexState args) ++ "</span> "
 
 
 renderSubheading : LatexState -> List LatexExpression -> String
