@@ -90,6 +90,10 @@ render latexState latexExpression =
 
 
 xRenderString str =
+    str
+
+
+spaceify str =
     let
         lastChar =
             String.right 1 str
@@ -111,7 +115,7 @@ xRenderString str =
 
 renderLatexList : LatexState -> List LatexExpression -> String
 renderLatexList latexState args =
-    args |> List.map (render latexState) |> String.join ("")
+    args |> List.map (render latexState) |> List.map spaceify |> String.join ("")
 
 
 renderArgList : LatexState -> List LatexExpression -> String
@@ -381,7 +385,7 @@ renderMacro latexState name args =
 
 renderArg : Int -> LatexState -> List LatexExpression -> String
 renderArg k latexState args =
-    render latexState (getElement k args)
+    render latexState (getElement k args) |> String.trim
 
 
 

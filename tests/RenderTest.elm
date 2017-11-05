@@ -188,16 +188,16 @@ suite =
                         "This is MiniLaTeX: \n<div class=\"environment\">\n<strong>Theorem 0</strong>\n<div class=\"italic\">\nThis is a test: $\\alpha^2 = 7$ \\foo{1} \n<div class=\"environment\">\n<strong>A</strong>\n<div class=\"italic\">\nla di dah\n</div>\n</div>\n\n</div>\n</div>\n"
                 in
                     Expect.equal renderOutput expectedOutput
-        , test "(P.1) Yada" <|
+        , test "(E.1) ellie" <|
             \_ ->
                 let
                     renderOutput =
-                        parseString
+                        renderString
                             latexList
-                            "test \\code{foo}."
+                            "\\ellie{8tsqnpLx7a1/1}{foo}"
 
                     expectedOutput =
-                        ""
+                        "<iframe src =\"https://ellie-app.com/embed/ 8tsqnpLx7a1/1\" style = \"width:100%; height:400px; border:0; border-radius: 3px; overflow:hidden;\" sandbox=\"allow-modals allow-forms allow-popups allow-scripts allow-same-origin\" ></iframe>\n<center style=\"margin-top: -10px;\"><a href=\"https://ellie-app.com/8tsqnpLx7a1/1\" target=_blank> foo</a></center>"
                 in
                     Expect.equal renderOutput expectedOutput
         ]
