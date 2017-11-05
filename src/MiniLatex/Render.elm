@@ -332,7 +332,8 @@ renderVerbatim latexState body =
 renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String)
 renderMacroDict =
     Dict.fromList
-        [ ( "cite", \x y -> renderCite x y )
+        [ ( "bozo", \x y -> renderBozo x y )
+        , ( "cite", \x y -> renderCite x y )
         , ( "code", \x y -> renderCode x y )
         , ( "ellie", \x y -> renderEllie x y )
         , ( "emph", \x y -> renderItalic x y )
@@ -390,6 +391,11 @@ renderArg k latexState args =
 
 
 {- INDIVIDUAL MACRO RENDERERS -}
+
+
+renderBozo : LatexState -> List LatexExpression -> String
+renderBozo latexState args =
+    "bozo{" ++ (renderArg 0 latexState args) ++ "}{" ++ (renderArg 1 latexState args) ++ "}"
 
 
 {-| Needs work
