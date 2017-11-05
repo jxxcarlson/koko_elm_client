@@ -21,6 +21,11 @@ import Regex
 import Parser as P
 
 
+getAt : Int -> List String -> String
+getAt k list_ =
+    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+
+
 getElement : Int -> List LatexExpression -> String
 getElement k list =
     let
@@ -76,11 +81,6 @@ transformer parse render updateState input acc =
 
 type alias LatexInfo =
     { typ : String, name : String, value : List LatexExpression }
-
-
-getAt : Int -> List String -> String
-getAt k list_ =
-    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
 
 
 info : LatexExpression -> LatexInfo
@@ -187,18 +187,24 @@ updateState parsedParagraph latexState =
                 |> Maybe.map info
                 |> Maybe.withDefault (LatexInfo "null" "null" [ (Macro "null" []) ])
 
+        _ =
+            Debug.log "headElement" headElement
+
+        he =
+            { typ = "macro", name = "setcounter", value = [ LatexList ([ LXString "section" ]), LatexList ([ LXString "7" ]) ] }
+
         newLatexState =
             case ( headElement.typ, headElement.name ) of
                 ( "macro", "setcounter" ) ->
                     let
-                        args =
-                            headElement.value
+                        argList =
+                            headElement.value |> List.map PT.latexList2List |> List.map PT.list2LeadingString
 
                         arg1 =
-                            getElement 0 args
+                            getAt 0 argList
 
                         arg2 =
-                            getElement 1 args
+                            getAt 1 argList
 
                         initialSectionNumber =
                             if arg1 == "section" then

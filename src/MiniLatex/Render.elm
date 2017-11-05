@@ -351,6 +351,7 @@ renderMacroDict =
         , ( "ref", \x y -> renderRef x y )
         , ( "section", \x y -> renderSection x y )
         , ( "section*", \x y -> renderSectionStar x y )
+        , ( "setcounter", \x y -> "" )
         , ( "strong", \x y -> renderStrong x y )
         , ( "subheading", \x y -> renderSubheading x y )
         , ( "subsection", \x y -> renderSubsection x y )
