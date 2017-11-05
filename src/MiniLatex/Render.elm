@@ -13,6 +13,7 @@ import String.Extra
 transformText : String -> String
 transformText text =
     renderString latexList text
+        |> \str -> "\n<p>" ++ str ++ "</p>\n"
 
 
 
@@ -516,7 +517,7 @@ renderImage latexState args =
 
 renderItalic : LatexState -> List LatexExpression -> String
 renderItalic latexState args =
-    " <it>" ++ (renderArg 0 latexState args) ++ "</it>"
+    " <span class=italic>" ++ (renderArg 0 latexState args) ++ "</span>"
 
 
 renderNewCommand : LatexState -> List LatexExpression -> String

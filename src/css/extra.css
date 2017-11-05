@@ -19,7 +19,7 @@
 #rendered_text2 .environment {margin-top: 1em; margin-bottom: 1em;}
 #rendered_text2 .strong {font-weight: bold}
 #rendered_text2 .subheading {margin-top: 0.75em; margin-bottom: 0.5em; font-weight: bold}
-#rendered_text2 .verbatim {margin-top: 1em; margin-bottom: 1em; font-size: 10pt;}
+#rendered_text2 .verbatim {margin-top:-20px; margin-bottom: 1em; font-size: 10pt;}
 
 
 #rendered_text2 ul { padding-left: 1em; margin-top: 1em; margin-bottom: 1em;}
