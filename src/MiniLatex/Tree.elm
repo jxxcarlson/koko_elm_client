@@ -1,4 +1,4 @@
-module LatexParser.Tree exposing (..)
+module MiniLatex.Tree exposing (..)
 
 {-| General Trees
 

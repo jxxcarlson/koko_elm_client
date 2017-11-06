@@ -1,8 +1,8 @@
-module Document.MiniLatexDiffer exposing (..)
+module MiniLatex.LatexDiffer exposing (..)
 
 import MiniLatex.Accumulator as Accumulator
 import Document.Dictionary as Dictionary
-import Document.Differ as Differ exposing (EditRecord)
+import MiniLatex.Differ as Differ exposing (EditRecord)
 import Document.Preprocess as Preprocess
 import MiniLatex.Render as Render
 import String.Extra

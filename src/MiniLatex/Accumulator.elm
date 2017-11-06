@@ -12,7 +12,7 @@ module MiniLatex.Accumulator
 import Dict
 import MiniLatex.Parser as Parser exposing (macro, defaultLatexList, parseParagraph, LatexExpression(..))
 import String.Extra
-import Document.Differ as Differ
+import MiniLatex.Differ as Differ
 import MiniLatex.Render as Render exposing (render, renderLatexList)
 import MiniLatex.LatexState exposing (..)
 import MiniLatex.ParserTools as PT

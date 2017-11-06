@@ -8,8 +8,8 @@ import Document.Document as Document exposing (defaultDocument, defaultMasterDoc
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
-import Document.Differ exposing (EditRecord)
-import Document.MiniLatexDiffer as MiniLatexDiffer
+import MiniLatex.LatexDiffer as MiniLatexDiffer
+import MiniLatex.Differ as Differ exposing (EditRecord)
 import Regex
 import Request.Document
 import String.Extra
@@ -24,7 +24,7 @@ clearEditRecord : AppState -> AppState
 clearEditRecord appState =
     let
         newEditRecord =
-            Document.Differ.clear
+            Differ.clear
     in
         { appState | editRecord = newEditRecord }
 

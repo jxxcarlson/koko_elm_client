@@ -1,4 +1,4 @@
-module LatexParser.Levenshtein exposing (..)
+module MiniLatex.Levenshtein exposing (..)
 
 {-| Adapted from the Haskel code at
 <https://swizec.com/blog/levenshtein-distance-in-haskell/swizec/4801>

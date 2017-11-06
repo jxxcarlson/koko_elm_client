@@ -23,7 +23,7 @@ import Html exposing (..)
 import Image.Upload
 import Image.View
 import Jwt
-import Document.Differ exposing (EditRecord)
+import MiniLatex.Differ exposing (EditRecord)
 import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url

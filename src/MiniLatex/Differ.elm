@@ -1,4 +1,4 @@
-module Document.Differ exposing (..)
+module MiniLatex.Differ exposing (..)
 
 import Regex
 

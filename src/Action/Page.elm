@@ -5,7 +5,7 @@ import Action.UI
 import Document.Dictionary
 import Action.Document
 import External
-import Document.Differ as Differ exposing (EditRecord)
+import MiniLatex.Differ as Differ exposing (EditRecord)
 import Views.External
 import Time
 import Task
