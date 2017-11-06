@@ -40,10 +40,10 @@ getElement k list =
                 "yyy"
 
 
-transformParagraphs : List String -> List String
-transformParagraphs paragraphs =
+transformParagraphs : LatexState -> List String -> List String
+transformParagraphs latexState paragraphs =
     paragraphs
-        |> accumulator Parser.parseParagraph renderParagraph updateState
+        |> accumulator Parser.parseParagraph renderParagraph updateState latexState
         |> Tuple.first
 
 
@@ -51,11 +51,12 @@ accumulator :
     (String -> List LatexExpression)
     -> (List LatexExpression -> LatexState -> String)
     -> (List LatexExpression -> LatexState -> LatexState)
+    -> LatexState
     -> List String
     -> ( List String, LatexState )
-accumulator parse render updateState inputList =
+accumulator parse render updateState latexState inputList =
     inputList
-        |> List.foldl (transformer parse render updateState) ( [], emptyLatexState )
+        |> List.foldl (transformer parse render updateState) ( [], latexState )
 
 
 transformer :

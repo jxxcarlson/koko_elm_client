@@ -4,6 +4,7 @@ import MiniLatex.Accumulator as Accumulator
 import Document.Dictionary as Dictionary
 import MiniLatex.Differ as Differ exposing (EditRecord)
 import Document.Preprocess as Preprocess
+import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
 import MiniLatex.Render as Render
 import String.Extra
 import Regex
@@ -17,11 +18,11 @@ initialize text =
         |> Differ.initialize Render.transformText
 
 
-initialize2 : String -> EditRecord
-initialize2 text =
+initialize2 : LatexState -> String -> EditRecord
+initialize2 latexState text =
     text
         |> prepareContentForLatex
-        |> Differ.initialize2 Accumulator.transformParagraphs
+        |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
 
 
 update : EditRecord -> String -> EditRecord
@@ -31,9 +32,10 @@ update editorRecord text =
         |> Differ.update Render.transformText editorRecord
 
 
+safeUpdate : EditRecord -> String -> EditRecord
 safeUpdate editRecord content =
     if Differ.isEmpty editRecord then
-        initialize2 content
+        initialize2 emptyLatexState content
     else
         update editRecord content
 
