@@ -10,6 +10,7 @@ import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import MiniLatex.LatexDiffer as MiniLatexDiffer
 import MiniLatex.Differ as Differ exposing (EditRecord)
+import MiniLatex.LatexState exposing (emptyLatexState)
 import Regex
 import Request.Document
 import String.Extra
@@ -423,7 +424,7 @@ selectDocument model document =
         newAppState =
             { appState
                 | textBuffer = document.content
-                , editRecord = EditRecord [] []
+                , editRecord = EditRecord [] [] emptyLatexState
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model

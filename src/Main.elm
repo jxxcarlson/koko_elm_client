@@ -24,6 +24,7 @@ import Image.Upload
 import Image.View
 import Jwt
 import MiniLatex.Differ exposing (EditRecord)
+import MiniLatex.LatexState exposing (emptyLatexState)
 import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url
@@ -819,7 +820,7 @@ init flags location =
             , page = HomePage
             , tool = TableOfContents
             , textBuffer = ""
-            , editRecord = EditRecord [] []
+            , editRecord = EditRecord [] [] emptyLatexState
             , tickInterval = Configuration.tickInterval
             , command = ""
             }

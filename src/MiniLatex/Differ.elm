@@ -1,6 +1,7 @@
 module MiniLatex.Differ exposing (..)
 
 import Regex
+import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
 
 
 paragraphify : String -> List String
@@ -56,6 +57,7 @@ type alias DiffRecord =
 type alias EditRecord =
     { paragraphs : List String
     , renderedParagraphs : List String
+    , latexState : LatexState
     }
 
 
@@ -68,7 +70,7 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-        EditRecord paragraphs renderedParagraphs
+        EditRecord paragraphs renderedParagraphs emptyLatexState
 
 
 initialize2 : (List String -> List String) -> String -> EditRecord
@@ -80,12 +82,12 @@ initialize2 transformParagraphs text =
         renderedParagraphs =
             transformParagraphs paragraphs
     in
-        EditRecord paragraphs renderedParagraphs
+        EditRecord paragraphs renderedParagraphs emptyLatexState
 
 
 clear : EditRecord
 clear =
-    EditRecord [] []
+    EditRecord [] [] emptyLatexState
 
 
 isEmpty : EditRecord -> Bool
@@ -105,7 +107,7 @@ update transformer editorRecord text =
         newRenderedParagraphs =
             renderDiff transformer diffRecord editorRecord.renderedParagraphs
     in
-        EditRecord newParagraphs newRenderedParagraphs
+        EditRecord newParagraphs newRenderedParagraphs emptyLatexState
 
 
 diff : List String -> List String -> DiffRecord
