@@ -3,7 +3,6 @@ module Document.Preprocess exposing (preprocess, preprocessSource, transformXLin
 -- module Document.Preprocess exposing(preprocess, preprocessSource)
 
 import Regex exposing (..)
-import LatexParser.Paragraph
 import Types exposing (Document)
 import Configuration
 import String.Extra

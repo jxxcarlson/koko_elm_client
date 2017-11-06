@@ -177,13 +177,6 @@ toggleUpdateRate model =
         { model | appState = newAppState }
 
 
-
--- |> Regex.replace Regex.All (Regex.regex "%.*") (\_ -> "")
--- |> LatexParser.Render.transformText.identity
--- |> Regex.replace Regex.All (Regex.regex "\\label{.*}") (\_ -> "")
--- |> Regex.replace Regex.All (Regex.regex "\\emph{(.*)}") (\{match} -> "<it>\\1</it>")
-
-
 setTextType : String -> Model -> ( Model, Cmd Msg )
 setTextType textType model =
     let
