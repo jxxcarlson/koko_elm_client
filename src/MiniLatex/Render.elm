@@ -10,9 +10,9 @@ import Parser
 import String.Extra
 
 
-transformText : String -> String
-transformText text =
-    renderString latexList text
+transformText : LatexState -> String -> String
+transformText latexState text =
+    renderString latexList latexState text
         |> \str -> "\n<p>" ++ str ++ "</p>\n"
 
 
@@ -29,7 +29,7 @@ parseString parser str =
     Parser.run parser str
 
 
-renderString parser str =
+renderString parser latexState str =
     let
         parserOutput =
             Parser.run parser str
@@ -37,7 +37,7 @@ renderString parser str =
         renderOutput =
             case parserOutput of
                 Ok latexExpression ->
-                    render emptyLatexState latexExpression
+                    render latexState latexExpression
 
                 Err _ ->
                     "PARSE ERROR"

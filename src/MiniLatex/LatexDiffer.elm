@@ -15,21 +15,40 @@ initialize : String -> EditRecord
 initialize text =
     text
         |> prepareContentForLatex
-        |> Differ.initialize Render.transformText
+        |> Differ.initialize (Render.transformText emptyLatexState)
 
 
-initialize2 : LatexState -> String -> EditRecord
-initialize2 latexState text =
+initialize2a : LatexState -> String -> EditRecord
+initialize2a latexState text =
     text
         |> prepareContentForLatex
         |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
+
+
+initialize2 : LatexState -> String -> EditRecord
+initialize2 transformParagraphs text =
+    let
+        editRecord1 =
+            text
+                |> prepareContentForLatex
+                |> Differ.initialize2 (Accumulator.transformParagraphs emptyLatexState)
+
+        latexState2 =
+            { emptyLatexState | crossReferences = editRecord1.latexState.crossReferences }
+
+        editRecord2 =
+            text
+                |> prepareContentForLatex
+                |> Differ.initialize2 (Accumulator.transformParagraphs latexState2)
+    in
+        editRecord2
 
 
 update : EditRecord -> String -> EditRecord
 update editorRecord text =
     text
         |> prepareContentForLatex
-        |> Differ.update Render.transformText editorRecord
+        |> Differ.update (Render.transformText editorRecord.latexState) editorRecord
 
 
 safeUpdate : EditRecord -> String -> EditRecord
