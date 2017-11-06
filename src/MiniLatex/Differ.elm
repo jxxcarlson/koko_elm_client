@@ -73,16 +73,16 @@ initialize transformer text =
         EditRecord paragraphs renderedParagraphs emptyLatexState
 
 
-initialize2 : (List String -> List String) -> String -> EditRecord
+initialize2 : (List String -> ( List String, LatexState )) -> String -> EditRecord
 initialize2 transformParagraphs text =
     let
         paragraphs =
             paragraphify text
 
-        renderedParagraphs =
+        ( renderedParagraphs, latexState ) =
             transformParagraphs paragraphs
     in
-        EditRecord paragraphs renderedParagraphs emptyLatexState
+        EditRecord paragraphs renderedParagraphs latexState
 
 
 clear : EditRecord

@@ -9,10 +9,9 @@ module MiniLatex.Accumulator
         , processParagraph2
         )
 
-import Dict
 import MiniLatex.Parser as Parser exposing (macro, defaultLatexList, parseParagraph, LatexExpression(..))
 import String.Extra
-import MiniLatex.Differ as Differ
+import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.Render as Render exposing (render, renderLatexList)
 import MiniLatex.LatexState exposing (..)
 import MiniLatex.ParserTools as PT
@@ -40,11 +39,14 @@ getElement k list =
                 "yyy"
 
 
-transformParagraphs : LatexState -> List String -> List String
+transformParagraphs : LatexState -> List String -> ( List String, LatexState )
 transformParagraphs latexState paragraphs =
     paragraphs
         |> accumulator Parser.parseParagraph renderParagraph updateState latexState
-        |> Tuple.first
+
+
+
+-- |> Tuple.first
 
 
 accumulator :
