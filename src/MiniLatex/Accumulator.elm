@@ -5,6 +5,7 @@ module MiniLatex.Accumulator
         , renderParagraph
         , getSectionNumber
         , transformParagraphs
+        , parseParagraphs
         , processParagraph
         , processParagraph2
         )
@@ -39,14 +40,14 @@ getElement k list =
                 "yyy"
 
 
+
+-- |> Tuple.first
+
+
 transformParagraphs : LatexState -> List String -> ( List String, LatexState )
 transformParagraphs latexState paragraphs =
     paragraphs
         |> accumulator Parser.parseParagraph renderParagraph updateState latexState
-
-
-
--- |> Tuple.first
 
 
 accumulator :
@@ -59,20 +60,6 @@ accumulator :
 accumulator parse render updateState latexState inputList =
     inputList
         |> List.foldl (transformer parse render updateState) ( [], latexState )
-
-
-
-{- }
-   accumulator2 :
-       (List LatexExpression -> LatexState -> String)
-       -> (List LatexExpression -> LatexState -> LatexState)
-       -> LatexState
-       -> List LatexExpression
-       -> ( List String, LatexState )
-   accumulator2 render updateState latexState inputList =
-       inputList
-           |> List.foldl (transformer2 render updateState) ( [], latexState )
--}
 
 
 transformer :
@@ -97,22 +84,53 @@ transformer parse render updateState input acc =
 
 
 
-{- }
-   transformer2 :
-       (List LatexExpression -> LatexState -> String) -- render
-       -> (List LatexExpression -> LatexState -> LatexState) -- updateState
-       -> List LatexExpression -- Here is it is a list of LatexExpressions
-       -> ( List String, LatexState ) -- acc
-       -> ( List String, LatexState ) -- acc
-   transformer2 render updateState latexExpression acc =
-       let
-           ( outputList, state ) =
-               acc
+{- Accumulator1: parse a list of paragraphs and return
+   a tuple consisting of a list of (List LatexExpression)
+   and the computed LatexState
 
-           newState =
-               updateState latexExpression state
-       in
-           ( outputList ++ [ render latexExpression newState ], newState )
+-}
+
+
+parseParagraphs : LatexState -> List String -> ( List (List LatexExpression), LatexState )
+parseParagraphs latexState paragraphs =
+    paragraphs
+        |> accumulator1 Parser.parseParagraph updateState latexState
+
+
+accumulator1 :
+    (String -> List LatexExpression) -- parse
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> LatexState -- latexState
+    -> List String
+    -> ( List (List LatexExpression), LatexState )
+accumulator1 parse updateState latexState inputList =
+    inputList
+        |> List.foldl (transformer1 parse updateState) ( [], latexState )
+
+
+transformer1 :
+    (String -> List LatexExpression) -- parse
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> String --input
+    -> ( List (List LatexExpression), LatexState ) -- acc
+    -> ( List (List LatexExpression), LatexState ) -- acc
+transformer1 parse updateState input acc =
+    let
+        ( outputList, state ) =
+            acc
+
+        parsedInput =
+            parse input
+
+        newState =
+            updateState parsedInput state
+    in
+        ( outputList ++ [ parsedInput ], newState )
+
+
+
+{- renderParagraphs: take a list of (List LatexExpressions)
+   and a LatexState and rehder the list into a list of strings.
 -}
 
 

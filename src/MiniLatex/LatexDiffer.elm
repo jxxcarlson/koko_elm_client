@@ -3,7 +3,7 @@ module MiniLatex.LatexDiffer exposing (..)
 import MiniLatex.Accumulator as Accumulator
 import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
-import MiniLatex.Render as Render
+import MiniLatex.Render as Render exposing (render, renderLatexList)
 import String.Extra
 import Regex
 
@@ -22,8 +22,8 @@ initialize1 latexState text =
         |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
 
 
-initialize2 : LatexState -> String -> EditRecord
-initialize2 transformParagraphs text =
+initialize2a : LatexState -> String -> EditRecord
+initialize2a latexState text =
     let
         editRecord1 =
             text
@@ -39,6 +39,31 @@ initialize2 transformParagraphs text =
                 |> Differ.initialize2 (Accumulator.transformParagraphs latexState2)
     in
         editRecord2
+
+
+type alias EditRecord =
+    { paragraphs : List String
+    , renderedParagraphs : List String
+    , latexState : LatexState
+    }
+
+
+initialize2 : LatexState -> String -> EditRecord
+initialize2 latexState text =
+    let
+        paragraphs =
+            text
+                |> prepareContentForLatex
+                |> Differ.paragraphify
+
+        ( latexExpressionList, latexState ) =
+            paragraphs
+                |> Accumulator.parseParagraphs emptyLatexState
+
+        renderedParagraphs =
+            latexExpressionList |> List.map (renderLatexList latexState)
+    in
+        EditRecord paragraphs renderedParagraphs latexState
 
 
 update : EditRecord -> String -> EditRecord
