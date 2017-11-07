@@ -15,32 +15,6 @@ initialize text =
         |> Differ.initialize (Render.transformText emptyLatexState)
 
 
-initialize1 : LatexState -> String -> EditRecord
-initialize1 latexState text =
-    text
-        |> prepareContentForLatex
-        |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
-
-
-initialize2O : LatexState -> String -> EditRecord
-initialize2O latexState text =
-    let
-        editRecord1 =
-            text
-                |> prepareContentForLatex
-                |> Differ.initialize2 (Accumulator.transformParagraphs emptyLatexState)
-
-        latexState2 =
-            { emptyLatexState | crossReferences = editRecord1.latexState.crossReferences }
-
-        editRecord2 =
-            text
-                |> prepareContentForLatex
-                |> Differ.initialize2 (Accumulator.transformParagraphs latexState2)
-    in
-        editRecord2
-
-
 type alias EditRecord =
     { paragraphs : List String
     , renderedParagraphs : List String

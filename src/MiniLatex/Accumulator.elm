@@ -1,14 +1,7 @@
 module MiniLatex.Accumulator
     exposing
-        ( accumulator
-        , updateState
-        , renderParagraph
-        , getSectionNumber
-        , transformParagraphs
-        , parseParagraphs
+        ( parseParagraphs
         , renderParagraphs
-        , processParagraph
-        , processParagraph2
         )
 
 import MiniLatex.Parser as Parser exposing (macro, defaultLatexList, parseParagraph, LatexExpression(..))
@@ -39,57 +32,6 @@ getElement k list =
 
             _ ->
                 "yyy"
-
-
-
--- |> Tuple.first
-
-
-transformParagraphs : LatexState -> List String -> ( List String, LatexState )
-transformParagraphs latexState paragraphs =
-    paragraphs
-        |> accumulator Parser.parseParagraph renderParagraph updateState latexState
-
-
-accumulator :
-    (String -> List LatexExpression) -- parse
-    -> (List LatexExpression -> LatexState -> String) -- render
-    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
-    -> LatexState -- latexState
-    -> List String
-    -> ( List String, LatexState )
-accumulator parse render updateState latexState inputList =
-    inputList
-        |> List.foldl (transformer parse render updateState) ( [], latexState )
-
-
-transformer :
-    (String -> List LatexExpression) -- parse
-    -> (List LatexExpression -> LatexState -> String) -- render
-    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
-    -> String --input
-    -> ( List String, LatexState ) -- acc
-    -> ( List String, LatexState ) -- acc
-transformer parse render updateState input acc =
-    let
-        ( outputList, state ) =
-            acc
-
-        parsedInput =
-            parse input
-
-        newState =
-            updateState parsedInput state
-    in
-        ( outputList ++ [ render parsedInput newState ], newState )
-
-
-
-{- Accumulator1: parse a list of paragraphs and return
-   a tuple consisting of a list of (List LatexExpression)
-   and the computed LatexState
-
--}
 
 
 parseParagraphs : LatexState -> List String -> ( List (List LatexExpression), LatexState )
@@ -358,45 +300,6 @@ updateState parsedParagraph latexState =
         newLatexState
 
 
-processParagraph : String -> LatexState -> List LatexExpression
-processParagraph paragraph latexState =
-    paragraph
-        |> (updateSection latexState)
-        |> parseParagraph
-
-
-processParagraph2 : String -> LatexState -> String
-processParagraph2 paragraph latexState =
-    paragraph
-        |> (updateSection latexState)
-        |> parseParagraph
-        |> renderLatexList latexState
-
-
-getSectionNumber text =
-    let
-        rx =
-            (Regex.regex "\\\\setcounter{section}{(.*)}")
-
-        result =
-            Regex.find (Regex.AtMost 1) rx text
-                |> List.map .submatches
-                |> List.head
-                |> Maybe.withDefault [ Just "-1" ]
-                |> List.head
-                |> Maybe.withDefault (Just "-1")
-
-        index =
-            case result of
-                Just n ->
-                    String.toInt n |> Result.withDefault -1
-
-                Nothing ->
-                    -1
-    in
-        index
-
-
 updateSection : LatexState -> String -> String
 updateSection latexState paragraph =
     let
@@ -420,9 +323,3 @@ updateSection latexState paragraph =
                 |> String.Extra.replace "\\subsubsection{" ("\\subsubsection{" ++ (toString s1) ++ "." ++ (toString s2) ++ "." ++ (toString (s3 + 1)) ++ " ")
         else
             paragraph
-
-
-renderParagraph : List LatexExpression -> LatexState -> String
-renderParagraph parsedParagraph latexState =
-    renderLatexList latexState parsedParagraph
-        |> \paragraph -> "<p>" ++ paragraph ++ "</p>"
