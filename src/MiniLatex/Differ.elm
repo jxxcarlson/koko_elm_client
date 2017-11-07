@@ -1,7 +1,33 @@
-module MiniLatex.Differ exposing (..)
+module MiniLatex.Differ
+    exposing
+        ( EditRecord
+        , clear
+        , initialize
+        , isEmpty
+        , paragraphify
+        , update
+        )
 
 import Regex
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
+
+
+{- TYPES -}
+
+
+type alias DiffRecord =
+    { commonInitialSegment : List String
+    , commonTerminalSegment : List String
+    , middleSegmentInSource : List String
+    , middleSegmentInTarget : List String
+    }
+
+
+type alias EditRecord =
+    { paragraphs : List String
+    , renderedParagraphs : List String
+    , latexState : LatexState
+    }
 
 
 paragraphify : String -> List String
@@ -44,21 +70,6 @@ dropLast k x =
 takeLast : Int -> List String -> List String
 takeLast k x =
     x |> List.reverse |> List.take k |> List.reverse
-
-
-type alias DiffRecord =
-    { commonInitialSegment : List String
-    , commonTerminalSegment : List String
-    , middleSegmentInSource : List String
-    , middleSegmentInTarget : List String
-    }
-
-
-type alias EditRecord =
-    { paragraphs : List String
-    , renderedParagraphs : List String
-    , latexState : LatexState
-    }
 
 
 initialize : (String -> String) -> String -> EditRecord

@@ -4,15 +4,15 @@ module MiniLatex.Accumulator
         , renderParagraphs
         )
 
-import MiniLatex.Parser as Parser exposing (macro, defaultLatexList, parseParagraph, LatexExpression(..))
-import String.Extra
-import MiniLatex.Differ as Differ exposing (EditRecord)
-import MiniLatex.Render as Render exposing (render, renderLatexList)
-import MiniLatex.LatexState exposing (..)
-import MiniLatex.ParserTools as PT
 import List.Extra
+import String.Extra
 import Regex
 import Parser as P
+import MiniLatex.Parser as Parser exposing (macro, parseParagraph, LatexExpression(..))
+import MiniLatex.Differ as Differ exposing (EditRecord)
+import MiniLatex.Render as Render exposing (renderLatexList)
+import MiniLatex.LatexState exposing (..)
+import MiniLatex.ParserTools as PT
 
 
 {- Types -}
@@ -46,7 +46,7 @@ renderParagraphs latexState paragraphs =
 
 
 
-{- Accumulators and Transformers -}
+{- ACCUMULATORS AND TRANSFORMERS -}
 
 
 parseAccumulator :
@@ -125,7 +125,7 @@ info latexExpression =
 
 
 
-{- Updapters -}
+{- UPDATERS -}
 
 
 updateState : List LatexExpression -> LatexState -> LatexState
@@ -235,7 +235,7 @@ updateSection latexState paragraph =
 
 
 
-{- Handlers -}
+{- HANDLERS -}
 
 
 handleEquationNumbers : LatexState -> LatexInfo -> LatexState
@@ -255,7 +255,7 @@ handleEquationNumbers latexState info =
         label =
             case data of
                 LXString str ->
-                    getLabel2 str
+                    getLabel str
 
                 _ ->
                     ""
@@ -306,7 +306,7 @@ handleTheoremNumbers latexState info =
 
 
 
-{- Helpers -}
+{- HELPERS -}
 
 
 getAt : Int -> List String -> String
@@ -328,7 +328,7 @@ getElement k list =
                 "yyy"
 
 
-getLabel2 str =
+getLabel str =
     let
         maybeMacro =
             str
