@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
-import LatexParser.Paragraph
 import Regex
 import String.Extra
 import Dict

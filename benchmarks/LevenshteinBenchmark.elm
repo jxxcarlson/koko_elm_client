@@ -3,7 +3,7 @@ module Main exposing (..)
 import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
 import LatexParser.Paragraph
-import LatexParser.Levenshtein exposing (levenshtein)
+import Experiment.Levenshtein exposing (levenshtein)
 
 
 {-

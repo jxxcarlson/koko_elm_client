@@ -1,4 +1,4 @@
-module MiniLatex.Levenshtein exposing (..)
+module Experiment.Levenshtein exposing (..)
 
 {-| Adapted from the Haskel code at
 <https://swizec.com/blog/levenshtein-distance-in-haskell/swizec/4801>

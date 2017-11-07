@@ -15,49 +15,58 @@ import Regex
 import Parser as P
 
 
-getAt : Int -> List String -> String
-getAt k list_ =
-    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+{- Types -}
 
 
-getElement : Int -> List LatexExpression -> String
-getElement k list =
-    let
-        lxString =
-            List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
-    in
-        case lxString of
-            LXString str ->
-                str
-
-            _ ->
-                "yyy"
+type alias LatexInfo =
+    { typ : String, name : String, value : List LatexExpression }
 
 
+
+{- EXPORTED FUNCTIONS -}
+
+
+{-| parseParagraphs: Using a given LatexState, take a list of strings,
+i.e., paragraphs, and compute a tuple consisting of the parsed
+paragraohs and the upodated LatexState.
+-}
 parseParagraphs : LatexState -> List String -> ( List (List LatexExpression), LatexState )
 parseParagraphs latexState paragraphs =
     paragraphs
-        |> accumulator1 Parser.parseParagraph updateState latexState
+        |> parseAccumulator Parser.parseParagraph updateState latexState
 
 
-accumulator1 :
+{-| renderParagraphs: take a list of (List LatexExpressions)
+and a LatexState and rehder the list into a list of strings.
+-}
+renderParagraphs : LatexState -> List (List LatexExpression) -> ( List String, LatexState )
+renderParagraphs latexState paragraphs =
+    paragraphs
+        |> renderAccumulator renderLatexList updateState latexState
+
+
+
+{- Accumulators and Transformers -}
+
+
+parseAccumulator :
     (String -> List LatexExpression) -- parse
     -> (List LatexExpression -> LatexState -> LatexState) -- updateState
     -> LatexState -- latexState
     -> List String
     -> ( List (List LatexExpression), LatexState )
-accumulator1 parse updateState latexState inputList =
+parseAccumulator parse updateState latexState inputList =
     inputList
-        |> List.foldl (transformer1 parse updateState) ( [], latexState )
+        |> List.foldl (parseTransformer parse updateState) ( [], latexState )
 
 
-transformer1 :
+parseTransformer :
     (String -> List LatexExpression) -- parse
     -> (List LatexExpression -> LatexState -> LatexState) -- updateState
     -> String --input
     -> ( List (List LatexExpression), LatexState ) -- acc
     -> ( List (List LatexExpression), LatexState ) -- acc
-transformer1 parse updateState input acc =
+parseTransformer parse updateState input acc =
     let
         ( outputList, state ) =
             acc
@@ -71,36 +80,24 @@ transformer1 parse updateState input acc =
         ( outputList ++ [ parsedInput ], newState )
 
 
-
-{- renderParagraphs: take a list of (List LatexExpressions)
-   and a LatexState and rehder the list into a list of strings.
--}
-
-
-renderParagraphs : LatexState -> List (List LatexExpression) -> ( List String, LatexState )
-renderParagraphs latexState paragraphs =
-    paragraphs
-        |> accumulator2 renderLatexList updateState latexState
-
-
-accumulator2 :
+renderAccumulator :
     (LatexState -> List LatexExpression -> String) -- render
     -> (List LatexExpression -> LatexState -> LatexState) -- updateState
     -> LatexState -- latexState
     -> List (List LatexExpression)
     -> ( List String, LatexState )
-accumulator2 render updateState latexState inputList =
+renderAccumulator render updateState latexState inputList =
     inputList
-        |> List.foldl (transformer2 render updateState) ( [], latexState )
+        |> List.foldl (renderTransformer render updateState) ( [], latexState )
 
 
-transformer2 :
+renderTransformer :
     (LatexState -> List LatexExpression -> String) -- render
     -> (List LatexExpression -> LatexState -> LatexState) -- updateState
     -> List LatexExpression --input
     -> ( List String, LatexState ) -- acc
     -> ( List String, LatexState ) -- acc
-transformer2 render updateState input acc =
+renderTransformer render updateState input acc =
     let
         ( outputList, state ) =
             acc
@@ -110,15 +107,8 @@ transformer2 render updateState input acc =
 
         newState =
             updateState input state
-
-        _ =
-            Debug.log "state" newState
     in
         ( outputList ++ [ renderedInput ], newState )
-
-
-type alias LatexInfo =
-    { typ : String, name : String, value : List LatexExpression }
 
 
 info : LatexExpression -> LatexInfo
@@ -134,86 +124,8 @@ info latexExpression =
             { typ = "null", name = "null", value = [] }
 
 
-getLabel2 str =
-    let
-        maybeMacro =
-            str
-                |> String.trim
-                |> P.run Parser.macro
-    in
-        case maybeMacro of
-            Ok macro ->
-                macro |> PT.getFirstMacroArg "label"
 
-            _ ->
-                ""
-
-
-handleEquationNumbers : LatexState -> LatexInfo -> LatexState
-handleEquationNumbers latexState info =
-    let
-        {- label =
-           info.value
-               |> List.head
-               |> Maybe.withDefault (Macro "NULL" [])
-               |> PT.getFirstMacroArg "label"
-        -}
-        data =
-            info.value
-                |> List.head
-                |> Maybe.withDefault (Macro "NULL" [])
-
-        label =
-            case data of
-                LXString str ->
-                    getLabel2 str
-
-                _ ->
-                    ""
-
-        latexState1 =
-            incrementCounter "eqno" latexState
-
-        eqno =
-            getCounter "eqno" latexState1
-
-        s1 =
-            getCounter "s1" latexState1
-
-        latexState2 =
-            if label /= "" then
-                setCrossReference label ((toString s1) ++ "." ++ (toString eqno)) latexState1
-            else
-                latexState1
-    in
-        latexState2
-
-
-handleTheoremNumbers : LatexState -> LatexInfo -> LatexState
-handleTheoremNumbers latexState info =
-    let
-        label =
-            info.value
-                |> List.head
-                |> Maybe.withDefault (Macro "NULL" [])
-                |> PT.getFirstMacroArg "label"
-
-        latexState1 =
-            incrementCounter "tno" latexState
-
-        tno =
-            getCounter "tno" latexState1
-
-        s1 =
-            getCounter "s1" latexState1
-
-        latexState2 =
-            if label /= "" then
-                setCrossReference label ((toString s1) ++ "." ++ (toString tno)) latexState1
-            else
-                latexState1
-    in
-        latexState2
+{- Updapters -}
 
 
 updateState : List LatexExpression -> LatexState -> LatexState
@@ -224,9 +136,6 @@ updateState parsedParagraph latexState =
                 |> List.head
                 |> Maybe.map info
                 |> Maybe.withDefault (LatexInfo "null" "null" [ (Macro "null" []) ])
-
-        _ =
-            Debug.log "headElement" headElement
 
         he =
             { typ = "macro", name = "setcounter", value = [ LatexList ([ LXString "section" ]), LatexList ([ LXString "7" ]) ] }
@@ -323,3 +232,112 @@ updateSection latexState paragraph =
                 |> String.Extra.replace "\\subsubsection{" ("\\subsubsection{" ++ (toString s1) ++ "." ++ (toString s2) ++ "." ++ (toString (s3 + 1)) ++ " ")
         else
             paragraph
+
+
+
+{- Handlers -}
+
+
+handleEquationNumbers : LatexState -> LatexInfo -> LatexState
+handleEquationNumbers latexState info =
+    let
+        {- label =
+           info.value
+               |> List.head
+               |> Maybe.withDefault (Macro "NULL" [])
+               |> PT.getFirstMacroArg "label"
+        -}
+        data =
+            info.value
+                |> List.head
+                |> Maybe.withDefault (Macro "NULL" [])
+
+        label =
+            case data of
+                LXString str ->
+                    getLabel2 str
+
+                _ ->
+                    ""
+
+        latexState1 =
+            incrementCounter "eqno" latexState
+
+        eqno =
+            getCounter "eqno" latexState1
+
+        s1 =
+            getCounter "s1" latexState1
+
+        latexState2 =
+            if label /= "" then
+                setCrossReference label ((toString s1) ++ "." ++ (toString eqno)) latexState1
+            else
+                latexState1
+    in
+        latexState2
+
+
+handleTheoremNumbers : LatexState -> LatexInfo -> LatexState
+handleTheoremNumbers latexState info =
+    let
+        label =
+            info.value
+                |> List.head
+                |> Maybe.withDefault (Macro "NULL" [])
+                |> PT.getFirstMacroArg "label"
+
+        latexState1 =
+            incrementCounter "tno" latexState
+
+        tno =
+            getCounter "tno" latexState1
+
+        s1 =
+            getCounter "s1" latexState1
+
+        latexState2 =
+            if label /= "" then
+                setCrossReference label ((toString s1) ++ "." ++ (toString tno)) latexState1
+            else
+                latexState1
+    in
+        latexState2
+
+
+
+{- Helpers -}
+
+
+getAt : Int -> List String -> String
+getAt k list_ =
+    List.Extra.getAt k list_ |> Maybe.withDefault "xxx"
+
+
+getElement : Int -> List LatexExpression -> String
+getElement k list =
+    let
+        lxString =
+            List.Extra.getAt k list |> Maybe.withDefault (LXString "xxx")
+    in
+        case lxString of
+            LXString str ->
+                str
+
+            _ ->
+                "yyy"
+
+
+getLabel2 str =
+    let
+        maybeMacro =
+            str
+                |> String.trim
+                |> P.run Parser.macro
+    in
+        case maybeMacro of
+            Ok macro ->
+                macro |> PT.getFirstMacroArg "label"
+
+            _ ->
+                ""

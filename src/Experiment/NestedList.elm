@@ -1,4 +1,4 @@
-module MiniLatex.NestedList exposing (..)
+module Experiment.NestedList exposing (..)
 
 
 exprInt : Parser Expr
