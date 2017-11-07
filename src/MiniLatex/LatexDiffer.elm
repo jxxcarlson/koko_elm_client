@@ -1,14 +1,11 @@
 module MiniLatex.LatexDiffer exposing (..)
 
 import MiniLatex.Accumulator as Accumulator
-import Document.Dictionary as Dictionary
 import MiniLatex.Differ as Differ exposing (EditRecord)
-import Document.Preprocess as Preprocess
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
 import MiniLatex.Render as Render
 import String.Extra
 import Regex
-import Types exposing (DocumentDict)
 
 
 initialize : String -> EditRecord
@@ -18,8 +15,8 @@ initialize text =
         |> Differ.initialize (Render.transformText emptyLatexState)
 
 
-initialize2a : LatexState -> String -> EditRecord
-initialize2a latexState text =
+initialize1 : LatexState -> String -> EditRecord
+initialize1 latexState text =
     text
         |> prepareContentForLatex
         |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
