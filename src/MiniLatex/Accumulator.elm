@@ -50,10 +50,10 @@ transformParagraphs latexState paragraphs =
 
 
 accumulator :
-    (String -> List LatexExpression)
-    -> (List LatexExpression -> LatexState -> String)
-    -> (List LatexExpression -> LatexState -> LatexState)
-    -> LatexState
+    (String -> List LatexExpression) -- parse
+    -> (List LatexExpression -> LatexState -> String) -- render
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> LatexState -- latexState
     -> List String
     -> ( List String, LatexState )
 accumulator parse render updateState latexState inputList =
@@ -76,12 +76,12 @@ accumulator parse render updateState latexState inputList =
 
 
 transformer :
-    (input -> parsedInput) -- parse
-    -> (parsedInput -> state -> renderedInput) -- render
-    -> (parsedInput -> state -> state) -- updateState
-    -> input -- Here is it a string
-    -> ( List renderedInput, state ) -- acc
-    -> ( List renderedInput, state ) -- acc
+    (String -> List LatexExpression) -- parse
+    -> (List LatexExpression -> LatexState -> String) -- render
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> String --input
+    -> ( List String, LatexState ) -- acc
+    -> ( List String, LatexState ) -- acc
 transformer parse render updateState input acc =
     let
         ( outputList, state ) =
