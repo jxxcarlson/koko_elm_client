@@ -2,9 +2,10 @@ module Main exposing (..)
 
 import Benchmark exposing (..)
 import Benchmark.Runner exposing (BenchmarkProgram, program)
-import Document.Differ as Differ exposing (diff, renderDiff, paragraphify)
-import LatexParser.TextSample exposing (qftIntroText1, qftIntroText2)
-import LatexParser.Render as Render
+import MiniLatex.Differ as Differ exposing (diff, renderDiff, paragraphify)
+import Data exposing (qftIntroText, qftIntroText2)
+import MiniLatex.Render as Render
+import MiniLatex.LatexState as LatexState exposing (emptyLatexState)
 
 
 {-
@@ -23,16 +24,16 @@ suite =
     describe "Differ"
         [ benchmark2 "diff, identical sequences" diff p1 p1
         , benchmark2 "diff, one substitution" diff p1 p2
-        , benchmark3 "renderDiff, one substitution" renderDiff Render.transformText diffRecord r1
-        , benchmark2 "List.map Render.transformText" List.map Render.transformText p1
-        , benchmark1 "initialize differ" setup qftIntroText1
-        , benchmark2 "cycle differ" cycle qftIntroText1 qftIntroText2
-        , benchmark2 "double cycle differ" doubleCycle qftIntroText1 qftIntroText2
+        , benchmark3 "renderDiff, one substitution" renderDiff (Render.transformText emptyLatexState) diffRecord r1
+        , benchmark2 "List.map Render.transformText" List.map (Render.transformText emptyLatexState) p1
+        , benchmark1 "initialize differ" setup qftIntroText
+        , benchmark2 "cycle differ" cycle qftIntroText qftIntroText2
+        , benchmark2 "double cycle differ" doubleCycle qftIntroText qftIntroText2
         ]
 
 
 p1 =
-    Differ.paragraphify qftIntroText1
+    Differ.paragraphify qftIntroText
 
 
 p2 =
@@ -40,7 +41,7 @@ p2 =
 
 
 r1 =
-    List.map Render.transformText p1
+    List.map (Render.transformText emptyLatexState) p1
 
 
 diffRecord =
@@ -48,21 +49,21 @@ diffRecord =
 
 
 setup text =
-    Differ.initialize Render.transformText text
+    Differ.initialize (Render.transformText emptyLatexState) text
 
 
 cycle text1 text2 =
     let
         editorRecord =
-            Differ.initialize Render.transformText text1
+            Differ.initialize (Render.transformText emptyLatexState) text1
     in
-        Differ.update Render.transformText text2 editorRecord
+        Differ.update (Render.transformText emptyLatexState) editorRecord text2
 
 
 doubleCycle text1 text2 =
     let
         editorRecord =
-            Differ.initialize Render.transformText text1
+            Differ.initialize (Render.transformText emptyLatexState) text1
     in
         cycle2 text1 text2 editorRecord
 
@@ -70,9 +71,10 @@ doubleCycle text1 text2 =
 cycle2 text1 text2 editorRecord =
     let
         editorRecord2 =
-            Differ.update Render.transformText text2 editorRecord
+            -- update : (String -> String) -> EditRecord -> String -> EditRecord
+            Differ.update (Render.transformText emptyLatexState) editorRecord text2
     in
-        Differ.update Render.transformText text1 editorRecord2
+        Differ.update (Render.transformText emptyLatexState) editorRecord2 text1
 
 
 
