@@ -11,7 +11,16 @@ import Parser as P
 import MiniLatex.Parser as Parser exposing (macro, parseParagraph, LatexExpression(..))
 import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.Render as Render exposing (renderLatexList)
-import MiniLatex.LatexState exposing (..)
+import MiniLatex.LatexState
+    exposing
+        ( LatexState
+        , CrossReferences
+        , Counters
+        , getCounter
+        , incrementCounter
+        , setCrossReference
+        , updateCounter
+        )
 import MiniLatex.ParserTools as PT
 
 

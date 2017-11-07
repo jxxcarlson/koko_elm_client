@@ -2,7 +2,13 @@ module MiniLatex.Render exposing (..)
 
 import MiniLatex.Parser exposing (LatexExpression(..), latexList, defaultLatexList)
 import MiniLatex.Image
-import MiniLatex.LatexState exposing (..)
+import MiniLatex.LatexState
+    exposing
+        ( LatexState
+        , emptyLatexState
+        , getCrossReference
+        , getCounter
+        )
 import Configuration
 import Dict
 import List.Extra
