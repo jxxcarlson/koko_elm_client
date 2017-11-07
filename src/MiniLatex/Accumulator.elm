@@ -6,6 +6,7 @@ module MiniLatex.Accumulator
         , getSectionNumber
         , transformParagraphs
         , parseParagraphs
+        , renderParagraphs
         , processParagraph
         , processParagraph2
         )
@@ -132,6 +133,46 @@ transformer1 parse updateState input acc =
 {- renderParagraphs: take a list of (List LatexExpressions)
    and a LatexState and rehder the list into a list of strings.
 -}
+
+
+renderParagraphs : LatexState -> List (List LatexExpression) -> ( List String, LatexState )
+renderParagraphs latexState paragraphs =
+    paragraphs
+        |> accumulator2 renderLatexList updateState latexState
+
+
+accumulator2 :
+    (LatexState -> List LatexExpression -> String) -- render
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> LatexState -- latexState
+    -> List (List LatexExpression)
+    -> ( List String, LatexState )
+accumulator2 render updateState latexState inputList =
+    inputList
+        |> List.foldl (transformer2 render updateState) ( [], latexState )
+
+
+transformer2 :
+    (LatexState -> List LatexExpression -> String) -- render
+    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+    -> List LatexExpression --input
+    -> ( List String, LatexState ) -- acc
+    -> ( List String, LatexState ) -- acc
+transformer2 render updateState input acc =
+    let
+        ( outputList, state ) =
+            acc
+
+        renderedInput =
+            render state input
+
+        newState =
+            updateState input state
+
+        _ =
+            Debug.log "state" newState
+    in
+        ( outputList ++ [ renderedInput ], newState )
 
 
 type alias LatexInfo =

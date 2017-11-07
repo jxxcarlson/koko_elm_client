@@ -22,8 +22,8 @@ initialize1 latexState text =
         |> Differ.initialize2 (Accumulator.transformParagraphs latexState)
 
 
-initialize2a : LatexState -> String -> EditRecord
-initialize2a latexState text =
+initialize2O : LatexState -> String -> EditRecord
+initialize2O latexState text =
     let
         editRecord1 =
             text
@@ -50,6 +50,28 @@ type alias EditRecord =
 
 initialize2 : LatexState -> String -> EditRecord
 initialize2 latexState text =
+    let
+        paragraphs =
+            text
+                |> prepareContentForLatex
+                |> Differ.paragraphify
+
+        ( latexExpressionList, latexState1 ) =
+            paragraphs
+                |> Accumulator.parseParagraphs emptyLatexState
+
+        latexState2 =
+            { emptyLatexState | crossReferences = latexState1.crossReferences }
+
+        ( renderedParagraphs, latexState3 ) =
+            latexExpressionList
+                |> Accumulator.renderParagraphs latexState2
+    in
+        EditRecord paragraphs renderedParagraphs latexState2
+
+
+initialize2a : LatexState -> String -> EditRecord
+initialize2a latexState text =
     let
         paragraphs =
             text
