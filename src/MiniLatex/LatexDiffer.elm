@@ -1,4 +1,4 @@
-module MiniLatex.LatexDiffer exposing (..)
+module MiniLatex.LatexDiffer exposing (initialize, initialize2, safeUpdate)
 
 import MiniLatex.Accumulator as Accumulator
 import MiniLatex.Differ as Differ exposing (EditRecord)
@@ -13,13 +13,6 @@ initialize text =
     text
         |> prepareContentForLatex
         |> Differ.initialize (Render.transformText emptyLatexState)
-
-
-type alias EditRecord =
-    { paragraphs : List String
-    , renderedParagraphs : List String
-    , latexState : LatexState
-    }
 
 
 initialize2 : LatexState -> String -> EditRecord
