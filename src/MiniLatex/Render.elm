@@ -1,7 +1,12 @@
-module MiniLatex.Render exposing (..)
+module MiniLatex.Render
+    exposing
+        ( transformText
+        , render
+        , renderLatexList
+        )
 
 import MiniLatex.Parser exposing (LatexExpression(..), latexList, defaultLatexList)
-import MiniLatex.Image
+import MiniLatex.KeyValueUtilities as KeyValueUtilities
 import MiniLatex.LatexState
     exposing
         ( LatexState
@@ -741,16 +746,16 @@ parseImageAttributes : String -> ImageAttributes
 parseImageAttributes attributeString =
     let
         kvList =
-            MiniLatex.Image.getKeyValueList attributeString
+            KeyValueUtilities.getKeyValueList attributeString
 
         widthValue =
-            MiniLatex.Image.getValue "width" kvList |> String.toInt |> Result.withDefault 200
+            KeyValueUtilities.getValue "width" kvList |> String.toInt |> Result.withDefault 200
 
         floatValue =
-            MiniLatex.Image.getValue "float" kvList
+            KeyValueUtilities.getValue "float" kvList
 
         alignValue =
-            MiniLatex.Image.getValue "align" kvList
+            KeyValueUtilities.getValue "align" kvList
     in
         ImageAttributes widthValue floatValue alignValue
 

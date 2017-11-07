@@ -1,4 +1,4 @@
-module MiniLatex.Image exposing (getKeyValueList, getValue)
+module MiniLatex.KeyValueUtilities exposing (getKeyValueList, getValue)
 
 import Char
 import Parser exposing (..)
