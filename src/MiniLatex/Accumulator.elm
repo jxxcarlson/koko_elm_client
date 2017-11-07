@@ -61,6 +61,20 @@ accumulator parse render updateState latexState inputList =
         |> List.foldl (transformer parse render updateState) ( [], latexState )
 
 
+
+{- }
+   accumulator2 :
+       (List LatexExpression -> LatexState -> String)
+       -> (List LatexExpression -> LatexState -> LatexState)
+       -> LatexState
+       -> List LatexExpression
+       -> ( List String, LatexState )
+   accumulator2 render updateState latexState inputList =
+       inputList
+           |> List.foldl (transformer2 render updateState) ( [], latexState )
+-}
+
+
 transformer :
     (input -> parsedInput) -- parse
     -> (parsedInput -> state -> renderedInput) -- render
@@ -80,6 +94,26 @@ transformer parse render updateState input acc =
             updateState parsedInput state
     in
         ( outputList ++ [ render parsedInput newState ], newState )
+
+
+
+{- }
+   transformer2 :
+       (List LatexExpression -> LatexState -> String) -- render
+       -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+       -> List LatexExpression -- Here is it is a list of LatexExpressions
+       -> ( List String, LatexState ) -- acc
+       -> ( List String, LatexState ) -- acc
+   transformer2 render updateState latexExpression acc =
+       let
+           ( outputList, state ) =
+               acc
+
+           newState =
+               updateState latexExpression state
+       in
+           ( outputList ++ [ render latexExpression newState ], newState )
+-}
 
 
 type alias LatexInfo =
