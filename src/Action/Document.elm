@@ -88,6 +88,7 @@ updateCurrentLatexDocumentWithContent content model =
 
         rendered_content =
             newEditRecord.renderedParagraphs
+                |> List.map (\x -> "<p>\n" ++ x ++ "\n</p>")
                 |> String.join "\n\n"
                 |> (\x -> x ++ "\n\n" ++ macroDefinitions)
 
