@@ -227,7 +227,7 @@ updateState parsedParagraph latexState =
                 _ ->
                     latexState
     in
-        Debug.log "newLatexState" newLatexState
+        newLatexState
 
 
 updateSection : LatexState -> String -> String
