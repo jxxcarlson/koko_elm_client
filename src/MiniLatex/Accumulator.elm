@@ -2,6 +2,8 @@ module MiniLatex.Accumulator
     exposing
         ( parseParagraphs
         , renderParagraphs
+          -- , renderParagraph
+          --  , transformParagraphs
         )
 
 import List.Extra
@@ -33,6 +35,16 @@ type alias LatexInfo =
 
 
 {- EXPORTED FUNCTIONS -}
+-- transformParagraphs : LatexState -> List String -> ( List String, LatexState )
+-- transformParagraphs latexState paragraphs =
+--     paragraphs
+--         |> accumulator Parser.parseParagraph renderParagraph updateState latexState
+--
+--
+-- renderParagraph : List LatexExpression -> LatexState -> String
+-- renderParagraph parsedParagraph latexState =
+--     renderLatexList latexState parsedParagraph
+--         |> \paragraph -> "<p>" ++ paragraph ++ "</p>"
 
 
 {-| parseParagraphs: Using a given LatexState, take a list of strings,
@@ -111,11 +123,11 @@ renderTransformer render updateState input acc =
         ( outputList, state ) =
             acc
 
-        renderedInput =
-            render state input
-
         newState =
             updateState input state
+
+        renderedInput =
+            render newState input
     in
         ( outputList ++ [ renderedInput ], newState )
 
@@ -215,7 +227,7 @@ updateState parsedParagraph latexState =
                 _ ->
                     latexState
     in
-        newLatexState
+        Debug.log "newLatexState" newLatexState
 
 
 updateSection : LatexState -> String -> String

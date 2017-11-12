@@ -33,26 +33,30 @@ initialize2 latexState text =
         ( renderedParagraphs, latexState3 ) =
             latexExpressionList
                 |> Accumulator.renderParagraphs latexState2
+
+        renderedParagraphs2 =
+            renderedParagraphs |> List.map (\x -> "\n<p>\n" ++ x ++ "</p>")
     in
-        EditRecord paragraphs renderedParagraphs latexState2
+        EditRecord paragraphs renderedParagraphs2 latexState2
 
 
-initialize2a : LatexState -> String -> EditRecord
-initialize2a latexState text =
-    let
-        paragraphs =
-            text
-                |> prepareContentForLatex
-                |> Differ.paragraphify
 
-        ( latexExpressionList, latexState ) =
-            paragraphs
-                |> Accumulator.parseParagraphs emptyLatexState
-
-        renderedParagraphs =
-            latexExpressionList |> List.map (renderLatexList latexState)
-    in
-        EditRecord paragraphs renderedParagraphs latexState
+-- initialize2a : LatexState -> String -> EditRecord
+-- initialize2a latexState text =
+--     let
+--         paragraphs =
+--             text
+--                 |> prepareContentForLatex
+--                 |> Differ.paragraphify
+--
+--         ( latexExpressionList, latexState ) =
+--             paragraphs
+--                 |> Accumulator.parseParagraphs emptyLatexState
+--
+--         renderedParagraphs =
+--             latexExpressionList |> List.map (renderLatexList latexState)
+--     in
+--         EditRecord paragraphs renderedParagraphs latexState
 
 
 update : EditRecord -> String -> EditRecord

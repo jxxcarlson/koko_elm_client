@@ -22,11 +22,7 @@ var mountNode = document.getElementById('main');
     console.log("** typesetNow: I am calling MathJax.Hub.Queue in index.js ... ")
     MathJax.Hub.Queue([
       "Typeset",
-      MathJax.Hub
-      ,
-      // function(){app.ports.getRenderedText.send(document.getElementById('rendered_text2').innerHTML)}]);
-
-
+      MathJax.Hub,
       function(){
           var rendered_text = document.getElementById('rendered_text2').innerHTML
           app.ports.getRenderedText.send(rendered_text)

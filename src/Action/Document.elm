@@ -8,9 +8,13 @@ import Document.Document as Document exposing (defaultDocument, defaultMasterDoc
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
-import MiniLatex.LatexDiffer as MiniLatexDiffer
-import MiniLatex.Differ as Differ exposing (EditRecord)
-import MiniLatex.LatexState exposing (emptyLatexState)
+
+
+-- import MiniLatex.Driver as MiniLatex
+-- import MiniLatex.Differ as Differ exposing (EditRecord)
+-- import MiniLatex.LatexState exposing (emptyLatexState)
+
+import MiniLatex.Driver
 import Regex
 import Request.Document
 import String.Extra
@@ -25,7 +29,7 @@ clearEditRecord : AppState -> AppState
 clearEditRecord appState =
     let
         newEditRecord =
-            Differ.clear
+            MiniLatex.Driver.emptyEditRecord
     in
         { appState | editRecord = newEditRecord }
 
@@ -84,7 +88,7 @@ updateCurrentLatexDocumentWithContent content model =
                 macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            MiniLatexDiffer.safeUpdate appState.editRecord content
+            MiniLatex.Driver.update appState.editRecord content
 
         rendered_content =
             newEditRecord.renderedParagraphs
@@ -425,7 +429,7 @@ selectDocument model document =
         newAppState =
             { appState
                 | textBuffer = document.content
-                , editRecord = EditRecord [] [] emptyLatexState
+                , editRecord = MiniLatex.Driver.emptyEditRecord
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model

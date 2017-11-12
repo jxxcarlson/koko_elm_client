@@ -3,6 +3,7 @@ module MiniLatex.Render
         ( transformText
         , render
         , renderLatexList
+        , renderString
         )
 
 import MiniLatex.Parser exposing (LatexExpression(..), latexList, defaultLatexList)
@@ -14,7 +15,7 @@ import MiniLatex.LatexState
         , getCrossReference
         , getCounter
         )
-import Configuration
+import MiniLatex.Configuration as Configuration
 import Dict
 import List.Extra
 import Parser

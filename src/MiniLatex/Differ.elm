@@ -1,11 +1,15 @@
 module MiniLatex.Differ
     exposing
         ( EditRecord
-        , clear
+        , emptyEditRecord
         , initialize
         , isEmpty
         , paragraphify
         , update
+        , diff
+          -- for testing
+        , renderDiff
+          -- for testing
         )
 
 import Regex
@@ -28,6 +32,11 @@ type alias EditRecord =
     , renderedParagraphs : List String
     , latexState : LatexState
     }
+
+
+emptyEditRecord : EditRecord
+emptyEditRecord =
+    EditRecord [] [] emptyLatexState
 
 
 paragraphify : String -> List String
@@ -94,11 +103,6 @@ initialize2 transformParagraphs text =
             transformParagraphs paragraphs
     in
         EditRecord paragraphs renderedParagraphs latexState
-
-
-clear : EditRecord
-clear =
-    EditRecord [] [] emptyLatexState
 
 
 isEmpty : EditRecord -> Bool
