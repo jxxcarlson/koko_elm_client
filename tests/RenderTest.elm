@@ -75,8 +75,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        Debug.log "RENDERED OUTPUT"
-                            renderString2
+                        renderString2
                             parse
                             "a b c \\foo \\bar{1} \\baz{1}{2}"
 
@@ -88,8 +87,7 @@ suite =
             \_ ->
                 let
                     renderOutput =
-                        Debug.log "RENDERED OUTPUT"
-                            renderString2
+                        renderString2
                             parse
                             "\\italic{a b c}"
 

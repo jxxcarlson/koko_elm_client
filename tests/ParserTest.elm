@@ -197,8 +197,7 @@ suite =
             \_ ->
                 let
                     input =
-                        Debug.log "input (T.3)"
-                            "\\begin{tabular}{l l l l}\nHydrogen & H & 1 & 1.008 \\\\\nHelium & He & 2 & 4.003 \\\\\nLithium & Li & 3 &  6.94 \\\\\nBeryllium & Be & 4 & 9.012 \\\\\n\\end{tabular}"
+                        "\\begin{tabular}{l l l l}\nHydrogen & H & 1 & 1.008 \\\\\nHelium & He & 2 & 4.003 \\\\\nLithium & Li & 3 &  6.94 \\\\\nBeryllium & Be & 4 & 9.012 \\\\\n\\end{tabular}"
 
                     parsedInput =
                         run parse input
@@ -222,8 +221,7 @@ suite =
             \_ ->
                 let
                     input =
-                        Debug.log "input (T.3a)"
-                            """\\begin{tabular}
+                        """\\begin{tabular}
 Hydrogen & H & 1 & 1.008 \\\\
 Helium & He & 2 & 4.003 \\\\
 Lithium & Li & 3 &  6.94 \\\\
