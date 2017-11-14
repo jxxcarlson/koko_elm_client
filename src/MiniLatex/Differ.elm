@@ -41,7 +41,8 @@ emptyEditRecord =
 
 paragraphify : String -> List String
 paragraphify text =
-    Regex.split Regex.All (Regex.regex "\n\n+") text
+    --String.split "\n\n" text
+    Regex.split Regex.All (Regex.regex "\\n\\n+") text
         |> List.filter (\x -> String.length x /= 0)
         |> List.map ((String.trim) >> (\x -> x ++ "\n\n"))
 
