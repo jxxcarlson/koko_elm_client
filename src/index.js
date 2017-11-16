@@ -64,13 +64,13 @@ var mountNode = document.getElementById('main');
        }  , millisecondsToWait);
     }
 
-   var render_latex = function(content) {
+   var render_latex = function(force, content) {
        console.log("render_latex, content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
            request_in_progress = false;
-           if (content !== current_content) {
+           if (force || (content !== current_content)){
              document.getElementById('rendered_text2').innerHTML = content;
              // app.ports.getRenderedText.send(content); // Send rendered text to Elm
              typesetNow()
@@ -95,6 +95,12 @@ var mountNode = document.getElementById('main');
   app.ports.putTextToRender.subscribe(function(data) {
 
       console.log("JS-world: app.ports.putTextToRender")
+      if (data.force == true) {
+         console.log("DEBOUNCE = TRUE")
+      } else {
+        console.log("DEBOUNCE = FALSE")
+      }
+
 
       requestAnimationFrame(function() {
 
@@ -111,7 +117,7 @@ var mountNode = document.getElementById('main');
                render_plain(data.content)
                break;
             case "latex":
-                render_latex(data.content)
+                render_latex(force, data.content)
                 break;
             default:
               console.log("Default rendering ... asciidoc")

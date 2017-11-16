@@ -23,16 +23,11 @@ port getRenderedText : (String -> msg) -> Sub msg
 
 
 {-| encodeDocument is used to send rendered content to JS-world.
+force = False \ True, with True as the default.
 -}
-encodeDocument : Bool -> Document -> Encode.Value
-encodeDocument textBufferDirty document =
+encodeDocument : Bool -> Bool -> Document -> Encode.Value
+encodeDocument force textBufferDirty document =
     let
-        _ =
-            Debug.log "textBufferDirty" textBufferDirty
-
-        _ =
-            Debug.log "Master, I will now encode document" document.id
-
         textType =
             document.attributes.textType
 
@@ -47,11 +42,9 @@ encodeDocument textBufferDirty document =
 
                 ( _, _ ) ->
                     Document.Preprocess.preprocess document.content document
-
-        _ =
-            Debug.log "... document encoded" document.id
     in
-        [ ( "content", Encode.string content_to_render )
+        [ ( "force", Encode.bool force )
+        , ( "content", Encode.string content_to_render )
         , ( "textType", Encode.string document.attributes.textType )
         ]
             |> Encode.object

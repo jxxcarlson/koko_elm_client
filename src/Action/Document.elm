@@ -1,7 +1,7 @@
 module Action.Document exposing (..)
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
-import Document.RenderAsciidoc as RenderAsciidoc
+import Document.Render as Render
 import Document.Edit
 import Document.Dictionary as Dictionary
 import Document.Document as Document exposing (defaultDocument, defaultMasterDocument)
@@ -144,11 +144,11 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.put False model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
-                [ RenderAsciidoc.put model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.put False model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
                 ]
     in
@@ -325,7 +325,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , RenderAsciidoc.put model.appState.textBufferDirty current_document
+            , Render.put False model.appState.textBufferDirty current_document
             ]
         )
 
@@ -438,7 +438,7 @@ selectDocument model document =
 
         basicCommands =
             [ toJs (windowData model (displayPage model))
-            , RenderAsciidoc.put model.appState.textBufferDirty document
+            , Render.put False model.appState.textBufferDirty document
             ]
 
         additionalCommands =
@@ -466,7 +466,7 @@ selectNewDocument model document =
         , counter = model.counter + 1
         , documentStack = Stack.push document model.documentStack
       }
-    , RenderAsciidoc.put model.appState.textBufferDirty document
+    , Render.put False model.appState.textBufferDirty document
     )
 
 

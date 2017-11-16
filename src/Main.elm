@@ -14,7 +14,7 @@ import Document.Document as Document exposing (defaultDocument, defaultMasterDoc
 import Document.Dictionary
 import Dict
 import Document.MasterDocument
-import Document.RenderAsciidoc
+import Document.Render
 import Document.Search
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
@@ -234,7 +234,7 @@ update msg model =
             Document.Search.getRandomDocuments model
 
         DoRender key ->
-            Document.RenderAsciidoc.putWithKey key model
+            Document.Render.putWithKey key model
 
         GetRenderedText str ->
             let

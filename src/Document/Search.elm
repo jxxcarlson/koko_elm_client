@@ -25,7 +25,7 @@ import Document.Document
 import Http
 import Request.Document
 import Document.QueryParser exposing (parseQuery)
-import Document.RenderAsciidoc as RenderAsciidoc
+import Document.Render as Render
 import Task
 
 
@@ -131,7 +131,7 @@ dispatch searchState page model =
         ( updatedModel
         , Cmd.batch
             [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-            , RenderAsciidoc.put model.appState.textBufferDirty model.current_document
+            , Render.put False model.appState.textBufferDirty model.current_document
             ]
         )
 
