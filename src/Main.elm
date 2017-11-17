@@ -23,7 +23,7 @@ import Html exposing (..)
 import Image.Upload
 import Image.View
 import Jwt
-import MiniLatex.Differ exposing (EditRecord)
+import MiniLatex.Differ exposing (EditRecord, emptyEditRecord)
 import MiniLatex.LatexState exposing (emptyLatexState)
 import Nav.Navigation
 import Nav.Parser exposing (..)
@@ -33,6 +33,7 @@ import Parser
 import Phoenix.Channel
 import Phoenix.Socket
 import Phoenix.Socket
+import Random
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Request.Document
 import String.Extra
@@ -686,6 +687,19 @@ update msg model =
             in
                 ( nextModel, Cmd.none )
 
+        GenerateSeed ->
+            ( model, Random.generate NewSeed (Random.int 1 10000) )
+
+        NewSeed newSeed ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | seed = Debug.log "newSeed" newSeed }
+            in
+                ( { model | appState = newAppState }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -816,11 +830,12 @@ init flags location =
             , textBufferDirty = False
             , masterDocLoaded = False
             , masterDocOpened = False
+            , seed = 0
             , tickerPaused = False
             , page = HomePage
             , tool = TableOfContents
             , textBuffer = ""
-            , editRecord = EditRecord [] [] emptyLatexState
+            , editRecord = emptyEditRecord
             , tickInterval = Configuration.tickInterval
             , command = ""
             }
@@ -873,6 +888,7 @@ init flags location =
             , Task.perform ReceiveDate Date.now
             , Task.perform ReceiveTime Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
+            , Random.generate NewSeed (Random.int 1 10000)
             ]
 
         masterDocumentCommands =

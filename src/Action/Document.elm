@@ -20,6 +20,7 @@ import Request.Document
 import String.Extra
 import Task
 import Types exposing (..)
+import Random
 import Utility
 import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
@@ -88,13 +89,10 @@ updateCurrentLatexDocumentWithContent content model =
                 macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            MiniLatex.Driver.update appState.editRecord content
+            MiniLatex.Driver.update model.appState.seed appState.editRecord content
 
         rendered_content =
-            newEditRecord.renderedParagraphs
-                |> List.map (\x -> "<p>\n" ++ x ++ "\n</p>")
-                |> String.join "\n\n"
-                |> (\x -> x ++ "\n\n" ++ macroDefinitions)
+            MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
         newAppState =
             { appState | editRecord = newEditRecord }
@@ -150,6 +148,7 @@ updateCurrentDocument model document =
             else
                 [ Render.put False model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
+                , Random.generate NewSeed (Random.int 1 10000)
                 ]
     in
         ( { model

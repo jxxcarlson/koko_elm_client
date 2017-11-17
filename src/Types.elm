@@ -207,6 +207,7 @@ type alias AppState =
     , textBuffer : String
     , editRecord : EditRecord
     , tickInterval : Float
+    , seed : Int
     , command : String
     }
 
@@ -272,6 +273,7 @@ type Msg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
+    | GenerateSeed
     | MigrateFromAsciidocLatex
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
@@ -299,6 +301,7 @@ type Msg
     | Message String
     | Name String
     | NewDocument
+    | NewSeed Int
     | Password String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | PutDocument (Result Http.Error ())
