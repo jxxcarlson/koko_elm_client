@@ -26,10 +26,10 @@ home model =
 standardHome : Model -> List (Element Styles variation Msg)
 standardHome model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 2, fill 2 ]
+        { columns = [ fill 1, fill 2 ]
         , rows =
             [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
-              fill 2 => [ span 1 "LHSidebar", span 1 "Middle", span 1 "RHSidebar" ]
+              fill 2 => [ span 1 "LHSidebar", span 3 "Middle" ]
             ]
         }
         []
@@ -57,7 +57,7 @@ standardHome model =
                 -- , (Signin.signoutForm model)
                 , (Signin.registerUserForm model)
                 , (Signin.signinInfoPanel model)
-                , (Utility.visibleIf model.appState.signedIn (TOC.documentStackView model))
+                , Utility.visibleIf model.appState.signedIn (Common.specialContent model)
                 ]
             )
         , named "RHSidebar"
@@ -65,7 +65,8 @@ standardHome model =
                 None
                 [ spacing 15, paddingXY 20 40 ]
                 [ specialTitle model
-                , Common.specialContent model
+
+                --, (Utility.visibleIf model.appState.signedIn (TOC.documentStackView model))
                 ]
             )
         ]

@@ -117,7 +117,7 @@ var mountNode = document.getElementById('main');
                render_plain(data.content)
                break;
             case "latex":
-                render_latex(force, data.content)
+                render_latex(true, data.content)
                 break;
             default:
               console.log("Default rendering ... asciidoc")
