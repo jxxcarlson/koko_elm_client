@@ -117,6 +117,7 @@ var mountNode = document.getElementById('main');
                render_plain(data.content)
                break;
             case "latex":
+                // force = true
                 render_latex(true, data.content)
                 break;
             default:
