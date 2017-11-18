@@ -142,11 +142,11 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ Render.put False model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
-                [ Render.put False model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
                 , Random.generate NewSeed (Random.int 1 10000)
                 ]
@@ -324,7 +324,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , Render.put False model.appState.textBufferDirty current_document
+            , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty current_document
             ]
         )
 
@@ -437,7 +437,7 @@ selectDocument model document =
 
         basicCommands =
             [ toJs (windowData model (displayPage model))
-            , Render.put False model.appState.textBufferDirty document
+            , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
             ]
 
         additionalCommands =
@@ -465,7 +465,7 @@ selectNewDocument model document =
         , counter = model.counter + 1
         , documentStack = Stack.push document model.documentStack
       }
-    , Render.put False model.appState.textBufferDirty document
+    , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
     )
 
 

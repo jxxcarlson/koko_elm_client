@@ -25,8 +25,8 @@ port getRenderedText : (String -> msg) -> Sub msg
 {-| encodeDocument is used to send rendered content to JS-world.
 force = False \ True, with True as the default.
 -}
-encodeDocument : Bool -> Bool -> Document -> Encode.Value
-encodeDocument force textBufferDirty document =
+encodeDocument : Bool -> List String -> Bool -> Document -> Encode.Value
+encodeDocument force idList textBufferDirty document =
     let
         textType =
             document.attributes.textType
@@ -35,15 +35,19 @@ encodeDocument force textBufferDirty document =
             case ( textType, textBufferDirty ) of
                 ( "latex", True ) ->
                     -- Document.Preprocess.preprocess document.content document
-                    document.rendered_content
+                    Debug.log "encode, latex, true" document.rendered_content
 
                 ( "latex", False ) ->
-                    document.rendered_content
+                    Debug.log "encode, latex, false" document.rendered_content
 
                 ( _, _ ) ->
                     Document.Preprocess.preprocess document.content document
+
+        idValueList =
+            List.map Encode.string idList
     in
         [ ( "force", Encode.bool force )
+        , ( "idList", Encode.list idValueList )
         , ( "content", Encode.string content_to_render )
         , ( "textType", Encode.string document.attributes.textType )
         ]
