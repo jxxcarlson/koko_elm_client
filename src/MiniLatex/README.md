@@ -19,9 +19,12 @@ Basics
 Example:
 ```
 > import MiniLatex.Driver as MiniLatex
+
 > text = "\\begin{itemize}\n\\item Eggs\n\\item Milk\n\\item Bread\n\\end{itemize}"
 > macroDefinitions = ""
+
 > MiniLatex.render marcroDefinitions text
+
 "<p>\n \n<ul>\n <li class=\"item1\"> Eggs</li>\n <li class=\"item1\"> Milk</li>\n <li class=\"item1\"> Bread</li>\n\n</ul>\n\n</p>"
     : String
 ```
