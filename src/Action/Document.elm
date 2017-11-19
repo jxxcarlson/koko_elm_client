@@ -4,7 +4,7 @@ import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.Render as Render
 import Document.Edit
 import Document.Dictionary as Dictionary
-import Document.Document as Document exposing (defaultDocument, defaultMasterDocument)
+import Document.Document as Document exposing (defaultDocument, pageNotFoundDocument, defaultMasterDocument)
 import Document.Preprocess
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
@@ -271,7 +271,7 @@ updateDocuments model documentsRecord =
                     document
 
                 Nothing ->
-                    defaultDocument
+                    pageNotFoundDocument
 
         masterDocLoaded =
             if current_document.attributes.docType == "master" then
@@ -508,7 +508,7 @@ deleteDocument serverReply model =
                     Utility.removeWhen (\doc -> doc.id == model.current_document.id) documentStack
 
                 newCurrentDocument =
-                    (List.head updatedDocuments) |> Maybe.withDefault Document.defaultDocument
+                    (List.head updatedDocuments) |> Maybe.withDefault Document.errorDocument
             in
                 ( { model
                     | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))

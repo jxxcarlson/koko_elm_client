@@ -175,7 +175,7 @@ recallLastSearch model =
     in
         ( { model
             | documents = model.documents2
-            , current_document = List.head model.documents2 |> Maybe.withDefault Document.Document.defaultDocument
+            , current_document = List.head model.documents2 |> Maybe.withDefault Document.Document.pageNotFoundDocument
             , appState = newAppState
             , master_document = Document.Document.defaultMasterDocument
             , message = "Set masterDocLoaded: False"

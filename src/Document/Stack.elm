@@ -41,4 +41,4 @@ titleCompare doc1 doc2 =
 
 top : Int -> DocumentStack -> Document
 top k docstack =
-    List.Extra.getAt k docstack |> Maybe.withDefault Document.Document.defaultDocument
+    List.Extra.getAt k docstack |> Maybe.withDefault Document.Document.pageNotFoundDocument

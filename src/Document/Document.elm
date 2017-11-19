@@ -2,6 +2,8 @@ module Document.Document
     exposing
         ( defaultDocument
         , defaultMasterDocument
+        , pageNotFoundDocument
+        , errorDocument
         , startDocument
         , emptyDocument
         , blankDocument
@@ -40,6 +42,39 @@ defaultDocument =
     }
 
 
+errorDocument =
+    { id = 0
+    , identifier = "errorDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Error"
+    , content = "Oops - something went wrong"
+    , rendered_content = "Oops - something went wrong"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
+
+pageNotFoundDocument : Document
+pageNotFoundDocument =
+    { id = 0
+    , identifier = "pageNotFoundDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Page not found"
+    , content = "Sorry, page not found"
+    , rendered_content = "Sorry, page not found"
+    , attributes = defaultAttributes
+    , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
+
 startDocument : Document
 startDocument =
     { id = 0
@@ -47,8 +82,8 @@ startDocument =
     , author_id = 0
     , author_name = ""
     , title = "Welcome"
-    , content = "Welcome to noteshare"
-    , rendered_content = "Welcome to noteshare"
+    , content = "Welcome to noteshare (2)"
+    , rendered_content = "Welcome to noteshare (2)"
     , attributes = defaultAttributes
     , tags = []
     , children = []
