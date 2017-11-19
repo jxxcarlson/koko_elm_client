@@ -354,6 +354,7 @@ type Msg
 
 type Page
     = HomePage
+    | LoginPage
     | PublicPage Int
     | PrivatePage Int
     | ReaderPage
@@ -369,6 +370,9 @@ pageName page =
     case page of
         HomePage ->
             "Home"
+
+        LoginPage ->
+            "Sign in"
 
         ReaderPage ->
             "Reader"

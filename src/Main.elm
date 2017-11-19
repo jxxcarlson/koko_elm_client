@@ -51,6 +51,7 @@ import Views.Editor exposing (editor)
 import Views.External exposing (windowData, windowSetup)
 import Views.Footer as Footer
 import Views.Home exposing (home)
+import Views.Login exposing (loginPage)
 import Views.NavBar as NavBar
 import Views.UserPreferences exposing (userPreferences)
 import Views.Reader exposing (reader)
@@ -734,6 +735,9 @@ page model =
 
         HomePage ->
             home model
+
+        LoginPage ->
+            loginPage model
 
         AdminPage ->
             admin model

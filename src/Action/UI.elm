@@ -94,7 +94,7 @@ setAuthorizing model value =
             model.appState
 
         newAppState =
-            { oldAppState | authorizing = value, page = Types.HomePage }
+            { oldAppState | authorizing = value, page = Types.LoginPage }
     in
         ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
 

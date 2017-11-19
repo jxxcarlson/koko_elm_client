@@ -36,7 +36,7 @@ standardNavigation model =
         --, menu model
         , pageSelector model
         , modeSelector model
-        , loginButton Button model
+        , loginButton FlatButtonBlue model
         ]
 
 
@@ -152,7 +152,7 @@ loginButton : Styles -> Model -> Element Styles variation Msg
 loginButton style model =
     Basic.button
         (authenticationButtonText model)
-        Button
+        FlatButtonBlue
         [ EE.onClick AuthenticationAction
         , EA.width (px 70)
         , EA.height (px 30)

@@ -52,12 +52,7 @@ standardHome model =
             (row
                 None
                 [ padding 40, spacing 20 ]
-                [ (Signin.signinForm model)
-
-                -- , (Signin.signoutForm model)
-                , (Signin.registerUserForm model)
-                , (Signin.signinInfoPanel model)
-                , Utility.visibleIf model.appState.signedIn (Common.specialContent model)
+                [ Common.specialContent model
                 ]
             )
         , named "RHSidebar"
@@ -103,12 +98,7 @@ tabletHome model =
             (row
                 None
                 [ padding 40, spacing 20 ]
-                [ (Signin.signinForm model)
-
-                -- , (Signin.signoutForm model)
-                , (Signin.registerUserForm model)
-                , (Signin.signinInfoPanel model)
-                , (Utility.visibleIf model.appState.signedIn (TOC.documentStackView model))
+                [ Common.specialContent model
                 ]
             )
         ]
@@ -137,7 +127,7 @@ phoneList model =
             (row
                 Blue
                 [ height (px 700), width (px 440) ]
-                [ (TOC.documentListViewForPhone model)
+                [ Common.specialContent model
                 ]
             )
         ]
