@@ -3,7 +3,7 @@
 #rendered_text2 h3 {margin-bottom: 0.25em; margin-top: 1em;}
 #rendered_text2 h4 {margin-bottom: 0.25em; margin-top: 1em;}
 #rendered_text2 {line-height: 1.4em}
-#rendered_text2 p {line-height: 1.4em; margin-bottom: 1em; font-size: 0.9em;}
+#rendered_text2 p {line-height: 1.4em; margin-bottom: 1em; font-size: 1.0em;}
 #rendered_text2 pre { margin-left: 30px; margin-bottom: 20px; }
 
 
@@ -19,9 +19,10 @@
 #rendered_text2 .strong {font-weight: bold}
 #rendered_text2 .subheading {margin-top: 0.75em; margin-bottom: 0.5em; font-weight: bold}
 #rendered_text2 .verbatim {margin-top: 1em; margin-bottom: 1em; font-size: 10pt;}
+#rendered_text2 .item1 {margin-bottom: 0.5em}
 
 
 
-#rendered_text2 ul { padding-left: 1em; margin-top: 1em; margin-bottom: 1em; line-height:75%}
-#rendered_text2 ol { padding-left: 1em;  margin-top: 1em; margin-bottom: 1em; line-height:75%}
-#rendered_text2 li p { margin-top: 0; margin-bottom: 0; padding-top:0; padding-bottom:0}
+#rendered_text2 ul { padding-left: 1em; margin-top: 1em; margin-bottom: 1em; line-height: 1.3em; font-size: 1.0em;}
+#rendered_text2 ol { padding-left: 1em;  margin-top: 1em; margin-bottom: 1em; line-height: 1.2em; font-size: 1.0em;}
+#rendered_text2 li p { margin-bottom: 0.35em; }
