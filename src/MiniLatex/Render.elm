@@ -353,6 +353,7 @@ renderMacroDict =
         , ( "href", \x y -> renderHRef x y )
         , ( "iframe", \x y -> renderIFrame x y )
         , ( "image", \x y -> renderImage x y )
+        , ( "imageref", \x y -> renderImageRef x y )
         , ( "index", \x y -> "" )
         , ( "italic", \x y -> renderItalic x y )
         , ( "label", \x y -> "" )
@@ -529,13 +530,42 @@ renderImage latexState args =
             parseImageAttributes attributeString
     in
         if imageAttrs.float == "left" then
-            handleFloatedImageLeft url label imageAttrs
+            div [ imageFloatLeftStyle imageAttrs ] [ img url imageAttrs, "<br>", label ]
         else if imageAttrs.float == "right" then
-            handleFloatedImageRight url label imageAttrs
+            div [ imageFloatRightStyle imageAttrs ] [ img url imageAttrs, "<br>", label ]
         else if imageAttrs.align == "center" then
-            handleCenterImage url label imageAttrs
+            div [ imageCenterStyle imageAttrs ] [ img url imageAttrs, "<br>", label ]
         else
             "<image src=\"" ++ url ++ "\" " ++ (imageAttributes imageAttrs attributeString) ++ " >"
+
+
+renderImageRef : LatexState -> List LatexExpression -> String
+renderImageRef latexState args =
+    let
+        url =
+            renderArg 0 latexState args
+
+        imageUrl =
+            renderArg 1 latexState args
+
+        attributeString =
+            renderArg 2 latexState args
+
+        imageAttrs =
+            parseImageAttributes attributeString
+    in
+        if imageAttrs.float == "left" then
+            a url (div [ imageFloatLeftStyle imageAttrs ] [ img imageUrl imageAttrs ])
+        else if imageAttrs.float == "right" then
+            a url (div [ imageFloatRightStyle imageAttrs ] [ img imageUrl imageAttrs ])
+        else if imageAttrs.align == "center" then
+            a url (div [ imageCenterStyle imageAttrs ] [ img imageUrl imageAttrs ])
+        else
+            a url (div [ imageCenterStyle imageAttrs ] [ img imageUrl imageAttrs ])
+
+
+a url label =
+    "<a href=\"" ++ url ++ "\"  target=\"_blank\" >\n" ++ label ++ "\n</a>"
 
 
 renderItalic : LatexState -> List LatexExpression -> String
@@ -706,15 +736,39 @@ renderXLinkPublic latexState args =
 {- IMAGE HELPERS -}
 
 
+imageCenterStyle imageAttributes =
+    "class=\"center\" style=\"width: " ++ (toString (imageAttributes.width + 20)) ++ "px; margin-left:auto, margin-right:auto; text-align: center;\""
+
+
+imageFloatRightStyle imageAttributes =
+    "style=\"float: right; width: " ++ (toString (imageAttributes.width + 20)) ++ "px; margin: 0 0 7.5px 10px; text-align: center;\""
+
+
+imageFloatLeftStyle imageAttributes =
+    "style=\"float: left; width: " ++ (toString (imageAttributes.width + 20)) ++ "px; margin: 0 10px 7.5px 0; text-align: center;\""
+
+
+div attributes children =
+    let
+        attributeString =
+            attributes |> String.join " "
+
+        childrenString =
+            children |> String.join "\n"
+    in
+        "<div " ++ attributeString ++ " >\n" ++ childrenString ++ "\n</div>"
+
+
+img url imageAttributs =
+    "<img src=\"" ++ url ++ "\" width=" ++ (toString imageAttributs.width) ++ " >"
+
+
 handleCenterImage url label imageAttributes =
     let
         width =
             imageAttributes.width
-
-        imageCenterLeftPart width =
-            "<div class=\"center\" style=\"width: " ++ (toString (width + 20)) ++ "px; margin-left:auto, margin-right:auto; text-align: center;\">"
     in
-        (imageCenterLeftPart width) ++ "<img src=\"" ++ url ++ "\" width=" ++ (toString width) ++ " ><br>" ++ label ++ "</div>"
+        div [ imageCenterStyle imageAttributes ] [ img url imageAttributes, "<br>", label ]
 
 
 handleFloatedImageRight url label imageAttributes =
