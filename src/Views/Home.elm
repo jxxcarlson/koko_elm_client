@@ -26,10 +26,10 @@ home model =
 standardHome : Model -> List (Element Styles variation Msg)
 standardHome model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 2 ]
+        { columns = [ fill 1, fill 2, fill 1 ]
         , rows =
             [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
-              fill 2 => [ span 1 "LHSidebar", span 3 "Middle" ]
+              fill 2 => [ span 1 "LHSidebar", span 1 "Middle", span 1 "RHSidebar" ]
             ]
         }
         []
@@ -59,10 +59,7 @@ standardHome model =
             (column
                 None
                 [ spacing 15, paddingXY 20 40 ]
-                [ specialTitle model
-
-                --, (Utility.visibleIf model.appState.signedIn (TOC.documentStackView model))
-                ]
+                []
             )
         ]
     ]
@@ -107,10 +104,7 @@ tabletHome model =
 
 phoneHome : Model -> List (Element Styles variation Msg)
 phoneHome model =
-    if not model.appState.authorizing then
-        phoneList model
-    else
-        phoneSignInOut model
+    phoneList model
 
 
 phoneList : Model -> List (Element Styles variation Msg)
@@ -128,30 +122,6 @@ phoneList model =
                 Blue
                 [ height (px 700), width (px 440) ]
                 [ Common.specialContent model
-                ]
-            )
-        ]
-    ]
-
-
-phoneSignInOut : Model -> List (Element Styles variation Msg)
-phoneSignInOut model =
-    [ namedGrid Container
-        { columns = [ fill 1, fill 2 ]
-        , rows =
-            [ -- px 40 => [ span 1 "TOCHeader", span 1 "contentHeader", span 1 "sideBarHeader" ]
-              fill 2 => [ span 1 "Middle" ]
-            ]
-        }
-        []
-        [ named "Middle"
-            (row
-                Blue
-                [ height (px 700), width (px 440) ]
-                [ (Signin.signinForm model)
-                , (Signin.signoutForm model)
-                , (Signin.registerUserForm model)
-                , (Signin.signinInfoPanel model)
                 ]
             )
         ]

@@ -36,3 +36,12 @@ scp -r ./dist/* root@138.197.81.6:/var/www/html/
 
 echo
 tput setaf 2; echo "${color}Done${reset}"
+
+echo
+echo "${color}... Now use dev configuration.${reset}"
+cp ./robot/src/dev/Configuration.elm ./src/
+cp ./robot/src/dev/webpack.config.js ./src/
+
+echo
+echo "${color}Start webpack${reset}"
+yarn start
