@@ -247,6 +247,72 @@ Beryllium & Be & 4 & 9.012 \\\\
                             )
                 in
                     Expect.equal parsedInput expectedOutput
+        , test "(T.4) table with inline math" <|
+            \_ ->
+                let
+                    input =
+                        """\\begin{tabular}
+$ \\int x^n dx $ & $ \\frac{x^{n+1}}{n+1} $ \\\\
+$ \\int e^x dx $ & $ e^x $ \\\\
+\\end{tabular}
+"""
+
+                    parsedInput =
+                        run parse input
+
+                    expectedOutput =
+                        Ok
+                            (Environment "tabular"
+                                (LatexList
+                                    ([ LatexList
+                                        ([ InlineMath " \\int x^n dx "
+                                         , InlineMath " \\frac{x^{n+1}}{n+1} "
+                                         ]
+                                        )
+                                     , LatexList
+                                        ([ InlineMath " \\int e^x dx "
+                                         , InlineMath " e^x "
+                                         ]
+                                        )
+                                     ]
+                                    )
+                                )
+                            )
+                in
+                    Expect.equal parsedInput expectedOutput
+        , test "(T.5) table with display math" <|
+            \_ ->
+                let
+                    input =
+                        """\\begin{tabular}
+$$ \\int x^n dx $$ & $$ \\frac{x^{n+1}}{n+1} $$ \\\\
+$$ \\int e^x dx $$ & $$ e^x $$ \\\\
+\\end{tabular}
+"""
+
+                    parsedInput =
+                        run parse input
+
+                    expectedOutput =
+                        Ok
+                            (Environment "tabular"
+                                (LatexList
+                                    ([ LatexList
+                                        ([ InlineMath " \\int x^n dx "
+                                         , InlineMath " \\frac{x^{n+1}}{n+1} "
+                                         ]
+                                        )
+                                     , LatexList
+                                        ([ InlineMath " \\int e^x dx "
+                                         , InlineMath " e^x "
+                                         ]
+                                        )
+                                     ]
+                                    )
+                                )
+                            )
+                in
+                    Expect.equal parsedInput expectedOutput
         , test "(L.1) label" <|
             \_ ->
                 let

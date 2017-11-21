@@ -214,9 +214,10 @@ displayMathDollar : Parser LatexExpression
 displayMathDollar =
     inContext "display math" <|
         succeed DisplayMath
+            |. spaces
             |. symbol "$$"
             |= parseUntil "$$"
-            |. ws
+            |. spaces
 
 
 displayMathBrackets : Parser LatexExpression
