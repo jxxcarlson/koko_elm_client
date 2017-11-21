@@ -675,7 +675,7 @@ update msg model =
                                 ( True, "Session expired" )
 
                             Err error ->
-                                ( True, "Session expired" )
+                                ( True, "Session expired (2)" )
                     else
                         ( False, "Not logged in" )
 
