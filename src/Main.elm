@@ -5,6 +5,7 @@ module Main exposing (..)
 import Action.Channel
 import Action.Error
 import Action.Page
+import Action.Periodic
 import Action.Search
 import Action.User
 import Views.Common as Common
@@ -607,7 +608,8 @@ update msg model =
             then
                 updateCurrentDocumentWithContent model.appState.textBuffer model
             else if model.appState.online then
-                Action.Channel.sendImmediateMessage "hello" model
+                -- Action.Channel.sendImmediateMessage "hello" model
+                Action.Periodic.do model
                 -- (model, Cmd.none) --
             else
                 Action.Channel.joinChannel model
@@ -660,33 +662,33 @@ update msg model =
                 time_ =
                     Just time
 
-                _ =
-                    Debug.log "TOK VAL" model.current_user.token
+                token =
+                    model.current_user.token
+
+                ( expired, message ) =
+                    if token /= "" then
+                        case Jwt.isExpired time token of
+                            Ok False ->
+                                ( False, "Session valid" )
+
+                            Ok True ->
+                                ( True, "Session expired" )
+
+                            Err error ->
+                                ( True, "Session expired" )
+                    else
+                        ( False, "Not logged in" )
+
+                ( newModel, cmd ) =
+                    if expired then
+                        User.Login.signout "You are now signed out." model
+                    else
+                        ( model, Cmd.none )
 
                 _ =
-                    Debug.log "TOK EXP" (Jwt.isExpired time model.current_user.token)
-
-                ( message, signedIn ) =
-                    case Jwt.isExpired time model.current_user.token of
-                        Ok False ->
-                            ( "sign in OK", model.appState.signedIn )
-
-                        Ok True ->
-                            ( "Session expired - please sign in again", False )
-
-                        Err error ->
-                            ( "Session expired -- please sign in!", False )
-
-                appState =
-                    model.appState
-
-                nextAppState =
-                    { appState | signedIn = signedIn }
-
-                nextModel =
-                    { model | time = time_, message = message, warning = message, appState = nextAppState }
+                    Debug.log "TOK" message
             in
-                ( nextModel, Cmd.none )
+                ( { newModel | message = message, time = time_ }, cmd )
 
         GenerateSeed ->
             ( model, Random.generate NewSeed (Random.int 1 10000) )
