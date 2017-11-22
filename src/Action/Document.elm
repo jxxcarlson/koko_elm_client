@@ -1,4 +1,26 @@
-module Action.Document exposing (..)
+module Action.Document
+    exposing
+        ( clearEditRecord
+        , createDocument
+        , deleteDocument
+        , hasId
+        , inputContent
+        , migrateFromAsciidocLatex
+        , saveCurrentDocument
+        , saveDocumentCmd
+        , selectDocument
+        , selectNewDocument
+        , setDocType
+        , setTextType
+        , setTitle
+        , togglePublic
+        , toggleUpdateRate
+        , updateCurrentDocument
+        , updateCurrentDocumentWithContent
+        , updateDocuments
+        , updateTags
+        , wordCount
+        )
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
 import Document.Render as Render
