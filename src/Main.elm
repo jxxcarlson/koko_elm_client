@@ -33,7 +33,6 @@ import Navigation
 import Parser
 import Phoenix.Channel
 import Phoenix.Socket
-import Phoenix.Socket
 import Random
 import Request.Api exposing (loginUrl, registerUserUrl)
 import Request.Document
@@ -677,7 +676,7 @@ update msg model =
                             Err error ->
                                 ( True, "Session expired (2)" )
                     else
-                        ( False, "Not logged in" )
+                        ( False, "Not signed in" )
 
                 ( newModel, cmd ) =
                     if expired then

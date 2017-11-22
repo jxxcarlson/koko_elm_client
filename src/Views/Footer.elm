@@ -93,10 +93,14 @@ publicLink model =
 
 messageBox : Model -> Element Styles variation msg
 messageBox model =
-    if model.appState.signedIn then
-        (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
-    else
-        (el Zero [ alignBottom, padding 8 ] (text ""))
+    (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
+
+
+
+-- if model.appState.signedIn then
+--     (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
+-- else
+--     (el Zero [ alignBottom, padding 8 ] (text ""))
 
 
 warningMessage : Model -> Element Styles variation msg

@@ -10,6 +10,7 @@ import Time exposing (Time, second)
 import Action.Error
 import Data.User
 import External
+import Initialization
 import Request.Api
 import User.Auth
 import Views.External
@@ -172,12 +173,7 @@ signout message model =
         newAppState =
             { oldAppState | page = Types.HomePage, registerUser = False, signedIn = False, authorizing = False }
     in
-        ( { model
-            | current_user = updated_user
-            , appState = newAppState
-            , warning = ""
-            , message = message
-          }
+        ( Initialization.resetModel model
         , Cmd.batch
             [ External.toJs (Views.External.windowData model HomePage)
             , External.disconnectUser "foo"
