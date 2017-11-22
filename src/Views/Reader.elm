@@ -87,7 +87,7 @@ phoneReader model =
 rhSidebarHeader : Model -> Element Styles variation Msg
 rhSidebarHeader model =
     (el RHSidebarHeader
-        [ paddingXY 20 8, verticalCenter, onClick (EditDocument model.specialDocument.id) ]
+        [ paddingXY 20 8, verticalCenter, onClick EditSpecialDocument ]
         (text model.specialDocument.title)
     )
 

@@ -299,13 +299,13 @@ update msg model =
             in
                 ( newModel, Cmd.batch [ cmd ] )
 
-        EditDocument documentId ->
+        EditSpecialDocument ->
             let
                 appState =
                     model.appState
 
                 newAppState =
-                    { appState | page = EditorPage, textBuffer = model.current_document.content }
+                    { appState | page = EditorPage, textBuffer = model.specialDocument.content }
             in
                 ( { model | current_document = model.specialDocument, appState = newAppState }
                 , Cmd.none

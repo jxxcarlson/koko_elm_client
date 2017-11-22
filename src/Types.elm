@@ -268,7 +268,7 @@ type Msg
     | DeleteDocument (Result Http.Error ())
     | DoRender Int
     | DoSearch SearchDomain Int
-    | EditDocument Int
+    | EditSpecialDocument
     | Email String
     | FileSelected
     | FileUploaded Bool
