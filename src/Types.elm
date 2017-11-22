@@ -313,7 +313,6 @@ type Msg
     | ReceiveTime Time
     | ReconnectUser String
     | Resize Int Int
-    | Refresh
     | Register
     | RequestDate
     | RequestTime
@@ -343,6 +342,7 @@ type Msg
     | TogglePublic
     | ToggleRegister
     | ToggleUpdateRate
+    | UpdateDocument
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
     | UpdateCurrentUser

@@ -532,13 +532,10 @@ update msg model =
         InputContent content ->
             Action.Document.inputContent content model
 
-        {-
-           Rationalize: (1) Refresh (2) DoRender (3) InputContent, (3) Title
-        -}
-        Refresh ->
+        UpdateDocument ->
             let
                 _ =
-                    Debug.log "Refresh" "now"
+                    Debug.log "UpdateDocument" "now"
             in
                 Action.Document.updateCurrentDocumentWithContent model.appState.textBuffer model
 

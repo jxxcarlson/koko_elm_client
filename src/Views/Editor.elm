@@ -80,7 +80,7 @@ editorPanel model =
 
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
-    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (Refresh) ]
+    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (UpdateDocument) ]
 
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
