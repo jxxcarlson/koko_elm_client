@@ -5,6 +5,18 @@ import Regex
 
 parseQuery : String -> String
 parseQuery input =
+    let
+        cmd =
+            input |> String.split "=" |> List.head |> Maybe.withDefault "NoCommand"
+    in
+        if List.member cmd [ "idlist" ] then
+            input
+        else
+            parseQueryHelper input
+
+
+parseQueryHelper : String -> String
+parseQueryHelper input =
     input
         |> Regex.split Regex.All (Regex.regex "[, ]")
         |> List.map String.trim

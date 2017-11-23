@@ -338,6 +338,21 @@ getDocuments searchState user_id token =
 makeQuery : SearchState -> SearchDomain -> Int -> String
 makeQuery searchState updatedSearchDomain user_id =
     let
+        rawQuery =
+            searchState.query
+
+        cmd =
+            rawQuery |> String.split "=" |> List.head |> Maybe.withDefault "NoCommand"
+    in
+        if List.member cmd [ "idlist" ] then
+            rawQuery
+        else
+            makeQueryHelper searchState updatedSearchDomain user_id
+
+
+makeQueryHelper : SearchState -> SearchDomain -> Int -> String
+makeQueryHelper searchState updatedSearchDomain user_id =
+    let
         basicQuery =
             -- if searchState.query == "" then
             --     "publicdocs=all"
