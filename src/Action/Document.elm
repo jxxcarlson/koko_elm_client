@@ -336,11 +336,24 @@ updateDocuments model documentsRecord =
                 , masterDocLoaded = masterDocLoaded
                 , textBuffer = current_document.content
             }
+
+        newDocumentList =
+            documentsRecord.documents
+
+        firstDocument =
+            List.head newDocumentList |> Maybe.withDefault defaultDocument
+
+        newDocumentStack =
+            if List.length newDocumentList == 1 then
+                Stack.push firstDocument model.documentStack
+            else
+                model.documentStack
     in
         ( { model
-            | documents = documentsRecord.documents
+            | documents = newDocumentList
             , master_document = newMasterDocument
             , current_document = current_document2
+            , documentStack = newDocumentStack
             , appState = updatedAppState
             , counter = Debug.log "updateDocuments" (model.counter + 1)
           }
