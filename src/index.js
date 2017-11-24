@@ -161,7 +161,7 @@ var mountNode = document.getElementById('main');
 
 // PERSIST AND RECONNECT USER
 
-app.ports.persist.subscribe(function (str) {
+app.ports.saveUserLogin.subscribe(function (str) {
   console.log("I will put this in local storage: " + str);
   var userSettings = JSON.parse(str)
   console.log("userSettings = " + JSON.stringify(userSettings))
@@ -198,6 +198,36 @@ app.ports.askToReconnectUser.subscribe(function (str) {
     app.ports.toElm.send("Yada yada!");
   } else {
     console.log("I dont't unerstand that: " + str)
+  }
+
+})
+
+
+app.ports.saveUserState.subscribe(function (str) {
+  console.log("I will put the documentStack in local storage");
+  var data = JSON.parse(str)
+
+  if (data.documentStack.length > 0) {
+    console.log("item 0 = " + data.documentStack[0])
+  }
+  localStorage.setItem("documentStack", data.documentStack);
+
+  console.log("documentStack (1) = " + JSON.stringify(data))
+  console.log("documentStack (2) = " + JSON.stringify(data.documentStack))
+  console.log("documentStack (3) = "  + localStorage.getItem("documentStack"))
+  console.log("documentStack[0] = "  + localStorage.getItem("documentStack")[0])
+
+
+})
+
+app.ports.askToRecoverUserState.subscribe(function (str) {
+  console.log("app.ports.askToRecoverUserState received: " + str);
+  if (str == "recoverUserState") {
+    var localStorageAsString = JSON.stringify(localStorage)
+    console.log("ask to recover user state with data: " + localStorageAsString)
+    app.ports.recoverUserState.send(localStorageAsString);
+  } else {
+    console.log("I don't unerstand that: " + str)
   }
 
 })
