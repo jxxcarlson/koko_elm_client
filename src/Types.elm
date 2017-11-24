@@ -55,6 +55,10 @@ type alias UserRecord =
     { user : LoginUserRecord }
 
 
+type alias UserStateRecord =
+    { documentIntStack : List Int }
+
+
 type alias KWindow =
     { width : Int
     , height : Int
@@ -281,6 +285,7 @@ type Msg
     | GetRenderedText String
     | GetUser (Result Http.Error BigUserRecord)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
+    | LoadDocumentStack (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
@@ -312,6 +317,7 @@ type Msg
     | ReceiveDate Date
     | ReceiveTime Time
     | ReconnectUser String
+    | RecoverUserState String
     | Resize Int Int
     | Register
     | RequestDate
