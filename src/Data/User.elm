@@ -5,13 +5,14 @@ module Data.User
         , registerUserEncoder
         , userRecord
         , userRecordDecoder
+        , decodeUserStateRecord
         , localStorageUserRecord
         )
 
-import Json.Encode as Encode exposing (..)
-import Json.Decode exposing (at, int, list, string, decodeString, Decoder)
+import Json.Encode as Encode
+import Json.Decode exposing (map, field, at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
-import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage, LoginLocalStorageRecord)
+import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage, LoginLocalStorageRecord, UserStateRecord)
 
 
 signinEncoder : Model -> Encode.Value
@@ -73,6 +74,23 @@ userRecordDecoder : Decoder UserRecord
 userRecordDecoder =
     JPipeline.decode UserRecord
         |> JPipeline.required "user" (userDecoder)
+
+
+string2IntList str =
+    str
+        |> String.split ","
+        |> List.map String.toInt
+        |> List.map (Result.withDefault -1)
+
+
+userStateRecordDecoder : Decoder UserStateRecord
+userStateRecordDecoder =
+    map UserStateRecord (map string2IntList (field "documentStack" string))
+
+
+decodeUserStateRecord : String -> Result String UserStateRecord
+decodeUserStateRecord jsonString =
+    decodeString userStateRecordDecoder jsonString
 
 
 userDecoder : Decoder LoginUserRecord
