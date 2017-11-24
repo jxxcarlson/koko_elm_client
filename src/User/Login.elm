@@ -1,6 +1,16 @@
 module User.Login exposing (..)
 
-import Types exposing (Model, AppState, Page, Msg(..), Page(..), SearchDomain(..), LoginLocalStorageRecord)
+import Types
+    exposing
+        ( Model
+        , SearchOrder(..)
+        , AppState
+        , Page
+        , Msg(..)
+        , Page(..)
+        , SearchDomain(..)
+        , LoginLocalStorageRecord
+        )
 import Task
 import Time exposing (Time, second)
 
@@ -9,9 +19,11 @@ import Time exposing (Time, second)
 
 import Action.Error
 import Data.User
+import Document.Search
 import External
 import Initialization
 import Request.Api
+import Request.Document
 import User.Auth
 import Views.External
 
@@ -206,6 +218,48 @@ doReconnectUser jsonString model =
                         Debug.log "userRecord" userRecord
                 in
                     reconnectUser newModel userRecord
+
+            Err error ->
+                ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
+
+
+doRestoreUserState : String -> Model -> ( Model, Cmd Msg )
+doRestoreUserState jsonString model =
+    let
+        _ =
+            Debug.log "Enter" "doRestoreUserState"
+
+        _ =
+            Debug.log "in doRestoreUserState, jsonString" jsonString
+
+        maybeUserStateRecord =
+            Debug.log "in doRestoreUserState, maybeUserStateRecord"
+                (Data.User.decodeUserStateRecord jsonString)
+
+        _ =
+            Debug.log "maybeUserStateRecord" maybeUserStateRecord
+    in
+        case maybeUserStateRecord of
+            Ok userStateRecord ->
+                let
+                    _ =
+                        Debug.log "xxx userStateRecord" userStateRecord
+
+                    idList1 =
+                        Debug.log "xxx idList"
+                            (userStateRecord.documentIntStack |> List.map toString |> String.join (","))
+
+                    idList =
+                        if idList1 == "" then
+                            "3"
+                        else
+                            idList1
+
+                    query =
+                        Debug.log "xxx query"
+                            ("idlist=" ++ idList)
+                in
+                    ( model, Request.Document.getDocumentWithQuery LoadDocumentStack query )
 
             Err error ->
                 ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
