@@ -73,6 +73,7 @@ import Action.Document
         , toggleUpdateRate
         , updateCurrentDocumentWithContent
         , updateTags
+        , loadDocumentStack
         , saveCurrentDocument
         , deleteDocument
         )
@@ -158,6 +159,9 @@ update msg model =
 
         ReconnectUser jsonString ->
             User.Login.doReconnectUser jsonString model
+
+        RecoverUserState jsonString ->
+            User.Login.doRestoreUserState jsonString model
 
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
@@ -379,6 +383,12 @@ update msg model =
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
+
+        LoadDocumentStack (Ok documentsRecord) ->
+            Action.Document.loadDocumentStack documentsRecord model
+
+        LoadDocumentStack (Err err) ->
+            ( { model | message = "Error in LoadDocumentStack: " ++ (toString err) }, Cmd.none )
 
         SetDocumentInDict (Ok ( documentsRecord, key )) ->
             let
@@ -706,6 +716,7 @@ subscriptions model =
         [ Time.every ((model.appState.tickInterval) * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
+        , External.recoverUserState RecoverUserState
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         , External.getRenderedText GetRenderedText -- pull rendered text from JS-land, then store in DB
         , External.fileContentRead ImageRead
@@ -887,6 +898,7 @@ init flags location =
             [ Cmd.map PhoenixMsg phxCmd
             , toJs ws
             , External.askToReconnectUser "reconnectUser"
+            , External.askToRecoverUserState "recoverUserState"
             , Task.perform ReceiveDate Date.now
             , Task.perform ReceiveTime Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
