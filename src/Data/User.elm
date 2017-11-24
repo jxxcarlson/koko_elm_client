@@ -81,6 +81,7 @@ string2IntList str =
         |> String.split ","
         |> List.map String.toInt
         |> List.map (Result.withDefault -1)
+        |> List.filter (\x -> x /= -1)
 
 
 userStateRecordDecoder : Decoder UserStateRecord
