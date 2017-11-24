@@ -1,7 +1,7 @@
 module Views.External exposing (..)
 
 import Types exposing (Model, Page, Document)
-import Json.Encode exposing (encode, object, int, string, bool)
+import Json.Encode exposing (encode, object, int, string, bool, list)
 
 
 windowData : Model -> Page -> String
@@ -42,8 +42,8 @@ windowSetup width height page online signed_in =
         json
 
 
-{-| This is the data sent via ports to persist the user's
-login information. See `External.persist` in
+{-| This is the data sent via ports to saveUserLogin the user's
+login information. See `External.saveUserLogin` in
 User.Auth.getTokenCompleted
 -}
 userData : String -> String -> Int -> String -> String -> String
@@ -62,6 +62,23 @@ userData name email userId username token =
             Debug.log "userData" data
     in
         encode 2 data
+
+
+encodeDocumentStackData : Types.DocumentStack -> String
+encodeDocumentStackData documentStack =
+    let
+        ids =
+            List.map (\doc -> doc.id) documentStack |> encodeIntegerList
+
+        data =
+            (object [ ( "documentStack", ids ) ])
+    in
+        encode 2 data
+
+
+encodeIntegerList : List Int -> Json.Encode.Value
+encodeIntegerList ints =
+    ints |> List.map int |> list
 
 
 documentData : Document -> String
