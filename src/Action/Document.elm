@@ -5,6 +5,7 @@ module Action.Document
         , deleteDocument
         , hasId
         , inputContent
+        , loadDocumentStack
         , migrateFromAsciidocLatex
         , saveCurrentDocument
         , saveDocumentCmd
@@ -46,6 +47,22 @@ import Random
 import Utility
 import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
+
+
+loadDocumentStack : DocumentsRecord -> Model -> ( Model, Cmd Msg )
+loadDocumentStack documentsRecord model =
+    let
+        documents =
+            documentsRecord.documents
+
+        _ =
+            Debug.log "xxx number of documents" (List.length documents)
+    in
+        ( { model | documentStack = documents }, Cmd.none )
+
+
+
+---( { model | documentStack = documentsRecord.documents }, Cmd.none )
 
 
 clearEditRecord : AppState -> AppState
@@ -170,6 +187,7 @@ updateCurrentDocument model document =
             else
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
+                , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
                 , Random.generate NewSeed (Random.int 1 10000)
                 ]
     in
@@ -359,6 +377,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
+            , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
             , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty current_document
             ]
         )
@@ -473,6 +492,7 @@ selectDocument model document =
         basicCommands =
             [ toJs (windowData model (displayPage model))
             , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
+            , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
             ]
 
         additionalCommands =
