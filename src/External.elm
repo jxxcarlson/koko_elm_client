@@ -57,7 +57,16 @@ encodeDocument force idList textBufferDirty document =
 port toJs : String -> Cmd msg
 
 
-port persist : String -> Cmd msg
+port saveUserLogin : String -> Cmd msg
+
+
+port saveUserState : String -> Cmd msg
+
+
+port askToRecoverUserState : String -> Cmd msg
+
+
+port recoverUserState : (String -> msg) -> Sub msg
 
 
 
