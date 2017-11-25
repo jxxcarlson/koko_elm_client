@@ -11,7 +11,14 @@ import Action.User
 import Views.Common as Common
 import Configuration
 import Date exposing (Date)
-import Document.Document as Document exposing (defaultDocument, defaultMasterDocument, emptyDocument, blankDocument, startDocument)
+import Document.Document as Document
+    exposing
+        ( defaultDocument
+        , defaultMasterDocument
+        , emptyDocument
+        , blankDocument
+        , startDocument
+        )
 import Document.Dictionary
 import Dict
 import Document.MasterDocument
@@ -212,12 +219,9 @@ update msg model =
             Document.Search.recallLastSearch model
 
         UserHomePage ->
-            let
-                searchTerm =
-                    "key=home&authorname=" ++ (User.Login.shortUsername model)
-            in
-                Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+            Action.Page.setHomePage model
 
+        -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
 

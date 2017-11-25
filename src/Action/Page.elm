@@ -1,15 +1,43 @@
 module Action.Page exposing (..)
 
 import Types exposing (..)
+import User.Login
 import Action.UI
 import Document.Dictionary
 import Action.Document
 import External
 import MiniLatex.Differ as Differ exposing (EditRecord)
+import Request.Document
 import Views.External
 import Time
 import Task
 import Request.Document
+
+
+setHomePage model =
+    let
+        query =
+            "key=home&authorname=" ++ (User.Login.shortUsername model)
+
+        cmd =
+            Request.Document.getDocuments "public/documents" query GetDocuments model.current_user.token
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
+    in
+        ( { model | appState = newAppState }, cmd )
+
+
+
+-- setHomePage1 model =
+--     let
+--         searchTerm =
+--             "key=home&authorname=" ++ (User.Login.shortUsername model)
+--     in
+--         Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
 
 {-| NOTE:
