@@ -207,15 +207,11 @@ app.ports.saveUserState.subscribe(function (str) {
   console.log("I will put the documentStack in local storage");
   var data = JSON.parse(str)
 
-  if (data.documentStack.length > 0) {
-    console.log("item 0 = " + data.documentStack[0])
-  }
-  localStorage.setItem("documentStack", data.documentStack);
+  console.log("data.documentStack = " + data.documentStack )
+  console.log("data.currentDocumentId = " + data.currentDocumentId )
 
-  console.log("documentStack (1) = " + JSON.stringify(data))
-  console.log("documentStack (2) = " + JSON.stringify(data.documentStack))
-  console.log("documentStack (3) = "  + localStorage.getItem("documentStack"))
-  console.log("documentStack[0] = "  + localStorage.getItem("documentStack")[0])
+  localStorage.setItem("documentStack", data.documentStack);
+  localStorage.setItem("currentDocumentId", data.currentDocumentId);
 
 
 })

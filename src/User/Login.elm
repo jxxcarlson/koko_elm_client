@@ -223,17 +223,17 @@ doReconnectUser jsonString model =
                 ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
 
 
-doRestoreUserState : String -> Model -> ( Model, Cmd Msg )
-doRestoreUserState jsonString model =
+doRecoverUserState : String -> Model -> ( Model, Cmd Msg )
+doRecoverUserState jsonString model =
     let
         _ =
-            Debug.log "Enter" "doRestoreUserState"
+            Debug.log "Enter" "doRecoverUserState"
 
         _ =
-            Debug.log "in doRestoreUserState, jsonString" jsonString
+            Debug.log "in doRecoverUserState, jsonString" jsonString
 
         maybeUserStateRecord =
-            Debug.log "in doRestoreUserState, maybeUserStateRecord"
+            Debug.log "in doRecoverUserState, maybeUserStateRecord"
                 (Data.User.decodeUserStateRecord jsonString)
 
         _ =

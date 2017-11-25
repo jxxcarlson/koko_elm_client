@@ -64,23 +64,6 @@ userData name email userId username token =
         encode 2 data
 
 
-encodeDocumentStackData : Types.DocumentStack -> String
-encodeDocumentStackData documentStack =
-    let
-        ids =
-            List.map (\doc -> doc.id) documentStack |> encodeIntegerList
-
-        data =
-            (object [ ( "documentStack", ids ) ])
-    in
-        encode 2 data
-
-
-encodeIntegerList : List Int -> Json.Encode.Value
-encodeIntegerList ints =
-    ints |> List.map int |> list
-
-
 documentData : Document -> String
 documentData document =
     let

@@ -6,11 +6,12 @@ module Data.User
         , userRecord
         , userRecordDecoder
         , decodeUserStateRecord
+        , encodeUserState
         , localStorageUserRecord
         )
 
 import Json.Encode as Encode
-import Json.Decode exposing (map, field, at, int, list, string, decodeString, Decoder)
+import Json.Decode exposing (map, map2, map3, field, at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
 import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage, LoginLocalStorageRecord, UserStateRecord)
 
@@ -86,12 +87,32 @@ string2IntList str =
 
 userStateRecordDecoder : Decoder UserStateRecord
 userStateRecordDecoder =
-    map UserStateRecord (map string2IntList (field "documentStack" string))
+    map2 UserStateRecord (map string2IntList (field "documentStack" string)) (map String.toInt (field "currentDocumentId" string))
 
 
 decodeUserStateRecord : String -> Result String UserStateRecord
 decodeUserStateRecord jsonString =
     decodeString userStateRecordDecoder jsonString
+
+
+encodeUserState : Model -> String
+encodeUserState model =
+    let
+        ids =
+            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
+
+        currentDocumentId =
+            Encode.int model.current_document.id
+
+        data =
+            (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ) ])
+    in
+        Encode.encode 2 data
+
+
+encodeIntegerList : List Int -> Encode.Value
+encodeIntegerList ints =
+    ints |> List.map Encode.int |> Encode.list
 
 
 userDecoder : Decoder LoginUserRecord

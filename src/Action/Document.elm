@@ -24,6 +24,7 @@ module Action.Document
         )
 
 import Action.UI exposing (displayPage, updateToolStatus, appStateWithPage)
+import Data.User
 import Document.Render as Render
 import Document.Edit
 import Document.Dictionary as Dictionary
@@ -187,7 +188,7 @@ updateCurrentDocument model document =
             else
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
-                , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
+                , External.saveUserState (Data.User.encodeUserState model)
                 , Random.generate NewSeed (Random.int 1 10000)
                 ]
     in
@@ -377,7 +378,7 @@ updateDocuments model documentsRecord =
           }
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
+            , External.saveUserState (Data.User.encodeUserState model)
             , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty current_document
             ]
         )
@@ -492,7 +493,7 @@ selectDocument model document =
         basicCommands =
             [ toJs (windowData model (displayPage model))
             , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
-            , External.saveUserState (Views.External.encodeDocumentStackData model.documentStack)
+            , External.saveUserState (Data.User.encodeUserState model)
             ]
 
         additionalCommands =

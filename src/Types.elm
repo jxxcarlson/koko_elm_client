@@ -56,7 +56,9 @@ type alias UserRecord =
 
 
 type alias UserStateRecord =
-    { documentIntStack : List Int }
+    { documentIntStack : List Int
+    , curentDocumentId : Result.Result String Int
+    }
 
 
 type alias KWindow =

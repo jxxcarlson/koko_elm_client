@@ -168,7 +168,7 @@ update msg model =
             User.Login.doReconnectUser jsonString model
 
         RecoverUserState jsonString ->
-            User.Login.doRestoreUserState jsonString model
+            User.Login.doRecoverUserState jsonString model
 
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )

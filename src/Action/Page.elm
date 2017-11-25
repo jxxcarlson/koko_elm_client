@@ -31,15 +31,6 @@ setHomePage model =
         ( { model | appState = newAppState }, cmd )
 
 
-
--- setHomePage1 model =
---     let
---         searchTerm =
---             "key=home&authorname=" ++ (User.Login.shortUsername model)
---     in
---         Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-
-
 {-| NOTE:
 
 I am disabling the line
