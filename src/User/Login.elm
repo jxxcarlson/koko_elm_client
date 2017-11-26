@@ -282,7 +282,7 @@ doRecoverUserState jsonString model =
                     ( { model | appState = newAppState }, Cmd.batch [ recoverCurrentDocumentCmd, recoverDocumentStackCmd ] )
 
             Err error ->
-                ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
+                ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )
 
 
 reconnectUser : Model -> LoginLocalStorageRecord -> ( Model, Cmd Msg )
@@ -308,7 +308,7 @@ reconnectUser model userRecord =
             model.appState
 
         newAppState =
-            { appState | page = Types.StartPage, signedIn = True, authorizing = False }
+            { appState | page = Types.ReaderPage, signedIn = True, authorizing = False }
     in
         ( { model
             | current_user = current_user
