@@ -1,4 +1,4 @@
-module User.Request exposing (getList, get, putCurrentUser)
+module User.Request exposing (encodeUserState, getList, get, putCurrentUser, putUserState)
 
 import Types exposing (Model, User, Users, UsersRecord, Msg(GetUsers, GetUser, PutUser))
 import Http exposing (send)
@@ -66,6 +66,24 @@ putCurrentUser model =
         Http.send PutUser request
 
 
+putUserState : Model -> Cmd Msg
+putUserState model =
+    let
+        params =
+            encodeUserState model
+
+        url =
+            Request.Api.api ++ "users/saveuserstate/" ++ (toString model.current_user.id)
+
+        request =
+            HB.put url
+                |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
+                |> withJsonBody params
+                |> HB.toRequest
+    in
+        Http.send PutUser request
+
+
 decodeUserRecord : Json.Decode.Decoder Types.BigUserRecord
 decodeUserRecord =
     Json.Decode.Pipeline.decode Types.BigUserRecord
@@ -120,7 +138,36 @@ encodeMinimalUserRecord user =
         ]
 
 
+string2IntList str =
+    str
+        |> String.split ","
+        |> List.map String.toInt
+        |> List.map (Result.withDefault -1)
+        |> List.filter (\x -> x /= -1)
 
+
+encodeIntegerList : List Int -> Json.Encode.Value
+encodeIntegerList ints =
+    ints |> List.map Json.Encode.int |> Json.Encode.list
+
+
+encodeUserState : Model -> Json.Encode.Value
+encodeUserState model =
+    let
+        ids =
+            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
+
+        currentDocumentId =
+            Json.Encode.int model.current_document.id
+
+        -- data =
+        --     (Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ])
+    in
+        (Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ])
+
+
+
+-- Json.Encode.encode 2 data
 -- encodeUsers : (List User) -> Json.Encode.Value
 -- encodeUsers record =
 --     Json.Encode.object

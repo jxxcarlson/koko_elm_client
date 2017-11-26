@@ -26,6 +26,7 @@ import Initialization
 import Request.Api
 import Request.Document
 import User.Auth
+import User.Request
 import Views.External
 
 
@@ -192,6 +193,7 @@ signout message model =
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
             , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
             , External.disconnectUser "foo"
+            , User.Request.putUserState model
             ]
         )
 
