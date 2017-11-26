@@ -132,7 +132,7 @@ login model =
             model.appState
 
         newAppState =
-            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
+            { appState | page = Types.StartPage, signedIn = True, authorizing = False }
 
         searchState =
             model.searchState
@@ -159,7 +159,7 @@ login2 model =
 
 
 
---, Action.Document.search Private "sort=updated" HomePage model
+--, Action.Document.search Private "sort=updated" StartPage model
 
 
 signout : String -> Model -> ( Model, Cmd Msg )
@@ -183,11 +183,11 @@ signout message model =
             model.appState
 
         newAppState =
-            { oldAppState | page = Types.HomePage, registerUser = False, signedIn = False, authorizing = False }
+            { oldAppState | page = Types.StartPage, registerUser = False, signedIn = False, authorizing = False }
     in
         ( Initialization.resetModel model
         , Cmd.batch
-            [ External.toJs (Views.External.windowData model HomePage)
+            [ External.toJs (Views.External.windowData model StartPage)
             , External.disconnectUser "foo"
             ]
         )
@@ -197,10 +197,10 @@ doReconnectUser : String -> Model -> ( Model, Cmd Msg )
 doReconnectUser jsonString model =
     let
         _ =
-            Debug.log "Enter" "doReconnectUser"
+            Debug.log "xxx" ("doReconnectUser: " ++ (toString model.counter))
 
         _ =
-            Debug.log "in doReconnectUser, jsonString" jsonString
+            Debug.log "xxx doReconnectUser, jsonString" jsonString
 
         maybeUserRecord =
             Data.User.localStorageUserRecord jsonString
@@ -288,7 +288,7 @@ reconnectUser model userRecord =
             model.appState
 
         newAppState =
-            { appState | page = Types.HomePage, signedIn = True, authorizing = False }
+            { appState | page = Types.StartPage, signedIn = True, authorizing = False }
     in
         ( { model
             | current_user = current_user
@@ -325,6 +325,6 @@ doSignIn model =
             model.appState
 
         newAppState =
-            { appState | authorizing = True, page = HomePage }
+            { appState | authorizing = True, page = StartPage }
     in
         ( { model | appState = newAppState }, Cmd.none )

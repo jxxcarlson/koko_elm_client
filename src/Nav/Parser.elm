@@ -11,7 +11,7 @@ import Types exposing (Page(..), Msg(..))
 route : Parser (Page -> a) a
 route =
     oneOf
-        [ UrlParser.map HomePage (UrlParser.s "home")
+        [ UrlParser.map StartPage (UrlParser.s "home")
         , UrlParser.map PrivatePage (UrlParser.s "document" </> int)
         , UrlParser.map PublicPage (UrlParser.s "public" </> int)
         ]

@@ -53,7 +53,7 @@ goMenu model =
     row NavBar
         [ spacing 6, paddingRight 8, moveLeft 10 ]
         [ --   (startPageIcon model)
-          Basic.button "List" Charcoal [ width (px 40), onClick Types.InitHomePage ]
+          Basic.button "List" Charcoal [ width (px 40), onClick Types.InitStartPage ]
         , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 55), center ]
         , Basic.button (signInOutText model) Button [ onClick SignOutOrIn, width (px 60) ]
         ]
@@ -222,7 +222,7 @@ userPreferencesIcon model =
 
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =
-    Basic.faIcon "Start page" FontAwesome.asterisk [ onClick Types.InitHomePage ]
+    Basic.faIcon "Start page" FontAwesome.asterisk [ onClick Types.InitStartPage ]
 
 
 newDocumentButton : Model -> Element Styles variation Msg

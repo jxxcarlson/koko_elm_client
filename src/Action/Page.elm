@@ -65,19 +65,19 @@ goToPage p model =
 
         ( EditorPage, False ) ->
             ( { model
-                | appState = Action.UI.appStateWithPage model HomePage
+                | appState = Action.UI.appStateWithPage model StartPage
                 , message = "Please sign in if you wish to edit"
               }
             , External.toJs (Views.External.windowData model p)
             )
 
-        ( HomePage, True ) ->
+        ( StartPage, True ) ->
             let
                 appState =
                     model.appState
 
                 newAppState =
-                    { appState | page = HomePage, masterDocLoaded = False }
+                    { appState | page = StartPage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
                 , Cmd.batch
@@ -86,13 +86,13 @@ goToPage p model =
                     ]
                 )
 
-        ( HomePage, False ) ->
+        ( StartPage, False ) ->
             let
                 appState =
                     model.appState
 
                 newAppState =
-                    { appState | page = HomePage, masterDocLoaded = False }
+                    { appState | page = StartPage, masterDocLoaded = False }
             in
                 ( { model | appState = newAppState }
                 , Cmd.batch

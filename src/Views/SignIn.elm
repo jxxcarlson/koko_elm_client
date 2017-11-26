@@ -112,6 +112,6 @@ signinInfoPanel1 model =
 handleAuthentication : Model -> ( Model, Cmd Msg )
 handleAuthentication model =
     if model.appState.signedIn then
-        ( { model | appState = appStateWithPage model HomePage }, Cmd.none )
+        ( { model | appState = appStateWithPage model StartPage }, Cmd.none )
     else
-        ( { model | appState = appStateWithPage model HomePage }, Cmd.none )
+        ( { model | appState = appStateWithPage model StartPage }, Cmd.none )

@@ -58,7 +58,7 @@ getTokenCompleted model result =
                             model.appState
 
                         updatedAppState =
-                            { appState | page = HomePage, signedIn = True }
+                            { appState | page = StartPage, signedIn = True }
 
                         user2 =
                             { user
@@ -71,10 +71,10 @@ getTokenCompleted model result =
                             | current_user = user2
                             , message = "Signed in as " ++ value.username
                             , warning = ""
-                            , appState = updatedAppState -- appStateWithPage model HomePage
+                            , appState = updatedAppState -- appStateWithPage model StartPage
                           }
                         , Cmd.batch
-                            [ Utility.gotoPage model HomePage
+                            [ Utility.gotoPage model StartPage
                             , External.saveUserLogin (Views.External.userData user2.name user2.email user2.id user2.username newToken)
                             ]
                         )
@@ -88,7 +88,7 @@ getTokenCompleted model result =
                     model.appState
 
                 updatedAppState =
-                    { appState | page = HomePage, signedIn = False }
+                    { appState | page = StartPage, signedIn = False }
             in
                 ( { model
                     | errorMsg = (toString error)

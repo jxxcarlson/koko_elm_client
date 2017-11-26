@@ -82,9 +82,9 @@ toggleAuthorizing model =
             model.appState
 
         newAppState =
-            { oldAppState | authorizing = (not oldAppState.authorizing), page = Types.HomePage }
+            { oldAppState | authorizing = (not oldAppState.authorizing), page = Types.StartPage }
     in
-        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
+        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
 
 
 setAuthorizing : Model -> Bool -> ( Model, Cmd Msg )
@@ -96,7 +96,7 @@ setAuthorizing model value =
         newAppState =
             { oldAppState | authorizing = value, page = Types.LoginPage }
     in
-        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.HomePage) )
+        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
 
 
 appStateWithPage : Model -> Page -> AppState

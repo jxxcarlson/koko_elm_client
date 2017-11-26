@@ -228,13 +228,13 @@ update msg model =
         GetPublicPage searchTerm ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
-        InitHomePage ->
+        InitStartPage ->
             let
                 appState =
                     model.appState
 
                 newAppState =
-                    { appState | page = HomePage, masterDocLoaded = False, authorizing = False }
+                    { appState | page = StartPage, masterDocLoaded = False, authorizing = False }
             in
                 ( { model | appState = newAppState }
                 , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
@@ -746,7 +746,7 @@ page model =
         ImagePage ->
             Image.View.imageEditor model
 
-        HomePage ->
+        StartPage ->
             home model
 
         LoginPage ->
@@ -833,7 +833,7 @@ init flags location =
             SearchState "" Public Viewed
 
         ws =
-            windowSetup 150 50 HomePage False False
+            windowSetup 150 50 StartPage False False
 
         appState =
             { activeDocumentList = SearchResultList
@@ -849,7 +849,7 @@ init flags location =
             , masterDocOpened = False
             , seed = 0
             , tickerPaused = False
-            , page = HomePage
+            , page = StartPage
             , tool = TableOfContents
             , textBuffer = ""
             , editRecord = emptyEditRecord
@@ -930,4 +930,4 @@ init flags location =
 
 
 
---  {"width":1218,"height":686,"page":"HomePage","online":true,"signed_in":false}
+--  {"width":1218,"height":686,"page":"StartPage","online":true,"signed_in":false}

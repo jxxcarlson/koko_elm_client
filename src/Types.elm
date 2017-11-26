@@ -300,7 +300,7 @@ type Msg
     | HandleSendError JsEncode.Value
     | ImageRead ImagePortData
     | ImageSelected
-    | InitHomePage
+    | InitStartPage
     | InputContent String
     | InputTags String
     | LinkTo String
@@ -361,7 +361,7 @@ type Msg
 
 
 type Page
-    = HomePage
+    = StartPage
     | LoginPage
     | PublicPage Int
     | PrivatePage Int
@@ -376,7 +376,7 @@ type Page
 pageName : Page -> String
 pageName page =
     case page of
-        HomePage ->
+        StartPage ->
             "Home"
 
         LoginPage ->
