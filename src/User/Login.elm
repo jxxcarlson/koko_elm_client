@@ -19,6 +19,7 @@ import Time exposing (Time, second)
 
 import Action.Error
 import Data.User
+import Document.Dictionary
 import Document.Search
 import External
 import Initialization
@@ -188,6 +189,8 @@ signout message model =
         ( Initialization.resetModel model
         , Cmd.batch
             [ External.toJs (Views.External.windowData model StartPage)
+            , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
+            , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
             , External.disconnectUser "foo"
             ]
         )
