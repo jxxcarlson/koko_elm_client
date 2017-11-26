@@ -58,6 +58,7 @@ type alias UserRecord =
 type alias UserStateRecord =
     { documentIntStack : List Int
     , currentDocumentId : Result.Result String Int
+    , token : String
     }
 
 

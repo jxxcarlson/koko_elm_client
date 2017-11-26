@@ -87,7 +87,10 @@ string2IntList str =
 
 userStateRecordDecoder : Decoder UserStateRecord
 userStateRecordDecoder =
-    map2 UserStateRecord (map string2IntList (field "documentStack" string)) (map String.toInt (field "currentDocumentId" string))
+    map3 UserStateRecord
+        (map string2IntList (field "documentStack" string))
+        (map String.toInt (field "currentDocumentId" string))
+        (field "token" string)
 
 
 decodeUserStateRecord : String -> Result String UserStateRecord

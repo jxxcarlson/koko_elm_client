@@ -242,21 +242,23 @@ doRecoverUserState jsonString model =
         case maybeUserStateRecord of
             Ok userStateRecord ->
                 let
-                    _ =
-                        Debug.log "xxxx userStateRecord" userStateRecord
+                    appState =
+                        model.appState
+
+                    newAppState =
+                        { appState | page = ReaderPage }
+
+                    token =
+                        userStateRecord.token
 
                     idList1 =
-                        Debug.log "xxxx idList (1)"
-                            (userStateRecord.documentIntStack |> List.map toString |> String.join (","))
+                        (userStateRecord.documentIntStack |> List.map toString |> String.join (","))
 
                     idList =
                         if idList1 == "" then
                             "316"
                         else
                             idList1
-
-                    _ =
-                        Debug.log "xxxx idList (2)" idList
 
                     queryForDocumentStack =
                         ("idlist=" ++ idList)
@@ -272,12 +274,12 @@ doRecoverUserState jsonString model =
                                     ("id=316")
 
                     recoverDocumentStackCmd =
-                        Request.Document.getDocumentWithQuery LoadDocumentStack queryForDocumentStack
+                        Request.Document.getDocumentWithAuthenticatedQuery LoadDocumentStack token queryForDocumentStack
 
                     recoverCurrentDocumentCmd =
-                        Request.Document.getDocumentWithQuery SetCurrentDocument queryForCurrentDocument
+                        Request.Document.getDocumentWithAuthenticatedQuery SetCurrentDocument token queryForCurrentDocument
                 in
-                    ( model, Cmd.batch [ recoverCurrentDocumentCmd, recoverDocumentStackCmd ] )
+                    ( { model | appState = newAppState }, Cmd.batch [ recoverCurrentDocumentCmd, recoverDocumentStackCmd ] )
 
             Err error ->
                 ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
