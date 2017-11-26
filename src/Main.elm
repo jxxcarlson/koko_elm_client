@@ -394,6 +394,12 @@ update msg model =
         LoadDocumentStack (Err err) ->
             ( { model | message = "Error in LoadDocumentStack: " ++ (toString err) }, Cmd.none )
 
+        SetCurrentDocument (Ok documentsRecord) ->
+            Action.Document.setCurrentDocument documentsRecord model
+
+        SetCurrentDocument (Err err) ->
+            ( { model | message = "Error in SetCurrentDocument: " ++ (toString err) }, Cmd.none )
+
         SetDocumentInDict (Ok ( documentsRecord, key )) ->
             let
                 document =
@@ -912,12 +918,10 @@ init flags location =
         masterDocumentCommands =
             [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
 
-        ( newModel, command ) =
-            Document.Search.getRandomDocuments model
-
+        -- ( newModel, command ) =
+        --     Document.Search.getRandomDocuments model
         startupPageCommands =
             [ Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
-            , command
             ]
 
         commands =

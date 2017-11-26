@@ -227,39 +227,57 @@ doRecoverUserState : String -> Model -> ( Model, Cmd Msg )
 doRecoverUserState jsonString model =
     let
         _ =
-            Debug.log "Enter" "doRecoverUserState"
+            Debug.log "xxxx" ("doRecoverUserState: " ++ (toString model.counter))
 
         _ =
-            Debug.log "in doRecoverUserState, jsonString" jsonString
+            Debug.log "xxxx in doRecoverUserState, jsonString" jsonString
 
         maybeUserStateRecord =
-            Debug.log "in doRecoverUserState, maybeUserStateRecord"
+            Debug.log "xxxx in doRecoverUserState, maybeUserStateRecord"
                 (Data.User.decodeUserStateRecord jsonString)
 
         _ =
-            Debug.log "maybeUserStateRecord" maybeUserStateRecord
+            Debug.log "xxxx maybeUserStateRecord" maybeUserStateRecord
     in
         case maybeUserStateRecord of
             Ok userStateRecord ->
                 let
                     _ =
-                        Debug.log "xxx userStateRecord" userStateRecord
+                        Debug.log "xxxx userStateRecord" userStateRecord
 
                     idList1 =
-                        Debug.log "xxx idList"
+                        Debug.log "xxxx idList (1)"
                             (userStateRecord.documentIntStack |> List.map toString |> String.join (","))
 
                     idList =
                         if idList1 == "" then
-                            "3"
+                            "316"
                         else
                             idList1
 
-                    query =
-                        Debug.log "xxx query"
-                            ("idlist=" ++ idList)
+                    _ =
+                        Debug.log "xxxx idList (2)" idList
+
+                    queryForDocumentStack =
+                        ("idlist=" ++ idList)
+
+                    queryForCurrentDocument =
+                        case userStateRecord.currentDocumentId of
+                            Ok currentDocumentId ->
+                                Debug.log "xxxx queryForCurrentDocument"
+                                    ("id=" ++ (toString currentDocumentId))
+
+                            Err err ->
+                                Debug.log "xxxx error queryForCurrentDocument"
+                                    ("id=316")
+
+                    recoverDocumentStackCmd =
+                        Request.Document.getDocumentWithQuery LoadDocumentStack queryForDocumentStack
+
+                    recoverCurrentDocumentCmd =
+                        Request.Document.getDocumentWithQuery SetCurrentDocument queryForCurrentDocument
                 in
-                    ( model, Request.Document.getDocumentWithQuery LoadDocumentStack query )
+                    ( model, Cmd.batch [ recoverCurrentDocumentCmd, recoverDocumentStackCmd ] )
 
             Err error ->
                 ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )

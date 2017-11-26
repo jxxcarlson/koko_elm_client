@@ -57,7 +57,7 @@ type alias UserRecord =
 
 type alias UserStateRecord =
     { documentIntStack : List Int
-    , curentDocumentId : Result.Result String Int
+    , currentDocumentId : Result.Result String Int
     }
 
 
@@ -288,6 +288,7 @@ type Msg
     | GetUser (Result Http.Error BigUserRecord)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | LoadDocumentStack (Result Http.Error DocumentsRecord)
+    | SetCurrentDocument (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials

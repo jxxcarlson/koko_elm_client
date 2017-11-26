@@ -15,10 +15,19 @@ push document stack =
         _ =
             Debug.log "Pushing document" document.id
 
+        _ =
+            Debug.log "Pushed doc tags" document.tags
+
+        newStackPart =
+            if List.member "home" document.tags then
+                []
+            else
+                [ document ]
+
         stack2 =
             Utility.removeWhen (\doc -> doc.id == document.id) stack
     in
-        [ document ] ++ (List.take 9 stack2)
+        newStackPart ++ (List.take 9 stack2)
 
 
 sorted : DocumentStack -> DocumentStack

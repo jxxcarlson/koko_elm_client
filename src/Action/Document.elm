@@ -11,6 +11,7 @@ module Action.Document
         , saveDocumentCmd
         , selectDocument
         , selectNewDocument
+        , setCurrentDocument
         , setDocType
         , setTextType
         , setTitle
@@ -48,6 +49,35 @@ import Random
 import Utility
 import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
+
+
+setCurrentDocument : DocumentsRecord -> Model -> ( Model, Cmd Msg )
+setCurrentDocument documentsRecord model =
+    let
+        maybeCurrentDocument =
+            documentsRecord.documents |> List.head
+
+        _ =
+            Debug.log "xxxx setCurrentDocument" maybeCurrentDocument
+
+        currentDocument =
+            case maybeCurrentDocument of
+                Just doc ->
+                    doc
+
+                Nothing ->
+                    pageNotFoundDocument
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | page = ReaderPage }
+
+        _ =
+            Debug.log "IN setCurrentDocument, title = " currentDocument.title
+    in
+        ( { model | current_document = currentDocument, documents = documentsRecord.documents }, Cmd.none )
 
 
 loadDocumentStack : DocumentsRecord -> Model -> ( Model, Cmd Msg )
@@ -180,6 +210,14 @@ updateCurrentDocument model document =
         refreshMasterDocumentTask =
             Request.Document.getDocumentsTask route query model.current_user.token
 
+        newModel =
+            { model
+                | current_document = document
+                , documents = new_documents
+                , documentStack = newDocumentStack
+                , appState = newAppState
+            }
+
         cmds =
             if document.attributes.docType == "master" then
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
@@ -188,18 +226,11 @@ updateCurrentDocument model document =
             else
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt SaveDocument saveTask
-                , External.saveUserState (Data.User.encodeUserState model)
+                , External.saveUserState (Data.User.encodeUserState newModel)
                 , Random.generate NewSeed (Random.int 1 10000)
                 ]
     in
-        ( { model
-            | current_document = document
-            , documents = new_documents
-            , documentStack = newDocumentStack
-            , appState = newAppState
-          }
-        , Cmd.batch cmds
-        )
+        ( newModel, Cmd.batch cmds )
 
 
 toggleUpdateRate : Model -> Model
@@ -328,7 +359,7 @@ updateDocuments model documentsRecord =
 
         page =
             if model.device == Phone then
-                HomePage
+                StartPage
             else
                 model.appState.page
 
@@ -367,19 +398,22 @@ updateDocuments model documentsRecord =
                 Stack.push firstDocument model.documentStack
             else
                 model.documentStack
+
+        newModel =
+            { model
+                | documents = newDocumentList
+                , master_document = newMasterDocument
+                , current_document = current_document2
+                , documentStack = newDocumentStack
+                , appState = updatedAppState
+                , counter = Debug.log "updateDocuments" (model.counter + 1)
+            }
     in
-        ( { model
-            | documents = newDocumentList
-            , master_document = newMasterDocument
-            , current_document = current_document2
-            , documentStack = newDocumentStack
-            , appState = updatedAppState
-            , counter = Debug.log "updateDocuments" (model.counter + 1)
-          }
+        ( newModel
         , Cmd.batch
             [ toJs (windowData model model.appState.page)
-            , External.saveUserState (Data.User.encodeUserState model)
-            , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty current_document
+            , External.saveUserState (Data.User.encodeUserState newModel)
+            , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
             ]
         )
 
@@ -490,24 +524,27 @@ selectDocument model document =
                 , textBufferDirty = False
             }
 
+        newModel =
+            { model
+                | current_document = document
+                , documentStack = Stack.push document model.documentStack
+                , appState = newAppState
+                , counter = model.counter + 1
+            }
+
         basicCommands =
-            [ toJs (windowData model (displayPage model))
-            , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
-            , External.saveUserState (Data.User.encodeUserState model)
+            [ toJs (windowData newModel (displayPage model))
+            , Render.put False newModel.appState.editRecord.idList model.appState.textBufferDirty document
+            , External.saveUserState (Data.User.encodeUserState newModel)
             ]
 
         additionalCommands =
-            if model.appState.page == EditorPage && document.attributes.textType == "latex" then
-                [ Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token ]
+            if newModel.appState.page == EditorPage && document.attributes.textType == "latex" then
+                [ Dictionary.setItemInDict ("title=texmacros&authorname=" ++ newModel.current_user.username) "texmacros" newModel.current_user.token ]
             else
                 []
     in
-        ( { model
-            | current_document = document
-            , documentStack = Stack.push document model.documentStack
-            , appState = newAppState
-            , counter = model.counter + 1
-          }
+        ( newModel
         , Cmd.batch (basicCommands ++ additionalCommands)
         )
 
