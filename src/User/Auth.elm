@@ -11,6 +11,7 @@ import Types exposing (..)
 import Utility exposing (gotoPage)
 import External
 import Views.External
+import User.Request
 
 
 loginUserCmd : Model -> String -> Cmd Msg

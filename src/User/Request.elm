@@ -1,6 +1,6 @@
-module User.Request exposing (encodeUserState, getList, get, putCurrentUser, putUserState)
+module User.Request exposing (encodeUserState, getList, get, getUserState, putCurrentUser, putUserState)
 
-import Types exposing (Model, User, Users, UsersRecord, Msg(GetUsers, GetUser, PutUser))
+import Types exposing (Model, User, Users, UsersRecord, Msg(GetUsers, GetUser, GetUserState, PutUser))
 import Http exposing (send)
 import HttpBuilder as HB exposing (..)
 import Json.Decode exposing (field)

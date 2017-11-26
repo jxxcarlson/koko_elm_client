@@ -287,6 +287,7 @@ type Msg
     | GetPublicPage String
     | GetRenderedText String
     | GetUser (Result Http.Error BigUserRecord)
+    | GetUserState (Result Http.Error UserStateRecord)
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | LoadDocumentStack (Result Http.Error DocumentsRecord)
     | SetCurrentDocument (Result Http.Error DocumentsRecord)

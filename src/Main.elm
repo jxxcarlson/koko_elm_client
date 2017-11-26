@@ -361,6 +361,23 @@ update msg model =
             in
                 ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
+        GetUserState (Ok userStateRecord) ->
+            let
+                _ =
+                    Debug.log
+                        "in GetUserState, userStateRecord"
+                        userStateRecord
+            in
+                ( model, Cmd.none )
+
+        GetUserState (Err error) ->
+            let
+                _ =
+                    Debug.log
+                        "in GetUserState, ERROR"
+            in
+                ( model, Cmd.none )
+
         GetDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
 

@@ -99,8 +99,8 @@ decodeUserStateRecord jsonString =
     decodeString userStateRecordDecoder jsonString
 
 
-encodeUserState : Model -> Encode.Value
-encodeUserState model =
+encodeUserState2 : Model -> Encode.Value
+encodeUserState2 model =
     let
         ids =
             List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
@@ -115,6 +115,21 @@ encodeUserState model =
             (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ), ( "token", token ) ])
     in
         Encode.object [ ( "user", data ) ]
+
+
+encodeUserState : Model -> String
+encodeUserState model =
+    let
+        ids =
+            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
+
+        currentDocumentId =
+            Encode.int model.current_document.id
+
+        data =
+            (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ) ])
+    in
+        Encode.encode 2 data
 
 
 encodeIntegerList : List Int -> Encode.Value
