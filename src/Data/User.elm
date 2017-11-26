@@ -5,6 +5,7 @@ module Data.User
         , registerUserEncoder
         , userRecord
         , userRecordDecoder
+        , userStateRecordDecoder
         , decodeUserStateRecord
         , encodeUserState
         , localStorageUserRecord
@@ -98,7 +99,7 @@ decodeUserStateRecord jsonString =
     decodeString userStateRecordDecoder jsonString
 
 
-encodeUserState : Model -> String
+encodeUserState : Model -> Encode.Value
 encodeUserState model =
     let
         ids =
@@ -107,10 +108,13 @@ encodeUserState model =
         currentDocumentId =
             Encode.int model.current_document.id
 
+        token =
+            Encode.string model.current_user.token
+
         data =
-            (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ) ])
+            (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ), ( "token", token ) ])
     in
-        Encode.encode 2 data
+        Encode.object [ ( "user", data ) ]
 
 
 encodeIntegerList : List Int -> Encode.Value

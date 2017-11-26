@@ -7,6 +7,7 @@ import Json.Decode exposing (field)
 import Json.Decode.Pipeline
 import Json.Encode
 import Request.Api
+import Data.User exposing (userStateRecordDecoder)
 
 
 getList : String -> Cmd Msg
@@ -40,6 +41,17 @@ get user_id =
             -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeUserRecord)
             |> HB.send GetUser
+
+
+getUserState : Int -> Cmd Msg
+getUserState userId =
+    let
+        url =
+            Request.Api.api ++ "users/getuserstate/" ++ (toString userId)
+    in
+        HB.get url
+            |> withExpect (Http.expectJson userStateRecordDecoder)
+            |> HB.send GetUserState
 
 
 putCurrentUserRB : Model -> RequestBuilder ()
