@@ -53,6 +53,7 @@ getUserState userId =
             Request.Api.api ++ "users/getuserstate/" ++ (toString userId)
     in
         HB.get url
+            -- |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
             |> withExpect (Http.expectJson userStateRecordDecoder2)
             |> HB.send GetUserState
 
