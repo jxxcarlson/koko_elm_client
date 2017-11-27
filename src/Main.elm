@@ -24,6 +24,7 @@ import Dict
 import Document.MasterDocument
 import Document.Render
 import Document.Search
+import User.Synchronize
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import External exposing (putTextToRender, toJs, fileUpload, fileUploaded)
@@ -53,6 +54,7 @@ import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
 import User.Display
 import User.Login
 import User.Request
+import User.Synchronize
 import Views.Admin exposing (admin)
 import Views.Editor exposing (editor)
 import Views.External exposing (windowData, windowSetup)
@@ -80,7 +82,6 @@ import Action.Document
         , toggleUpdateRate
         , updateCurrentDocumentWithContent
         , updateTags
-        , loadDocumentStack
         , saveCurrentDocument
         , deleteDocument
         )
@@ -168,7 +169,7 @@ update msg model =
             User.Login.doReconnectUser jsonString model
 
         RecoverUserState jsonString ->
-            User.Login.doRecoverUserState jsonString model
+            User.Synchronize.doRecoverUserState jsonString model
 
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
@@ -372,8 +373,23 @@ update msg model =
                     Debug.log
                         "in GetUserState, userStateRecord"
                         userStateRecord
+
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = ReaderPage }
+
+                token =
+                    model.current_user.token
+
+                cmd1 =
+                    User.Synchronize.recoverDocumentStackCmd userStateRecord token
+
+                cmd2 =
+                    User.Synchronize.recoverCurrentDocumentCmd userStateRecord token
             in
-                ( model, Cmd.none )
+                ( { model | appState = newAppState }, Cmd.batch [ cmd1, cmd2 ] )
 
         GetUserState (Err error) ->
             let
@@ -412,13 +428,13 @@ update msg model =
             ( { model | message = "Getting special document: error" }, Cmd.none )
 
         LoadDocumentStack (Ok documentsRecord) ->
-            Action.Document.loadDocumentStack documentsRecord model
+            User.Synchronize.loadDocumentStack documentsRecord model
 
         LoadDocumentStack (Err err) ->
             ( { model | message = "Error in LoadDocumentStack: " ++ (toString err) }, Cmd.none )
 
         SetCurrentDocument (Ok documentsRecord) ->
-            Action.Document.setCurrentDocument documentsRecord model
+            User.Synchronize.setCurrentDocument documentsRecord model
 
         SetCurrentDocument (Err err) ->
             ( { model | message = "Error in SetCurrentDocument: " ++ (toString err) }, Cmd.none )

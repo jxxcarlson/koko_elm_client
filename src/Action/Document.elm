@@ -5,13 +5,11 @@ module Action.Document
         , deleteDocument
         , hasId
         , inputContent
-        , loadDocumentStack
         , migrateFromAsciidocLatex
         , saveCurrentDocument
         , saveDocumentCmd
         , selectDocument
         , selectNewDocument
-        , setCurrentDocument
         , setDocType
         , setTextType
         , setTitle
@@ -49,48 +47,6 @@ import Random
 import Utility
 import Utility exposing (replaceIf)
 import Views.External exposing (windowData)
-
-
-setCurrentDocument : DocumentsRecord -> Model -> ( Model, Cmd Msg )
-setCurrentDocument documentsRecord model =
-    let
-        maybeCurrentDocument =
-            documentsRecord.documents |> List.head
-
-        _ =
-            Debug.log "xxxx setCurrentDocument" maybeCurrentDocument
-
-        currentDocument =
-            case maybeCurrentDocument of
-                Just doc ->
-                    doc
-
-                Nothing ->
-                    pageNotFoundDocument
-
-        appState =
-            model.appState
-
-        newAppState =
-            { appState | page = ReaderPage }
-
-        _ =
-            Debug.log "IN setCurrentDocument, title = " currentDocument.title
-    in
-        ( { model | current_document = currentDocument, documents = documentsRecord.documents }, Cmd.none )
-
-
-loadDocumentStack : DocumentsRecord -> Model -> ( Model, Cmd Msg )
-loadDocumentStack documentsRecord model =
-    let
-        documents =
-            documentsRecord.documents
-
-        _ =
-            Debug.log "xxx number of documents" (List.length documents)
-    in
-        ( { model | documentStack = documents }, Cmd.none )
-
 
 
 ---( { model | documentStack = documentsRecord.documents }, Cmd.none )
