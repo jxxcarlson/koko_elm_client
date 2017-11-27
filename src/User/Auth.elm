@@ -43,7 +43,7 @@ loginUser model loginUrl =
 
 
 {-| One of the tasks of getTokenCompleted is to send user data to
-local stoarge via ports so taht it can be persisted between app reloads.
+local stoarge via ports so that it can be persisted between app reloads.
 -}
 getTokenCompleted : Model -> Result Http.Error String -> ( Model, Cmd Msg )
 getTokenCompleted model result =
@@ -62,11 +62,12 @@ getTokenCompleted model result =
                             { appState | page = StartPage, signedIn = True }
 
                         user2 =
-                            { user
-                                | username = value.username
-                                , token = newToken
-                                , id = value.user_id
-                            }
+                            Debug.log "user2"
+                                { user
+                                    | username = value.username
+                                    , token = newToken
+                                    , id = value.user_id
+                                }
                     in
                         ( { model
                             | current_user = user2
@@ -75,7 +76,8 @@ getTokenCompleted model result =
                             , appState = updatedAppState -- appStateWithPage model StartPage
                           }
                         , Cmd.batch
-                            [ Utility.gotoPage model StartPage
+                            [ User.Request.getUserState user2.id
+                            , Utility.gotoPage model StartPage
                             , External.saveUserLogin (Views.External.userData user2.name user2.email user2.id user2.username newToken)
                             ]
                         )

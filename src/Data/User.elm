@@ -6,6 +6,7 @@ module Data.User
         , userRecord
         , userRecordDecoder
         , userStateRecordDecoder
+        , userStateRecordDecoder2
         , decodeUserStateRecord
         , encodeUserState
         , localStorageUserRecord
@@ -91,6 +92,14 @@ userStateRecordDecoder =
     map3 UserStateRecord
         (map string2IntList (field "documentStack" string))
         (map String.toInt (field "currentDocumentId" string))
+        (field "token" string)
+
+
+userStateRecordDecoder2 : Decoder UserStateRecord
+userStateRecordDecoder2 =
+    map3 UserStateRecord
+        (field "documentStack" (list int))
+        (map Ok (field "currentDocumentId" int))
         (field "token" string)
 
 

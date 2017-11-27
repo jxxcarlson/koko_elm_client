@@ -365,6 +365,11 @@ update msg model =
             let
                 _ =
                     Debug.log
+                        "in GetUserState"
+                        "SUCCESS"
+
+                _ =
+                    Debug.log
                         "in GetUserState, userStateRecord"
                         userStateRecord
             in
@@ -374,7 +379,8 @@ update msg model =
             let
                 _ =
                     Debug.log
-                        "in GetUserState, ERROR"
+                        "in GetUserState ERROR"
+                        (toString error)
             in
                 ( model, Cmd.none )
 

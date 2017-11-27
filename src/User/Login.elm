@@ -67,7 +67,7 @@ completeRegistration result model =
 doLogin model =
     let
         ( model1, cmds1 ) =
-            login2 model
+            login model
 
         ( model2, cmds2 ) =
             if model1.appState.signedIn then
@@ -127,8 +127,8 @@ updateUsername model username =
         ( { model | current_user = updated_user }, Cmd.none )
 
 
-login : Model -> Model
-login model =
+setupLogin : Model -> Model
+setupLogin model =
     let
         appState =
             model.appState
@@ -155,9 +155,9 @@ login model =
         }
 
 
-login2 : Model -> ( Model, Cmd Msg )
-login2 model =
-    ( login model, User.Auth.loginUserCmd model Request.Api.loginUrl )
+login : Model -> ( Model, Cmd Msg )
+login model =
+    ( setupLogin model, User.Auth.loginUserCmd model Request.Api.loginUrl )
 
 
 
