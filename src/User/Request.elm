@@ -84,6 +84,9 @@ putCurrentUser model =
 putUserState : Model -> Cmd Msg
 putUserState model =
     let
+        _ =
+            Debug.log "putUserState" "NOW"
+
         params =
             encodeUserState model
 

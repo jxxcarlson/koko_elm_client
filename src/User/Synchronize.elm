@@ -92,53 +92,19 @@ setUserState data model =
 -- Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
 
 
-{-| Get current document using info in userStateREcord
--}
-recoverCurrentDocumentCmd userStateRecord token =
-    let
-        queryForCurrentDocument =
-            case userStateRecord.currentDocumentId of
-                Ok currentDocumentId ->
-                    Debug.log "xxxx queryForCurrentDocument"
-                        ("id=" ++ (toString currentDocumentId))
-
-                Err err ->
-                    Debug.log "xxxx error queryForCurrentDocument"
-                        ("id=316")
-    in
-        Request.Document.getDocumentWithAuthenticatedQuery SetCurrentDocument token queryForCurrentDocument
-
-
 recoverCurrentDocumentTask userStateRecord token =
     let
         queryForCurrentDocument =
             case userStateRecord.currentDocumentId of
                 Ok currentDocumentId ->
                     Debug.log "xxxx queryForCurrentDocument"
-                        ("id=" ++ (toString currentDocumentId))
+                        ("id=" ++ (toString currentDocumentId) ++ "&docs=any")
 
                 Err err ->
                     Debug.log "xxxx error queryForCurrentDocument"
                         ("id=316")
     in
         Request.Document.getDocumentWithAuthenticatedQueryTask token queryForCurrentDocument
-
-
-recoverDocumentStackCmd userStateRecord token =
-    let
-        idList1 =
-            userStateRecord.documentIntStack |> List.map toString |> (String.join ",")
-
-        idList =
-            if idList1 == "" then
-                "316"
-            else
-                idList1
-
-        queryForDocumentStack =
-            ("idlist=" ++ idList)
-    in
-        Request.Document.getDocumentWithAuthenticatedQuery LoadDocumentStack token queryForDocumentStack
 
 
 recoverDocumentStackTask userStateRecord token =

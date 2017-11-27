@@ -120,7 +120,8 @@ getDocumentWithAuthenticatedQueryTask : String -> String -> Task.Task Http.Error
 getDocumentWithAuthenticatedQueryTask token query =
     let
         url =
-            documentsUrl ++ "?" ++ query
+            Debug.log ("getDocumentWithAuthenticatedQueryTask, route & query")
+                (documentsUrl ++ "?" ++ query)
     in
         HB.get url
             |> HB.withHeader "Authorization" ("Bearer " ++ token)

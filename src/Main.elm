@@ -377,6 +377,12 @@ update msg model =
                 appState =
                     model.appState
 
+                searchState =
+                    model.searchState
+
+                newSearchState =
+                    { searchState | domain = All }
+
                 newAppState =
                     { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
 
@@ -386,7 +392,7 @@ update msg model =
                 task =
                     User.Synchronize.setUserStateTask userStateRecord token
             in
-                ( { model | appState = newAppState }, Task.attempt SetUserState task )
+                ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
 
         GetUserState (Err error) ->
             let
@@ -423,18 +429,6 @@ update msg model =
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
-
-        LoadDocumentStack (Ok documentsRecord) ->
-            User.Synchronize.loadDocumentStack documentsRecord model
-
-        LoadDocumentStack (Err err) ->
-            ( { model | message = "Error in LoadDocumentStack: " ++ (toString err) }, Cmd.none )
-
-        SetCurrentDocument (Ok documentsRecord) ->
-            User.Synchronize.setCurrentDocument documentsRecord model
-
-        SetCurrentDocument (Err err) ->
-            ( { model | message = "Error in SetCurrentDocument: " ++ (toString err) }, Cmd.none )
 
         SetUserState (Ok result) ->
             User.Synchronize.setUserState result model
