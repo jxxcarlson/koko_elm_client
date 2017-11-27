@@ -8,6 +8,7 @@ module Request.Document
         , getDocumentsTask
         , getPublicDocumentsTask
         , getDocumentWithAuthenticatedQuery
+        , getDocumentWithAuthenticatedQueryTask
         , reloadMasterDocument
         , saveDocumentTask
         )
@@ -113,6 +114,19 @@ getDocumentWithAuthenticatedQuery processor token query =
             |> HB.withHeader "Authorization" ("Bearer " ++ token)
             |> withExpect (Http.expectJson decodeDocumentsRecord)
             |> HB.send processor
+
+
+getDocumentWithAuthenticatedQueryTask : String -> String -> Task.Task Http.Error DocumentsRecord
+getDocumentWithAuthenticatedQueryTask token query =
+    let
+        url =
+            documentsUrl ++ "?" ++ query
+    in
+        HB.get url
+            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+            |> withExpect (Http.expectJson decodeDocumentsRecord)
+            |> HB.toRequest
+            |> Http.toTask
 
 
 getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg

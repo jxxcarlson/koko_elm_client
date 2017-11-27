@@ -8,6 +8,7 @@ module Data.User
         , userStateRecordDecoder
         , userStateRecordDecoder2
         , decodeUserStateRecord
+        , encodeDocumentStack
         , encodeUserState
         , localStorageUserRecord
         )
@@ -137,6 +138,18 @@ encodeUserState model =
 
         data =
             (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ) ])
+    in
+        Encode.encode 2 data
+
+
+encodeDocumentStack : Model -> String
+encodeDocumentStack model =
+    let
+        ids =
+            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
+
+        data =
+            (Encode.object [ ( "documentStack", ids ) ])
     in
         Encode.encode 2 data
 

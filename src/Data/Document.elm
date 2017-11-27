@@ -9,13 +9,8 @@ import Types exposing (..)
 -- http://eeue56.github.io/json-to-elm/
 -- https://github.com/eeue56/json-to-elm
 -- https://medium.com/@eeue56/how-i-implemented-json-to-elm-b61081587c3a
-
-
-type alias Documents =
-    { documents : List Document }
-
-
-
+-- type alias DocumentsRecord =
+--     { documents : List Document }
 -- Nested JSON: https://gist.github.com/hipertracker/36afd3fa89c1f446cddd0a1fd1d53b6b
 -- Nested JSON: https://gist.github.com/hipertracker/6fcfcc340bc369740afa6b985e64e663
 -- Also: https://github.com/eeue56/json-to-elm
@@ -125,19 +120,19 @@ encodeChild record =
 -- DOCUMENTS DECODERS
 
 
-decodeDocumentsRecord : Decoder Documents
+decodeDocumentsRecord : Decoder DocumentsRecord
 decodeDocumentsRecord =
-    JPipeline.decode Documents
+    JPipeline.decode DocumentsRecord
         |> JPipeline.required "documents" (Decode.list documentDecoder)
 
 
-documentsDecoder : Decoder Documents
+documentsDecoder : Decoder DocumentsRecord
 documentsDecoder =
     decode
-        Documents
+        DocumentsRecord
         |> required "documents" (Decode.list documentDecoder)
 
 
-documents : String -> Result String Documents
+documents : String -> Result String DocumentsRecord
 documents jsonString =
     decodeString documentsDecoder jsonString

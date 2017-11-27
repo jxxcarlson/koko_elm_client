@@ -378,18 +378,15 @@ update msg model =
                     model.appState
 
                 newAppState =
-                    { appState | page = ReaderPage }
+                    { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
 
                 token =
                     model.current_user.token
 
-                cmd1 =
-                    User.Synchronize.recoverDocumentStackCmd userStateRecord token
-
-                cmd2 =
-                    User.Synchronize.recoverCurrentDocumentCmd userStateRecord token
+                task =
+                    User.Synchronize.setUserStateTask userStateRecord token
             in
-                ( { model | appState = newAppState }, Cmd.batch [ cmd1, cmd2 ] )
+                ( { model | appState = newAppState }, Task.attempt SetUserState task )
 
         GetUserState (Err error) ->
             let
@@ -438,6 +435,12 @@ update msg model =
 
         SetCurrentDocument (Err err) ->
             ( { model | message = "Error in SetCurrentDocument: " ++ (toString err) }, Cmd.none )
+
+        SetUserState (Ok result) ->
+            User.Synchronize.setUserState result model
+
+        SetUserState (Err err) ->
+            ( { model | message = "Error in SetUserState: " ++ (toString err) }, Cmd.none )
 
         SetDocumentInDict (Ok ( documentsRecord, key )) ->
             let

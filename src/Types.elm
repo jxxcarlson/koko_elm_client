@@ -8,6 +8,7 @@ import Date exposing (Date)
 import Dict
 import Image.FileReader as FileReader exposing (NativeFile)
 import MiniLatex.Differ exposing (EditRecord)
+import Task
 
 
 type Device
@@ -343,6 +344,7 @@ type Msg
     | SetParentId String
     | SetSearchTerm String
     | SetTextType String
+    | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
     | SetupPages
     | Signout
     | SignOutOrIn

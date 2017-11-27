@@ -212,8 +212,20 @@ app.ports.saveUserState.subscribe(function (str) {
 
   localStorage.setItem("documentStack", data.documentStack);
   localStorage.setItem("currentDocumentId", data.currentDocumentId);
+})
 
+app.ports.saveDocumentStack.subscribe(function (str) {
+  console.log("xxx I will put the documentStack in local storage");
+  var data = JSON.parse(str)
+  console.log("data.documentStack = " + data.documentStack )
+  localStorage.setItem("documentStack", data.documentStack);
+})
 
+app.ports.saveCurrentDocumentId.subscribe(function (str) {
+  console.log("xxx I will put the CurrentDocumentId in local storage");
+  var data = JSON.parse(str)
+  console.log("data.currentDocumentId = " + data.currentDocumentId )
+  localStorage.setItem("currentDocumentId", data.currentDocumentId);
 })
 
 app.ports.askToRecoverUserState.subscribe(function (str) {

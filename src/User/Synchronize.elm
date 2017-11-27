@@ -5,6 +5,7 @@ import Request.Document
 import Data.User
 import Document.Document exposing (pageNotFoundDocument)
 import External
+import Task
 
 
 {-| Recover state from local storage
@@ -38,18 +39,61 @@ doRecoverUserState jsonString model =
                         userStateRecord.token
 
                     -- model.current_user.token
-                    cmd1 =
-                        recoverDocumentStackCmd userStateRecord token
+                    docStackTask =
+                        recoverDocumentStackTask userStateRecord token
 
-                    cmd2 =
-                        recoverCurrentDocumentCmd userStateRecord token
+                    currentDocTask =
+                        recoverCurrentDocumentTask userStateRecord token
+
+                    setUserStateTask =
+                        Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
                 in
-                    ( { model | appState = newAppState }, Cmd.batch [ cmd1, cmd2 ] )
+                    ( model, Task.attempt SetUserState setUserStateTask )
 
+            -- ( { model | appState = newAppState }, Task.attempt SetUserState setUserStateTask )
             Err error ->
                 ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )
 
 
+setUserStateTask userStateRecord token =
+    let
+        docStackTask =
+            recoverDocumentStackTask userStateRecord token
+
+        currentDocTask =
+            recoverCurrentDocumentTask userStateRecord token
+    in
+        Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
+
+
+setUserState data model =
+    let
+        currentDocument =
+            data
+                |> Tuple.first
+                |> .documents
+                |> List.head
+                |> Maybe.withDefault pageNotFoundDocument
+
+        documentList =
+            data
+                |> Tuple.second
+                |> .documents
+
+        newModel =
+            { model | current_document = currentDocument, documentStack = documentList }
+    in
+        ( newModel
+        , External.saveUserState (Data.User.encodeUserState newModel)
+        )
+
+
+
+-- Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
+
+
+{-| Get current document using info in userStateREcord
+-}
 recoverCurrentDocumentCmd userStateRecord token =
     let
         queryForCurrentDocument =
@@ -65,8 +109,19 @@ recoverCurrentDocumentCmd userStateRecord token =
         Request.Document.getDocumentWithAuthenticatedQuery SetCurrentDocument token queryForCurrentDocument
 
 
+recoverCurrentDocumentTask userStateRecord token =
+    let
+        queryForCurrentDocument =
+            case userStateRecord.currentDocumentId of
+                Ok currentDocumentId ->
+                    Debug.log "xxxx queryForCurrentDocument"
+                        ("id=" ++ (toString currentDocumentId))
 
--- External.saveUserState (Data.User.encodeUserState newModel)
+                Err err ->
+                    Debug.log "xxxx error queryForCurrentDocument"
+                        ("id=316")
+    in
+        Request.Document.getDocumentWithAuthenticatedQueryTask token queryForCurrentDocument
 
 
 recoverDocumentStackCmd userStateRecord token =
@@ -86,6 +141,29 @@ recoverDocumentStackCmd userStateRecord token =
         Request.Document.getDocumentWithAuthenticatedQuery LoadDocumentStack token queryForDocumentStack
 
 
+recoverDocumentStackTask userStateRecord token =
+    let
+        idList1 =
+            userStateRecord.documentIntStack |> List.map toString |> (String.join ",")
+
+        idList =
+            if idList1 == "" then
+                "316"
+            else
+                idList1
+
+        queryForDocumentStack =
+            ("idlist=" ++ idList)
+    in
+        Request.Document.getDocumentWithAuthenticatedQueryTask token queryForDocumentStack
+
+
+
+-- |> Http.toTask
+
+
+{-| Set the currentDocumen using the data in the DocumentsRecord.
+-}
 setCurrentDocument : DocumentsRecord -> Model -> ( Model, Cmd Msg )
 setCurrentDocument documentsRecord model =
     let
@@ -121,10 +199,8 @@ setCurrentDocument documentsRecord model =
         ( newModel, Cmd.none )
 
 
-
--- External.saveUserState (Data.User.encodeUserState newModel)
-
-
+{-| Set documentStack using the data in the DocumentsRecord.
+-}
 loadDocumentStack : DocumentsRecord -> Model -> ( Model, Cmd Msg )
 loadDocumentStack documentsRecord model =
     let
@@ -141,10 +217,10 @@ loadDocumentStack documentsRecord model =
             { appState | page = ReaderPage }
 
         cmd =
-            External.saveUserState (Data.User.encodeUserState newModel)
+            External.saveDocumentStack (Data.User.encodeDocumentStack newModel)
 
         _ =
             Debug.log "xxx number of documents" (List.length documents)
     in
         --( { model | documentStack = documents }, Cmd.none )
-        ( { newModel | documentStack = documents }, Cmd.none )
+        ( { newModel | documentStack = documents }, cmd )

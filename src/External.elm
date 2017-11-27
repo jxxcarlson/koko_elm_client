@@ -63,6 +63,12 @@ port saveUserLogin : String -> Cmd msg
 port saveUserState : String -> Cmd msg
 
 
+port saveDocumentStack : String -> Cmd msg
+
+
+port saveCurrentDocumentId : String -> Cmd msg
+
+
 port askToRecoverUserState : String -> Cmd msg
 
 
