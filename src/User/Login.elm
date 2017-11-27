@@ -257,38 +257,53 @@ doRecoverUserState jsonString model =
                     token =
                         userStateRecord.token
 
-                    idList1 =
-                        (userStateRecord.documentIntStack |> List.map toString |> String.join (","))
+                    -- model.current_user.token
+                    cmd1 =
+                        recoverDocumentStackCmd userStateRecord token
 
-                    idList =
-                        if idList1 == "" then
-                            "316"
-                        else
-                            idList1
-
-                    queryForDocumentStack =
-                        ("idlist=" ++ idList)
-
-                    queryForCurrentDocument =
-                        case userStateRecord.currentDocumentId of
-                            Ok currentDocumentId ->
-                                Debug.log "xxxx queryForCurrentDocument"
-                                    ("id=" ++ (toString currentDocumentId))
-
-                            Err err ->
-                                Debug.log "xxxx error queryForCurrentDocument"
-                                    ("id=316")
-
-                    recoverDocumentStackCmd =
-                        Request.Document.getDocumentWithAuthenticatedQuery LoadDocumentStack token queryForDocumentStack
-
-                    recoverCurrentDocumentCmd =
-                        Request.Document.getDocumentWithAuthenticatedQuery SetCurrentDocument token queryForCurrentDocument
+                    cmd2 =
+                        recoverCurrentDocumentCmd userStateRecord token
                 in
-                    ( { model | appState = newAppState }, Cmd.batch [ recoverCurrentDocumentCmd, recoverDocumentStackCmd ] )
+                    ( { model | appState = newAppState }, Cmd.batch [ cmd1, cmd2 ] )
 
             Err error ->
                 ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )
+
+
+recoverCurrentDocumentCmd userStateRecord token =
+    let
+        queryForCurrentDocument =
+            case userStateRecord.currentDocumentId of
+                Ok currentDocumentId ->
+                    Debug.log "xxxx queryForCurrentDocument"
+                        ("id=" ++ (toString currentDocumentId))
+
+                Err err ->
+                    Debug.log "xxxx error queryForCurrentDocument"
+                        ("id=316")
+    in
+        Request.Document.getDocumentWithAuthenticatedQuery SetCurrentDocument token queryForCurrentDocument
+
+
+recoverDocumentStackCmd userStateRecord token =
+    let
+        idList1 =
+            userStateRecord.documentIntStack |> List.map toString |> (String.join ",")
+
+        idList =
+            if idList1 == "" then
+                "316"
+            else
+                idList1
+
+        queryForDocumentStack =
+            ("idlist=" ++ idList)
+    in
+        Request.Document.getDocumentWithAuthenticatedQuery LoadDocumentStack token queryForDocumentStack
+
+
+
+-- recoverDocumentStackCmd idList =
 
 
 reconnectUser : Model -> LoginLocalStorageRecord -> ( Model, Cmd Msg )
