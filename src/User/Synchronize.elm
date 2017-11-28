@@ -13,18 +13,8 @@ import Task
 doRecoverUserState : String -> Model -> ( Model, Cmd Msg )
 doRecoverUserState jsonString model =
     let
-        _ =
-            Debug.log "xxxx" ("doRecoverUserState: " ++ (toString model.counter))
-
-        _ =
-            Debug.log "xxxx in doRecoverUserState, jsonString" jsonString
-
         maybeUserStateRecord =
-            Debug.log "xxxx in doRecoverUserState, maybeUserStateRecord"
-                (Data.User.decodeUserStateRecord jsonString)
-
-        _ =
-            Debug.log "xxxx maybeUserStateRecord" maybeUserStateRecord
+            (Data.User.decodeUserStateRecord jsonString)
     in
         case maybeUserStateRecord of
             Ok userStateRecord ->
@@ -38,7 +28,6 @@ doRecoverUserState jsonString model =
                     token =
                         userStateRecord.token
 
-                    -- model.current_user.token
                     docStackTask =
                         recoverDocumentStackTask userStateRecord token
 
@@ -48,9 +37,8 @@ doRecoverUserState jsonString model =
                     setUserStateTask =
                         Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
                 in
-                    ( model, Task.attempt SetUserState setUserStateTask )
+                    ( { model | appState = newAppState }, Task.attempt SetUserState setUserStateTask )
 
-            -- ( { model | appState = newAppState }, Task.attempt SetUserState setUserStateTask )
             Err error ->
                 ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )
 
