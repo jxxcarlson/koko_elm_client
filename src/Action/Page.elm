@@ -42,11 +42,17 @@ for the moment. I believe that it is what is causing overwrites.
 -}
 setEditPage model =
     let
-        newAppState =
-            Action.UI.appStateWithPage model EditorPage
-                |> Action.Document.clearEditRecord
+        appState =
+            model.appState
 
-        --|> (\appState -> { appState | textBuffer = model.current_document.content })
+        newAppState =
+            { appState
+                | page = EditorPage
+                , tool = Action.UI.updateTool model EditorPage
+                , textBuffer = model.current_document.content
+                , textBufferDirty = False
+            }
+                |> Action.Document.clearEditRecord
     in
         ( { model | appState = newAppState }
         , Cmd.batch
