@@ -354,6 +354,7 @@ type Msg
     | ToggleRegister
     | ToggleUpdateRate
     | UpdateDocument
+    | LatexFullRender
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
     | UpdateCurrentUser

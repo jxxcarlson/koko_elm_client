@@ -58,6 +58,7 @@ type Styles
     | Mono
     | NavBar
     | NavBarActive
+    | NavBarActive2
     | NavOption
     | Page
     | PaleBlue
@@ -168,6 +169,11 @@ stylesheet =
         , style NavBarActive
             [ Color.background Color.lightCharcoal
             , Color.text Color.white
+            , pseudo "active" [ Transition.all, Color.background Color.darkBlue, Color.text Color.blue ]
+            ]
+        , style NavBarActive2
+            [ Color.background Color.lightCharcoal
+            , Color.text Color.blue
             , pseudo "active" [ Transition.all, Color.background Color.darkBlue, Color.text Color.blue ]
             ]
         , style Panel

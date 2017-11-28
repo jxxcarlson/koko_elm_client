@@ -17,6 +17,7 @@ module Action.Document
         , toggleUpdateRate
         , updateCurrentDocument
         , updateCurrentDocumentWithContent
+        , latexFullRender
         , updateDocuments
         , updateTags
         , wordCount
@@ -74,6 +75,40 @@ updateCurrentDocumentWithContent content model =
         updateCurrentLatexDocumentWithContent content model
     else
         updateStandardDocumentWithContent content model
+
+
+latexFullRender : String -> Model -> ( Model, Cmd Msg )
+latexFullRender content model =
+    let
+        appState =
+            model.appState
+
+        document =
+            model.current_document
+
+        macroDefinitions =
+            let
+                macrosString =
+                    macros model.documentDict
+            in
+                macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
+
+        newEditRecord =
+            MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord content
+
+        rendered_content =
+            MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
+
+        newAppState =
+            { appState | editRecord = newEditRecord }
+
+        newModel =
+            { model | appState = newAppState }
+
+        newDocument =
+            { document | content = content, rendered_content = rendered_content }
+    in
+        updateCurrentDocument newModel newDocument
 
 
 updateStandardDocumentWithContent : String -> Model -> ( Model, Cmd Msg )

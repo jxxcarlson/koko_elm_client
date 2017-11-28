@@ -25,6 +25,12 @@ faIcon title_ icon attrs =
         (iconWhite20 icon)
 
 
+faIcon2 title_ icon attrs =
+    el NavBarActive2
+        ([ height (px 25), width (px 20), alignBottom, title title_, verticalCenter ] ++ attrs)
+        (iconGreen20 icon)
+
+
 iconMaker : a -> b -> (a -> b -> Html.Html msg) -> Element style variation msg
 iconMaker color iconSize icon =
     (EL.html (icon color iconSize))
@@ -35,3 +41,10 @@ iconWhite20 :
     -> Element style variation msg
 iconWhite20 =
     iconMaker Color.white 25
+
+
+iconGreen20 :
+    (Color.Color -> number -> Html.Html msg)
+    -> Element style variation msg
+iconGreen20 =
+    iconMaker Color.green 25

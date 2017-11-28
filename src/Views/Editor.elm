@@ -16,6 +16,7 @@ import Utility
 import Types exposing (..)
 import FontAwesome
 import Views.Common as Common
+import Views.Utility
 
 
 editor : Model -> List (Element Styles variation Msg)
@@ -69,6 +70,7 @@ editorPanel model =
     row Panel
         [ paddingXY 10 6, spacing 15, center ]
         [ Common.publicCheckbox model
+        , Views.Utility.visibleIf (model.current_document.attributes.textType == "latex") (typeSetAllButton model)
         , refreshButton model
         , toggleUpdateRateIndicator model
         , toggleUpdateRateButton model
@@ -81,6 +83,11 @@ editorPanel model =
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
     Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (UpdateDocument) ]
+
+
+typeSetAllButton : Model -> Element Styles variation Msg
+typeSetAllButton model =
+    Basic.faIcon2 "Typeset from scratch" FontAwesome.save [ onClick (LatexFullRender) ]
 
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg

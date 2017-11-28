@@ -595,6 +595,13 @@ update msg model =
             in
                 Action.Document.updateCurrentDocumentWithContent model.appState.textBuffer model
 
+        LatexFullRender ->
+            let
+                _ =
+                    Debug.log "UpdateDocument" "now"
+            in
+                Action.Document.latexFullRender model.appState.textBuffer model
+
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
 
