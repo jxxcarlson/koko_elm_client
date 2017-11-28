@@ -93,7 +93,7 @@ documentStackView model =
 
 documentStackView1 : Model -> Element Styles variation Msg
 documentStackView1 model =
-    column PaleBlue2
+    column DocumentStackColor
         [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
         (List.map (viewTitleInStack model model.current_document) (Stack.sorted model.documentStack))
 
