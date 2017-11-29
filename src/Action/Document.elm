@@ -74,7 +74,7 @@ updateCurrentDocumentWithContent model =
     if model.current_document.attributes.textType == "latex" then
         updateCurrentLatexDocumentWithContent model
     else
-        updateStandardDocumentWithContent model
+        updateCurrentDocument model model.current_document
 
 
 latexFullRender : Model -> ( Model, Cmd Msg )
@@ -109,18 +109,6 @@ latexFullRender model =
             { document | rendered_content = rendered_content }
     in
         updateCurrentDocument newModel newDocument
-
-
-updateStandardDocumentWithContent : Model -> ( Model, Cmd Msg )
-updateStandardDocumentWithContent model =
-    let
-        document =
-            model.current_document
-
-        newDocument =
-            { document | rendered_content = document.rendered_content }
-    in
-        updateCurrentDocument model newDocument
 
 
 macros : DocumentDict -> String
@@ -211,7 +199,9 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.put True model.appState.editRecord.idList True document -- put new content in JS-mirror of document and save the document (XX: client-server)
+
+                --, Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
                 , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
