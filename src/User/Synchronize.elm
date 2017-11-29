@@ -37,7 +37,15 @@ doRecoverUserState jsonString model =
                     setUserStateTask =
                         Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
                 in
-                    ( { model | appState = newAppState }, Task.attempt SetUserState setUserStateTask )
+                    ( { model | appState = newAppState }
+                    , Cmd.batch
+                        [ Task.attempt SetUserState setUserStateTask
+                        , Request.Document.getDocumentWithAuthenticatedQuery
+                            GetSpecialDocument
+                            token
+                            "key=sidebarNotes"
+                        ]
+                    )
 
             Err error ->
                 ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )

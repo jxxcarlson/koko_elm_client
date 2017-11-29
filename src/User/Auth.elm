@@ -10,6 +10,7 @@ import Data.User exposing (signinEncoder, jwtDecoder, registerUserEncoder)
 import Types exposing (..)
 import Utility exposing (gotoPage)
 import External
+import Request.Document
 import Views.External
 import User.Request
 
@@ -79,6 +80,10 @@ getTokenCompleted model result =
                             [ User.Request.getUserState user2.id
                             , Utility.gotoPage model StartPage
                             , External.saveUserLogin (Views.External.userData user2.name user2.email user2.id user2.username newToken)
+                            , Request.Document.getDocumentWithAuthenticatedQuery
+                                GetSpecialDocument
+                                user2.token
+                                "key=sidebarNotes"
                             ]
                         )
 

@@ -99,7 +99,10 @@ goToPage p model =
 
         ( ReaderPage, True ) ->
             ( { model | appState = Action.UI.appStateWithPage model p }
-            , Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
+            , Cmd.batch
+                [ Request.Document.getDocumentWithAuthenticatedQuery GetSpecialDocument model.current_user.token "key=sidebarNotes"
+                , Document.Dictionary.setItemInDict "key=sidebarNotes" "sidebar" model.current_user.token
+                ]
             )
 
         ( ReaderPage, False ) ->
