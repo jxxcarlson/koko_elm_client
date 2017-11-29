@@ -197,9 +197,15 @@ type ActiveDocumentList
     | DocumentStackList
 
 
+type DeleteState
+    = Pending
+    | Resting
+
+
 type alias AppState =
     { activeDocumentList : ActiveDocumentList
     , online : Bool
+    , deleteState : DeleteState
     , signedIn : Bool
     , authorizing : Bool
     , registerUser : Bool
@@ -272,6 +278,8 @@ type Msg
     | CompleteRegistration (Result Http.Error UserRecord)
     | CreateDocument (Result Http.Error DocumentRecord)
     | CredentialsResult (Result Http.Error CredentialsWrapper)
+    | RequestDocumentDelete
+    | CancelDocumentDelete
     | DeleteCurrentDocument
     | DeleteDocument (Result Http.Error ())
     | DoRender Int

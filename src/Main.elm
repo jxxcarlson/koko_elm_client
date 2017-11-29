@@ -537,8 +537,40 @@ update msg model =
         CreateDocument (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
+        RequestDocumentDelete ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | deleteState = Pending }
+            in
+                ( { model | appState = newAppState }, Cmd.none )
+
+        CancelDocumentDelete ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | deleteState = Resting }
+            in
+                ( { model | appState = newAppState }, Cmd.none )
+
         DeleteCurrentDocument ->
-            ( { model | message = "Delete current document" }, Request.Document.deleteCurrentDocument model )
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | deleteState = Resting }
+            in
+                ( { model
+                    | appState = newAppState
+                    , message = "Delete current document"
+                  }
+                , Request.Document.deleteCurrentDocument model
+                )
 
         DeleteDocument serverReply ->
             Action.Document.deleteDocument serverReply model
@@ -887,6 +919,7 @@ init flags location =
         appState =
             { activeDocumentList = SearchResultList
             , online = False
+            , deleteState = Resting
             , signedIn = False
             , authorizing = False
             , registerUser = False

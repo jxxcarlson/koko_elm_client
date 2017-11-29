@@ -593,10 +593,17 @@ deleteDocument serverReply model =
 
                 newCurrentDocument =
                     (List.head updatedDocuments) |> Maybe.withDefault Document.errorDocument
+
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | textBuffer = newCurrentDocument.content }
             in
                 ( { model
                     | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
                     , documents = updatedDocuments
+                    , appState = newAppState
                     , documentStack = updatedDocumentStack
                     , current_document = newCurrentDocument
                   }

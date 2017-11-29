@@ -67,6 +67,8 @@ type Styles
     | PaleYellow
     | Panel
     | PanelInfo
+    | PanelInfoRed
+    | PanelInfoGreen
     | Radio
     | SearchField
     | Small
@@ -180,6 +182,10 @@ stylesheet =
             [ Color.background Color.lightCharcoal ]
         , style PanelInfo
             [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
+        , style PanelInfoRed
+            [ Color.background Color.black, Color.text Color.red, Font.lineHeight 1.3 ]
+        , style PanelInfoGreen
+            [ Color.background Color.black, Color.text Color.green, Font.lineHeight 1.3 ]
         , style Radio
             [ Font.size 14, Color.background Color.lightGray ]
         , style TitleStyle

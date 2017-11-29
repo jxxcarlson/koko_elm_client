@@ -77,6 +77,7 @@ editorPanel model =
         , full PanelInfo [] (el Zero [ verticalCenter ] (text ("ID: " ++ (toString model.current_document.id))))
         , full PanelInfo [] (el Zero [ verticalCenter ] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
         , deleteButton model
+        , Views.Utility.visibleIf (model.appState.deleteState == Pending) (deleteConfirmation model)
         ]
 
 
@@ -112,7 +113,26 @@ toggleUpdateRateIcon model =
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
-    Basic.faIcon "Delete document" FontAwesome.trash [ onClick (DeleteCurrentDocument) ]
+    Basic.faIcon "Delete document" FontAwesome.trash [ onClick (RequestDocumentDelete) ]
+
+
+confirmDeleteButton : Model -> Element Styles variation Msg
+confirmDeleteButton model =
+    full PanelInfoRed [ padding 8, onClick (DeleteCurrentDocument) ] (el Zero [ verticalCenter ] (text "Delete forever"))
+
+
+cancelDeleteButton : Model -> Element Styles variation Msg
+cancelDeleteButton model =
+    full PanelInfoGreen [ padding 8, onClick (CancelDocumentDelete) ] (el Zero [ verticalCenter ] (text "Cancel"))
+
+
+deleteConfirmation : Model -> Element Styles variation Msg
+deleteConfirmation model =
+    row Panel
+        [ spacing 10 ]
+        [ cancelDeleteButton model
+        , confirmDeleteButton model
+        ]
 
 
 
