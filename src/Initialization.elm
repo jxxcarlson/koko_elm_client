@@ -43,7 +43,6 @@ resetAppState model =
             , tickerPaused = False
             , page = StartPage
             , tool = TableOfContents
-            , textBuffer = ""
             , editRecord = emptyEditRecord
             , tickInterval = Configuration.tickInterval
             , command = ""

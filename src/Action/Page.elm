@@ -31,15 +31,6 @@ setHomePage model =
         ( { model | appState = newAppState }, cmd )
 
 
-{-| NOTE:
-
-I am disabling the line
-
-    (\appState -> { appState | textBuffer = model.current_document.content })
-
-for the moment. I believe that it is what is causing overwrites.
-
--}
 setEditPage model =
     let
         appState =
@@ -49,7 +40,6 @@ setEditPage model =
             { appState
                 | page = EditorPage
                 , tool = Action.UI.updateTool model EditorPage
-                , textBuffer = model.current_document.content
                 , textBufferDirty = False
             }
                 |> Action.Document.clearEditRecord

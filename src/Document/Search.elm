@@ -171,7 +171,7 @@ recallLastSearch model =
             model.appState
 
         newAppState =
-            { appState | masterDocLoaded = False, tool = TableOfContents, textBuffer = model.current_document.content }
+            { appState | masterDocLoaded = False, tool = TableOfContents }
     in
         ( { model
             | documents = model.documents2

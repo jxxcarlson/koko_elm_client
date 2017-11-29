@@ -218,7 +218,6 @@ type alias AppState =
     , tickerPaused : Bool
     , page : Page
     , tool : Tool
-    , textBuffer : String
     , editRecord : EditRecord
     , tickInterval : Float
     , seed : Int

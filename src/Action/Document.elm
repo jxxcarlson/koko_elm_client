@@ -69,16 +69,16 @@ clearEditRecord appState =
 {-| This is the function called when the user changes the document content
 in the Editorl
 -}
-updateCurrentDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
-updateCurrentDocumentWithContent content model =
+updateCurrentDocumentWithContent : Model -> ( Model, Cmd Msg )
+updateCurrentDocumentWithContent model =
     if model.current_document.attributes.textType == "latex" then
-        updateCurrentLatexDocumentWithContent content model
+        updateCurrentLatexDocumentWithContent model
     else
-        updateStandardDocumentWithContent content model
+        updateStandardDocumentWithContent model
 
 
-latexFullRender : String -> Model -> ( Model, Cmd Msg )
-latexFullRender content model =
+latexFullRender : Model -> ( Model, Cmd Msg )
+latexFullRender model =
     let
         appState =
             model.appState
@@ -94,7 +94,7 @@ latexFullRender content model =
                 macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord content
+            MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord document.content
 
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
@@ -106,19 +106,19 @@ latexFullRender content model =
             { model | appState = newAppState }
 
         newDocument =
-            { document | content = content, rendered_content = rendered_content }
+            { document | rendered_content = rendered_content }
     in
         updateCurrentDocument newModel newDocument
 
 
-updateStandardDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
-updateStandardDocumentWithContent content model =
+updateStandardDocumentWithContent : Model -> ( Model, Cmd Msg )
+updateStandardDocumentWithContent model =
     let
         document =
             model.current_document
 
         newDocument =
-            { document | content = content, rendered_content = document.rendered_content }
+            { document | rendered_content = document.rendered_content }
     in
         updateCurrentDocument model newDocument
 
@@ -133,8 +133,8 @@ macros documentDict =
         ""
 
 
-updateCurrentLatexDocumentWithContent : String -> Model -> ( Model, Cmd Msg )
-updateCurrentLatexDocumentWithContent content model =
+updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
+updateCurrentLatexDocumentWithContent model =
     let
         appState =
             model.appState
@@ -150,7 +150,7 @@ updateCurrentLatexDocumentWithContent content model =
                 macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            MiniLatex.Driver.update model.appState.seed appState.editRecord content
+            MiniLatex.Driver.update model.appState.seed appState.editRecord document.content
 
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
@@ -162,7 +162,7 @@ updateCurrentLatexDocumentWithContent content model =
             { model | appState = newAppState }
 
         newDocument =
-            { document | content = content, rendered_content = rendered_content }
+            { document | rendered_content = rendered_content }
     in
         updateCurrentDocument newModel newDocument
 
@@ -375,7 +375,6 @@ updateDocuments model documentsRecord =
                 | page = page
                 , tool = TableOfContents
                 , masterDocLoaded = masterDocLoaded
-                , textBuffer = current_document.content
             }
 
         newDocumentList =
@@ -507,8 +506,7 @@ selectDocument model document =
 
         newAppState =
             { appState
-                | textBuffer = document.content
-                , editRecord = MiniLatex.Driver.emptyEditRecord
+                | editRecord = MiniLatex.Driver.emptyEditRecord
                 , masterDocLoaded = masterDocLoaded_
                 , masterDocOpened = masterDocOpened
                 , page = displayPage model
@@ -593,17 +591,10 @@ deleteDocument serverReply model =
 
                 newCurrentDocument =
                     (List.head updatedDocuments) |> Maybe.withDefault Document.errorDocument
-
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | textBuffer = newCurrentDocument.content }
             in
                 ( { model
                     | message = "Document deleted, remaining = " ++ (toString (List.length updatedDocuments))
                     , documents = updatedDocuments
-                    , appState = newAppState
                     , documentStack = updatedDocumentStack
                     , current_document = newCurrentDocument
                   }
@@ -633,22 +624,34 @@ inputContent content model =
             model.appState
 
         newAppState =
-            { appState | textBuffer = content, textBufferDirty = True }
+            { appState | textBufferDirty = True }
+
+        currentDocument =
+            model.current_document
+
+        newCurrentDocument =
+            { currentDocument | content = content }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+        ( { model | appState = newAppState, current_document = newCurrentDocument }, Cmd.none )
 
 
 migrateFromAsciidocLatex : Model -> ( Model, Cmd Msg )
 migrateFromAsciidocLatex model =
     let
-        updatedText =
-            model.appState.textBuffer
+        currentDocument =
+            model.current_document
+
+        updatedContent =
+            currentDocument.content
                 |> Document.Edit.migrateTextFomAsciidocLaTeX
+
+        updatedDocument =
+            { currentDocument | content = updatedContent }
 
         counter =
             model.counter
 
         newModel =
-            { model | counter = counter + 1 }
+            { model | current_document = updatedDocument, counter = counter + 1 }
     in
-        updateCurrentDocumentWithContent updatedText newModel
+        updateCurrentDocumentWithContent newModel

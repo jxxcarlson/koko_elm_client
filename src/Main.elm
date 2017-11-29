@@ -314,7 +314,7 @@ update msg model =
                     model.appState
 
                 newAppState =
-                    { appState | page = EditorPage, textBuffer = model.specialDocument.content }
+                    { appState | page = EditorPage }
             in
                 ( { model | current_document = model.specialDocument, appState = newAppState }
                 , Cmd.none
@@ -625,14 +625,14 @@ update msg model =
                 _ =
                     Debug.log "UpdateDocument" "now"
             in
-                Action.Document.updateCurrentDocumentWithContent model.appState.textBuffer model
+                Action.Document.updateCurrentDocumentWithContent model
 
         LatexFullRender ->
             let
                 _ =
                     Debug.log "UpdateDocument" "now"
             in
-                Action.Document.latexFullRender model.appState.textBuffer model
+                Action.Document.latexFullRender model
 
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
@@ -697,7 +697,7 @@ update msg model =
                     && model.current_document.attributes.docType
                     /= "master"
             then
-                updateCurrentDocumentWithContent model.appState.textBuffer model
+                updateCurrentDocumentWithContent model
             else if model.appState.online then
                 -- Action.Channel.sendImmediateMessage "hello" model
                 Action.Periodic.do model
@@ -933,7 +933,6 @@ init flags location =
             , tickerPaused = False
             , page = StartPage
             , tool = TableOfContents
-            , textBuffer = ""
             , editRecord = emptyEditRecord
             , tickInterval = Configuration.tickInterval
             , command = ""
