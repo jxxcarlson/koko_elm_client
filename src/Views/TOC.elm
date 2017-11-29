@@ -64,7 +64,7 @@ documentListView0 model =
 documentListView1 : Model -> Element Styles variation Msg
 documentListView1 model =
     column PaleBlue
-        [ yScrollbar, paddingTop 15, paddingLeft 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
+        [ yScrollbar, paddingTop 15, paddingLeft 15, spacing 0, height (px (toFloat (model.window.height - 170))) ]
         (List.map (viewTitle model model.current_document) model.documents)
 
 
@@ -94,7 +94,7 @@ documentStackView model =
 documentStackView1 : Model -> Element Styles variation Msg
 documentStackView1 model =
     column DocumentStackColor
-        [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 140))) ]
+        [ yScrollbar, paddingTop 15, spacing 0, height (px (toFloat (model.window.height - 170))) ]
         (List.map (viewTitleInStack model model.current_document) (Stack.sorted model.documentStack))
 
 
