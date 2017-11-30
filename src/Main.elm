@@ -699,9 +699,7 @@ update msg model =
             then
                 updateCurrentDocumentWithContent model
             else if model.appState.online then
-                -- Action.Channel.sendImmediateMessage "hello" model
-                Action.Periodic.do model
-                -- (model, Cmd.none) --
+                Action.Periodic.do model time
             else
                 Action.Channel.joinChannel model
 
@@ -974,6 +972,7 @@ init flags location =
             , fileInputId = ""
             , date = Nothing
             , time = Nothing
+            , lastEditTime = Nothing
             , fileToUpload = Nothing
             , userList = []
             , selectedUserName = ""

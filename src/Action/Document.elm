@@ -194,6 +194,7 @@ updateCurrentDocument model document =
                 | current_document = document
                 , documents = new_documents
                 , documentStack = newDocumentStack
+                , lastEditTime = model.time
                 , appState = newAppState
             }
 

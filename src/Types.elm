@@ -252,6 +252,7 @@ type alias Model =
     , fileInputId : String
     , date : Maybe Date
     , time : Maybe Time
+    , lastEditTime : Maybe Time
     , fileToUpload : Maybe NativeFile
     , userList : Users
     , selectedUserName : String
