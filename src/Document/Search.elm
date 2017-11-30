@@ -4,6 +4,7 @@ module Document.Search
         , getRandomDocuments
         , recallLastSearch
         , onEnter
+        , search
         , update
         , updateDomain
         , withParameters
@@ -45,6 +46,11 @@ import Task
    Request.Document.getDocuments route query message token
 
 -}
+
+
+search : SearchState -> Model -> ( Model, Cmd Msg )
+search searchState model =
+    withParameters searchState.query searchState.order searchState.domain model.appState.page model
 
 
 withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
@@ -102,6 +108,7 @@ dispatch searchState page model =
             { appState
                 | masterDocLoaded = masterDocLoaded_
                 , tool = TableOfContents
+                , activeDocumentList = SearchResultList
                 , page = page
             }
 

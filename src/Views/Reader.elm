@@ -154,11 +154,7 @@ toolSelectorPanel model =
         [ paddingXY 20 6, justify ]
         [ Common.printButton model.current_document
         , Common.recallLastSearchButton model
-        , Common.searchOrderMenu model
         , Common.toggleListView model
-
-        -- , Common.selectTableOfContents model
-        -- , selectReaderTools model
         ]
 
 

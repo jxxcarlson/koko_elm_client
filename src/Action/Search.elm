@@ -56,7 +56,8 @@ selectSearchOrder searchOrder model =
         newSearchState =
             { oldSearchState | order = order }
     in
-        ( { model | searchState = newSearchState }, Cmd.none )
+        -- ( { model | searchState = newSearchState }, Cmd.none )
+        Document.Search.search newSearchState model
 
 
 doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )

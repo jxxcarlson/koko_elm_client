@@ -43,11 +43,11 @@ searchOrderMenu model =
     -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
     select "searchOrder"
         LightGray
-        [ height (px 25), verticalCenter, onInput SelectSearchOrder ]
-        [ option "viewed" True (text "Viewed")
-        , option "updated" False (text "Updated")
-        , option "created" False (text "Created")
-        , option "alpha" False (text "Alpha")
+        [ height (px 30), verticalCenter, onInput SelectSearchOrder ]
+        [ option "viewed" True (el Zero [ verticalCenter ] (text "Viewed"))
+        , option "updated" False (el Zero [ verticalCenter ] (text "Updated"))
+        , option "created" False (el Zero [ verticalCenter ] (text "Created"))
+        , option "alpha" False (el Zero [ verticalCenter ] (text "Alpha"))
         ]
 
 
@@ -86,7 +86,8 @@ documentStackView model =
     column None
         [ height (percent 100), minWidth (px 200) ]
         [ documentStackHeader model
-        , searchOrderMenu model
+
+        -- , searchOrderMenu model
         , documentStackView1 model
         ]
 
