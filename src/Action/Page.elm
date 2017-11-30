@@ -36,6 +36,9 @@ setEditPage model =
         appState =
             model.appState
 
+        lastEditTime =
+            model.time
+
         newAppState =
             { appState
                 | page = EditorPage
@@ -44,7 +47,7 @@ setEditPage model =
             }
                 |> Action.Document.clearEditRecord
     in
-        ( { model | appState = newAppState }
+        ( { model | appState = newAppState, lastEditTime = lastEditTime }
         , Cmd.batch
             [ External.toJs (Views.External.windowData model EditorPage)
             , Task.perform ReceiveTime Time.now
