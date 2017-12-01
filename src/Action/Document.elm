@@ -466,40 +466,83 @@ createDocument model document =
         ( { model | appState = newAppState }, Request.Document.createDocument document model.current_user.token )
 
 
+masterDocLoaded : Model -> Document -> Bool
+masterDocLoaded model document =
+    if
+        document.attributes.docType
+            == "master"
+            || (document.parent_id
+                    == model.master_document.id
+                    && document.parent_id
+                    /= 0
+               )
+    then
+        True
+    else
+        False
+
+
+masterDocOpened : Model -> Document -> Bool
+masterDocOpened model document =
+    if document.parent_id == model.master_document.id && model.appState.masterDocLoaded then
+        True
+    else
+        False
+
+
+texmacroFileId : List String -> Int
+texmacroFileId tags =
+    let
+        maybeMacrotag =
+            tags
+                |> List.filter (\tag -> String.startsWith "texmacros:" tag)
+                |> List.head
+
+        fileId =
+            case maybeMacrotag of
+                Nothing ->
+                    0
+
+                Just tag ->
+                    fileIdHelper tag
+    in
+        fileId
+
+
+fileIdHelper : String -> Int
+fileIdHelper tag =
+    let
+        maybeIdString =
+            tag |> String.split ":" |> List.drop 1 |> List.head
+
+        id =
+            case maybeIdString of
+                Nothing ->
+                    0
+
+                Just idString ->
+                    idString |> String.toInt |> Result.withDefault 0
+    in
+        id
+
+
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
     let
-        masterDocLoaded_ =
-            if
-                document.attributes.docType
-                    == "master"
-                    || (document.parent_id
-                            == model.master_document.id
-                            && document.parent_id
-                            /= 0
-                       )
-            then
-                True
-            else
-                False
-
-        masterDocOpened =
-            if document.parent_id == model.master_document.id && model.appState.masterDocLoaded then
-                True
-            else
-                False
-
         appState =
             if (model.appState.page == EditorPage) && (document.attributes.textType == "latex") then
                 model.appState |> clearEditRecord
             else
                 model.appState
 
+        macroFileId =
+            texmacroFileId document.tags |> toString
+
         newAppState =
             { appState
                 | editRecord = MiniLatex.Driver.emptyEditRecord
-                , masterDocLoaded = masterDocLoaded_
-                , masterDocOpened = masterDocOpened
+                , masterDocLoaded = masterDocLoaded model document
+                , masterDocOpened = masterDocOpened model document
                 , page = displayPage model
                 , textBufferDirty = False
             }
@@ -520,7 +563,7 @@ selectDocument model document =
 
         additionalCommands =
             if newModel.appState.page == EditorPage && document.attributes.textType == "latex" then
-                [ Dictionary.setItemInDict ("title=texmacros&authorname=" ++ newModel.current_user.username) "texmacros" newModel.current_user.token ]
+                [ Dictionary.setItemInDict ("id=" ++ macroFileId) "texmacros" newModel.current_user.token ]
             else
                 []
     in
