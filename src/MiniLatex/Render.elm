@@ -159,6 +159,7 @@ renderEnvironmentDict =
     Dict.fromList
         [ ( "align", \x y -> renderAlignEnvironment x y )
         , ( "center", \x y -> renderCenterEnvironment x y )
+        , ( "indent", \x y -> renderIndentEnvironment x y )
         , ( "enumerate", \x y -> renderEnumerate x y )
         , ( "eqnarray", \x y -> renderEqnArray x y )
         , ( "equation", \x y -> renderEquationEnvironment x y )
@@ -190,6 +191,12 @@ renderDefaultEnvironment name latexState body =
         renderTheoremLikeEnvironment latexState name body
     else
         renderDefaultEnvironment2 latexState name body
+
+
+renderIndentEnvironment : LatexState -> LatexExpression -> String
+renderIndentEnvironment latexState body =
+    -- div [ "style=\"margin-left:2em\"" ] [ (render latexState body) ]
+    div [ "style=\"margin-left:2em\"" ] [ render latexState body ]
 
 
 renderTheoremLikeEnvironment : LatexState -> String -> LatexExpression -> String
@@ -748,6 +755,7 @@ imageFloatLeftStyle imageAttributes =
     "style=\"float: left; width: " ++ (toString (imageAttributes.width + 20)) ++ "px; margin: 0 10px 7.5px 0; text-align: center;\""
 
 
+div : List String -> List String -> String
 div attributes children =
     let
         attributeString =
