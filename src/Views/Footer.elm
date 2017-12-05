@@ -46,6 +46,7 @@ standardFooter model =
     (row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
         [ (messageBox model)
+        , (documentId model)
         , (publicLink model)
         , (warningMessage model)
         , (onlineStatusIndicator model)
@@ -94,6 +95,11 @@ publicLink model =
 messageBox : Model -> Element Styles variation msg
 messageBox model =
     (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
+
+
+documentId : Model -> Element Styles variation msg
+documentId model =
+    (el FooterNote [ alignBottom, padding 8 ] (text ("ID " ++ (toString model.current_document.id))))
 
 
 
