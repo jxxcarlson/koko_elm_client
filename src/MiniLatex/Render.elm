@@ -165,8 +165,10 @@ renderEnvironmentDict =
         , ( "equation", \x y -> renderEquationEnvironment x y )
         , ( "itemize", \x y -> renderItemize x y )
         , ( "macros", \x y -> renderMacros x y )
+        , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
+        , ( "verse", \x y -> renderVerse x y )
         ]
 
 
@@ -300,6 +302,14 @@ renderItemize latexState body =
 
 renderMacros latexState body =
     "\n$$\n" ++ (render latexState body) ++ "\n$$\n"
+
+
+renderQuotation latexState body =
+    div [ "class=\"quotation\"" ] [ render latexState body ]
+
+
+renderVerse latexState body =
+    div [ "class=\"verse\"" ] [ render latexState body ]
 
 
 renderTabular latexState body =

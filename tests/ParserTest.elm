@@ -333,4 +333,14 @@ $$ \\int e^x dx $$ & $$ e^x $$ \\\\
                         Ok (LatexList ([ LXString "test", Macro "code" ([ LatexList ([ LXString "foo" ]) ]), LXString "." ]))
                 in
                     Expect.equal parsedInput expectedOutput
+        , test "(V.1) verse" <|
+            \_ ->
+                let
+                    parsedInput =
+                        run latexList "\\begin{verse}\nTest\n\nTest\n\\end{verse}"
+
+                    expectedOutput =
+                        Ok (LatexList ([ LXString "test", Macro "code" ([ LatexList ([ LXString "foo" ]) ]), LXString "." ]))
+                in
+                    Expect.equal parsedInput expectedOutput
         ]

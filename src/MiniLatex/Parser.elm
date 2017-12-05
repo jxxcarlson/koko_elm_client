@@ -347,7 +347,7 @@ environmentOfType envType =
             "\\end{" ++ envType ++ "}"
 
         envKind =
-            if List.member envType [ "equation", "align", "eqnarray", "verbatim" ] then
+            if List.member envType [ "equation", "align", "eqnarray", "verbatim", "verse" ] then
                 "mathJax"
             else
                 envType
