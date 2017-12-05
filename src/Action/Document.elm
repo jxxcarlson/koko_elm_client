@@ -538,11 +538,18 @@ selectDocument model document =
         macroFileId =
             texmacroFileId document.tags |> toString
 
+        tickerPaused =
+            if document.attributes.textType == "latex" then
+                True
+            else
+                False
+
         newAppState =
             { appState
                 | editRecord = MiniLatex.Driver.emptyEditRecord
                 , masterDocLoaded = masterDocLoaded model document
                 , masterDocOpened = masterDocOpened model document
+                , tickerPaused = tickerPaused
                 , page = displayPage model
                 , textBufferDirty = False
             }
