@@ -309,7 +309,7 @@ renderQuotation latexState body =
 
 
 renderVerse latexState body =
-    div [ "class=\"verse\"" ] [ render latexState body ]
+    div [ "class=\"verse\"" ] [ String.trim <| render latexState body ]
 
 
 renderTabular latexState body =
@@ -362,6 +362,7 @@ renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String
 renderMacroDict =
     Dict.fromList
         [ ( "bozo", \x y -> renderBozo x y )
+        , ( "bigskip", \x y -> renderBigSkip x y )
         , ( "cite", \x y -> renderCite x y )
         , ( "code", \x y -> renderCode x y )
         , ( "ellie", \x y -> renderEllie x y )
@@ -382,6 +383,7 @@ renderMacroDict =
         , ( "section", \x y -> renderSection x y )
         , ( "section*", \x y -> renderSectionStar x y )
         , ( "setcounter", \x y -> "" )
+        , ( "smallskip", \x y -> renderSmallSkip x y )
         , ( "strong", \x y -> renderStrong x y )
         , ( "subheading", \x y -> renderSubheading x y )
         , ( "subsection", \x y -> renderSubsection x y )
@@ -427,6 +429,16 @@ renderArg k latexState args =
 renderBozo : LatexState -> List LatexExpression -> String
 renderBozo latexState args =
     "bozo{" ++ (renderArg 0 latexState args) ++ "}{" ++ (renderArg 1 latexState args) ++ "}"
+
+
+renderBigSkip : LatexState -> List LatexExpression -> String
+renderBigSkip latexState args =
+    div [] [ "<br><br>" ]
+
+
+renderSmallSkip : LatexState -> List LatexExpression -> String
+renderSmallSkip latexState args =
+    div [] [ "<br>" ]
 
 
 {-| Needs work
