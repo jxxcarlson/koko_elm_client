@@ -1,9 +1,9 @@
 module Action.Periodic exposing (do)
 
+import Action.Channel as Channel
 import Task
 import Time
 import Types exposing (Model, Msg(..), Page(..))
-import Action.Channel as Channel
 
 
 do model time =
@@ -18,7 +18,7 @@ do model time =
                     0
 
         _ =
-            Debug.log "LE INTERVAL" intervalSinceLastEdit
+            Debug.log "Last Edit Interval" intervalSinceLastEdit
 
         appState =
             model.appState
@@ -41,4 +41,4 @@ do model time =
         cmd2 =
             Task.perform ReceiveTime Time.now
     in
-        ( model2, Cmd.batch [ cmd1, cmd2 ] )
+    ( model2, Cmd.batch [ cmd1, cmd2 ] )

@@ -41,13 +41,22 @@ var mountNode = document.getElementById('main');
 
    var render_asciidoc_latex = function(content) {
        console.log("render_asciidoc_latex, content length = " + content.length)
+           if (content !== current_content) {
+             document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
+             typeset()
+             current_content = content
+           }
+    }
+
+   var render_asciidoc_latex_old = function(content) {
+       console.log("render_asciidoc_latex, content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
-             typesetNow()
+            typeset()
              current_content = content
            }
        }  , millisecondsToWait);
@@ -58,52 +67,18 @@ var mountNode = document.getElementById('main');
       app.ports.getRenderedText.send(rendered_text)
     }
 
-    function typesetNow(){
-      console.log("** typesetNow: I am calling MathJax.Hub.Queue in index.js ... ")
-      MathJax.Hub.Queue([
-        "Typeset",
-        MathJax.Hub,
-        sendRenderedTextToElm]);
-    }
 
-   var idList2Elements = function(idList) {
-     var elementList = []
-     for (var i = 0; i < idList.length; i++ ) {
-       var element = document.getElementById(idList[i])
-       elementList.push(element);
-     }
-     return elementList
+  function typeset() {
+     console.log("** plain typeset ... ")
+     MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
    }
 
-   function typesetIdList(idList){
-     console.log("** typesetIdList ... ")
-     var elements = idList2Elements(idList)
-     for(var i = 0; i < idList.length; i++) {
-       MathJax.Hub.Queue( ["Typeset", MathJax.Hub, elements[i]])
-     }
-     MathJax.Hub.Queue( ["Typeset", MathJax.Hub,sendRenderedTextToElm] );
-   }
-
-
-   var render_latex = function(force, idList, content) {
-       console.log("render_latex, content length = " + content.length)
-       console.log("idList = " + idList)
-       request_in_progress = true;
-       var millisecondsToWait = 100;
-       setTimeout(function() {
-           request_in_progress = false;
-           if (force || (content !== current_content)){
-             document.getElementById('rendered_text2').innerHTML = content;
-             if (idList.length == 0) {
-               typesetNow()
-             } else {
-               typesetIdList(idList)
-             }
-
-             current_content = content
-           }
-       }  , millisecondsToWait);
-    }
+  var render_latex = function(force, idList, content) {
+    console.log("render_latex, content length = " + content.length)
+    console.log("idList = " + idList)
+    document.getElementById('rendered_text2').innerHTML = content;
+    typeset()
+  }
 
    var render_plain = function(content) {
        console.log("rende_plain,  content length = " + content.length)

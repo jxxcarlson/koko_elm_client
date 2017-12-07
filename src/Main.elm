@@ -1,33 +1,55 @@
 module Main exposing (..)
 
 -- 1
+-- 2
 
 import Action.Channel
+import Action.Document
+    exposing
+        ( createDocument
+        , deleteDocument
+        , saveCurrentDocument
+        , selectDocument
+        , selectNewDocument
+        , togglePublic
+        , toggleUpdateRate
+        , updateCurrentDocumentWithContent
+        , updateDocuments
+        , updateTags
+        )
 import Action.Error
 import Action.Page
 import Action.Periodic
 import Action.Search
+import Action.UI
+    exposing
+        ( appStateToggleAuthorizing
+        , appStateWithPage
+        , displayPage
+        , toggleAuthorizing
+        , toggleMenu
+        , toggleRegister
+        , updateToolStatus
+        )
 import Action.User
-import Views.Common as Common
 import Configuration
 import Date exposing (Date)
+import Dict
+import Document.Dictionary
 import Document.Document as Document
     exposing
-        ( defaultDocument
+        ( blankDocument
+        , defaultDocument
         , defaultMasterDocument
         , emptyDocument
-        , blankDocument
         , startDocument
         )
-import Document.Dictionary
-import Dict
 import Document.MasterDocument
 import Document.Render
 import Document.Search
-import User.Synchronize
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import External exposing (putTextToRender, toJs, fileUpload, fileUploaded)
+import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Html exposing (..)
 import Image.Upload
 import Image.View
@@ -49,52 +71,25 @@ import StyleSheet exposing (..)
 import Task
 import Time exposing (Time, second)
 import Types exposing (..)
-import Utility
-import User.Auth exposing (loginUserCmd, getTokenCompleted, registerUserCmd)
+import User.Auth exposing (getTokenCompleted, loginUserCmd, registerUserCmd)
 import User.Display
 import User.Login
 import User.Request
 import User.Synchronize
+import Utility
 import Views.Admin exposing (admin)
+import Views.Common as Common
 import Views.Editor exposing (editor)
 import Views.External exposing (windowData, windowSetup)
 import Views.Footer as Footer
 import Views.Home exposing (home)
 import Views.Login exposing (loginPage)
 import Views.NavBar as NavBar
-import Views.UserPreferences exposing (userPreferences)
 import Views.Reader exposing (reader)
-import Views.UserHomePages exposing (userHomePages)
 import Views.TOC as TOC exposing (toggleListView)
+import Views.UserHomePages exposing (userHomePages)
+import Views.UserPreferences exposing (userPreferences)
 import Window exposing (..)
-
-
--- 2
-
-import Action.Document
-    exposing
-        ( createDocument
-        , updateDocuments
-        , selectDocument
-        , selectNewDocument
-        , updateCurrentDocument
-        , togglePublic
-        , toggleUpdateRate
-        , updateCurrentDocumentWithContent
-        , updateTags
-        , saveCurrentDocument
-        , deleteDocument
-        )
-import Action.UI
-    exposing
-        ( displayPage
-        , toggleMenu
-        , toggleRegister
-        , updateToolStatus
-        , appStateWithPage
-        , toggleAuthorizing
-        , appStateToggleAuthorizing
-        )
 
 
 main : Program Flags Model Msg
@@ -116,11 +111,11 @@ updateWindow model w h =
         device =
             Common.getDevice w
     in
-        { model
-            | device = device
-            , window = new_window
-            , message = "w: " ++ (toString model.window.width) ++ ", h: " ++ (toString model.window.height)
-        }
+    { model
+        | device = device
+        , window = new_window
+        , message = "w: " ++ toString model.window.width ++ ", h: " ++ toString model.window.height
+    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -130,13 +125,13 @@ update msg model =
             ( { model | message = "NoOp" }, Cmd.none )
 
         Resize w h ->
-            ( (updateWindow model w h), toJs (Views.External.windowData model model.appState.page) )
+            ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
 
         GoTo p ->
             Action.Page.goToPage p model
 
         SelectTool t ->
-            ( { model | appState = (updateToolStatus model t) }, Cmd.none )
+            ( { model | appState = updateToolStatus model t }, Cmd.none )
 
         Name name ->
             User.Login.updateName model name
@@ -237,9 +232,9 @@ update msg model =
                 newAppState =
                     { appState | page = StartPage, masterDocLoaded = False, authorizing = False }
             in
-                ( { model | appState = newAppState }
-                , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
-                )
+            ( { model | appState = newAppState }
+            , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
+            )
 
         RandomDocuments ->
             Document.Search.getRandomDocuments model
@@ -261,8 +256,8 @@ update msg model =
                 _ =
                     Debug.log "GetRenderedText" "now"
             in
-                -- Action.Document.saveCurrentDocument "" newModel
-                ( { model | current_document = newDocument }, Cmd.none )
+            -- Action.Document.saveCurrentDocument "" newModel
+            ( { model | current_document = newDocument }, Cmd.none )
 
         GotoUserHomePages ->
             User.Display.goToUserHomePages model
@@ -275,12 +270,12 @@ update msg model =
                 newAppState =
                     { appState | page = UserPreferencesPage }
             in
-                ( { model
-                    | appState = newAppState
-                    , textInputBuffer = model.current_user.blurb
-                  }
-                , User.Request.get model.current_user.id
-                )
+            ( { model
+                | appState = newAppState
+                , textInputBuffer = model.current_user.blurb
+              }
+            , User.Request.get model.current_user.id
+            )
 
         SearchForUserHomePages keyCode ->
             if keyCode == 13 then
@@ -294,7 +289,7 @@ update msg model =
                     newSearchState =
                         { searchState | domain = Public }
                 in
-                    ( { model | searchState = newSearchState }, User.Request.getList query )
+                ( { model | searchState = newSearchState }, User.Request.getList query )
             else
                 ( model, Cmd.none )
 
@@ -306,7 +301,7 @@ update msg model =
                 ( newModel, cmd ) =
                     Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
             in
-                ( newModel, Cmd.batch [ cmd ] )
+            ( newModel, Cmd.batch [ cmd ] )
 
         EditSpecialDocument ->
             let
@@ -316,9 +311,9 @@ update msg model =
                 newAppState =
                     { appState | page = EditorPage }
             in
-                ( { model | current_document = model.specialDocument, appState = newAppState }
-                , Cmd.none
-                )
+            ( { model | current_document = model.specialDocument, appState = newAppState }
+            , Cmd.none
+            )
 
         GetUsers (Ok usersRecord) ->
             let
@@ -334,7 +329,7 @@ update msg model =
                 ( model1, cmd ) =
                     Document.Search.withParameters query Alphabetical Public UserHomePages model
             in
-                ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
+            ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
 
         GetUsers (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
@@ -353,14 +348,14 @@ update msg model =
                 updatedCurrentUser =
                     { current_user | blurb = user.blurb }
             in
-                ( { model | current_user = updatedCurrentUser }, Cmd.none )
+            ( { model | current_user = updatedCurrentUser }, Cmd.none )
 
         GetUser (Err error) ->
             let
                 _ =
                     Debug.log "error" error
             in
-                ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         GetUserState (Ok userStateRecord) ->
             let
@@ -392,7 +387,7 @@ update msg model =
                 task =
                     User.Synchronize.setUserStateTask userStateRecord token
             in
-                ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
+            ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
 
         GetUserState (Err error) ->
             let
@@ -401,7 +396,7 @@ update msg model =
                         "in GetUserState ERROR"
                         (toString error)
             in
-                ( model, Cmd.none )
+            ( model, Cmd.none )
 
         GetDocuments (Ok documentsRecord) ->
             updateDocuments model documentsRecord
@@ -425,7 +420,7 @@ update msg model =
                         Nothing ->
                             Document.emptyDocument
             in
-                ( { model | specialDocument = specialDocument }, Cmd.none )
+            ( { model | specialDocument = specialDocument }, Cmd.none )
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
@@ -434,7 +429,7 @@ update msg model =
             User.Synchronize.setUserState result model
 
         SetUserState (Err err) ->
-            ( { model | message = "Error in SetUserState: " ++ (toString err) }, Cmd.none )
+            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
 
         SetDocumentInDict (Ok ( documentsRecord, key )) ->
             let
@@ -455,7 +450,7 @@ update msg model =
                     else
                         documentDict
             in
-                ( { model | documentDict = newDocumentDict }, Cmd.none )
+            ( { model | documentDict = newDocumentDict }, Cmd.none )
 
         SetDocumentInDict (Err err) ->
             ( { model | message = "Error setting key in documentDict" }, Cmd.none )
@@ -477,7 +472,7 @@ update msg model =
                 newDocuments =
                     Utility.replaceIf (Action.Document.hasId masterDocument.id) masterDocument oldDocuments
             in
-                ( { model | master_document = masterDocument }, Cmd.none )
+            ( { model | master_document = masterDocument }, Cmd.none )
 
         GetMasterDocument (Err err) ->
             ( { model | message = "Getting master document: error" }, Cmd.none )
@@ -488,7 +483,7 @@ update msg model =
             ( { model | message = str }, Cmd.none )
 
         PutDocument (Ok serverReply) ->
-            case (serverReply) of
+            case serverReply of
                 () ->
                     ( model, Cmd.none )
 
@@ -499,7 +494,7 @@ update msg model =
             Action.User.updateCurrentUser model
 
         PutUser (Ok serverReply) ->
-            case (serverReply) of
+            case serverReply of
                 () ->
                     ( model, Cmd.none )
 
@@ -511,14 +506,14 @@ update msg model =
                 newDocument =
                     Document.defaultDocument
             in
-                createDocument model Document.blankDocument
+            createDocument model Document.blankDocument
 
         AddToMasterDocument ->
             let
                 _ =
                     Debug.log "MAIN: AddToMasterDocument" "now"
             in
-                Document.MasterDocument.addTo model
+            Document.MasterDocument.addTo model
 
         --( model , Request.Document.createDocument newDocument model.current_user.token )
         AttachCurrentDocument location ->
@@ -527,9 +522,9 @@ update msg model =
                     model.appState
 
                 newAppState =
-                    { appState | command = (Document.MasterDocument.attach location model) }
+                    { appState | command = Document.MasterDocument.attach location model }
             in
-                ( { model | appState = newAppState }, Cmd.none )
+            ( { model | appState = newAppState }, Cmd.none )
 
         CreateDocument (Ok documentRecord) ->
             selectNewDocument model documentRecord.document
@@ -545,7 +540,7 @@ update msg model =
                 newAppState =
                     { appState | deleteState = Pending }
             in
-                ( { model | appState = newAppState }, Cmd.none )
+            ( { model | appState = newAppState }, Cmd.none )
 
         CancelDocumentDelete ->
             let
@@ -555,7 +550,7 @@ update msg model =
                 newAppState =
                     { appState | deleteState = Resting }
             in
-                ( { model | appState = newAppState }, Cmd.none )
+            ( { model | appState = newAppState }, Cmd.none )
 
         DeleteCurrentDocument ->
             let
@@ -565,12 +560,12 @@ update msg model =
                 newAppState =
                     { appState | deleteState = Resting }
             in
-                ( { model
-                    | appState = newAppState
-                    , message = "Delete current document"
-                  }
-                , Request.Document.deleteCurrentDocument model
-                )
+            ( { model
+                | appState = newAppState
+                , message = "Delete current document"
+              }
+            , Request.Document.deleteCurrentDocument model
+            )
 
         DeleteDocument serverReply ->
             Action.Document.deleteDocument serverReply model
@@ -595,7 +590,7 @@ update msg model =
                 _ =
                     Debug.log "SaveCurrentDocument" "now"
             in
-                saveCurrentDocument "" model
+            saveCurrentDocument "" model
 
         SaveDocument result ->
             ( { model | message = "Document saved" }, Cmd.none )
@@ -605,14 +600,14 @@ update msg model =
                 _ =
                     Debug.log "AdoptChildren" "now"
             in
-                saveCurrentDocument "adopt_children=yes" model
+            saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
             let
                 _ =
                     Debug.log "SelectDocument" "now"
             in
-                Action.Document.selectDocument model document
+            Action.Document.selectDocument model document
 
         SelectMaster document ->
             Document.MasterDocument.select document model
@@ -625,14 +620,14 @@ update msg model =
                 _ =
                     Debug.log "UpdateDocument" "now"
             in
-                Action.Document.updateCurrentDocumentWithContent model
+            Action.Document.updateCurrentDocumentWithContent model
 
         LatexFullRender ->
             let
                 _ =
                     Debug.log "UpdateDocument" "now"
             in
-                Action.Document.latexFullRender model
+            Action.Document.latexFullRender model
 
         UseSearchDomain searchDomain ->
             Document.Search.updateDomain model searchDomain
@@ -655,9 +650,9 @@ update msg model =
                 newImageRecord =
                     { id = "ImageInputId", mImage = Just newImage }
             in
-                ( { model | imageRecord = newImageRecord }
-                , Cmd.none
-                )
+            ( { model | imageRecord = newImageRecord }
+            , Cmd.none
+            )
 
         GetUploadCredentials ->
             Image.Upload.getUploadCredentials model
@@ -696,6 +691,8 @@ update msg model =
                     && model.appState.textBufferDirty
                     && model.current_document.attributes.docType
                     /= "master"
+                    && model.current_document.attributes.textType
+                    /= "latex"
             then
                 updateCurrentDocumentWithContent model
             else if model.appState.online then
@@ -741,7 +738,7 @@ update msg model =
                 nextModel =
                     { model | date = Just date }
             in
-                ( nextModel, Cmd.none )
+            ( nextModel, Cmd.none )
 
         RequestTime ->
             ( model, Task.perform ReceiveTime Time.now )
@@ -777,7 +774,7 @@ update msg model =
                 _ =
                     Debug.log "TOK" message
             in
-                ( { newModel | message = message, time = time_ }, cmd )
+            ( { newModel | message = message, time = time_ }, cmd )
 
         GenerateSeed ->
             ( model, Random.generate NewSeed (Random.int 1 10000) )
@@ -790,13 +787,13 @@ update msg model =
                 newAppState =
                     { appState | seed = Debug.log "newSeed" newSeed }
             in
-                ( { model | appState = newAppState }, Cmd.none )
+            ( { model | appState = newAppState }, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every ((model.appState.tickInterval) * Time.second) Tick
+        [ Time.every (model.appState.tickInterval * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser ReconnectUser
         , External.recoverUserState RecoverUserState
@@ -946,7 +943,7 @@ init flags location =
                 |> Phoenix.Socket.join channel
 
         model =
-            { window = (KWindow flags.width flags.height)
+            { window = KWindow flags.width flags.height
             , device = Common.getDevice flags.width
             , counter = 0
             , appState = appState
@@ -990,7 +987,7 @@ init flags location =
             ]
 
         masterDocumentCommands =
-            [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ (toString id)) ]
+            [ Navigation.newUrl (Configuration.client ++ "/##public/" ++ toString id) ]
 
         -- ( newModel, command ) =
         --     Document.Search.getRandomDocuments model
@@ -1004,7 +1001,7 @@ init flags location =
             else
                 startupPageCommands ++ standardCommands
     in
-        ( model, Cmd.batch commands )
+    ( model, Cmd.batch commands )
 
 
 

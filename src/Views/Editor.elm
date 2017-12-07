@@ -1,21 +1,18 @@
 module Views.Editor exposing (..)
 
-import StyleSheet exposing (..)
+import Action.Document exposing (wordCount)
+import Color
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onInput, onClick)
+import Element.Events exposing (onClick, onInput)
+import Element.Keyed as Keyed
+import FontAwesome
+import StyleSheet exposing (..)
+import Types exposing (..)
+import Utility
 import Views.Basic as Basic
 import Views.Common as Common
-import Color
-import FontAwesome
 import Views.Component as Component
-import Types exposing (..)
-import Element.Keyed as Keyed
-import Action.Document exposing (wordCount)
-import Utility
-import Types exposing (..)
-import FontAwesome
-import Views.Common as Common
 import Views.Utility
 
 
@@ -43,26 +40,24 @@ editor model =
 
 titlePanel : Model -> Element Styles variation Msg
 titlePanel model =
-    (inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] (model.current_document.title))
+    inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] model.current_document.title
 
 
 contentPanel : Model -> Element Styles variation Msg
 contentPanel model =
-    (Keyed.row None
+    Keyed.row None
         [ height (percent 100) ]
-        [ ( (toString model.counter)
-          , (textArea Mono
+        [ ( toString model.counter
+          , textArea Mono
                 [ width (percent 100)
                 , yScrollbar
                 , padding 20
                 , onInput InputContent
                 , Utility.onKeyUp DoRender
                 ]
-                (model.current_document.content)
-            )
+                model.current_document.content
           )
         ]
-    )
 
 
 editorPanel : Model -> Element Styles variation Msg
@@ -72,28 +67,34 @@ editorPanel model =
         [ Common.publicCheckbox model
         , Views.Utility.visibleIf (model.current_document.attributes.textType == "latex") (typeSetAllButton model)
         , refreshButton model
-        , toggleUpdateRateIndicator model
-        , toggleUpdateRateButton model
-        , full PanelInfo [] (el Zero [ verticalCenter ] (text ("ID: " ++ (toString model.current_document.id))))
+        , notVisibleIfLatex model (toggleUpdateRateIndicator model)
+        , notVisibleIfLatex model (toggleUpdateRateButton model)
+        , full PanelInfo [] (el Zero [ verticalCenter ] (text ("ID: " ++ toString model.current_document.id)))
         , full PanelInfo [] (el Zero [ verticalCenter ] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
         , deleteButton model
         , Views.Utility.visibleIf (model.appState.deleteState == Pending) (deleteConfirmation model)
         ]
 
 
+notVisibleIfLatex : Model -> Element Styles variation Msg -> Element Styles variation Msg
+notVisibleIfLatex model body =
+    -- notVisibleIf : Bool -> Element Styles variation Msg -> Element Styles variation Msg
+    Views.Utility.notVisibleIf (model.current_document.attributes.textType == "latex") body
+
+
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
-    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (UpdateDocument) ]
+    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick UpdateDocument ]
 
 
 typeSetAllButton : Model -> Element Styles variation Msg
 typeSetAllButton model =
-    Basic.faIcon2 "Typeset from scratch" FontAwesome.save [ onClick (LatexFullRender) ]
+    Basic.faIcon2 "Typeset from scratch" FontAwesome.save [ onClick LatexFullRender ]
 
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
 toggleUpdateRateButton model =
-    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [ onClick (ToggleUpdateRate) ]
+    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [ onClick ToggleUpdateRate ]
 
 
 toggleUpdateRateIndicator : Model -> Element Styles variation Msg
@@ -113,17 +114,17 @@ toggleUpdateRateIcon model =
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
-    Basic.faIcon "Delete document" FontAwesome.trash [ onClick (RequestDocumentDelete) ]
+    Basic.faIcon "Delete document" FontAwesome.trash [ onClick RequestDocumentDelete ]
 
 
 confirmDeleteButton : Model -> Element Styles variation Msg
 confirmDeleteButton model =
-    full PanelInfoRed [ padding 8, onClick (DeleteCurrentDocument) ] (el Zero [ verticalCenter ] (text "Delete forever"))
+    full PanelInfoRed [ padding 8, onClick DeleteCurrentDocument ] (el Zero [ verticalCenter ] (text "Delete forever"))
 
 
 cancelDeleteButton : Model -> Element Styles variation Msg
 cancelDeleteButton model =
-    full PanelInfoGreen [ padding 8, onClick (CancelDocumentDelete) ] (el Zero [ verticalCenter ] (text "Cancel"))
+    full PanelInfoGreen [ padding 8, onClick CancelDocumentDelete ] (el Zero [ verticalCenter ] (text "Cancel"))
 
 
 deleteConfirmation : Model -> Element Styles variation Msg
