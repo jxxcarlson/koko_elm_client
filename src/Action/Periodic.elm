@@ -4,10 +4,14 @@ import Action.Channel as Channel
 import Task
 import Time
 import Types exposing (Model, Msg(..), Page(..))
+import User.Request
 
 
 do model time =
     let
+        integerTick =
+            round (time / 1000.0)
+
         intervalSinceLastEdit =
             -- interval in seconds
             case model.lastEditTime of
@@ -18,7 +22,7 @@ do model time =
                     0
 
         _ =
-            Debug.log "Last Edit Interval" intervalSinceLastEdit
+            Debug.log "Last Edit Interval" ( integerTick % 1000, intervalSinceLastEdit )
 
         appState =
             model.appState
@@ -40,5 +44,15 @@ do model time =
 
         cmd2 =
             Task.perform ReceiveTime Time.now
+
+        cmd3 =
+            if (integerTick % 30) == 2 then
+                User.Request.putUserState model
+            else
+                Cmd.none
     in
-    ( model2, Cmd.batch [ cmd1, cmd2 ] )
+    ( model2, Cmd.batch [ cmd1, cmd2, cmd3 ] )
+
+
+
+-- User.Request.putUserState model
