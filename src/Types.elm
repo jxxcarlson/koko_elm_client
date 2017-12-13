@@ -1,14 +1,14 @@
 module Types exposing (..)
 
-import Http
-import Time exposing (Time)
-import Phoenix.Socket
-import Json.Encode as JsEncode
 import Date exposing (Date)
 import Dict
+import Http
 import Image.FileReader as FileReader exposing (NativeFile)
+import Json.Encode as JsEncode
 import MiniLatex.Differ exposing (EditRecord)
+import Phoenix.Socket
 import Task
+import Time exposing (Time)
 
 
 type Device
@@ -256,6 +256,7 @@ type alias Model =
     , fileToUpload : Maybe NativeFile
     , userList : Users
     , selectedUserName : String
+    , userStateRecord : UserStateRecord
     }
 
 

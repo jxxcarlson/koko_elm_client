@@ -3,8 +3,21 @@ module Action.Periodic exposing (do)
 import Action.Channel as Channel
 import Task
 import Time
-import Types exposing (Model, Msg(..), Page(..))
+import Types exposing (Model, Msg(..), Page(..), UserStateRecord)
 import User.Request
+
+
+computeUserStateRecord : Model -> UserStateRecord
+computeUserStateRecord model =
+    { documentIntStack = List.map (\doc -> doc.id) model.documentStack
+    , currentDocumentId = Ok model.current_document.id
+    , token = model.current_user.token
+    }
+
+
+doUpdateUserRecord : UserStateRecord -> Model -> Bool
+doUpdateUserRecord userStateRecord model =
+    model.userStateRecord /= userStateRecord
 
 
 do model time =
@@ -39,17 +52,20 @@ do model time =
         ( model1, cmd1 ) =
             Channel.sendMessage model
 
+        newUserStateRecord =
+            computeUserStateRecord model
+
+        cmd3 =
+            if doUpdateUserRecord newUserStateRecord model then
+                User.Request.putUserStateRecord newUserStateRecord model
+            else
+                Cmd.none
+
         model2 =
-            { model1 | appState = newAppState }
+            { model1 | appState = newAppState, userStateRecord = computeUserStateRecord model }
 
         cmd2 =
             Task.perform ReceiveTime Time.now
-
-        cmd3 =
-            if (integerTick % 30) == 2 then
-                User.Request.putUserState model
-            else
-                Cmd.none
     in
     ( model2, Cmd.batch [ cmd1, cmd2, cmd3 ] )
 

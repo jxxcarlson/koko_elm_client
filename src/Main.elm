@@ -942,6 +942,9 @@ init flags location =
                 |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
                 |> Phoenix.Socket.join channel
 
+        emptyUserStateRecord =
+            { documentIntStack = [], currentDocumentId = Err "not defined", token = "" }
+
         model =
             { window = KWindow flags.width flags.height
             , device = Common.getDevice flags.width
@@ -972,6 +975,7 @@ init flags location =
             , lastEditTime = Nothing
             , fileToUpload = Nothing
             , userList = []
+            , userStateRecord = emptyUserStateRecord
             , selectedUserName = ""
             }
 

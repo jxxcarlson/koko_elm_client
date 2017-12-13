@@ -1,13 +1,13 @@
-module User.Request exposing (encodeUserState, getList, get, getUserState, putCurrentUser, putUserState)
+module User.Request exposing (encodeUserState, get, getList, getUserState, putCurrentUser, putUserState, putUserStateRecord)
 
-import Types exposing (Model, User, Users, UsersRecord, Msg(GetUsers, GetUser, GetUserState, PutUser))
+import Data.User exposing (userStateRecordDecoder2)
 import Http exposing (send)
 import HttpBuilder as HB exposing (..)
 import Json.Decode exposing (field)
 import Json.Decode.Pipeline
 import Json.Encode
 import Request.Api
-import Data.User exposing (userStateRecordDecoder2)
+import Types exposing (Model, Msg(GetUser, GetUserState, GetUsers, PutUser), User, UserStateRecord, Users, UsersRecord)
 
 
 getList : String -> Cmd Msg
@@ -23,24 +23,24 @@ getList query =
                 [ Request.Api.api ++ "users?public_user=yes", query ]
 
         url =
-            queries |> String.join ("&")
+            queries |> String.join "&"
     in
-        HB.get url
-            -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeUsers)
-            |> HB.send GetUsers
+    HB.get url
+        -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeUsers)
+        |> HB.send GetUsers
 
 
 get : Int -> Cmd Msg
 get user_id =
     let
         url =
-            Request.Api.api ++ "users/" ++ (toString user_id)
+            Request.Api.api ++ "users/" ++ toString user_id
     in
-        HB.get url
-            -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeUserRecord)
-            |> HB.send GetUser
+    HB.get url
+        -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeUserRecord)
+        |> HB.send GetUser
 
 
 getUserState : Int -> Cmd Msg
@@ -50,12 +50,12 @@ getUserState userId =
             Debug.log "getUserState" "CALLED"
 
         url =
-            Request.Api.api ++ "users/getuserstate/" ++ (toString userId)
+            Request.Api.api ++ "users/getuserstate/" ++ toString userId
     in
-        HB.get url
-            -- |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
-            |> withExpect (Http.expectJson userStateRecordDecoder2)
-            |> HB.send GetUserState
+    HB.get url
+        -- |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
+        |> withExpect (Http.expectJson userStateRecordDecoder2)
+        |> HB.send GetUserState
 
 
 putCurrentUserRB : Model -> RequestBuilder ()
@@ -65,11 +65,11 @@ putCurrentUserRB model =
             encodeMinimalUserRecord model.current_user
 
         url =
-            Request.Api.api ++ "users/" ++ (toString model.current_user.id)
+            Request.Api.api ++ "users/" ++ toString model.current_user.id
     in
-        HB.put url
-            |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
-            |> withJsonBody params
+    HB.put url
+        |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
+        |> withJsonBody params
 
 
 putCurrentUser : Model -> Cmd Msg
@@ -79,7 +79,7 @@ putCurrentUser model =
             putCurrentUserRB model
                 |> HB.toRequest
     in
-        Http.send PutUser request
+    Http.send PutUser request
 
 
 putUserState : Model -> Cmd Msg
@@ -92,7 +92,7 @@ putUserState model =
             encodeUserState model
 
         url =
-            Request.Api.api ++ "users/saveuserstate/" ++ (toString model.current_user.id)
+            Request.Api.api ++ "users/saveuserstate/" ++ toString model.current_user.id
 
         request =
             HB.put url
@@ -100,7 +100,25 @@ putUserState model =
                 |> withJsonBody params
                 |> HB.toRequest
     in
-        Http.send PutUser request
+    Http.send PutUser request
+
+
+putUserStateRecord : UserStateRecord -> Model -> Cmd Msg
+putUserStateRecord userStateRecord model =
+    let
+        params =
+            encodeUserStateRecord userStateRecord
+
+        url =
+            Request.Api.api ++ "users/saveuserstate/" ++ toString model.current_user.id
+
+        request =
+            HB.put url
+                |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
+                |> withJsonBody params
+                |> HB.toRequest
+    in
+    Http.send PutUser request
 
 
 decodeUserRecord : Json.Decode.Decoder Types.BigUserRecord
@@ -118,14 +136,14 @@ decodeUsers =
 decodeUser : Json.Decode.Decoder User
 decodeUser =
     Json.Decode.Pipeline.decode User
-        |> Json.Decode.Pipeline.required "name" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "id" (Json.Decode.int)
-        |> Json.Decode.Pipeline.required "username" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "email" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "blurb" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "password" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "token" (Json.Decode.string)
-        |> Json.Decode.Pipeline.required "admin" (Json.Decode.bool)
+        |> Json.Decode.Pipeline.required "name" Json.Decode.string
+        |> Json.Decode.Pipeline.required "id" Json.Decode.int
+        |> Json.Decode.Pipeline.required "username" Json.Decode.string
+        |> Json.Decode.Pipeline.required "email" Json.Decode.string
+        |> Json.Decode.Pipeline.required "blurb" Json.Decode.string
+        |> Json.Decode.Pipeline.required "password" Json.Decode.string
+        |> Json.Decode.Pipeline.required "token" Json.Decode.string
+        |> Json.Decode.Pipeline.required "admin" Json.Decode.bool
 
 
 encodeUser : User -> Json.Encode.Value
@@ -170,6 +188,26 @@ encodeIntegerList ints =
     ints |> List.map Json.Encode.int |> Json.Encode.list
 
 
+encodeUserStateRecord : UserStateRecord -> Json.Encode.Value
+encodeUserStateRecord userStateRecord =
+    let
+        ids =
+            userStateRecord.documentIntStack |> encodeIntegerList
+
+        currentDocumentId =
+            case userStateRecord.currentDocumentId of
+                Ok id ->
+                    Json.Encode.int id
+
+                Err _ ->
+                    Json.Encode.int 0
+
+        -- data =
+        --     (Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ])
+    in
+    Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ]
+
+
 encodeUserState : Model -> Json.Encode.Value
 encodeUserState model =
     let
@@ -182,7 +220,7 @@ encodeUserState model =
         -- data =
         --     (Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ])
     in
-        (Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ])
+    Json.Encode.object [ ( "current_document_id", currentDocumentId ), ( "id_list", ids ) ]
 
 
 
