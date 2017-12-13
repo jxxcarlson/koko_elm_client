@@ -691,10 +691,11 @@ update msg model =
                     && model.appState.textBufferDirty
                     && model.current_document.attributes.docType
                     /= "master"
-                    && model.current_document.attributes.textType
-                    /= "latex"
             then
-                updateCurrentDocumentWithContent model
+                if model.current_document.attributes.textType == "latex" then
+                    saveCurrentDocument "" model
+                else
+                    updateCurrentDocumentWithContent model
             else if model.appState.online then
                 Action.Periodic.do model time
             else
