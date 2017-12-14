@@ -9,6 +9,7 @@ module Action.Document
         , migrateFromAsciidocLatex
         , saveCurrentDocument
         , saveDocumentCmd
+        , saveDocumentListCmd
         , selectDocument
         , selectNewDocument
         , setDocType
@@ -133,6 +134,7 @@ macros documentDict =
    updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
    saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
    saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+   saveDocumentListCmd : List Document -> Model -> Cmd Msg
 
 -}
 
@@ -381,6 +383,16 @@ saveDocumentCmd queryString document model =
                 Cmd.none
     in
     cmd
+
+
+saveDocumentListCmd : List Document -> Model -> Cmd Msg
+saveDocumentListCmd documentList model =
+    let
+        cmds =
+            documentList
+                |> List.map (\doc -> saveDocumentCmd "" doc model)
+    in
+    Cmd.batch cmds
 
 
 

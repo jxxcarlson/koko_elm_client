@@ -1,7 +1,32 @@
 module Document.TOC exposing (..)
 
-import Types exposing (Document, DocumentAttributes)
+import Action.Document
+import Types exposing (Document, DocumentAttributes, Model, Msg)
 import Utility.KeyValue as KeyValue
+
+
+renumberMasterDocument : Model -> ( Model, Cmd Msg )
+renumberMasterDocument model =
+    if model.current_document.attributes.docType == "master" then
+        renumberDocuments model
+    else
+        ( { model | message = "Can only renumber master documents" }, Cmd.none )
+
+
+renumberDocuments : Model -> ( Model, Cmd Msg )
+renumberDocuments model =
+    let
+        tocLabelList =
+            tocLabelsForDocumentList model.documents
+                |> List.map tocLabelText
+
+        documents =
+            setDocumentLevels model.documents
+    in
+    ( { model | message = "Renumber", documents = documents }
+    , Action.Document.saveDocumentListCmd documents model
+    )
+
 
 
 {- TOC labels -}

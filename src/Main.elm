@@ -572,18 +572,7 @@ update msg model =
             Action.Document.deleteDocument serverReply model
 
         RenumberDocuments ->
-            let
-                tocLabelList =
-                    Document.TOC.tocLabelsForDocumentList model.documents
-                        |> List.map Document.TOC.tocLabelText
-
-                documents =
-                    Document.TOC.setDocumentLevels model.documents
-
-                _ =
-                    Debug.log "TOCC" tocLabelList
-            in
-            ( { model | message = "Renumber", documents = documents }, Cmd.none )
+            Document.TOC.renumberMasterDocument model
 
         Title title ->
             Action.Document.setTitle title model
