@@ -88,6 +88,20 @@ latexFullRender model =
         document =
             model.current_document
 
+        maybeSectionNumber =
+            getIntValueForKeyFromTagList "sectionNumber" document.tags
+
+        sectionNumberCommand =
+            case maybeSectionNumber of
+                Just id ->
+                    "\\setcounter{section}{" ++ toString id ++ "}"
+
+                Nothing ->
+                    ""
+
+        enrichedContent =
+            sectionNumberCommand ++ "\n\n" ++ document.content
+
         macroDefinitions =
             let
                 macrosString =
@@ -96,7 +110,7 @@ latexFullRender model =
             macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
-            MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord document.content
+            MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord enrichedContent
 
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
@@ -490,31 +504,35 @@ masterDocOpened model document =
         False
 
 
+
+-- texmacroFileId
+
+
 {-| Tags the form k:v define a key-value pair.
 The function extractValue key taglist resturns
 the value of the key-value pair as a Maybe Int
 -}
-texmacroFileId : List String -> Int
-texmacroFileId tags =
+getIntValueForKeyFromTagList : String -> List String -> Maybe Int
+getIntValueForKeyFromTagList key tags =
     let
         maybeMacrotag =
             tags
-                |> List.filter (\tag -> String.startsWith "texmacros:" tag)
+                |> List.filter (\tag -> String.startsWith (key ++ ":") tag)
                 |> List.head
 
-        fileId =
+        value =
             case maybeMacrotag of
                 Nothing ->
-                    0
+                    Nothing
 
                 Just tag ->
-                    fileIdHelper tag
+                    keyValueHelper tag
     in
-    fileId
+    value
 
 
-fileIdHelper : String -> Int
-fileIdHelper tag =
+keyValueHelper : String -> Maybe Int
+keyValueHelper tag =
     let
         maybeIdString =
             tag |> String.split ":" |> List.drop 1 |> List.head
@@ -522,10 +540,10 @@ fileIdHelper tag =
         id =
             case maybeIdString of
                 Nothing ->
-                    0
+                    Nothing
 
                 Just idString ->
-                    idString |> String.toInt |> Result.withDefault 0
+                    idString |> String.toInt |> Result.toMaybe
     in
     id
 
@@ -539,8 +557,8 @@ selectDocument model document =
             else
                 model.appState
 
-        macroFileId =
-            texmacroFileId document.tags |> toString
+        maybeMacroFileId =
+            getIntValueForKeyFromTagList "texmacros" document.tags
 
         newAppState =
             { appState
@@ -565,11 +583,16 @@ selectDocument model document =
             , External.saveUserState (Data.User.encodeUserState newModel)
             ]
 
+        setTexMacroFileCmd =
+            case maybeMacroFileId of
+                Just id ->
+                    Dictionary.setItemInDict ("id=" ++ toString id) "texmacros" newModel.current_user.token
+
+                Nothing ->
+                    Cmd.none
+
         additionalCommands =
-            if newModel.appState.page == EditorPage && document.attributes.textType == "latex" then
-                [ Dictionary.setItemInDict ("id=" ++ macroFileId) "texmacros" newModel.current_user.token ]
-            else
-                []
+            [ setTexMacroFileCmd ]
     in
     ( newModel
     , Cmd.batch (basicCommands ++ additionalCommands)
