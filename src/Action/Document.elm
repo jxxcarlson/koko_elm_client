@@ -490,6 +490,10 @@ masterDocOpened model document =
         False
 
 
+{-| Tags the form k:v define a key-value pair.
+The function extractValue key taglist resturns
+the value of the key-value pair as a Maybe Int
+-}
 texmacroFileId : List String -> Int
 texmacroFileId tags =
     let
