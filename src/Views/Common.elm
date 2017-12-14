@@ -2,19 +2,20 @@ module Views.Common
     exposing
         ( exportButton
         , getDevice
+        , getDocument
+        , homepage
         , imageCatalogueButton
-        , tool
-        , selectTableOfContents
+        , printButton
         , publicCheckbox
         , recallLastSearchButton
-        , printButton
-        , homepage
-        , getDocument
         , renderedContent
         , renderedContentForPhone
+        , renumberDocumentsButton
         , searchOrderMenu
+        , selectTableOfContents
         , specialContent
         , toggleListView
+        , tool
         )
 
 import Action.UI as UI
@@ -39,26 +40,25 @@ import Views.Utility as Utility
 
 renderedContent : Model -> Element Styles variation msg
 renderedContent model =
-    Keyed.row None [] [ ( (toString model.counter), innerRenderedContent model ) ]
+    Keyed.row None [] [ ( toString model.counter, innerRenderedContent model ) ]
 
 
 innerRenderedContent : Model -> Element Styles variation msg
 innerRenderedContent model =
     let
         h =
-            (toFloat model.window.height) - 150
+            toFloat model.window.height - 150
     in
-        (el (contentStyle model)
-            [ yScrollbar
-            , id "rendered_text2"
-            , paddingXY 50 50
-            , width (percent 100)
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.current_document.rendered_content)
-            ]
-            (text "")
-        )
+    el (contentStyle model)
+        [ yScrollbar
+        , id "rendered_text2"
+        , paddingXY 50 50
+        , width (percent 100)
+        , height (px h)
+        , property "innerHTML"
+            (Json.Encode.string model.current_document.rendered_content)
+        ]
+        (text "")
 
 
 contentStyle : Model -> Styles
@@ -73,55 +73,53 @@ contentStyle model =
             else
                 MainContent
     in
-        style_
+    style_
 
 
 renderedContentForPhone : Model -> Element Styles variation msg
 renderedContentForPhone model =
-    Keyed.row None [] [ ( (toString model.counter), innerRenderedContentForPhone model ) ]
+    Keyed.row None [] [ ( toString model.counter, innerRenderedContentForPhone model ) ]
 
 
 innerRenderedContentForPhone : Model -> Element Styles variation msg
 innerRenderedContentForPhone model =
     let
         h =
-            (toFloat model.window.height) - 100
+            toFloat model.window.height - 100
     in
-        (el (contentStyle model)
-            [ yScrollbar
-            , id "rendered_text2"
-            , paddingXY 50 50
-            , width (percent 100)
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.current_document.rendered_content)
-            ]
-            (text "")
-        )
+    el (contentStyle model)
+        [ yScrollbar
+        , id "rendered_text2"
+        , paddingXY 50 50
+        , width (percent 100)
+        , height (px h)
+        , property "innerHTML"
+            (Json.Encode.string model.current_document.rendered_content)
+        ]
+        (text "")
 
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
-    Keyed.row None [] [ ( (toString model.counter), innerSpecialContent model ) ]
+    Keyed.row None [] [ ( toString model.counter, innerSpecialContent model ) ]
 
 
 innerSpecialContent : Model -> Element Styles variation msg
 innerSpecialContent model =
     let
         h =
-            (toFloat model.window.height) - 180
+            toFloat model.window.height - 180
     in
-        (el Zero
-            [ yScrollbar
-            , id "rendered_text2"
-            , padding 20
-            , width (percent 100)
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.specialDocument.rendered_content)
-            ]
-            (text "")
-        )
+    el Zero
+        [ yScrollbar
+        , id "rendered_text2"
+        , padding 20
+        , width (percent 100)
+        , height (px h)
+        , property "innerHTML"
+            (Json.Encode.string model.specialDocument.rendered_content)
+        ]
+        (text "")
 
 
 selectTableOfContents : Model -> Element Styles variation Msg
@@ -168,14 +166,14 @@ searchDomainChecked model domain =
 readerTools : Model -> Element Styles variation msg
 readerTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 10, height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 10, height (px (toFloat model.window.height - 129.0)) ]
         [ el Box [ padding 20, center ] (text "Reader tools") ]
 
 
 newDocumentTools : Model -> Element Styles variation Msg
 newDocumentTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 15, width (px 300), height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 15, width (px 300), height (px (toFloat model.window.height - 129.0)) ]
         [ el Box [ width (px 250), height (px 35), paddingXY 10 10 ] (text "New document tools")
         , column Zero
             [ spacing 15, height (px 130), alignLeft ]
@@ -193,11 +191,11 @@ newDocumentTable model =
         [ spacing 20, width (px 250) ]
         [ [ el TOCItemMaster [] (text "Master")
           , el TOCItemChild [] (text "Current")
-          , (text "New")
+          , text "New"
           ]
         , [ el TOCItemMaster [] (text (Utility.shortString 20 model.master_document.title))
           , el TOCItemChild [] (text (Utility.shortString 20 (Stack.top 1 model.documentStack).title))
-          , (text (Utility.shortString 20 model.current_document.title))
+          , text (Utility.shortString 20 model.current_document.title)
           ]
         ]
 
@@ -223,7 +221,7 @@ homepage model =
         , paddingXY 8 0
         , verticalCenter
         ]
-        (el Zero [ verticalCenter ] (text ("Home page")))
+        (el Zero [ verticalCenter ] (text "Home page"))
 
 
 getDocument : Styles -> String -> String -> Model -> Element Styles variation Msg
@@ -241,7 +239,7 @@ getDocument style searchTerm label model =
 editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 30, height (px ((toFloat model.window.height) - 129.0)) ]
+        [ alignLeft, padding 20, spacing 30, height (px (toFloat model.window.height - 129.0)) ]
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
             [ spacing 4, height (px 130), alignLeft ]
@@ -260,7 +258,7 @@ editorTools model =
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
-            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ (toString model.current_document.attributes.level)))
+            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ toString model.current_document.attributes.level))
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (UI.displayIdentifier model))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
@@ -326,7 +324,7 @@ publicCheckbox : Model -> Element Styles variation Msg
 publicCheckbox model =
     row Box
         [ paddingXY 10 2, spacing 20, verticalCenter ]
-        [ (node "input" <|
+        [ node "input" <|
             el Zero
                 [ onClick TogglePublic
                 , Element.Attributes.checked model.current_document.attributes.public
@@ -334,8 +332,7 @@ publicCheckbox model =
                 , type_ "checkbox"
                 ]
                 (text "foo")
-          )
-        , (text "Public")
+        , text "Public"
         ]
 
 
@@ -347,7 +344,7 @@ printButton document =
 
 printUrl : Document -> String
 printUrl document =
-    Request.Api.printUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+    Request.Api.printUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
 
 
 exportButton : Document -> Element Styles variation Msg
@@ -358,18 +355,23 @@ exportButton document =
 
 exportUrl : Document -> String
 exportUrl document =
-    Request.Api.exportUrl ++ "/" ++ (toString document.id) ++ "?" ++ (printTypeString document)
+    Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
 
 
 imageCatalogueUrl : Document -> String
 imageCatalogueUrl document =
-    Request.Api.imageCatalogueUrl ++ "/" ++ (toString document.id)
+    Request.Api.imageCatalogueUrl ++ "/" ++ toString document.id
 
 
 imageCatalogueButton : Document -> Element Styles variation Msg
 imageCatalogueButton document =
     link (imageCatalogueUrl document) <|
         el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
+
+
+renumberDocumentsButton : Model -> Element Styles variation Msg
+renumberDocumentsButton model =
+    Basic.button "N" FlatButtonBlue [ onClick RenumberDocuments, width (px 30) ]
 
 
 printTypeString : Document -> String

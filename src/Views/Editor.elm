@@ -148,6 +148,7 @@ toolSelectorPanel model =
 
         --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
         , Common.exportButton model.current_document
+        , Common.renumberDocumentsButton model
         , Common.imageCatalogueButton model.current_document
         , Common.selectTableOfContents model
         , Common.toggleListView model

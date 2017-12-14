@@ -363,6 +363,7 @@ type Msg
     | ToggleRegister
     | ToggleUpdateRate
     | UpdateDocument
+    | RenumberDocuments
     | LatexFullRender
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
