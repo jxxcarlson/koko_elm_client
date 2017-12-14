@@ -1,7 +1,9 @@
 module Action.Document
     exposing
-        ( clearEditRecord
+        ( TOCLabel
+        , clearEditRecord
         , createDocument
+        , currentLabel
         , deleteDocument
         , getIntValueForKeyFromTagList
         , hasId
@@ -13,10 +15,12 @@ module Action.Document
         , saveDocumentCmd
         , selectDocument
         , selectNewDocument
+        , setCounterTextForLabel
         , setDocType
         , setIntValueForKeyInTagList
         , setTextType
         , setTitle
+        , tocLabelText
         , togglePublic
         , toggleUpdateRate
         , updateCurrentDocument
@@ -561,15 +565,19 @@ keyValueHelper tag =
     id
 
 
+
+{- TOC labels -}
+
+
 type alias TOCLabel =
     { section : Int, subsection : Int }
 
 
-{-| currentlLabel level previousLabel computes the next TOC label as
+{-| currentLabel level previousLabel computes the next TOC label as
 a function of the current level and previous label
 -}
-currentlLabel : Int -> TOCLabel -> TOCLabel
-currentlLabel level previousLabel =
+currentLabel : Int -> TOCLabel -> TOCLabel
+currentLabel level previousLabel =
     let
         section =
             if level == 1 then
@@ -584,6 +592,42 @@ currentlLabel level previousLabel =
                 0
     in
     { section = section, subsection = subsection }
+
+
+tocLabelText : TOCLabel -> String
+tocLabelText label =
+    let
+        sectionLabel =
+            if label.section > 0 then
+                toString label.section
+            else
+                ""
+
+        fullLabel =
+            if label.subsection > 0 then
+                sectionLabel ++ "." ++ toString label.subsection
+            else
+                sectionLabel
+    in
+    fullLabel
+
+
+setCounterTextForLabel : TOCLabel -> String
+setCounterTextForLabel label =
+    let
+        sectionText =
+            if label.section > 0 then
+                "\\setcounter{section}{" ++ toString label.section ++ "}"
+            else
+                ""
+
+        subsectionText =
+            if label.subsection > 0 then
+                "\\setcounter{subsection}{" ++ toString label.subsection ++ "}"
+            else
+                ""
+    in
+    String.join "\n" [ sectionText, subsectionText ]
 
 
 
