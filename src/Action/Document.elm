@@ -47,7 +47,13 @@ import Utility.KeyValue as KeyValue
 import Views.External exposing (windowData)
 
 
----( { model | documentStack = documentsRecord.documents }, Cmd.none )
+{- LaTeX Processing
+
+   clearEditRecord : AppState -> AppState
+   latexFullRender : Model -> ( Model, Cmd Msg )
+   macros : DocumentDict -> String
+
+-}
 
 
 clearEditRecord : AppState -> AppState
@@ -57,27 +63,6 @@ clearEditRecord appState =
             MiniLatex.Driver.emptyEditRecord
     in
     { appState | editRecord = newEditRecord }
-
-
-
---|> Debug.log "processed latex"
-
-
-{-| This is the function called when the user changes the document content
-in the Editor. It will call updateCurrentDocument which in turn calls
-Render.put. This last function pushe the document content to JS-world
-for processing by MathJax.
--}
-updateCurrentDocumentWithContent : Model -> ( Model, Cmd Msg )
-updateCurrentDocumentWithContent model =
-    let
-        _ =
-            Debug.log "updateCurrentDocumentWithContent" "now"
-    in
-    if model.current_document.attributes.textType == "latex" then
-        updateCurrentLatexDocumentWithContent model
-    else
-        updateCurrentDocument model model.current_document
 
 
 latexFullRender : Model -> ( Model, Cmd Msg )
@@ -136,6 +121,55 @@ macros documentDict =
             |> String.Extra.replace "$$" "\n$$\n"
     else
         ""
+
+
+
+{- Update/save document
+
+   inputContent : String -> Model -> ( Model, Cmd Msg )
+   updateCurrentDocumentWithContent : Model -> ( Model, Cmd Msg )
+   updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
+   updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
+   updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
+   saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
+   saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+
+-}
+
+
+inputContent : String -> Model -> ( Model, Cmd Msg )
+inputContent content model =
+    let
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textBufferDirty = True }
+
+        currentDocument =
+            model.current_document
+
+        newCurrentDocument =
+            { currentDocument | content = content }
+    in
+    ( { model | appState = newAppState, current_document = newCurrentDocument }, Cmd.none )
+
+
+{-| This is the function called when the user changes the document content
+in the Editor. It will call updateCurrentDocument which in turn calls
+Render.put. This last function pushe the document content to JS-world
+for processing by MathJax.
+-}
+updateCurrentDocumentWithContent : Model -> ( Model, Cmd Msg )
+updateCurrentDocumentWithContent model =
+    let
+        _ =
+            Debug.log "updateCurrentDocumentWithContent" "now"
+    in
+    if model.current_document.attributes.textType == "latex" then
+        updateCurrentLatexDocumentWithContent model
+    else
+        updateCurrentDocument model model.current_document
 
 
 updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
@@ -228,104 +262,6 @@ updateCurrentDocument model document =
                 ]
     in
     ( newModel, Cmd.batch cmds )
-
-
-toggleUpdateRate : Model -> Model
-toggleUpdateRate model =
-    let
-        oldAppState =
-            model.appState
-
-        tickerPaused =
-            not oldAppState.tickerPaused
-
-        tickInterval =
-            if tickerPaused then
-                5 * 60.0
-            else
-                1.0
-
-        newAppState =
-            { oldAppState | tickerPaused = tickerPaused, tickInterval = tickInterval }
-    in
-    { model | appState = newAppState }
-
-
-setTextType : String -> Model -> ( Model, Cmd Msg )
-setTextType textType model =
-    let
-        oldDocument =
-            model.current_document
-
-        docAttributes =
-            oldDocument.attributes
-
-        newDocumentAttributes =
-            { docAttributes | textType = textType }
-
-        appState =
-            model.appState
-
-        newAppState =
-            { appState | textTypeMenuDropped = False }
-
-        newModel =
-            { model | appState = newAppState }
-
-        -- TEST: foobar = Debug.log "foo" model.current_document.id
-        newDocument =
-            { oldDocument | attributes = newDocumentAttributes }
-    in
-    updateCurrentDocument newModel newDocument
-
-
-setDocType : String -> Model -> ( Model, Cmd Msg )
-setDocType docType model =
-    let
-        oldDocument =
-            model.current_document
-
-        docAttributes =
-            oldDocument.attributes
-
-        newDocAttributes =
-            { docAttributes | docType = docType }
-
-        appState =
-            model.appState
-
-        newAppState =
-            { appState | docTypeMenuDropped = False }
-
-        newModel =
-            { model | appState = newAppState }
-
-        -- TEST: foobar = Debug.log "foo" model.current_document.id
-        newDocument =
-            { oldDocument | attributes = newDocAttributes }
-    in
-    updateCurrentDocument newModel newDocument
-
-
-parseTagString : String -> List String
-parseTagString str =
-    String.split "," str
-        |> List.map String.trim
-
-
-updateTags : String -> Model -> ( Model, Cmd Msg )
-updateTags tagText model =
-    let
-        updatedTags =
-            parseTagString tagText
-
-        document =
-            model.current_document
-
-        updatedDocument =
-            { document | tags = updatedTags }
-    in
-    ( { model | current_document = updatedDocument }, Cmd.none )
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
@@ -447,16 +383,161 @@ saveDocumentCmd queryString document model =
     cmd
 
 
+
+{- User settings
+
+   toggleUpdateRate : Model -> Model
+   setTextType : String -> Model -> ( Model, Cmd Msg )
+   setDocType : String -> Model -> ( Model, Cmd Msg )
+   togglePublic : Model -> ( Model, Cmd Msg )
+
+
+-}
+
+
+toggleUpdateRate : Model -> Model
+toggleUpdateRate model =
+    let
+        oldAppState =
+            model.appState
+
+        tickerPaused =
+            not oldAppState.tickerPaused
+
+        tickInterval =
+            if tickerPaused then
+                5 * 60.0
+            else
+                1.0
+
+        newAppState =
+            { oldAppState | tickerPaused = tickerPaused, tickInterval = tickInterval }
+    in
+    { model | appState = newAppState }
+
+
+setTextType : String -> Model -> ( Model, Cmd Msg )
+setTextType textType model =
+    let
+        oldDocument =
+            model.current_document
+
+        docAttributes =
+            oldDocument.attributes
+
+        newDocumentAttributes =
+            { docAttributes | textType = textType }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textTypeMenuDropped = False }
+
+        newModel =
+            { model | appState = newAppState }
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newDocumentAttributes }
+    in
+    updateCurrentDocument newModel newDocument
+
+
+setDocType : String -> Model -> ( Model, Cmd Msg )
+setDocType docType model =
+    let
+        oldDocument =
+            model.current_document
+
+        docAttributes =
+            oldDocument.attributes
+
+        newDocAttributes =
+            { docAttributes | docType = docType }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | docTypeMenuDropped = False }
+
+        newModel =
+            { model | appState = newAppState }
+
+        -- TEST: foobar = Debug.log "foo" model.current_document.id
+        newDocument =
+            { oldDocument | attributes = newDocAttributes }
+    in
+    updateCurrentDocument newModel newDocument
+
+
+togglePublic : Model -> ( Model, Cmd Msg )
+togglePublic model =
+    let
+        document =
+            model.current_document
+
+        attributes =
+            document.attributes
+
+        newAttributes =
+            { attributes | public = not attributes.public }
+
+        newDocument =
+            { document | attributes = newAttributes }
+
+        updatedModel =
+            { model | current_document = newDocument }
+    in
+    updateCurrentDocument updatedModel newDocument
+
+
+
+{- TAGS
+
+   parseTagString : String -> List String
+   updateTags : String -> Model -> ( Model, Cmd Msg )
+
+
+
+-}
+
+
+parseTagString : String -> List String
+parseTagString str =
+    String.split "," str
+        |> List.map String.trim
+
+
+updateTags : String -> Model -> ( Model, Cmd Msg )
+updateTags tagText model =
+    let
+        updatedTags =
+            parseTagString tagText
+
+        document =
+            model.current_document
+
+        updatedDocument =
+            { document | tags = updatedTags }
+    in
+    ( { model | current_document = updatedDocument }, Cmd.none )
+
+
+
+{- DOCUMENT ID
+
+   hasId : Int -> Document -> Bool
+   getDocumentsById : Model -> Int -> List Document
+   getDocumentById : Model -> Int -> Maybe Document
+
+-}
+
+
 hasId : Int -> Document -> Bool
 hasId id document =
     document.id == id
-
-
-wordCount : Document -> Int
-wordCount document =
-    document.content
-        |> String.split " "
-        |> List.length
 
 
 getDocumentsById : Model -> Int -> List Document
@@ -469,6 +550,13 @@ getDocumentById model k =
     List.head (getDocumentsById model k)
 
 
+wordCount : Document -> Int
+wordCount document =
+    document.content
+        |> String.split " "
+        |> List.length
+
+
 createDocument : Model -> Document -> ( Model, Cmd Msg )
 createDocument model document =
     let
@@ -479,6 +567,15 @@ createDocument model document =
             { appState | tool = NewDocumentTools, page = EditorPage }
     in
     ( { model | appState = newAppState }, Request.Document.createDocument document model.current_user.token )
+
+
+
+{- MASTER DOCUMENT
+
+   masterDocLoaded : Model -> Document -> Bool
+   masterDocOpened : Model -> Document -> Bool
+
+-}
 
 
 masterDocLoaded : Model -> Document -> Bool
@@ -506,7 +603,14 @@ masterDocOpened model document =
 
 
 
-{- xxxx -}
+{- DOCUMENT OPERATIONS
+
+   selectDocument : Model -> Document -> ( Model, Cmd Msg )
+   selectNewDocument : Model -> Document -> ( Model, Cmd Msg )
+   deleteDocument : Result a value -> Model -> ( Model, Cmd Msg )
+   setTitle : String -> Model -> ( Model, Cmd Msg )
+
+-}
 
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
@@ -573,27 +677,6 @@ selectNewDocument model document =
     )
 
 
-togglePublic : Model -> ( Model, Cmd Msg )
-togglePublic model =
-    let
-        document =
-            model.current_document
-
-        attributes =
-            document.attributes
-
-        newAttributes =
-            { attributes | public = not attributes.public }
-
-        newDocument =
-            { document | attributes = newAttributes }
-
-        updatedModel =
-            { model | current_document = newDocument }
-    in
-    updateCurrentDocument updatedModel newDocument
-
-
 deleteDocument : Result a value -> Model -> ( Model, Cmd Msg )
 deleteDocument serverReply model =
     case serverReply of
@@ -639,22 +722,12 @@ setTitle title model =
     updateCurrentDocument model new_document
 
 
-inputContent : String -> Model -> ( Model, Cmd Msg )
-inputContent content model =
-    let
-        appState =
-            model.appState
 
-        newAppState =
-            { appState | textBufferDirty = True }
+{-
 
-        currentDocument =
-            model.current_document
+   TEMPORARY
 
-        newCurrentDocument =
-            { currentDocument | content = content }
-    in
-    ( { model | appState = newAppState, current_document = newCurrentDocument }, Cmd.none )
+-}
 
 
 migrateFromAsciidocLatex : Model -> ( Model, Cmd Msg )
