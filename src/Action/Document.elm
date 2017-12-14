@@ -3,15 +3,18 @@ module Action.Document
         ( clearEditRecord
         , createDocument
         , deleteDocument
+        , getIntValueForKeyFromTagList
         , hasId
         , inputContent
         , latexFullRender
         , migrateFromAsciidocLatex
+        , removeKeyInTagList
         , saveCurrentDocument
         , saveDocumentCmd
         , selectDocument
         , selectNewDocument
         , setDocType
+        , setIntValueForKeyInTagList
         , setTextType
         , setTitle
         , togglePublic
@@ -505,7 +508,7 @@ masterDocOpened model document =
 
 
 
--- texmacroFileId
+{- Key-value functions for a list of tags -}
 
 
 {-| Tags the form k:v define a key-value pair.
@@ -531,6 +534,16 @@ getIntValueForKeyFromTagList key tags =
     value
 
 
+removeKeyInTagList : String -> List String -> List String
+removeKeyInTagList key tags =
+    tags |> List.filter (\tag -> not (String.startsWith (key ++ ":") tag))
+
+
+setIntValueForKeyInTagList : String -> Int -> List String -> List String
+setIntValueForKeyInTagList key value tags =
+    tags |> removeKeyInTagList key |> (\list -> list ++ [ key ++ ":" ++ toString value ])
+
+
 keyValueHelper : String -> Maybe Int
 keyValueHelper tag =
     let
@@ -546,6 +559,35 @@ keyValueHelper tag =
                     idString |> String.toInt |> Result.toMaybe
     in
     id
+
+
+type alias TOCLabel =
+    { section : Int, subsection : Int }
+
+
+{-| currentlLabel level previousLabel computes the next TOC label as
+a function of the current level and previous label
+-}
+currentlLabel : Int -> TOCLabel -> TOCLabel
+currentlLabel level previousLabel =
+    let
+        section =
+            if level == 1 then
+                previousLabel.section + 1
+            else
+                previousLabel.section
+
+        subsection =
+            if level == 2 then
+                previousLabel.subsection + 1
+            else
+                0
+    in
+    { section = section, subsection = subsection }
+
+
+
+{- xxxx -}
 
 
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
