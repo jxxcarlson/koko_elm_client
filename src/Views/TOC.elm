@@ -1,15 +1,16 @@
 module Views.TOC
     exposing
         ( documentListView
+        , documentListView0
         , documentListViewForPhone
         , documentStackView
-        , documentListView0
         , toggleListView
         )
 
 import Action.UI as UI
-import Document.Stack as Stack
 import Color
+import Document.Stack as Stack
+import Document.TOC
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
@@ -101,7 +102,7 @@ documentStackView1 model =
 
 documentIndicator : Document -> Model -> Element Styles variation Msg
 documentIndicator document model =
-    el Transparent [ height (px 25), (moveDown 4), onClick (SelectMaster document) ] (documentIndicator1 document model)
+    el Transparent [ height (px 25), moveDown 4, onClick (SelectMaster document) ] (documentIndicator1 document model)
 
 
 documentIndicator1 : Document -> Model -> Element style variation msg
@@ -116,26 +117,26 @@ masterDocumentIndicator : Document -> Model -> Element style variation msg
 masterDocumentIndicator document model =
     case ( model.appState.masterDocLoaded, model.appState.masterDocOpened, document.id == model.master_document.id ) of
         ( True, True, True ) ->
-            (html (FontAwesome.caret_down Color.red 15))
+            html (FontAwesome.caret_down Color.red 15)
 
         ( _, _, _ ) ->
-            (html (FontAwesome.caret_right Color.red 15))
+            html (FontAwesome.caret_right Color.red 15)
 
 
 childDocumentIndicator : Document -> Model -> Element style variation msg
 childDocumentIndicator document model =
     case ( document.parent_id == 0, model.appState.masterDocLoaded, document.parent_id == model.master_document.id ) of
         ( True, _, _ ) ->
-            (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
+            html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15)
 
         ( False, True, True ) ->
-            (html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15))
+            html (FontAwesome.caret_right (Color.rgba 0 0 0 0) 15)
 
         ( False, False, False ) ->
-            (html (FontAwesome.caret_up (Color.blue) 15))
+            html (FontAwesome.caret_up Color.blue 15)
 
         ( _, _, _ ) ->
-            (html (FontAwesome.caret_up (Color.green) 15))
+            html (FontAwesome.caret_up Color.green 15)
 
 
 documentIndentLevel : Document -> Model -> Float
@@ -149,7 +150,7 @@ documentIndentLevel document model =
                 ( _, _ ) ->
                     1
     in
-        -12.0 + 16.0 * (toFloat (level - 1))
+    -12.0 + 16.0 * toFloat (level - 1)
 
 
 documentListHeader : Model -> Element Styles variation Msg
@@ -164,7 +165,7 @@ documentStackHeader model =
 
 numberOfDocumentInStack : Model -> String
 numberOfDocumentInStack model =
-    "Recent documents" ++ ": " ++ (toString (List.length model.documentStack))
+    "Recent documents" ++ ": " ++ toString (List.length model.documentStack)
 
 
 viewTitle : Model -> Document -> Document -> Element Styles variation Msg
@@ -189,20 +190,29 @@ titleDisplay : Model -> Document -> Document -> Element Styles variation Msg
 titleDisplay model selectedDocument document =
     let
         windowDelta =
-            (toFloat (model.window.width - 1300))
+            toFloat (model.window.width - 1300)
 
         scaledWindowDelta =
-            ((windowDelta / 25.0) |> round)
+            (windowDelta / 25.0) |> round
 
         maxTitleCharacters =
-            (35 + scaledWindowDelta)
+            35 + scaledWindowDelta
+
+        label =
+            Document.TOC.tocLabel document
+
+        titleText =
+            Utility.shortString maxTitleCharacters document.title
+
+        title =
+            label ++ " " ++ titleText
     in
-        el (tocStyle selectedDocument document)
-            [ onClick (SelectDocument document)
-            , paddingXY 8 0
-            , height (px 20)
-            ]
-            (el TOCTitle [ verticalCenter ] (text (Utility.shortString maxTitleCharacters document.title)))
+    el (tocStyle selectedDocument document)
+        [ onClick (SelectDocument document)
+        , paddingXY 8 0
+        , height (px 20)
+        ]
+        (el TOCTitle [ verticalCenter ] (text title))
 
 
 tocStyle : Document -> Document -> Styles
@@ -242,4 +252,4 @@ toggleListView model =
                 , tool = TableOfContents
             }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+    ( { model | appState = newAppState }, Cmd.none )

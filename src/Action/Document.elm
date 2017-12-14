@@ -1,26 +1,19 @@
 module Action.Document
     exposing
-        ( TOCLabel
-        , clearEditRecord
+        ( clearEditRecord
         , createDocument
-        , currentLabel
         , deleteDocument
-        , getIntValueForKeyFromTagList
         , hasId
         , inputContent
         , latexFullRender
         , migrateFromAsciidocLatex
-        , removeKeyInTagList
         , saveCurrentDocument
         , saveDocumentCmd
         , selectDocument
         , selectNewDocument
-        , setCounterTextForLabel
         , setDocType
-        , setIntValueForKeyInTagList
         , setTextType
         , setTitle
-        , tocLabelText
         , togglePublic
         , toggleUpdateRate
         , updateCurrentDocument
@@ -50,6 +43,7 @@ import String.Extra
 import Task
 import Types exposing (..)
 import Utility exposing (replaceIf)
+import Utility.KeyValue as KeyValue
 import Views.External exposing (windowData)
 
 
@@ -96,7 +90,7 @@ latexFullRender model =
             model.current_document
 
         maybeSectionNumber =
-            getIntValueForKeyFromTagList "sectionNumber" document.tags
+            KeyValue.getIntValueForKeyFromTagList "sectionNumber" document.tags
 
         sectionNumberCommand =
             case maybeSectionNumber of
@@ -512,125 +506,6 @@ masterDocOpened model document =
 
 
 
-{- Key-value functions for a list of tags -}
-
-
-{-| Tags the form k:v define a key-value pair.
-The function extractValue key taglist resturns
-the value of the key-value pair as a Maybe Int
--}
-getIntValueForKeyFromTagList : String -> List String -> Maybe Int
-getIntValueForKeyFromTagList key tags =
-    let
-        maybeMacrotag =
-            tags
-                |> List.filter (\tag -> String.startsWith (key ++ ":") tag)
-                |> List.head
-
-        value =
-            case maybeMacrotag of
-                Nothing ->
-                    Nothing
-
-                Just tag ->
-                    keyValueHelper tag
-    in
-    value
-
-
-removeKeyInTagList : String -> List String -> List String
-removeKeyInTagList key tags =
-    tags |> List.filter (\tag -> not (String.startsWith (key ++ ":") tag))
-
-
-setIntValueForKeyInTagList : String -> Int -> List String -> List String
-setIntValueForKeyInTagList key value tags =
-    tags |> removeKeyInTagList key |> (\list -> list ++ [ key ++ ":" ++ toString value ])
-
-
-keyValueHelper : String -> Maybe Int
-keyValueHelper tag =
-    let
-        maybeIdString =
-            tag |> String.split ":" |> List.drop 1 |> List.head
-
-        id =
-            case maybeIdString of
-                Nothing ->
-                    Nothing
-
-                Just idString ->
-                    idString |> String.toInt |> Result.toMaybe
-    in
-    id
-
-
-
-{- TOC labels -}
-
-
-type alias TOCLabel =
-    { section : Int, subsection : Int }
-
-
-{-| currentLabel level previousLabel computes the next TOC label as
-a function of the current level and previous label
--}
-currentLabel : Int -> TOCLabel -> TOCLabel
-currentLabel level previousLabel =
-    let
-        section =
-            if level == 1 then
-                previousLabel.section + 1
-            else
-                previousLabel.section
-
-        subsection =
-            if level == 2 then
-                previousLabel.subsection + 1
-            else
-                0
-    in
-    { section = section, subsection = subsection }
-
-
-tocLabelText : TOCLabel -> String
-tocLabelText label =
-    let
-        sectionLabel =
-            if label.section > 0 then
-                toString label.section
-            else
-                ""
-
-        fullLabel =
-            if label.subsection > 0 then
-                sectionLabel ++ "." ++ toString label.subsection
-            else
-                sectionLabel
-    in
-    fullLabel
-
-
-setCounterTextForLabel : TOCLabel -> String
-setCounterTextForLabel label =
-    let
-        sectionText =
-            if label.section > 0 then
-                "\\setcounter{section}{" ++ toString label.section ++ "}"
-            else
-                ""
-
-        subsectionText =
-            if label.subsection > 0 then
-                "\\setcounter{subsection}{" ++ toString label.subsection ++ "}"
-            else
-                ""
-    in
-    String.join "\n" [ sectionText, subsectionText ]
-
-
-
 {- xxxx -}
 
 
@@ -644,7 +519,7 @@ selectDocument model document =
                 model.appState
 
         maybeMacroFileId =
-            getIntValueForKeyFromTagList "texmacros" document.tags
+            KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags
 
         newAppState =
             { appState

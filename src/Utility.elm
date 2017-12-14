@@ -1,12 +1,12 @@
 module Utility exposing (..)
 
-import Html exposing (..)
-import Json.Decode as Json exposing (int, list, string, float, Decoder)
-import Html.Attributes exposing (..)
-import Element.Events as EE exposing (on, keyCode)
 import Element
-import Types exposing (Model, Page)
+import Element.Events as EE exposing (keyCode, on)
 import External exposing (toJs)
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Json.Decode as Json exposing (Decoder, float, int, list, string)
+import Types exposing (Model, Page)
 import Views.External exposing (windowData)
 
 
