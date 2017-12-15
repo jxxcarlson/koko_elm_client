@@ -725,13 +725,19 @@ deleteDocument serverReply model =
 setTitle : String -> Model -> ( Model, Cmd Msg )
 setTitle title model =
     let
-        doc =
+        document =
             model.current_document
 
-        new_document =
-            { doc | title = title }
+        updatedDocument =
+            { document | title = title }
+
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | textBufferDirty = True }
     in
-    updateCurrentDocument model new_document
+    ( { model | current_document = updatedDocument, appState = newAppState }, Cmd.none )
 
 
 
