@@ -193,7 +193,7 @@ titleDisplay model selectedDocument document =
             toFloat (model.window.width - 1300)
 
         scaledWindowDelta =
-            (windowDelta / 25.0) |> round
+            (windowDelta / 30.0) |> round
 
         maxTitleCharacters =
             28 + scaledWindowDelta
@@ -209,7 +209,7 @@ titleDisplay model selectedDocument document =
     in
     el (tocStyle selectedDocument document)
         [ onClick (SelectDocument document)
-        , paddingXY 8 0
+        , paddingXY 0 0
         , height (px 20)
         ]
         (el TOCTitle [ verticalCenter ] (text title))
