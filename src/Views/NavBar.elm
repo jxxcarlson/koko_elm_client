@@ -1,4 +1,4 @@
-module Views.NavBar exposing (navigation, loginButton)
+module Views.NavBar exposing (loginButton, navigation)
 
 import Action.UI as UI
 import Color
@@ -6,9 +6,9 @@ import Configuration
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
+import Element.Keyed as Keyed
 import FontAwesome
 import Json.Decode as Json
-import StyleSheet exposing (..)
 import StyleSheet exposing (..)
 import Types exposing (..)
 import Utility
@@ -97,7 +97,7 @@ searchForm model =
                 , height (px 29)
                 , width (px 300)
                 ]
-                (model.searchQueryInputBuffer)
+                model.searchQueryInputBuffer
             , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
             ]
         , row Zero
@@ -124,7 +124,7 @@ basicSearchForm model =
                 , height (px 29)
                 , minWidth (px 180)
                 ]
-                (model.searchQueryInputBuffer)
+                model.searchQueryInputBuffer
             , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
             ]
         ]
@@ -145,7 +145,7 @@ searchButton model =
 
 searchIcon : Model -> SearchDomain -> Element style variation msg
 searchIcon model searchDomain =
-    (EL.html (FontAwesome.search (Color.white) 25))
+    EL.html (FontAwesome.search Color.white 25)
 
 
 loginButton : Styles -> Model -> Element Styles variation Msg
@@ -163,12 +163,12 @@ pageSelector : Model -> Element Styles variation Msg
 pageSelector model =
     row NavBar
         [ spacing 12 ]
-        [ (userHomePagesIcon model)
-        , Utility.visibleIf ((model.window.width > Configuration.tabletWidth) && (model.appState.signedIn)) (userPreferencesIcon model)
+        [ userHomePagesIcon model
+        , Utility.visibleIf ((model.window.width > Configuration.tabletWidth) && model.appState.signedIn) (userPreferencesIcon model)
         , Utility.visibleIf model.appState.signedIn (homepageIcon model)
 
         -- , el NavBar [ alignBottom, height (px 30), padding 8 ] (startPageIcon model)
-        , (startPageIcon model)
+        , startPageIcon model
         ]
 
 
