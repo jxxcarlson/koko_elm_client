@@ -196,7 +196,7 @@ titleDisplay model selectedDocument document =
             (windowDelta / 25.0) |> round
 
         maxTitleCharacters =
-            35 + scaledWindowDelta
+            28 + scaledWindowDelta
 
         label =
             Document.TOC.tocLabel document
