@@ -84,22 +84,30 @@ searchOptionsMenu model =
         ]
 
 
+searchElement model =
+    inputText SearchField
+        [ EE.onInput UpdateSearchQueryInputBuffer
+        , Utility.onKeyUp (DoSearch model.searchState.domain)
+        , placeholder "Search: title, k:keyword .."
+        , height (px 29)
+        , width (px 300)
+        ]
+        model.searchQueryInputBuffer
+
+
+
+-- , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
+--  Keyed.row None [] [ ( toString model.counter, innerRenderedContent model ) ]
+
+
 searchForm : Model -> Element Styles variation Msg
 searchForm model =
     row NavBar
         [ spacing 8, verticalCenter ]
-        [ row Zero
+        [ Keyed.row Zero
             []
-            [ inputText SearchField
-                [ EE.onInput UpdateSearchQueryInputBuffer
-                , Utility.onKeyUp (DoSearch model.searchState.domain)
-                , placeholder "Search: title, k:keyword .."
-                , height (px 29)
-                , width (px 300)
-                ]
-                model.searchQueryInputBuffer
-            , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
-            ]
+            [ ( toString model.counter, searchElement model ) ]
+        , row Zero [] [ circle 10 ClearButton [ moveLeft 35, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x") ]
         , row Zero
             [ spacing 10, moveLeft 18 ]
             [ -- searchButton model
