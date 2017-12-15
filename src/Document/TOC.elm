@@ -112,7 +112,7 @@ updateSectionNumberTags tocLabel document =
         tags =
             document.tags
                 |> KeyValue.setIntValueForKeyInTagList "sectionNumber" tocLabel.section
-                |> KeyValue.setIntValueForKeyInTagList "subsadsectionNumber" tocLabel.subsection
+                |> KeyValue.setIntValueForKeyInTagList "subsectionNumber" tocLabel.subsection
     in
     { document | tags = tags }
 
