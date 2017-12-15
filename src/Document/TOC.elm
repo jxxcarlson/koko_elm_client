@@ -111,6 +111,7 @@ updateSectionNumberTags tocLabel document =
     let
         tags =
             document.tags
+                |> KeyValue.removeKeyInTagList "subsadsectionNumber"
                 |> KeyValue.setIntValueForKeyInTagList "sectionNumber" tocLabel.section
                 |> KeyValue.setIntValueForKeyInTagList "subsectionNumber" tocLabel.subsection
     in
