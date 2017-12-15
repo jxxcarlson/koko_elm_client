@@ -689,6 +689,13 @@ update msg model =
             ( model, Cmd.none )
 
         Tick time ->
+            let
+                tick =
+                    model.tick + 1
+
+                newModel =
+                    { model | tick = tick }
+            in
             if
                 model.appState.page
                     == EditorPage
@@ -697,13 +704,13 @@ update msg model =
                     /= "master"
             then
                 if model.current_document.attributes.textType == "latex" then
-                    saveCurrentDocument "" model
+                    saveCurrentDocument "" newModel
                 else
-                    updateCurrentDocumentWithContent model
+                    updateCurrentDocumentWithContent newModel
             else if model.appState.online then
-                Action.Periodic.do model time
+                Action.Periodic.do newModel time
             else
-                Action.Channel.joinChannel model
+                Action.Channel.joinChannel newModel
 
         -- (model, Cmd.none) --
         SendToJS str ->
@@ -977,6 +984,7 @@ init flags location =
             , fileInputId = ""
             , date = Nothing
             , time = Nothing
+            , tick = 0
             , lastEditTime = Nothing
             , fileToUpload = Nothing
             , userList = []
