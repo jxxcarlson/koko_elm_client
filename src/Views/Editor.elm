@@ -38,9 +38,24 @@ editor model =
     ]
 
 
-titlePanel : Model -> Element Styles variation Msg
+
+-- titlePanel : Model -> Element Styles variation Msg
+
+
 titlePanel model =
-    inputText TitleStyle [ paddingXY 10 8, width (percent 100), height (percent 100), onInput Title, placeholder "Title" ] model.current_document.title
+    Keyed.row None
+        []
+        [ ( toString model.counter
+          , inputText TitleStyle
+                [ paddingXY 10 8
+                , width (percent 100)
+                , height (percent 100)
+                , onInput Title
+                , placeholder "Title"
+                ]
+                model.current_document.title
+          )
+        ]
 
 
 contentPanel : Model -> Element Styles variation Msg
