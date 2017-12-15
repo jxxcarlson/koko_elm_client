@@ -1,22 +1,19 @@
 module Configuration exposing (..)
 
--- --
--- -- --
-
 
 host : String
 host =
-    "http://localhost:4000"
+    "https://nshost.herokuapp.com"
 
 
 client : String
 client =
-    "http://localhost:3000"
+    "http://www.knode.io"
 
 
 websocketHost : String
 websocketHost =
-    "ws://localhost:4000/socket/websocket"
+    "wss://nshost.herokuapp.com/socket/websocket"
 
 
 tickInterval : Float

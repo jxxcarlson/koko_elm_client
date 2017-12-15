@@ -1,6 +1,7 @@
 module Action.Periodic exposing (do)
 
 import Action.Channel as Channel
+import Action.Document
 import Task
 import Time
 import Types exposing (Model, Msg(..), Page(..), UserStateRecord)
@@ -20,11 +21,8 @@ doUpdateUserRecord userStateRecord model =
     model.userStateRecord /= userStateRecord
 
 
-do model time =
+gotoReader time model =
     let
-        integerTick =
-            round (time / 1000.0)
-
         intervalSinceLastEdit =
             -- interval in seconds
             case model.lastEditTime of
@@ -34,40 +32,93 @@ do model time =
                 Nothing ->
                     0
 
-        _ =
-            Debug.log "Last Edit Interval" ( integerTick % 1000, intervalSinceLastEdit )
-
         appState =
             model.appState
 
-        page =
+        newPage =
             if intervalSinceLastEdit > 600.0 then
                 ReaderPage
             else
                 appState.page
 
         newAppState =
-            { appState | page = page }
+            { appState | page = newPage }
+    in
+    ( { model | appState = newAppState }, Cmd.none )
 
-        ( model1, cmd1 ) =
-            Channel.sendMessage model
 
+sendChannelMessage model =
+    Channel.sendMessage model
+
+
+updateUserState model =
+    let
         newUserStateRecord =
             computeUserStateRecord model
 
-        cmd3 =
-            if doUpdateUserRecord newUserStateRecord model then
-                User.Request.putUserStateRecord newUserStateRecord model
-            else
-                Cmd.none
+        cmd =
+            Task.perform ReceiveTime Time.now
+    in
+    if doUpdateUserRecord newUserStateRecord model then
+        ( model, Cmd.batch [ User.Request.putUserStateRecord newUserStateRecord model, cmd ] )
+    else
+        ( model, cmd )
 
-        model2 =
-            { model1 | appState = newAppState, userStateRecord = computeUserStateRecord model }
+
+documentNeedsUpdate : Model -> Bool
+documentNeedsUpdate model =
+    model.appState.page
+        == EditorPage
+        && model.appState.textBufferDirty
+        && model.current_document.attributes.docType
+        /= "master"
+        && model.current_document.attributes.textType
+        /= "latex"
+
+
+saveLatexDocument model =
+    if (model.current_document.attributes.textType == "latex") && model.appState.textBufferDirty then
+        Action.Document.saveCurrentDocument "" model
+    else
+        ( model, Cmd.none )
+
+
+doCycle model time =
+    let
+        cycle =
+            Debug.log "cycle"
+                (model.tick % 5)
 
         cmd2 =
             Task.perform ReceiveTime Time.now
     in
-    ( model2, Cmd.batch [ cmd1, cmd2, cmd3 ] )
+    case cycle of
+        0 ->
+            updateUserState model
+
+        1 ->
+            sendChannelMessage model
+
+        2 ->
+            Channel.joinChannel model
+
+        3 ->
+            saveLatexDocument model
+
+        _ ->
+            gotoReader time model
+
+
+do model time =
+    let
+        _ =
+            Debug.log "Cycle" -1
+    in
+    if documentNeedsUpdate model then
+        -- doCycle model cycle time
+        Action.Document.updateCurrentDocumentWithContent model
+    else
+        doCycle model time
 
 
 
