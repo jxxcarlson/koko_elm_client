@@ -1,8 +1,8 @@
 module MiniLatex.Parser exposing (..)
 
-import Parser exposing (..)
 import Dict
 import List.Extra
+import Parser exposing (..)
 
 
 {- ELLIE: https://ellie-app.com/pcB5b3BPfa1/0
@@ -27,7 +27,7 @@ type LatexExpression
 
 defaultLatexList : LatexExpression
 defaultLatexList =
-    LatexList ([ LXString "Parse Error" ])
+    LatexList [ LXString "Parse Error" ]
 
 
 defaultLatexExpression : List LatexExpression
@@ -41,12 +41,12 @@ parseParagraph text =
         expr =
             Parser.run latexList text
     in
-        case expr of
-            Ok (LatexList list) ->
-                list
+    case expr of
+        Ok (LatexList list) ->
+            list
 
-            _ ->
-                []
+        _ ->
+            []
 
 
 
@@ -262,7 +262,7 @@ arg : Parser LatexExpression
 arg =
     succeed identity
         |. keyword "{"
-        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, (lazy (\_ -> macro)) ])
+        |= repeat zeroOrMore (oneOf [ words2, inlineMath2, lazy (\_ -> macro) ])
         |. symbol "}"
         |> map LatexList
 
@@ -352,7 +352,7 @@ environmentOfType envType =
             else
                 envType
     in
-        (environmentParser envKind) endWord envType
+    environmentParser envKind endWord envType
 
 
 
@@ -461,4 +461,12 @@ beginWord =
     succeed identity
         |. ignore zeroOrMore ((==) ' ')
         |. symbol "\\begin{"
+        |= parseUntil "}"
+
+
+endWord : Parser String
+endWord =
+    succeed identity
+        |. ignore zeroOrMore ((==) ' ')
+        |. symbol "\\end{"
         |= parseUntil "}"

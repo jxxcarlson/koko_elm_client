@@ -19,6 +19,8 @@ module MiniLatex.Differ
         )
 
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
+import MiniLatex.Parser
+import Parser
 import Regex
 
 
@@ -57,19 +59,53 @@ emptyEditRecord =
 type ParserState
     = Start
     | InParagraph
-    | InBlock
+    | InBlock String
     | Error
 
 
 type LineType
     = Blank
     | Text
-    | BeginBlock
-    | EndBlock
+    | BeginBlock String
+    | EndBlock String
 
 
 type alias ParserRecord =
     { currentParagraph : String, paragraphList : List String, state : ParserState }
+
+
+getBeginArg : String -> String
+getBeginArg line =
+    let
+        parseResult =
+            Parser.run MiniLatex.Parser.beginWord line
+
+        arg =
+            case parseResult of
+                Ok word ->
+                    word
+
+                Err _ ->
+                    ""
+    in
+    arg
+
+
+getEndArg : String -> String
+getEndArg line =
+    let
+        parseResult =
+            Parser.run MiniLatex.Parser.endWord line
+
+        arg =
+            case parseResult of
+                Ok word ->
+                    word
+
+                Err _ ->
+                    ""
+    in
+    arg
 
 
 lineType : String -> LineType
@@ -77,9 +113,9 @@ lineType line =
     if line == "" then
         Blank
     else if String.startsWith "\\begin" line then
-        BeginBlock
+        BeginBlock (getBeginArg line)
     else if String.startsWith "\\end" line then
-        EndBlock
+        EndBlock (getEndArg line)
     else
         Text
 
@@ -93,25 +129,28 @@ nextState line parserState =
         ( Start, Text ) ->
             InParagraph
 
-        ( Start, BeginBlock ) ->
-            InBlock
+        ( Start, BeginBlock arg ) ->
+            InBlock arg
 
-        ( InBlock, Blank ) ->
-            InBlock
+        ( InBlock arg, Blank ) ->
+            InBlock arg
 
-        ( InBlock, Text ) ->
-            InBlock
+        ( InBlock arg, Text ) ->
+            InBlock arg
 
-        ( InBlock, EndBlock ) ->
-            Start
+        ( InBlock arg1, EndBlock arg2 ) ->
+            if arg1 == arg2 then
+                Start
+            else
+                InBlock arg1
 
         ( InParagraph, Text ) ->
             InParagraph
 
-        ( InParagraph, BeginBlock ) ->
+        ( InParagraph, BeginBlock str ) ->
             InParagraph
 
-        ( InParagraph, EndBlock ) ->
+        ( InParagraph, EndBlock arg ) ->
             InParagraph
 
         ( InParagraph, Blank ) ->
@@ -154,7 +193,7 @@ updateParserRecord line parserRecord =
                 , state = state2
             }
 
-        InBlock ->
+        InBlock arg ->
             { parserRecord
                 | currentParagraph = joinLines parserRecord.currentParagraph line
                 , state = state2

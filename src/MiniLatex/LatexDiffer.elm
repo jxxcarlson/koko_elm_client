@@ -38,7 +38,7 @@ initialize2 latexState text =
 
         --|> List.map (\x -> "\n<p>\n" ++ x ++ "</p>")
     in
-        EditRecord paragraphs renderedParagraphs2 latexState2 [] 0
+    EditRecord paragraphs renderedParagraphs2 latexState2 [] 0
 
 
 
