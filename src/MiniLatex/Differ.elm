@@ -1,19 +1,25 @@
 module MiniLatex.Differ
     exposing
         ( EditRecord
+        , ParserRecord
+        , ParserState(..)
+        , diff
+          -- for testing
         , emptyEditRecord
         , initialize
         , isEmpty
+        , logicalParagraphParse
+        , logicalParagraphify
+        , nextState
         , paragraphify
-        , update
-        , diff
-          -- for testing
         , renderDiff
           -- for testing
+        , update
+        , updateParserRecord
         )
 
-import Regex
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
+import Regex
 
 
 {- TYPES -}
@@ -48,12 +54,143 @@ emptyEditRecord =
     EditRecord [] [] emptyLatexState [] 0
 
 
+type ParserState
+    = Start
+    | InParagraph
+    | InBlock
+    | Error
+
+
+type LineType
+    = Blank
+    | Text
+    | BeginBlock
+    | EndBlock
+
+
+type alias ParserRecord =
+    { currentParagraph : String, paragraphList : List String, state : ParserState }
+
+
+lineType : String -> LineType
+lineType line =
+    if line == "" then
+        Blank
+    else if String.startsWith "\\begin" line then
+        BeginBlock
+    else if String.startsWith "\\end" line then
+        EndBlock
+    else
+        Text
+
+
+nextState : String -> ParserState -> ParserState
+nextState line parserState =
+    case ( parserState, lineType line ) of
+        ( Start, Blank ) ->
+            Start
+
+        ( Start, Text ) ->
+            InParagraph
+
+        ( Start, BeginBlock ) ->
+            InBlock
+
+        ( InBlock, Blank ) ->
+            InBlock
+
+        ( InBlock, Text ) ->
+            InBlock
+
+        ( InBlock, EndBlock ) ->
+            Start
+
+        ( InParagraph, Text ) ->
+            InParagraph
+
+        ( InParagraph, BeginBlock ) ->
+            InParagraph
+
+        ( InParagraph, EndBlock ) ->
+            InParagraph
+
+        ( InParagraph, Blank ) ->
+            Start
+
+        ( _, _ ) ->
+            Error
+
+
+joinLines : String -> String -> String
+joinLines a b =
+    case ( a, b ) of
+        ( "", _ ) ->
+            b
+
+        ( _, "" ) ->
+            a
+
+        ( a, b ) ->
+            a ++ "\n" ++ b
+
+
+updateParserRecord : String -> ParserRecord -> ParserRecord
+updateParserRecord line parserRecord =
+    let
+        state2 =
+            nextState line parserRecord.state
+    in
+    case state2 of
+        Start ->
+            { parserRecord
+                | currentParagraph = ""
+                , paragraphList = parserRecord.paragraphList ++ [ joinLines parserRecord.currentParagraph line ]
+                , state = state2
+            }
+
+        InParagraph ->
+            { parserRecord
+                | currentParagraph = joinLines parserRecord.currentParagraph line
+                , state = state2
+            }
+
+        InBlock ->
+            { parserRecord
+                | currentParagraph = joinLines parserRecord.currentParagraph line
+                , state = state2
+            }
+
+        Error ->
+            parserRecord
+
+
+logicalParagraphParse : String -> ParserRecord
+logicalParagraphParse text =
+    text
+        |> String.split "\n"
+        |> List.foldl updateParserRecord { currentParagraph = "", paragraphList = [], state = Start }
+
+
+{-| logicalParagraphify text: split text into logical
+parapgraphs, where these are either normal paragraphs, i.e.,
+blocks text with no blank lines surrounded by blank lines,
+or outer blocks of the form \begin{_} ... \end{_}.
+-}
+logicalParagraphify : String -> List String
+logicalParagraphify text =
+    let
+        lastState =
+            logicalParagraphParse text
+    in
+    lastState.paragraphList
+
+
 paragraphify : String -> List String
 paragraphify text =
     --String.split "\n\n" text
     Regex.split Regex.All (Regex.regex "\\n\\n+") text
         |> List.filter (\x -> String.length x /= 0)
-        |> List.map ((String.trim) >> (\x -> x ++ "\n\n"))
+        |> List.map (String.trim >> (\x -> x ++ "\n\n"))
 
 
 commonInitialSegment : List String -> List String -> List String
@@ -70,10 +207,10 @@ commonInitialSegment x y =
             b =
                 List.take 1 y
         in
-            if a == b then
-                a ++ commonInitialSegment (List.drop 1 x) (List.drop 1 y)
-            else
-                []
+        if a == b then
+            a ++ commonInitialSegment (List.drop 1 x) (List.drop 1 y)
+        else
+            []
 
 
 commonTerminalSegment : List String -> List String -> List String
@@ -106,7 +243,7 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-        EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
+    EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
 
 
 initialize2 : (List String -> ( List String, LatexState )) -> String -> EditRecord
@@ -124,7 +261,7 @@ initialize2 transformParagraphs text =
         ( renderedParagraphs, latexState ) =
             transformParagraphs paragraphs
     in
-        EditRecord paragraphs renderedParagraphs latexState idList 0
+    EditRecord paragraphs renderedParagraphs latexState idList 0
 
 
 isEmpty : EditRecord -> Bool
@@ -144,7 +281,7 @@ update seed transformer editorRecord text =
         diffPacket =
             renderDiff seed transformer diffRecord editorRecord.renderedParagraphs
     in
-        EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
+    EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
 
 
 diff : List String -> List String -> DiffRecord
@@ -169,17 +306,17 @@ diff u v =
             v |> List.drop la |> dropLast lb
 
         bb =
-            if la == (List.length u) then
+            if la == List.length u then
                 []
             else
                 b
     in
-        DiffRecord a bb x y
+    DiffRecord a bb x y
 
 
 prefixer : Int -> Int -> String
 prefixer b k =
-    "p." ++ (toString b) ++ "." ++ (toString k)
+    "p." ++ toString b ++ "." ++ toString k
 
 
 renderDiff : Int -> (String -> String) -> DiffRecord -> List String -> DiffPacket
@@ -204,9 +341,9 @@ renderDiff seed renderer diffRecord renderedStringList =
             List.range 1 n |> List.map (prefixer seed)
 
         middleSegmentRendered =
-            (List.map renderer) diffRecord.middleSegmentInTarget
+            List.map renderer diffRecord.middleSegmentInTarget
     in
-        { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
-        , idList = idList
-        , idListStart = ii
-        }
+    { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
+    , idList = idList
+    , idListStart = ii
+    }
