@@ -173,6 +173,14 @@ joinLines a b =
             a ++ "\n" ++ b
 
 
+fixLine : String -> String
+fixLine line =
+    if line == "" then
+        "\n"
+    else
+        line
+
+
 updateParserRecord : String -> ParserRecord -> ParserRecord
 updateParserRecord line parserRecord =
     let
@@ -195,7 +203,7 @@ updateParserRecord line parserRecord =
 
         InBlock arg ->
             { parserRecord
-                | currentParagraph = joinLines parserRecord.currentParagraph line
+                | currentParagraph = joinLines parserRecord.currentParagraph (fixLine line)
                 , state = state2
             }
 
