@@ -703,7 +703,7 @@ update msg model =
                     && model.current_document.attributes.docType
                     /= "master"
             then
-                if model.current_document.attributes.textType == "latex" then
+                if model.current_document.attributes.textType == "latex"  then
                     saveCurrentDocument "" newModel
                 else
                     updateCurrentDocumentWithContent newModel
