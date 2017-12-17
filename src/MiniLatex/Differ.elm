@@ -120,6 +120,9 @@ lineType line =
         Text
 
 
+{-| nextState is the transition function for a finite-state
+machine which parses lines.
+-}
 nextState : String -> ParserState -> ParserState
 nextState line parserState =
     case ( parserState, lineType line ) of
@@ -219,7 +222,7 @@ updateParserRecord line parserRecord =
 
 logicalParagraphParse : String -> ParserRecord
 logicalParagraphParse text =
-    text
+    (text ++ "\n")
         |> String.split "\n"
         |> List.foldl updateParserRecord { currentParagraph = "", paragraphList = [], state = Start }
 
