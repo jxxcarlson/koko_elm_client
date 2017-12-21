@@ -45,7 +45,7 @@ module.exports = {
         options: {
           verbose: true,
           debug: true,
-          warn: true,
+          warn: false,
           pathToMake: '.bin/unbuffered-elm-make',
 
         },

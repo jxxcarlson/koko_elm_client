@@ -125,7 +125,7 @@ update msg model =
         NoOp ->
             ( { model | message = "NoOp" }, Cmd.none )
 
-        DocMsg Foo ->
+        Authentication Foo ->
             ( { model | message = "DocMsg: Foo" }, Cmd.none )
 
         Resize w h ->
@@ -152,13 +152,13 @@ update msg model =
         Signout ->
             User.Login.signout "Please sign in" model
 
-        AuthenticationAction ->
+        Authentication AuthenticationAction ->
             if model.appState.signedIn then
                 User.Login.signout "You are now signed out." model
             else
                 Action.UI.setAuthorizing model True
 
-        CancelAuthentication ->
+        Authentication CancelAuthentication ->
             Action.UI.toggleAuthorizing model
 
         Login ->
@@ -173,7 +173,7 @@ update msg model =
         Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
-        CompleteRegistration result ->
+        Authentication (CompleteRegistration result) ->
             User.Login.completeRegistration result model
 
         GetTokenCompleted result ->

@@ -14,7 +14,7 @@ cancelAuthentication style model =
     Basic.button
         "Cancel"
         Button
-        [ EE.onClick CancelAuthentication
+        [ EE.onClick (Authentication CancelAuthentication)
         , EA.width (px 85)
         , EA.height (px 30)
         ]

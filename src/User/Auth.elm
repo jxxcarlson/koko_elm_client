@@ -22,7 +22,7 @@ loginUserCmd model loginUrl =
 
 registerUserCmd : Model -> String -> Cmd Msg
 registerUserCmd model registerUserUrl =
-    Http.send CompleteRegistration (registerUser model registerUserUrl)
+    Http.send (Authentication << CompleteRegistration) (registerUser model registerUserUrl)
 
 
 

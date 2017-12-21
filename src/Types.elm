@@ -7,7 +7,6 @@ import Image.FileReader as FileReader exposing (NativeFile)
 import Json.Encode as JsEncode
 import MiniLatex.Differ exposing (EditRecord)
 import Phoenix.Socket
-import Task
 import Time exposing (Time)
 
 
@@ -274,8 +273,7 @@ type alias ErrorMessage =
 
 
 type DocMsg
-    = Foo
-    | AddToMasterDocument
+    = AddToMasterDocument
     | AdoptChildren
     | CreateDocument (Result Http.Error DocumentRecord)
     | RequestDocumentDelete
@@ -304,14 +302,19 @@ type DocMsg
     | UpdateDocument
 
 
-type Msg
-    = NoOp
-    | DocMsg DocMsg
-    | AttachCurrentDocument String
+type Authentication
+    = Foo
     | AuthenticationAction
     | CancelAuthentication
-    | ClearSearch
     | CompleteRegistration (Result Http.Error UserRecord)
+
+
+type Msg
+    = NoOp
+    | Authentication Authentication
+    | DocMsg DocMsg
+    | AttachCurrentDocument String
+    | ClearSearch
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int
     | Email String

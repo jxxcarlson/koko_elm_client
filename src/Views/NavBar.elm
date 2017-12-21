@@ -161,7 +161,7 @@ loginButton style model =
     Basic.button
         (authenticationButtonText model)
         FlatButtonBlue
-        [ EE.onClick AuthenticationAction
+        [ EE.onClick (Authentication AuthenticationAction)
         , EA.width (px 70)
         , EA.height (px 30)
         ]
