@@ -203,10 +203,10 @@ update msg model =
         UpdateTextInputBuffer str ->
             ( { model | textInputBuffer = str }, Cmd.none )
 
-        SelectSearchMode searchMode ->
+        SearchMsg (SelectSearchMode searchMode) ->
             Action.Search.selectSearchMode searchMode model
 
-        SelectSearchOrder searchOrder ->
+        SearchMsg (SelectSearchOrder searchOrder) ->
             Action.Search.selectSearchOrder searchOrder model
 
         SearchMsg ClearSearch ->
@@ -263,10 +263,10 @@ update msg model =
             -- Action.Document.saveCurrentDocument "" newModel
             ( { model | current_document = newDocument }, Cmd.none )
 
-        GotoUserHomePages ->
+        PageMsg GotoUserHomePages ->
             User.Display.goToUserHomePages model
 
-        GotoUserPreferencesPage ->
+        PageMsg GotoUserPreferencesPage ->
             let
                 appState =
                     model.appState
@@ -297,7 +297,7 @@ update msg model =
             else
                 ( model, Cmd.none )
 
-        GetHomePageForUserHomePages searchTerm username ->
+        PageMsg (GetHomePageForUserHomePages searchTerm username) ->
             let
                 model2 =
                     { model | selectedUserName = username }
@@ -505,7 +505,7 @@ update msg model =
         PutUser (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        NewDocument ->
+        DocMsg NewDocument ->
             let
                 newDocument =
                     Document.defaultDocument
@@ -739,7 +739,7 @@ update msg model =
         PhoenixMsg msg ->
             Action.Channel.handleMsg msg model
 
-        GoToPage maybepage ->
+        PageMsg (GoToPage maybepage) ->
             Nav.Navigation.navigateTo maybepage model
 
         LinkTo path ->

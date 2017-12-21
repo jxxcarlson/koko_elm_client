@@ -7,9 +7,9 @@ import StyleSheet exposing (..)
 import Types
     exposing
         ( Model
-        , Msg(GetHomePageForUserHomePages)
+        , Msg(..)
         , Page(..)
-        , PageMsg(GetPublicPage)
+        , PageMsg(GetHomePageForUserHomePages, GetPublicPage)
         , SearchDomain(..)
         , SearchOrder(..)
         , User
@@ -47,7 +47,7 @@ viewUser model user =
             "authorname=" ++ user.username ++ "&key=home"
     in
     el (titleStyle model user)
-        [ onClick (GetHomePageForUserHomePages query user.username)
+        [ onClick (PageMsg (GetHomePageForUserHomePages query user.username))
         , spacing 15
         , paddingLeft 10
         , paddingTop 5

@@ -77,7 +77,7 @@ searchOptionsMenu model =
     -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
     select "searchMode"
         LightGray
-        [ height (px 25), EA.verticalCenter, onInput SelectSearchMode ]
+        [ height (px 25), EA.verticalCenter, onInput (SearchMsg << SelectSearchMode) ]
         [ option "public" (model.searchState.domain == Public) (text "Public")
         , option "private" (model.searchState.domain == Private) (text "My docs")
         , option "all" (model.searchState.domain == All) (text "All")
@@ -215,7 +215,7 @@ randomDocumentIcon model =
 
 userHomePagesIcon : Model -> Element Styles variation Msg
 userHomePagesIcon model =
-    Basic.faIcon "User Pages" FontAwesome.group [ onClick Types.GotoUserHomePages ]
+    Basic.faIcon "User Pages" FontAwesome.group [ onClick (PageMsg GotoUserHomePages) ]
 
 
 
@@ -225,7 +225,7 @@ userHomePagesIcon model =
 
 userPreferencesIcon : Model -> Element Styles variation Msg
 userPreferencesIcon model =
-    Basic.faIcon "User Preferences" FontAwesome.list_alt [ onClick Types.GotoUserPreferencesPage ]
+    Basic.faIcon "User Preferences" FontAwesome.list_alt [ onClick (PageMsg GotoUserPreferencesPage) ]
 
 
 startPageIcon : Model -> Element Styles variation Msg
@@ -235,4 +235,4 @@ startPageIcon model =
 
 newDocumentButton : Model -> Element Styles variation Msg
 newDocumentButton model =
-    Basic.faIcon "New document" FontAwesome.plus [ onClick NewDocument ]
+    Basic.faIcon "New document" FontAwesome.plus [ onClick (DocMsg NewDocument) ]

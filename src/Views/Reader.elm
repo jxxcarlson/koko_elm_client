@@ -139,7 +139,7 @@ authorLink model =
             "authorname=" ++ author_name ++ "&key=home"
     in
     el AuthorStyle
-        [ onClick (GetHomePageForUserHomePages query author_name)
+        [ onClick (PageMsg (GetHomePageForUserHomePages query author_name))
         , verticalCenter
         , paddingXY 16 13
         ]

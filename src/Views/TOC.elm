@@ -44,7 +44,7 @@ searchOrderMenu model =
     -- select "searchMode" TOC [ width (px 120), EA.verticalCenter, on "change" (Json.map SelectSearchMode Json.string)]
     select "searchOrder"
         LightGray
-        [ height (px 30), verticalCenter, onInput SelectSearchOrder ]
+        [ height (px 30), verticalCenter, onInput (SearchMsg << SelectSearchOrder) ]
         [ option "viewed" True (el Zero [ verticalCenter ] (text "Viewed"))
         , option "updated" False (el Zero [ verticalCenter ] (text "Updated"))
         , option "created" False (el Zero [ verticalCenter ] (text "Created"))

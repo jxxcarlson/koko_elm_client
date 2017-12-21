@@ -289,6 +289,7 @@ type DocMsg
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | LatexFullRender
+    | NewDocument
     | PutDocument (Result Http.Error ())
     | RandomDocuments
     | RenumberDocuments
@@ -321,13 +322,19 @@ type AuthMsg
 type SearchMsg
     = ClearSearch
     | SearchForUserHomePages Int
+    | SelectSearchMode String
+    | SelectSearchOrder String
     | SetSearchTerm String
     | UseSearchDomain SearchDomain
 
 
 type PageMsg
     = GetPublicPage String
+    | GetHomePageForUserHomePages String String
     | GoTo Page
+    | GoToPage (Maybe Page)
+    | GotoUserHomePages
+    | GotoUserPreferencesPage
 
 
 type Msg
@@ -344,14 +351,10 @@ type Msg
     | Files (List NativeFile)
     | GenerateSeed
     | MigrateFromAsciidocLatex
-    | GetHomePageForUserHomePages String String
     | GetUser (Result Http.Error BigUserRecord)
     | GetUserState (Result Http.Error UserStateRecord)
     | GetUploadCredentials
     | GetUsers (Result Http.Error UsersRecord)
-    | GoToPage (Maybe Page)
-    | GotoUserHomePages
-    | GotoUserPreferencesPage
     | HandleSendError JsEncode.Value
     | ImageRead ImagePortData
     | ImageSelected
@@ -360,7 +363,6 @@ type Msg
     | InputTags String
     | LinkTo String
     | Message String
-    | NewDocument
     | NewSeed Int
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | PutUser (Result Http.Error ())
@@ -373,8 +375,6 @@ type Msg
     | Resize Int Int
     | RequestDate
     | RequestTime
-    | SelectSearchMode String
-    | SelectSearchOrder String
     | SelectTool Tool
     | SendMessage
     | SendToJS String
