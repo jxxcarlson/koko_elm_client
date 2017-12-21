@@ -125,19 +125,19 @@ update msg model =
         NoOp ->
             ( { model | message = "NoOp" }, Cmd.none )
 
-        Authentication Foo ->
+        AuthMsg Foo ->
             ( { model | message = "DocMsg: Foo" }, Cmd.none )
 
         Resize w h ->
             ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
 
-        GoTo p ->
+        PageMsg (GoTo p) ->
             Action.Page.goToPage p model
 
         SelectTool t ->
             ( { model | appState = updateToolStatus model t }, Cmd.none )
 
-        Name name ->
+        AuthMsg (Name name) ->
             User.Login.updateName model name
 
         Username username ->
@@ -146,22 +146,22 @@ update msg model =
         Email email ->
             User.Login.updateEmail model email
 
-        Password password ->
+        AuthMsg (Password password) ->
             User.Login.updatePassword model password
 
-        Signout ->
+        AuthMsg Signout ->
             User.Login.signout "Please sign in" model
 
-        Authentication AuthenticationAction ->
+        AuthMsg AuthenticationAction ->
             if model.appState.signedIn then
                 User.Login.signout "You are now signed out." model
             else
                 Action.UI.setAuthorizing model True
 
-        Authentication CancelAuthentication ->
+        AuthMsg CancelAuthentication ->
             Action.UI.toggleAuthorizing model
 
-        Login ->
+        AuthMsg Login ->
             User.Login.doLogin model
 
         ReconnectUser jsonString ->
@@ -170,14 +170,17 @@ update msg model =
         RecoverUserState jsonString ->
             User.Synchronize.doRecoverUserState jsonString model
 
-        Register ->
+        AuthMsg Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
 
-        Authentication (CompleteRegistration result) ->
+        AuthMsg (CompleteRegistration result) ->
             User.Login.completeRegistration result model
 
-        GetTokenCompleted result ->
+        AuthMsg (GetTokenCompleted result) ->
             User.Auth.getTokenCompleted model result
+
+        AuthMsg SignOutOrIn ->
+            User.Login.signOutOrIn model
 
         ToggleListView ->
             TOC.toggleListView model
@@ -185,16 +188,13 @@ update msg model =
         ToggleRegister ->
             toggleRegister model
 
-        SignOutOrIn ->
-            User.Login.signOutOrIn model
-
         ToggleUpdateRate ->
             ( Action.Document.toggleUpdateRate model, Cmd.none )
 
         ToggleMenu menu ->
             toggleMenu menu model
 
-        SetSearchTerm searchTerms ->
+        SearchMsg (SetSearchTerm searchTerms) ->
             Document.Search.update model searchTerms
 
         UpdateSearchQueryInputBuffer str ->
@@ -209,7 +209,7 @@ update msg model =
         SelectSearchOrder searchOrder ->
             Action.Search.selectSearchOrder searchOrder model
 
-        ClearSearch ->
+        SearchMsg ClearSearch ->
             ( { model | searchQueryInputBuffer = "" }, Cmd.none )
 
         DoSearch searchDomain key ->
@@ -225,7 +225,7 @@ update msg model =
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
 
-        GetPublicPage searchTerm ->
+        PageMsg (GetPublicPage searchTerm) ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
         InitStartPage ->
@@ -281,7 +281,7 @@ update msg model =
             , User.Request.get model.current_user.id
             )
 
-        SearchForUserHomePages keyCode ->
+        SearchMsg (SearchForUserHomePages keyCode) ->
             if keyCode == 13 then
                 let
                     query =
@@ -520,7 +520,7 @@ update msg model =
             Document.MasterDocument.addTo model
 
         --( model , Request.Document.createDocument newDocument model.current_user.token )
-        AttachCurrentDocument location ->
+        DocMsg (AttachCurrentDocument location) ->
             let
                 appState =
                     model.appState
@@ -577,7 +577,7 @@ update msg model =
         DocMsg RenumberDocuments ->
             Document.TOC.renumberMasterDocument model
 
-        Title title ->
+        DocMsg (Title title) ->
             Action.Document.setTitle title model
 
         DocMsg (SetTextType textType) ->
@@ -636,7 +636,7 @@ update msg model =
             in
             Action.Document.latexFullRender model
 
-        UseSearchDomain searchDomain ->
+        SearchMsg (UseSearchDomain searchDomain) ->
             Document.Search.updateDomain model searchDomain
 
         TogglePublic ->

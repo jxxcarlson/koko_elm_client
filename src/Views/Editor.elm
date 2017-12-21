@@ -50,7 +50,7 @@ titlePanel model =
                 [ paddingXY 10 8
                 , width (percent 100)
                 , height (percent 100)
-                , onInput Title
+                , onInput (DocMsg << Title)
                 , placeholder "Title"
                 ]
                 model.current_document.title

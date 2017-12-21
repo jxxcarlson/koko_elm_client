@@ -1,22 +1,22 @@
 module User.Display exposing (..)
 
-import Types
-    exposing
-        ( Model
-        , Msg(GetPublicPage, GetHomePageForUserHomePages)
-        , User
-        , Users
-        , Page(..)
-        , SearchDomain(..)
-        , SearchOrder(..)
-        )
-import StyleSheet exposing (..)
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Views.Utility as Utility
 import StyleSheet exposing (..)
+import Types
+    exposing
+        ( Model
+        , Msg(GetHomePageForUserHomePages)
+        , Page(..)
+        , PageMsg(GetPublicPage)
+        , SearchDomain(..)
+        , SearchOrder(..)
+        , User
+        , Users
+        )
 import User.Request
+import Views.Utility as Utility
 
 
 list : String -> Model -> Element Styles variation Msg
@@ -46,17 +46,16 @@ viewUser model user =
         query =
             "authorname=" ++ user.username ++ "&key=home"
     in
-        (el (titleStyle model user)
-            [ onClick (GetHomePageForUserHomePages query user.username)
-            , spacing 15
-            , paddingLeft 10
-            , paddingTop 5
-            , paddingBottom 2.5
-            , height (px 30)
-            , width (px 500)
-            ]
-            (text (Utility.shortString 35 (user.username ++ ": " ++ user.blurb)))
-        )
+    el (titleStyle model user)
+        [ onClick (GetHomePageForUserHomePages query user.username)
+        , spacing 15
+        , paddingLeft 10
+        , paddingTop 5
+        , paddingBottom 2.5
+        , height (px 30)
+        , width (px 500)
+        ]
+        (text (Utility.shortString 35 (user.username ++ ": " ++ user.blurb)))
 
 
 titleStyle : Model -> User -> Styles
@@ -76,4 +75,4 @@ goToUserHomePages model =
         newAppState =
             { appState | page = UserHomePages }
     in
-        ( { model | appState = newAppState }, User.Request.getList "" )
+    ( { model | appState = newAppState }, User.Request.getList "" )

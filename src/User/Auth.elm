@@ -17,12 +17,12 @@ import Views.External
 
 loginUserCmd : Model -> String -> Cmd Msg
 loginUserCmd model loginUrl =
-    Http.send GetTokenCompleted (loginUser model loginUrl)
+    Http.send (AuthMsg << GetTokenCompleted) (loginUser model loginUrl)
 
 
 registerUserCmd : Model -> String -> Cmd Msg
 registerUserCmd model registerUserUrl =
-    Http.send (Authentication << CompleteRegistration) (registerUser model registerUserUrl)
+    Http.send (AuthMsg << CompleteRegistration) (registerUser model registerUserUrl)
 
 
 

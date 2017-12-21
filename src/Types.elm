@@ -275,6 +275,7 @@ type alias ErrorMessage =
 type DocMsg
     = AddToMasterDocument
     | AdoptChildren
+    | AttachCurrentDocument String
     | CreateDocument (Result Http.Error DocumentRecord)
     | RequestDocumentDelete
     | CancelDocumentDelete
@@ -299,22 +300,42 @@ type DocMsg
     | SetDocumentInDict (Result Http.Error ( DocumentsRecord, String ))
     | SetParentId String
     | SetTextType String
+    | Title String
     | UpdateDocument
 
 
-type Authentication
+type AuthMsg
     = Foo
     | AuthenticationAction
     | CancelAuthentication
     | CompleteRegistration (Result Http.Error UserRecord)
+    | GetTokenCompleted (Result Http.Error String)
+    | Login
+    | Password String
+    | Name String
+    | Register
+    | Signout
+    | SignOutOrIn
+
+
+type SearchMsg
+    = ClearSearch
+    | SearchForUserHomePages Int
+    | SetSearchTerm String
+    | UseSearchDomain SearchDomain
+
+
+type PageMsg
+    = GetPublicPage String
+    | GoTo Page
 
 
 type Msg
     = NoOp
-    | Authentication Authentication
+    | AuthMsg AuthMsg
     | DocMsg DocMsg
-    | AttachCurrentDocument String
-    | ClearSearch
+    | PageMsg PageMsg
+    | SearchMsg SearchMsg
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int
     | Email String
@@ -324,13 +345,10 @@ type Msg
     | GenerateSeed
     | MigrateFromAsciidocLatex
     | GetHomePageForUserHomePages String String
-    | GetPublicPage String
     | GetUser (Result Http.Error BigUserRecord)
     | GetUserState (Result Http.Error UserStateRecord)
-    | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
     | GetUsers (Result Http.Error UsersRecord)
-    | GoTo Page
     | GoToPage (Maybe Page)
     | GotoUserHomePages
     | GotoUserPreferencesPage
@@ -341,12 +359,9 @@ type Msg
     | InputContent String
     | InputTags String
     | LinkTo String
-    | Login
     | Message String
-    | Name String
     | NewDocument
     | NewSeed Int
-    | Password String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | PutUser (Result Http.Error ())
     | RecallLastSearch
@@ -356,23 +371,17 @@ type Msg
     | ReconnectUser String
     | RecoverUserState String
     | Resize Int Int
-    | Register
     | RequestDate
     | RequestTime
-    | SearchForUserHomePages Int
     | SelectSearchMode String
     | SelectSearchOrder String
     | SelectTool Tool
     | SendMessage
     | SendToJS String
     | SetMessage String
-    | SetSearchTerm String
     | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
     | SetupPages
-    | Signout
-    | SignOutOrIn
     | Tick Time
-    | Title String
     | ToggleListView
     | ToggleMenu String
     | TogglePublic
@@ -382,7 +391,6 @@ type Msg
     | UpdateTextInputBuffer String
     | UpdateCurrentUser
     | UploadComplete (Result Http.Error String)
-    | UseSearchDomain SearchDomain
     | UserHomePage
     | Username String
 

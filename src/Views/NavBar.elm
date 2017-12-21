@@ -54,8 +54,8 @@ goMenu model =
         [ spacing 6, paddingRight 8, moveLeft 10 ]
         [ --   (startPageIcon model)
           Basic.button "List" Charcoal [ width (px 40), onClick Types.InitStartPage ]
-        , Basic.button "Read" Charcoal [ EE.onClick (GoTo ReaderPage), width (px 55), center ]
-        , Basic.button (signInOutText model) Button [ onClick SignOutOrIn, width (px 60) ]
+        , Basic.button "Read" Charcoal [ EE.onClick (PageMsg (GoTo ReaderPage)), width (px 55), center ]
+        , Basic.button (signInOutText model) Button [ onClick (AuthMsg SignOutOrIn), width (px 60) ]
         ]
 
 
@@ -107,7 +107,7 @@ searchForm model =
         [ Keyed.row Zero
             []
             [ ( toString model.counter, searchElement model ) ]
-        , row Zero [] [ circle 10 ClearButton [ moveLeft 35, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x") ]
+        , row Zero [] [ circle 10 ClearButton [ moveLeft 35, verticalCenter, paddingXY 6.5 9.0, onClick (SearchMsg ClearSearch) ] (text "x") ]
         , row Zero
             [ spacing 10, moveLeft 18 ]
             [ -- searchButton model
@@ -133,7 +133,7 @@ basicSearchForm model =
                 , minWidth (px 180)
                 ]
                 model.searchQueryInputBuffer
-            , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick ClearSearch ] (text "x")
+            , circle 10 ClearButton [ moveLeft 25, verticalCenter, paddingXY 6.5 9.0, onClick (SearchMsg ClearSearch) ] (text "x")
             ]
         ]
 
@@ -161,7 +161,7 @@ loginButton style model =
     Basic.button
         (authenticationButtonText model)
         FlatButtonBlue
-        [ EE.onClick (Authentication AuthenticationAction)
+        [ EE.onClick (AuthMsg AuthenticationAction)
         , EA.width (px 70)
         , EA.height (px 30)
         ]
@@ -185,13 +185,13 @@ modeSelector model =
     row NavBar
         [ spacing 8 ]
         [ Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (newDocumentButton model)
-        , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (GoTo ReaderPage), width (px 60), center ]
+        , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (PageMsg (GoTo ReaderPage)), width (px 60), center ]
         , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth))
-            (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (GoTo EditorPage), width (px 50), center ])
+            (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (PageMsg (GoTo EditorPage)), width (px 50), center ])
 
         -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
         , Utility.visibleIf ((model.current_user.username == "jxxcarlson") && (model.window.width > Configuration.tabletWidth))
-            (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (GoTo AdminPage), width (px 55), center ])
+            (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (PageMsg (GoTo AdminPage)), width (px 55), center ])
         ]
 
 

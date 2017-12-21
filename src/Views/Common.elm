@@ -153,8 +153,8 @@ searchOptionControl model =
     radio "Search domain"
         Radio
         [ verticalCenter, padding 20, spacing 20, width (px 300) ]
-        [ option "My documents" (searchDomainChecked model Private) (el None [ onClick (UseSearchDomain Private) ] (text "My documents"))
-        , option "Public documents" (searchDomainChecked model Public) (el None [ onClick (UseSearchDomain Public) ] (text "Public documents"))
+        [ option "My documents" (searchDomainChecked model Private) (el None [ onClick (SearchMsg (UseSearchDomain Private)) ] (text "My documents"))
+        , option "Public documents" (searchDomainChecked model Public) (el None [ onClick (SearchMsg (UseSearchDomain Public)) ] (text "Public documents"))
         ]
 
 
@@ -205,10 +205,10 @@ selectAttachmentOption model =
     radio "Attach new document"
         TOC
         [ spacing 10, width (px 200), paddingXY 20 0 ]
-        [ option "top" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-top") ] (text "At top"))
-        , option "above" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "above") ] (text "Above current"))
-        , option "below" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "below") ] (text "Below current"))
-        , option "bottom" False (el TOC [ spacing 10, verticalCenter, onClick (AttachCurrentDocument "at-bottom") ] (text "At bottom"))
+        [ option "top" False (el TOC [ spacing 10, verticalCenter, onClick (DocMsg (AttachCurrentDocument "at-top")) ] (text "At top"))
+        , option "above" False (el TOC [ spacing 10, verticalCenter, onClick (DocMsg (AttachCurrentDocument "above")) ] (text "Above current"))
+        , option "below" False (el TOC [ spacing 10, verticalCenter, onClick (DocMsg (AttachCurrentDocument "below")) ] (text "Below current"))
+        , option "bottom" False (el TOC [ spacing 10, verticalCenter, onClick (DocMsg (AttachCurrentDocument "at-bottom")) ] (text "At bottom"))
         ]
 
 
@@ -228,7 +228,7 @@ getDocument : Styles -> String -> String -> Model -> Element Styles variation Ms
 getDocument style searchTerm label model =
     el style
         [ maxWidth (px 200)
-        , onClick (Types.GetPublicPage searchTerm)
+        , onClick (PageMsg (GetPublicPage searchTerm))
         , height (px 30)
         , paddingXY 8 0
         , verticalCenter
