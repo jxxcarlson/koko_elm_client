@@ -68,7 +68,7 @@ contentPanel model =
                 , yScrollbar
                 , padding 20
                 , onInput InputContent
-                , Utility.onKeyUp DoRender
+                , Utility.onKeyUp (DocMsg << DoRender)
                 ]
                 model.current_document.content
           )
@@ -99,12 +99,12 @@ notVisibleIfLatex model body =
 
 refreshButton : Model -> Element Styles variation Msg
 refreshButton model =
-    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick UpdateDocument ]
+    Basic.faIcon "Refresh display & save. Also: press ESC" FontAwesome.save [ onClick (DocMsg UpdateDocument) ]
 
 
 typeSetAllButton : Model -> Element Styles variation Msg
 typeSetAllButton model =
-    Basic.faIcon2 "Typeset from scratch" FontAwesome.save [ onClick LatexFullRender ]
+    Basic.faIcon2 "Typeset from scratch" FontAwesome.save [ onClick (DocMsg LatexFullRender) ]
 
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
@@ -129,17 +129,17 @@ toggleUpdateRateIcon model =
 
 deleteButton : Model -> Element Styles variation Msg
 deleteButton model =
-    Basic.faIcon "Delete document" FontAwesome.trash [ onClick RequestDocumentDelete ]
+    Basic.faIcon "Delete document" FontAwesome.trash [ onClick (DocMsg RequestDocumentDelete) ]
 
 
 confirmDeleteButton : Model -> Element Styles variation Msg
 confirmDeleteButton model =
-    full PanelInfoRed [ padding 8, onClick DeleteCurrentDocument ] (el Zero [ verticalCenter ] (text "Delete forever"))
+    full PanelInfoRed [ padding 8, onClick (DocMsg DeleteCurrentDocument) ] (el Zero [ verticalCenter ] (text "Delete forever"))
 
 
 cancelDeleteButton : Model -> Element Styles variation Msg
 cancelDeleteButton model =
-    full PanelInfoGreen [ padding 8, onClick CancelDocumentDelete ] (el Zero [ verticalCenter ] (text "Cancel"))
+    full PanelInfoGreen [ padding 8, onClick (DocMsg CancelDocumentDelete) ] (el Zero [ verticalCenter ] (text "Cancel"))
 
 
 deleteConfirmation : Model -> Element Styles variation Msg

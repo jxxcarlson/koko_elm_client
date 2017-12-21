@@ -5,12 +5,9 @@ module Document.Edit
          ..
         )
 
-import Types exposing (Document)
 import List.Extra
 import Regex
 import String.Extra
-import Char
-import Parser exposing (..)
 
 
 getAt : Int -> List String -> String
@@ -173,7 +170,7 @@ getMatchTuples regexString text =
         zip =
             List.map2 (,)
     in
-        zip matches submatches
+    zip matches submatches
 
 
 getMatchTuples2 regexString text =
@@ -190,7 +187,7 @@ getMatchTuples2 regexString text =
         zip =
             List.map2 (,)
     in
-        zip matches submatches
+    zip matches submatches
 
 
 replaceWithTuple tuple pre post text =
@@ -201,7 +198,7 @@ replaceWithTuple tuple pre post text =
         replacement =
             pre ++ core ++ post
     in
-        String.Extra.replace target replacement text
+    String.Extra.replace target replacement text
 
 
 type alias Tuple2 =
@@ -234,9 +231,9 @@ replaceWithTuple2 tuple2 pre1 post1 pre2 post2 text =
                     target
 
                 Just aargs ->
-                    pre1 ++ (getAt 0 aargs) ++ post1 ++ pre2 ++ (getAt 1 aargs) ++ post2
+                    pre1 ++ getAt 0 aargs ++ post1 ++ pre2 ++ getAt 1 aargs ++ post2
     in
-        String.Extra.replace target replacement text
+    String.Extra.replace target replacement text
 
 
 
@@ -251,7 +248,7 @@ makeReplacements regexString pre post text =
         tuples =
             getMatchTuples regexString text
     in
-        tuples |> List.foldr (\tuple text -> replaceWithTuple tuple pre post text) text
+    tuples |> List.foldr (\tuple text -> replaceWithTuple tuple pre post text) text
 
 
 makeReplacements2 regexString pre1 post1 pre2 post2 text =
@@ -259,7 +256,7 @@ makeReplacements2 regexString pre1 post1 pre2 post2 text =
         tuples =
             getMatchTuples2 regexString text
     in
-        tuples |> List.foldr (\tuple text -> replaceWithTuple2 tuple pre1 post1 pre2 post2 text) text
+    tuples |> List.foldr (\tuple text -> replaceWithTuple2 tuple pre1 post1 pre2 post2 text) text
 
 
 fixHyperlinks text =

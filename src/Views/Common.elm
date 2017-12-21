@@ -290,7 +290,7 @@ parentIdPanel model =
 parentIdPane : Model -> Element Styles variation Msg
 parentIdPane model =
     inputText Field
-        [ onInput SetParentId
+        [ onInput (DocMsg << SetParentId)
         , placeholder "parent_id"
         , paddingXY 5 0
         , height (px 25)
@@ -301,17 +301,17 @@ parentIdPane model =
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =
-    Basic.button "Adopt children" FlatButtonBlue [ onClick AdoptChildren, width (px 250) ]
+    Basic.button "Adopt children" FlatButtonBlue [ onClick (DocMsg AdoptChildren), width (px 250) ]
 
 
 updateTagsButton : Model -> Element Styles variation Msg
 updateTagsButton model =
-    Basic.button "Update keywords" FlatButtonBlue [ onClick SaveCurrentDocument, width (px 250) ]
+    Basic.button "Update keywords" FlatButtonBlue [ onClick (DocMsg SaveCurrentDocument), width (px 250) ]
 
 
 addToMasterDocumentButton : Model -> Element Styles variation Msg
 addToMasterDocumentButton model =
-    Basic.button "Add to master" FlatButton [ onClick AddToMasterDocument, width (px 250) ]
+    Basic.button "Add to master" FlatButton [ onClick (DocMsg AddToMasterDocument), width (px 250) ]
 
 
 migrateFromADLButton : Model -> Element Styles variation Msg
@@ -371,7 +371,7 @@ imageCatalogueButton document =
 
 renumberDocumentsButton : Model -> Element Styles variation Msg
 renumberDocumentsButton model =
-    Basic.button "N" FlatButtonBlue [ onClick RenumberDocuments, width (px 30) ]
+    Basic.button "N" FlatButtonBlue [ onClick (DocMsg RenumberDocuments), width (px 30) ]
 
 
 printTypeString : Document -> String

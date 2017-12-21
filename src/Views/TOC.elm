@@ -102,7 +102,7 @@ documentStackView1 model =
 
 documentIndicator : Document -> Model -> Element Styles variation Msg
 documentIndicator document model =
-    el Transparent [ height (px 25), moveDown 4, onClick (SelectMaster document) ] (documentIndicator1 document model)
+    el Transparent [ height (px 25), moveDown 4, onClick ((DocMsg << SelectMaster) document) ] (documentIndicator1 document model)
 
 
 documentIndicator1 : Document -> Model -> Element style variation msg
@@ -208,7 +208,7 @@ titleDisplay model selectedDocument document =
             label ++ " " ++ titleText
     in
     el (tocStyle selectedDocument document)
-        [ onClick (SelectDocument document)
+        [ onClick ((DocMsg << SelectDocument) document)
         , paddingXY 0 0
         , height (px 20)
         ]

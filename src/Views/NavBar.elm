@@ -210,7 +210,7 @@ homepageIcon model =
 
 randomDocumentIcon : Model -> Element Styles variation Msg
 randomDocumentIcon model =
-    Basic.faIcon "Get random documents" FontAwesome.random [ onClick RandomDocuments ]
+    Basic.faIcon "Get random documents" FontAwesome.random [ onClick (DocMsg RandomDocuments) ]
 
 
 userHomePagesIcon : Model -> Element Styles variation Msg

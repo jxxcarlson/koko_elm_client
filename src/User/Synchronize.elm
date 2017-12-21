@@ -8,7 +8,7 @@ import Http
 import MiniLatex.Driver
 import Request.Document
 import Task exposing (Task)
-import Types exposing (ActiveDocumentList(..), DocumentsRecord, Model, Msg(..), Page(..), UserStateRecord)
+import Types exposing (ActiveDocumentList(..), DocMsg(..), DocumentsRecord, Model, Msg(..), Page(..), UserStateRecord)
 
 
 {-| Recover state from local storage
@@ -44,7 +44,7 @@ doRecoverUserState jsonString model =
             , Cmd.batch
                 [ Task.attempt SetUserState innerSetUserStateTask
                 , Request.Document.getDocumentWithAuthenticatedQuery
-                    GetSpecialDocument
+                    (DocMsg << GetSpecialDocument)
                     token
                     "key=sidebarNotes"
                 ]
@@ -105,10 +105,6 @@ setUserState data model =
     ( newModel
     , Cmd.batch [ saveUserStateToLocalStorageCommand, renderCommand ]
     )
-
-
-
--- Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
 
 
 recoverCurrentDocumentTask userStateRecord token =

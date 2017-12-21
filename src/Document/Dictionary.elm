@@ -1,10 +1,10 @@
 module Document.Dictionary exposing (..)
 
-import Types exposing (Document, DocumentDict, Msg(SetDocumentInDict))
 import Dict
-import Task
-import Request.Document
 import Platform.Cmd
+import Request.Document
+import Task
+import Types exposing (DocMsg(..), Document, DocumentDict)
 
 
 empty : DocumentDict
@@ -26,7 +26,7 @@ set key document dict =
             else
                 dict
     in
-        insert key document dict2
+    insert key document dict2
 
 
 remove : String -> DocumentDict -> DocumentDict
@@ -46,7 +46,7 @@ get key dict =
 
 getContent : String -> DocumentDict -> String
 getContent key dict =
-    case (get key dict) of
+    case get key dict of
         Just doc ->
             doc.content
 
@@ -66,8 +66,8 @@ setItemInDict query key token =
         setItemTask =
             Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
     in
-        -- Task.attempt Types.GetDocuments getDocsTask
-        Task.attempt SetDocumentInDict setItemTask
+    -- Task.attempt Types.GetDocuments getDocsTask
+    Task.attempt (Types.DocMsg << SetDocumentInDict) setItemTask
 
 
 setPublicItemInDict : String -> String -> Platform.Cmd.Cmd Types.Msg
@@ -82,8 +82,8 @@ setPublicItemInDict query key =
         setItemTask =
             Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
     in
-        -- Task.attempt Types.GetDocuments getDocsTask
-        Task.attempt SetDocumentInDict setItemTask
+    -- Task.attempt Types.GetDocuments getDocsTask
+    Task.attempt (Types.DocMsg << SetDocumentInDict) setItemTask
 
 
 

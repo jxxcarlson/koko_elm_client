@@ -254,11 +254,11 @@ updateCurrentDocument model document =
         cmds =
             if document.attributes.docType == "master" then
                 [ Render.put True model.appState.editRecord.idList True document -- put new content in JS-mirror of document and save the document (XX: client-server)
-                , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
+                , Task.attempt (DocMsg << GetUserDocuments) (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
-                , Task.attempt SaveDocument saveTask
+                , Task.attempt (DocMsg << SaveDocument) saveTask
                 , External.saveUserState (Data.User.encodeUserState newModel)
                 , Random.generate NewSeed (Random.int 1 10000)
                 ]

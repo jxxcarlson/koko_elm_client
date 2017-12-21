@@ -1,18 +1,16 @@
 module Document.Document
     exposing
-        ( defaultDocument
+        ( blankDocument
+        , defaultDocument
         , defaultMasterDocument
-        , pageNotFoundDocument
-        , errorDocument
-        , startDocument
         , emptyDocument
-        , blankDocument
+        , errorDocument
         , hasTag
+        , pageNotFoundDocument
+        , startDocument
         )
 
 import Types exposing (Document, DocumentAttributes)
-import Regex
-import String.Extra
 
 
 hasTag : String -> Document -> Bool
@@ -42,6 +40,7 @@ defaultDocument =
     }
 
 
+errorDocument : Document
 errorDocument =
     { id = 0
     , identifier = "errorDocument"

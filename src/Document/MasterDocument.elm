@@ -6,9 +6,13 @@ module Document.MasterDocument
         , setParentId
         )
 
+import Document.Stack as Stack
+import Request.Document
+import Task
 import Types
     exposing
         ( ActiveDocumentList(..)
+        , DocMsg(..)
         , Document
         , Model
         , Msg(..)
@@ -17,9 +21,6 @@ import Types
         , SearchOrder(Alphabetical)
         , Tool(TableOfContents)
         )
-import Document.Stack as Stack
-import Request.Document
-import Task
 
 
 select : Document -> Model -> ( Model, Cmd Msg )
@@ -52,18 +53,18 @@ selectAux document_id document model =
             { model | appState = newAppState }
 
         query =
-            "master=" ++ (toString document_id)
+            "master=" ++ toString document_id
 
         token =
             model.current_user.token
 
         cmd =
             if model.appState.signedIn then
-                Task.attempt GetDocuments (Request.Document.getDocumentsTask "documents" query token)
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query token)
             else
-                Task.attempt GetDocuments (Request.Document.getDocumentsTask "public/documents" query token)
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query token)
     in
-        ( updatedModel, cmd )
+    ( updatedModel, cmd )
 
 
 setParentId : String -> Model -> ( Model, Cmd Msg )
@@ -75,7 +76,7 @@ setParentId parentIdString model =
         newDocument =
             { document | parent_id = String.toInt parentIdString |> Result.withDefault 0 }
     in
-        ( { model | current_document = newDocument, message = "parent = " ++ parentIdString }, Cmd.none )
+    ( { model | current_document = newDocument, message = "parent = " ++ parentIdString }, Cmd.none )
 
 
 
@@ -101,7 +102,7 @@ addTo model =
             "documents"
 
         query =
-            "master=" ++ (toString model.master_document.id)
+            "master=" ++ toString model.master_document.id
 
         saveTask =
             Request.Document.saveDocumentTask model.appState.command model.master_document model
@@ -109,10 +110,10 @@ addTo model =
         refreshMasterDocumentTask =
             Request.Document.getDocumentsTask route query model.current_user.token
     in
-        ( { model | appState = newAppState, message = model.appState.command }
-          -- , Cmd.batch [ cmd1 ]
-        , Task.attempt GetUserDocuments (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
-        )
+    ( { model | appState = newAppState, message = model.appState.command }
+      -- , Cmd.batch [ cmd1 ]
+    , Task.attempt (DocMsg << GetUserDocuments) (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
+    )
 
 
 
@@ -124,9 +125,9 @@ attach location model =
     "attach="
         ++ location
         ++ "&child="
-        ++ (toString model.current_document.id)
+        ++ toString model.current_document.id
         ++ "&current="
-        ++ (toString (Stack.top 1 model.documentStack).id)
+        ++ toString (Stack.top 1 model.documentStack).id
 
 
 update : Model -> Document -> Cmd Msg

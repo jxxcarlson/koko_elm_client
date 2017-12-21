@@ -1,32 +1,32 @@
 module Request.Document
     exposing
-        ( getDocumentWithQuery
-        , put
-        , createDocument
+        ( createDocument
         , deleteCurrentDocument
+        , getDocumentWithAuthenticatedQuery
+        , getDocumentWithAuthenticatedQueryTask
+        , getDocumentWithQuery
         , getDocuments
         , getDocumentsTask
         , getPublicDocumentsTask
-        , getDocumentWithAuthenticatedQuery
-        , getDocumentWithAuthenticatedQueryTask
+        , put
         , reloadMasterDocument
         , saveDocumentTask
         )
 
-import Http exposing (send)
-import Json.Decode as Decode exposing (..)
-import Request.Api exposing (publicDocumentsUrl, documentsUrl, api)
-import Types exposing (..)
 import Data.Document
     exposing
-        ( documentDecoder
-        , documentsDecoder
+        ( decodeDocumentsRecord
+        , documentDecoder
         , documentRecordDecoder
-        , decodeDocumentsRecord
+        , documentsDecoder
         )
 import Document.QueryParser exposing (parseQuery)
+import Http exposing (send)
 import HttpBuilder as HB exposing (..)
+import Json.Decode as Decode exposing (..)
+import Request.Api exposing (api, documentsUrl, publicDocumentsUrl)
 import Task
+import Types exposing (..)
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
@@ -36,22 +36,22 @@ getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) ->
 getDocuments route query message token =
     let
         url =
-            api ++ route ++ "?" ++ parseQuery (query)
+            api ++ route ++ "?" ++ parseQuery query
 
         _ =
             Debug.log "getDocuments with URL" url
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send message
+    HB.get url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeDocumentsRecord)
+        |> HB.send message
 
 
 getDocumentsTask : String -> String -> String -> Task.Task Http.Error DocumentsRecord
 getDocumentsTask route query token =
     let
         url =
-            api ++ route ++ "?" ++ parseQuery (query)
+            api ++ route ++ "?" ++ parseQuery query
 
         _ =
             Debug.log "getDocumentsTask with URL" url
@@ -62,14 +62,14 @@ getDocumentsTask route query token =
                 |> withExpect (Http.expectJson decodeDocumentsRecord)
                 |> HB.toRequest
     in
-        request |> Http.toTask
+    request |> Http.toTask
 
 
 getPublicDocumentsTask : String -> String -> Task.Task Http.Error DocumentsRecord
 getPublicDocumentsTask route query =
     let
         url =
-            api ++ route ++ "?" ++ parseQuery (query)
+            api ++ route ++ "?" ++ parseQuery query
 
         _ =
             Debug.log "getDocumentsTask with URL" url
@@ -79,7 +79,7 @@ getPublicDocumentsTask route query =
                 |> withExpect (Http.expectJson decodeDocumentsRecord)
                 |> HB.toRequest
     in
-        request |> Http.toTask
+    request |> Http.toTask
 
 
 
@@ -96,7 +96,7 @@ saveDocumentTask queryString document model =
         _ =
             Debug.log "saveDocumentTask with queryString" queryString
     in
-        request |> Http.toTask
+    request |> Http.toTask
 
 
 getDocumentWithQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
@@ -110,24 +110,24 @@ getDocumentWithAuthenticatedQuery processor token query =
         url =
             documentsUrl ++ "?" ++ query
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send processor
+    HB.get url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeDocumentsRecord)
+        |> HB.send processor
 
 
 getDocumentWithAuthenticatedQueryTask : String -> String -> Task.Task Http.Error DocumentsRecord
 getDocumentWithAuthenticatedQueryTask token query =
     let
         url =
-            Debug.log ("getDocumentWithAuthenticatedQueryTask, route & query")
+            Debug.log "getDocumentWithAuthenticatedQueryTask, route & query"
                 (documentsUrl ++ "?" ++ query)
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.toRequest
-            |> Http.toTask
+    HB.get url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeDocumentsRecord)
+        |> HB.toRequest
+        |> Http.toTask
 
 
 getSpecialDocumentWithAuthenticatedQuery : String -> String -> Cmd Msg
@@ -136,10 +136,10 @@ getSpecialDocumentWithAuthenticatedQuery token query =
         url =
             documentsUrl ++ "?" ++ query
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetSpecialDocument
+    HB.get url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeDocumentsRecord)
+        |> HB.send (DocMsg << GetSpecialDocument)
 
 
 
@@ -160,25 +160,25 @@ reloadMasterDocument : Int -> String -> Cmd Msg
 reloadMasterDocument doc_id token =
     let
         url =
-            documentsUrl ++ "?" ++ "id=" ++ (toString doc_id)
+            documentsUrl ++ "?" ++ "id=" ++ toString doc_id
     in
-        HB.get url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withExpect (Http.expectJson decodeDocumentsRecord)
-            |> HB.send GetMasterDocument
+    HB.get url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withExpect (Http.expectJson decodeDocumentsRecord)
+        |> HB.send (DocMsg << GetMasterDocument)
 
 
 deleteCurrentDocumentRB : Model -> RequestBuilder ()
 deleteCurrentDocumentRB model =
     let
         url =
-            documentsUrl ++ "/" ++ (toString model.current_document.id)
+            documentsUrl ++ "/" ++ toString model.current_document.id
 
         token =
             model.current_user.token
     in
-        HB.delete url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
+    HB.delete url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
 
 
 deleteCurrentDocument : Model -> Cmd Msg
@@ -188,7 +188,7 @@ deleteCurrentDocument model =
             deleteCurrentDocumentRB model
                 |> HB.toRequest
     in
-        Http.send DeleteDocument request
+    Http.send (DocMsg << DeleteDocument) request
 
 
 
@@ -203,13 +203,13 @@ putDocumentRB queryString token document =
 
         url =
             if queryString == "" then
-                documentsUrl ++ "/" ++ (toString document.id)
+                documentsUrl ++ "/" ++ toString document.id
             else
-                documentsUrl ++ "/" ++ (toString document.id) ++ "?" ++ queryString
+                documentsUrl ++ "/" ++ toString document.id ++ "?" ++ queryString
     in
-        HB.put url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withJsonBody params
+    HB.put url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withJsonBody params
 
 
 put : String -> Model -> Document -> Cmd Msg
@@ -219,10 +219,13 @@ put queryString model document =
             putDocumentRB queryString model.current_user.token document
                 |> HB.toRequest
     in
-        Http.send PutDocument request
+    Http.send (DocMsg << PutDocument) request
 
 
-createDocument : Document -> String -> Cmd Msg
+
+-- createDocument : Document -> String -> Cmd Msg
+
+
 createDocument document token =
     let
         params =
@@ -231,11 +234,11 @@ createDocument document token =
         url =
             documentsUrl
     in
-        HB.post url
-            |> HB.withHeader "Authorization" ("Bearer " ++ token)
-            |> withJsonBody params
-            |> withExpect (Http.expectJson documentRecordDecoder)
-            |> HB.send CreateDocument
+    HB.post url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+        |> withJsonBody params
+        |> withExpect (Http.expectJson documentRecordDecoder)
+        |> HB.send (DocMsg << CreateDocument)
 
 
 decodeDoc : Decoder String

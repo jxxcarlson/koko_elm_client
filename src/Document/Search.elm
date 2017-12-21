@@ -2,17 +2,25 @@ module Document.Search
     exposing
         ( dispatch
         , getRandomDocuments
-        , recallLastSearch
         , onEnter
+        , recallLastSearch
         , search
         , update
         , updateDomain
         , withParameters
         )
 
+import Action.UI
+import Document.Document
+import Document.QueryParser exposing (parseQuery)
+import Document.Render as Render
+import Http
+import Request.Document
+import Task
 import Types
     exposing
         ( ActiveDocumentList(SearchResultList)
+        , DocMsg(..)
         , Model
         , Msg(..)
         , Page(..)
@@ -21,13 +29,6 @@ import Types
         , SearchState
         , Tool(..)
         )
-import Action.UI
-import Document.Document
-import Http
-import Request.Document
-import Document.QueryParser exposing (parseQuery)
-import Document.Render as Render
-import Task
 
 
 {-
@@ -62,12 +63,12 @@ withParameters query order domain page model =
         searchState =
             SearchState query domain order
     in
-        dispatch searchState page model
+    dispatch searchState page model
 
 
 onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
 onEnter searchDomain key model =
-    if (Debug.log "key" key) == 13 then
+    if Debug.log "key" key == 13 then
         let
             _ =
                 Debug.log "Firing Action.Document.onEnter" 1
@@ -78,7 +79,7 @@ onEnter searchDomain key model =
             newSearchState =
                 { searchState | domain = searchDomain }
         in
-            dispatch newSearchState (Action.UI.displayPage model) model
+        dispatch newSearchState (Action.UI.displayPage model) model
     else
         ( model, Cmd.none )
 
@@ -135,12 +136,12 @@ dispatch searchState page model =
                 , documents2 = model.documents
             }
     in
-        ( updatedModel
-        , Cmd.batch
-            [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-            , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
-            ]
-        )
+    ( updatedModel
+    , Cmd.batch
+        [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
+        , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
+        ]
+    )
 
 
 
@@ -163,7 +164,7 @@ fixQueryIfEmpty query searchDomain model =
                 "random=public"
 
             Private ->
-                "random_user=" ++ (toString model.current_user.id)
+                "random_user=" ++ toString model.current_user.id
 
             All ->
                 "random=all"
@@ -180,15 +181,15 @@ recallLastSearch model =
         newAppState =
             { appState | masterDocLoaded = False, tool = TableOfContents }
     in
-        ( { model
-            | documents = model.documents2
-            , current_document = List.head model.documents2 |> Maybe.withDefault Document.Document.pageNotFoundDocument
-            , appState = newAppState
-            , master_document = Document.Document.defaultMasterDocument
-            , message = "Set masterDocLoaded: False"
-          }
-        , Cmd.none
-        )
+    ( { model
+        | documents = model.documents2
+        , current_document = List.head model.documents2 |> Maybe.withDefault Document.Document.pageNotFoundDocument
+        , appState = newAppState
+        , master_document = Document.Document.defaultMasterDocument
+        , message = "Set masterDocLoaded: False"
+      }
+    , Cmd.none
+    )
 
 
 cleanQuery : String -> String
@@ -219,13 +220,13 @@ getRandomDocuments model =
         randomQuery =
             case model.searchState.domain of
                 All ->
-                    "random=all&user_id=" ++ (toString model.current_user.id)
+                    "random=all&user_id=" ++ toString model.current_user.id
 
                 Public ->
                     "random=public"
 
                 Private ->
-                    "random_user=" ++ (toString model.current_user.id)
+                    "random_user=" ++ toString model.current_user.id
 
         query =
             if initialQuery == "" then
@@ -233,7 +234,7 @@ getRandomDocuments model =
             else
                 randomQuery ++ "&" ++ initialQuery
     in
-        withParameters query Alphabetical model.searchState.domain ReaderPage newModel
+    withParameters query Alphabetical model.searchState.domain ReaderPage newModel
 
 
 
@@ -251,7 +252,7 @@ update model query =
         new_searchState =
             { searchState | query = query }
     in
-        ( { model | searchState = new_searchState }, Cmd.none )
+    ( { model | searchState = new_searchState }, Cmd.none )
 
 
 updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
@@ -277,7 +278,7 @@ updateDomain model searchDomain =
         new_searchState =
             { searchState | domain = newSearchDomain }
     in
-        ( { model | searchState = new_searchState, message = newMessage }, Cmd.none )
+    ( { model | searchState = new_searchState, message = newMessage }, Cmd.none )
 
 
 
@@ -302,11 +303,11 @@ refreshMasterDocumentTask route token documentsRecord =
 
         task =
             if (List.length documents == 1) && (isMasterDocument == True) then
-                Request.Document.getDocumentsTask route ("master=" ++ (toString masterDocumentId)) token
+                Request.Document.getDocumentsTask route ("master=" ++ toString masterDocumentId) token
             else
                 Task.succeed documentsRecord
     in
-        task
+    task
 
 
 getDocuments : SearchState -> Int -> String -> Cmd Msg
@@ -339,7 +340,7 @@ getDocuments searchState user_id token =
         searchTask =
             Request.Document.getDocumentsTask route adjustedQuery token
     in
-        Task.attempt GetUserDocuments (searchTask |> Task.andThen (\documentsRecord -> (refreshMasterDocumentTask route token documentsRecord)))
+    Task.attempt (DocMsg << GetUserDocuments) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
@@ -351,10 +352,10 @@ makeQuery searchState updatedSearchDomain user_id =
         cmd =
             rawQuery |> String.split "=" |> List.head |> Maybe.withDefault "NoCommand"
     in
-        if List.member cmd [ "idlist" ] then
-            rawQuery
-        else
-            makeQueryHelper searchState updatedSearchDomain user_id
+    if List.member cmd [ "idlist" ] then
+        rawQuery
+    else
+        makeQueryHelper searchState updatedSearchDomain user_id
 
 
 makeQueryHelper : SearchState -> SearchDomain -> Int -> String
@@ -364,7 +365,7 @@ makeQueryHelper searchState updatedSearchDomain user_id =
             -- if searchState.query == "" then
             --     "publicdocs=all"
             -- else
-            parseQuery (searchState.query)
+            parseQuery searchState.query
 
         soq =
             searchOrderQuery searchState.order
@@ -380,7 +381,7 @@ makeQueryHelper searchState updatedSearchDomain user_id =
                 -- ( Public, _ ) ->
                 --     "public=yes"
                 ( Private, "" ) ->
-                    "random_user=" ++ (toString user_id)
+                    "random_user=" ++ toString user_id
 
                 ( All, _ ) ->
                     "docs=any"
@@ -389,12 +390,12 @@ makeQueryHelper searchState updatedSearchDomain user_id =
                     ""
 
         queryList =
-            [ prefix ] ++ [ parseQuery (searchState.query), soq ]
+            [ prefix ] ++ [ parseQuery searchState.query, soq ]
     in
-        buildQuery queryList
+    buildQuery queryList
 
 
-processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> Msg, String )
+processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> DocMsg, String )
 processorAndRoute searchDomain =
     case searchDomain of
         Public ->

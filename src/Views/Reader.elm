@@ -86,37 +86,35 @@ phoneReader model =
 
 rhSidebarHeader : Model -> Element Styles variation Msg
 rhSidebarHeader model =
-    (el RHSidebarHeader
-        [ paddingXY 20 8, verticalCenter, onClick EditSpecialDocument ]
+    el RHSidebarHeader
+        [ paddingXY 20 8, verticalCenter, onClick (DocMsg EditSpecialDocument) ]
         (text model.specialDocument.title)
-    )
 
 
 specialContent : Model -> Element Styles variation msg
 specialContent model =
     let
         h =
-            (toFloat model.window.height) - 120
+            toFloat model.window.height - 120
     in
-        (el RHSidebar
-            [ yScrollbar
-            , id "rendered_text2"
-            , paddingXY 20 20
-            , height (px h)
-            , property "innerHTML"
-                (Json.Encode.string model.specialDocument.rendered_content)
-            ]
-            (text "")
-        )
+    el RHSidebar
+        [ yScrollbar
+        , id "rendered_text2"
+        , paddingXY 20 20
+        , height (px h)
+        , property "innerHTML"
+            (Json.Encode.string model.specialDocument.rendered_content)
+        ]
+        (text "")
 
 
 rhSidebar : Model -> Element Styles variation msg
 rhSidebar model =
     let
         h =
-            (toFloat model.window.height) - 120
+            toFloat model.window.height - 120
     in
-        (el RHSidebar [ padding 0, width (percent 100), height (px h) ] (text ""))
+    el RHSidebar [ padding 0, width (percent 100), height (px h) ] (text "")
 
 
 contentHeader : Model -> Element Styles variation Msg
@@ -140,12 +138,12 @@ authorLink model =
         query =
             "authorname=" ++ author_name ++ "&key=home"
     in
-        el AuthorStyle
-            [ onClick (GetHomePageForUserHomePages query author_name)
-            , verticalCenter
-            , paddingXY 16 13
-            ]
-            (text author_name)
+    el AuthorStyle
+        [ onClick (GetHomePageForUserHomePages query author_name)
+        , verticalCenter
+        , paddingXY 16 13
+        ]
+        (text author_name)
 
 
 toolSelectorPanel : Model -> Element Styles variation Msg

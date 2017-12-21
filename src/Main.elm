@@ -125,6 +125,9 @@ update msg model =
         NoOp ->
             ( { model | message = "NoOp" }, Cmd.none )
 
+        DocMsg Foo ->
+            ( { model | message = "DocMsg: Foo" }, Cmd.none )
+
         Resize w h ->
             ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
 
@@ -234,16 +237,16 @@ update msg model =
                     { appState | page = StartPage, masterDocLoaded = False, authorizing = False }
             in
             ( { model | appState = newAppState }
-            , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
+            , Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
             )
 
-        RandomDocuments ->
+        DocMsg RandomDocuments ->
             Document.Search.getRandomDocuments model
 
-        DoRender key ->
+        DocMsg (DoRender key) ->
             Document.Render.putWithKey key model
 
-        GetRenderedText str ->
+        DocMsg (GetRenderedText str) ->
             let
                 document =
                     model.current_document
@@ -304,7 +307,7 @@ update msg model =
             in
             ( newModel, Cmd.batch [ cmd ] )
 
-        EditSpecialDocument ->
+        DocMsg EditSpecialDocument ->
             let
                 appState =
                     model.appState
@@ -399,19 +402,19 @@ update msg model =
             in
             ( model, Cmd.none )
 
-        GetDocuments (Ok documentsRecord) ->
+        DocMsg (GetDocuments (Ok documentsRecord)) ->
             updateDocuments model documentsRecord
 
-        GetDocuments (Err error) ->
+        DocMsg (GetDocuments (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        GetUserDocuments (Ok documentsRecord) ->
+        DocMsg (GetUserDocuments (Ok documentsRecord)) ->
             updateDocuments model documentsRecord
 
-        GetUserDocuments (Err error) ->
+        DocMsg (GetUserDocuments (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        GetSpecialDocument (Ok documentsRecord) ->
+        DocMsg (GetSpecialDocument (Ok documentsRecord)) ->
             let
                 specialDocument =
                     case List.head documentsRecord.documents of
@@ -423,7 +426,7 @@ update msg model =
             in
             ( { model | specialDocument = specialDocument }, Cmd.none )
 
-        GetSpecialDocument (Err err) ->
+        DocMsg (GetSpecialDocument (Err err)) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
 
         SetUserState (Ok result) ->
@@ -432,7 +435,7 @@ update msg model =
         SetUserState (Err err) ->
             ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
 
-        SetDocumentInDict (Ok ( documentsRecord, key )) ->
+        DocMsg (SetDocumentInDict (Ok ( documentsRecord, key ))) ->
             let
                 document =
                     case List.head documentsRecord.documents of
@@ -453,11 +456,11 @@ update msg model =
             in
             ( { model | documentDict = newDocumentDict }, Cmd.none )
 
-        SetDocumentInDict (Err err) ->
+        DocMsg (SetDocumentInDict (Err err)) ->
             ( { model | message = "Error setting key in documentDict" }, Cmd.none )
 
         ---
-        GetMasterDocument (Ok documentsRecord) ->
+        DocMsg (GetMasterDocument (Ok documentsRecord)) ->
             let
                 masterDocument =
                     case List.head documentsRecord.documents of
@@ -475,7 +478,7 @@ update msg model =
             in
             ( { model | master_document = masterDocument }, Cmd.none )
 
-        GetMasterDocument (Err err) ->
+        DocMsg (GetMasterDocument (Err err)) ->
             ( { model | message = "Getting master document: error" }, Cmd.none )
 
         -- User.Login.signout "Error: could not get user documents." model
@@ -483,12 +486,12 @@ update msg model =
         Message str ->
             ( { model | message = str }, Cmd.none )
 
-        PutDocument (Ok serverReply) ->
+        DocMsg (PutDocument (Ok serverReply)) ->
             case serverReply of
                 () ->
                     ( model, Cmd.none )
 
-        PutDocument (Err error) ->
+        DocMsg (PutDocument (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         UpdateCurrentUser ->
@@ -509,7 +512,7 @@ update msg model =
             in
             createDocument model Document.blankDocument
 
-        AddToMasterDocument ->
+        DocMsg AddToMasterDocument ->
             let
                 _ =
                     Debug.log "MAIN: AddToMasterDocument" "now"
@@ -527,13 +530,13 @@ update msg model =
             in
             ( { model | appState = newAppState }, Cmd.none )
 
-        CreateDocument (Ok documentRecord) ->
+        DocMsg (CreateDocument (Ok documentRecord)) ->
             selectNewDocument model documentRecord.document
 
-        CreateDocument (Err error) ->
+        DocMsg (CreateDocument (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        RequestDocumentDelete ->
+        DocMsg RequestDocumentDelete ->
             let
                 appState =
                     model.appState
@@ -543,7 +546,7 @@ update msg model =
             in
             ( { model | appState = newAppState }, Cmd.none )
 
-        CancelDocumentDelete ->
+        DocMsg CancelDocumentDelete ->
             let
                 appState =
                     model.appState
@@ -553,7 +556,7 @@ update msg model =
             in
             ( { model | appState = newAppState }, Cmd.none )
 
-        DeleteCurrentDocument ->
+        DocMsg DeleteCurrentDocument ->
             let
                 appState =
                     model.appState
@@ -568,65 +571,65 @@ update msg model =
             , Request.Document.deleteCurrentDocument model
             )
 
-        DeleteDocument serverReply ->
+        DocMsg (DeleteDocument serverReply) ->
             Action.Document.deleteDocument serverReply model
 
-        RenumberDocuments ->
+        DocMsg RenumberDocuments ->
             Document.TOC.renumberMasterDocument model
 
         Title title ->
             Action.Document.setTitle title model
 
-        SetTextType textType ->
+        DocMsg (SetTextType textType) ->
             Action.Document.setTextType textType model
 
-        SetDocType docType ->
+        DocMsg (SetDocType docType) ->
             Action.Document.setDocType docType model
 
-        SetParentId parentIdString ->
+        DocMsg (SetParentId parentIdString) ->
             Document.MasterDocument.setParentId parentIdString model
 
         InputTags tagString ->
             updateTags tagString model
 
-        SaveCurrentDocument ->
+        DocMsg SaveCurrentDocument ->
             let
                 _ =
                     Debug.log "SaveCurrentDocument" "now"
             in
             saveCurrentDocument "" model
 
-        SaveDocument result ->
+        DocMsg (SaveDocument result) ->
             ( { model | message = "Document saved" }, Cmd.none )
 
-        AdoptChildren ->
+        DocMsg AdoptChildren ->
             let
                 _ =
                     Debug.log "AdoptChildren" "now"
             in
             saveCurrentDocument "adopt_children=yes" model
 
-        SelectDocument document ->
+        DocMsg (SelectDocument document) ->
             let
                 _ =
                     Debug.log "SelectDocument" "now"
             in
             Action.Document.selectDocument model document
 
-        SelectMaster document ->
+        DocMsg (SelectMaster document) ->
             Document.MasterDocument.select document model
 
         InputContent content ->
             Action.Document.inputContent content model
 
-        UpdateDocument ->
+        DocMsg UpdateDocument ->
             let
                 _ =
                     Debug.log "UpdateDocument" "now"
             in
             Action.Document.updateCurrentDocumentWithContent model
 
-        LatexFullRender ->
+        DocMsg LatexFullRender ->
             let
                 _ =
                     Debug.log "UpdateDocument" "now"
@@ -703,7 +706,7 @@ update msg model =
                     && model.current_document.attributes.docType
                     /= "master"
             then
-                if model.current_document.attributes.textType == "latex"  then
+                if model.current_document.attributes.textType == "latex" then
                     saveCurrentDocument "" newModel
                 else
                     updateCurrentDocumentWithContent newModel
@@ -810,7 +813,7 @@ subscriptions model =
         , External.reconnectUser ReconnectUser
         , External.recoverUserState RecoverUserState
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
-        , External.getRenderedText GetRenderedText -- pull rendered text from JS-land, then store in DB
+        , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
         , External.fileContentRead ImageRead
         , fileUploaded FileUploaded
         ]
@@ -1009,7 +1012,7 @@ init flags location =
         -- ( newModel, command ) =
         --     Document.Search.getRandomDocuments model
         startupPageCommands =
-            [ Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
+            [ Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
             ]
 
         commands =

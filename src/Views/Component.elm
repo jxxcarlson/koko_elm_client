@@ -1,12 +1,11 @@
 module Views.Component exposing (..)
 
-import StyleSheet exposing (..)
 import Color
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import Element.Events as EE exposing (..)
-import Types exposing (..)
 import StyleSheet exposing (..)
+import Types exposing (..)
 import Views.Basic as Basic
 
 
@@ -42,7 +41,7 @@ textFormatMenu model =
 
 setTextTypeButton : String -> String -> Model -> Element Styles variation Msg
 setTextTypeButton textType label model =
-    el (textFormatButton textType model) [ EA.width (px 85), EE.onClick (SetTextType textType), EA.height (px 30), paddingXY 8 14 ] (EL.text label)
+    el (textFormatButton textType model) [ EA.width (px 85), EE.onClick ((DocMsg << SetTextType) textType), EA.height (px 30), paddingXY 8 14 ] (EL.text label)
 
 
 textFormatButton : String -> Model -> Styles
@@ -60,10 +59,10 @@ docTypeMenu model =
             [ -- when model.appState.docTypeMenuDropped <|
               column Menu
                 [ padding 8, spacing 2 ]
-                [ el (docTypeButton "standard" model) [ EA.width (px 85), EE.onClick (SetDocType "standard"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Standard")
+                [ el (docTypeButton "standard" model) [ EA.width (px 85), EE.onClick ((DocMsg << SetDocType) "standard"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Standard")
 
                 -- , el (docTypeButton "note" model) [ EA.width (px 85), EE.onClick (SetDocType "note"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Note")
-                , el (docTypeButton "master" model) [ EA.width (px 85), EE.onClick (SetDocType "master"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Master")
+                , el (docTypeButton "master" model) [ EA.width (px 85), EE.onClick ((DocMsg << SetDocType) "master"), EA.height (px 30), paddingXY 8 14 ] (EL.text "Master")
                 ]
             ]
 

@@ -1,20 +1,5 @@
 module User.Login exposing (..)
 
-import Types
-    exposing
-        ( Model
-        , SearchOrder(..)
-        , AppState
-        , Page
-        , Msg(..)
-        , Page(..)
-        , SearchDomain(..)
-        , LoginLocalStorageRecord
-        )
-import Task
-import Time exposing (Time, second)
-
-
 -- App imports
 
 import Action.Error
@@ -25,13 +10,26 @@ import External
 import Initialization
 import Request.Api
 import Request.Document
+import Task
+import Time exposing (Time, second)
+import Types
+    exposing
+        ( AppState
+        , DocMsg(..)
+        , LoginLocalStorageRecord
+        , Model
+        , Msg(..)
+        , Page(..)
+        , SearchDomain(..)
+        , SearchOrder(..)
+        )
 import User.Auth
 import User.Request
 import Views.External
 
 
 completeRegistration result model =
-    case (result) of
+    case result of
         Ok result ->
             let
                 user =
@@ -54,14 +52,14 @@ completeRegistration result model =
                 newAppState =
                     { oldAppState | signedIn = True, authorizing = False }
             in
-                ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
+            ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
 
         Err err ->
             let
                 _ =
                     Debug.log "Registration failure" result
             in
-                ( { model | message = Action.Error.httpErrorString err }, Cmd.none )
+            ( { model | message = Action.Error.httpErrorString err }, Cmd.none )
 
 
 doLogin model =
@@ -76,7 +74,7 @@ doLogin model =
             else
                 ( model1, Cmd.none )
     in
-        ( model2, Cmd.batch [ cmds1, cmds2 ] )
+    ( model2, Cmd.batch [ cmds1, cmds2 ] )
 
 
 updateEmail : Model -> String -> ( Model, Cmd Msg )
@@ -88,7 +86,7 @@ updateEmail model email =
         updated_user =
             { user | email = email }
     in
-        ( { model | current_user = updated_user }, Cmd.none )
+    ( { model | current_user = updated_user }, Cmd.none )
 
 
 updatePassword : Model -> String -> ( Model, Cmd Msg )
@@ -100,7 +98,7 @@ updatePassword model password =
         updated_user =
             { user | password = password }
     in
-        ( { model | current_user = updated_user }, Cmd.none )
+    ( { model | current_user = updated_user }, Cmd.none )
 
 
 updateName : Model -> String -> ( Model, Cmd Msg )
@@ -112,7 +110,7 @@ updateName model name =
         updated_user =
             { user | name = name }
     in
-        ( { model | current_user = updated_user }, Cmd.none )
+    ( { model | current_user = updated_user }, Cmd.none )
 
 
 updateUsername : Model -> String -> ( Model, Cmd Msg )
@@ -124,7 +122,7 @@ updateUsername model username =
         updated_user =
             { user | username = username }
     in
-        ( { model | current_user = updated_user }, Cmd.none )
+    ( { model | current_user = updated_user }, Cmd.none )
 
 
 setupLogin : Model -> Model
@@ -148,11 +146,11 @@ setupLogin model =
         updatedUser =
             { user | password = "" }
     in
-        { model
-            | appState = newAppState
-            , searchState = newSearchState
-            , current_user = updatedUser
-        }
+    { model
+        | appState = newAppState
+        , searchState = newSearchState
+        , current_user = updatedUser
+    }
 
 
 login : Model -> ( Model, Cmd Msg )
@@ -188,22 +186,22 @@ signout message model =
         newAppState =
             { oldAppState | page = Types.StartPage, registerUser = False, signedIn = False, authorizing = False }
     in
-        ( Initialization.resetModel model
-        , Cmd.batch
-            [ External.toJs (Views.External.windowData model StartPage)
-            , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
-            , Request.Document.getDocumentWithQuery GetSpecialDocument "ident=2017-8-26@18-1-42.887330"
-            , External.disconnectUser "foo"
-            , User.Request.putUserState model
-            ]
-        )
+    ( Initialization.resetModel model
+    , Cmd.batch
+        [ External.toJs (Views.External.windowData model StartPage)
+        , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
+        , Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
+        , External.disconnectUser "foo"
+        , User.Request.putUserState model
+        ]
+    )
 
 
 doReconnectUser : String -> Model -> ( Model, Cmd Msg )
 doReconnectUser jsonString model =
     let
         _ =
-            Debug.log "xxx" ("doReconnectUser: " ++ (toString model.counter))
+            Debug.log "xxx" ("doReconnectUser: " ++ toString model.counter)
 
         _ =
             Debug.log "xxx doReconnectUser, jsonString" jsonString
@@ -214,19 +212,19 @@ doReconnectUser jsonString model =
         _ =
             Debug.log "maybeUserRecord" maybeUserRecord
     in
-        case maybeUserRecord of
-            Ok userRecord ->
-                let
-                    newModel =
-                        { model | warning = "" }
+    case maybeUserRecord of
+        Ok userRecord ->
+            let
+                newModel =
+                    { model | warning = "" }
 
-                    _ =
-                        Debug.log "userRecord" userRecord
-                in
-                    reconnectUser newModel userRecord
+                _ =
+                    Debug.log "userRecord" userRecord
+            in
+            reconnectUser newModel userRecord
 
-            Err error ->
-                ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
+        Err error ->
+            ( { model | warning = "Sorry, I cannot reconnect you" }, Cmd.none )
 
 
 reconnectUser : Model -> LoginLocalStorageRecord -> ( Model, Cmd Msg )
@@ -254,14 +252,14 @@ reconnectUser model userRecord =
         newAppState =
             { appState | page = Types.ReaderPage, signedIn = True, authorizing = False }
     in
-        ( { model
-            | current_user = current_user
-            , appState = newAppState
-            , searchState = newSearchState
-            , message = "User reconnected: " ++ userRecord.username
-          }
-        , Cmd.none
-        )
+    ( { model
+        | current_user = current_user
+        , appState = newAppState
+        , searchState = newSearchState
+        , message = "User reconnected: " ++ userRecord.username
+      }
+    , Cmd.none
+    )
 
 
 shortUsername : Model -> String
@@ -269,11 +267,11 @@ shortUsername model =
     let
         shortName =
             model.current_user.username
-                |> String.split ("@")
+                |> String.split "@"
                 |> List.head
                 |> Maybe.withDefault "---"
     in
-        shortName
+    shortName
 
 
 signOutOrIn model =
@@ -291,4 +289,4 @@ doSignIn model =
         newAppState =
             { appState | authorizing = True, page = StartPage }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+    ( { model | appState = newAppState }, Cmd.none )

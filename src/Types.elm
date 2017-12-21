@@ -269,41 +269,63 @@ type alias ErrorMessage =
     String
 
 
-type Msg
-    = NoOp
+
+-- https://www.reddit.com/r/elm/comments/5jd2xn/how_to_structure_elm_with_multiple_models/dbuu0m4/
+
+
+type DocMsg
+    = Foo
     | AddToMasterDocument
     | AdoptChildren
-    | AttachCurrentDocument String
-    | AuthenticationAction
-    | CancelAuthentication
-    | ClearSearch
-    | CompleteRegistration (Result Http.Error UserRecord)
     | CreateDocument (Result Http.Error DocumentRecord)
-    | CredentialsResult (Result Http.Error CredentialsWrapper)
     | RequestDocumentDelete
     | CancelDocumentDelete
     | DeleteCurrentDocument
     | DeleteDocument (Result Http.Error ())
     | DoRender Int
-    | DoSearch SearchDomain Int
     | EditSpecialDocument
+    | GetDocuments (Result Http.Error DocumentsRecord)
+    | GetUserDocuments (Result Http.Error DocumentsRecord)
+    | GetRenderedText String
+    | GetSpecialDocument (Result Http.Error DocumentsRecord)
+    | GetMasterDocument (Result Http.Error DocumentsRecord)
+    | LatexFullRender
+    | PutDocument (Result Http.Error ())
+    | RandomDocuments
+    | RenumberDocuments
+    | SaveCurrentDocument
+    | SaveDocument (Result Http.Error ())
+    | SelectDocument Document
+    | SelectMaster Document
+    | SetDocType String
+    | SetDocumentInDict (Result Http.Error ( DocumentsRecord, String ))
+    | SetParentId String
+    | SetTextType String
+    | UpdateDocument
+
+
+type Msg
+    = NoOp
+    | DocMsg DocMsg
+    | AttachCurrentDocument String
+    | AuthenticationAction
+    | CancelAuthentication
+    | ClearSearch
+    | CompleteRegistration (Result Http.Error UserRecord)
+    | CredentialsResult (Result Http.Error CredentialsWrapper)
+    | DoSearch SearchDomain Int
     | Email String
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
     | GenerateSeed
     | MigrateFromAsciidocLatex
-    | GetDocuments (Result Http.Error DocumentsRecord)
     | GetHomePageForUserHomePages String String
     | GetPublicPage String
-    | GetRenderedText String
     | GetUser (Result Http.Error BigUserRecord)
     | GetUserState (Result Http.Error UserStateRecord)
-    | GetSpecialDocument (Result Http.Error DocumentsRecord)
-    | GetMasterDocument (Result Http.Error DocumentsRecord)
     | GetTokenCompleted (Result Http.Error String)
     | GetUploadCredentials
-    | GetUserDocuments (Result Http.Error DocumentsRecord)
     | GetUsers (Result Http.Error UsersRecord)
     | GoTo Page
     | GoToPage (Maybe Page)
@@ -323,9 +345,7 @@ type Msg
     | NewSeed Int
     | Password String
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | PutDocument (Result Http.Error ())
     | PutUser (Result Http.Error ())
-    | RandomDocuments
     | RecallLastSearch
     | ReceiveChatMessage JsEncode.Value
     | ReceiveDate Date
@@ -336,22 +356,14 @@ type Msg
     | Register
     | RequestDate
     | RequestTime
-    | SaveCurrentDocument
-    | SaveDocument (Result Http.Error ())
     | SearchForUserHomePages Int
-    | SelectDocument Document
-    | SelectMaster Document
     | SelectSearchMode String
     | SelectSearchOrder String
     | SelectTool Tool
     | SendMessage
     | SendToJS String
-    | SetDocType String
-    | SetDocumentInDict (Result Http.Error ( DocumentsRecord, String ))
     | SetMessage String
-    | SetParentId String
     | SetSearchTerm String
-    | SetTextType String
     | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
     | SetupPages
     | Signout
@@ -363,9 +375,6 @@ type Msg
     | TogglePublic
     | ToggleRegister
     | ToggleUpdateRate
-    | UpdateDocument
-    | RenumberDocuments
-    | LatexFullRender
     | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
     | UpdateCurrentUser
