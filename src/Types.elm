@@ -283,6 +283,7 @@ type DocMsg
     | DeleteDocument (Result Http.Error ())
     | DoRender Int
     | EditSpecialDocument
+    | GetDiary
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
     | GetRenderedText String
@@ -292,6 +293,7 @@ type DocMsg
     | InputTags String
     | LatexFullRender
     | NewDocument
+    | NewDiaryEntry
     | PutDocument (Result Http.Error ())
     | RandomDocuments
     | RenumberDocuments

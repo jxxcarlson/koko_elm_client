@@ -3,6 +3,7 @@ module Document.Document
         ( blankDocument
         , defaultDocument
         , defaultMasterDocument
+        , diaryEntry
         , emptyDocument
         , errorDocument
         , hasTag
@@ -34,6 +35,23 @@ defaultDocument =
     , rendered_content = "Welcome to noteshare"
     , attributes = defaultAttributes
     , tags = []
+    , children = []
+    , parent_id = 0
+    , parent_title = "String"
+    }
+
+
+diaryEntry : Document
+diaryEntry =
+    { id = 0
+    , identifier = "nullDocument"
+    , author_id = 0
+    , author_name = ""
+    , title = "Diary Entry"
+    , content = "New diary entry"
+    , rendered_content = "New diary entry"
+    , attributes = defaultAttributes
+    , tags = [ "diary" ]
     , children = []
     , parent_id = 0
     , parent_title = "String"

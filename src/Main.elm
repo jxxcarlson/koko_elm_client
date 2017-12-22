@@ -41,6 +41,7 @@ import Document.Document as Document
         ( blankDocument
         , defaultDocument
         , defaultMasterDocument
+        , diaryEntry
         , emptyDocument
         , startDocument
         )
@@ -128,23 +129,11 @@ update msg model =
         AuthMsg Foo ->
             ( { model | message = "DocMsg: Foo" }, Cmd.none )
 
-        Resize w h ->
-            ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
-
-        PageMsg (GoTo p) ->
-            Action.Page.goToPage p model
-
-        SelectTool t ->
-            ( { model | appState = updateToolStatus model t }, Cmd.none )
-
         AuthMsg (Name name) ->
             User.Login.updateName model name
 
         AuthMsg (Username username) ->
             User.Login.updateUsername model username
-
-        Email email ->
-            User.Login.updateEmail model email
 
         AuthMsg (Password password) ->
             User.Login.updatePassword model password
@@ -163,12 +152,6 @@ update msg model =
 
         AuthMsg Login ->
             User.Login.doLogin model
-
-        UserMsg (ReconnectUser jsonString) ->
-            User.Login.doReconnectUser jsonString model
-
-        UserMsg (RecoverUserState jsonString) ->
-            User.Synchronize.doRecoverUserState jsonString model
 
         AuthMsg Register ->
             ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
@@ -262,6 +245,9 @@ update msg model =
             in
             -- Action.Document.saveCurrentDocument "" newModel
             ( { model | current_document = newDocument }, Cmd.none )
+
+        Email email ->
+            User.Login.updateEmail model email
 
         PageMsg GotoUserHomePages ->
             User.Display.goToUserHomePages model
@@ -429,12 +415,6 @@ update msg model =
         DocMsg (GetSpecialDocument (Err err)) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
 
-        SetUserState (Ok result) ->
-            User.Synchronize.setUserState result model
-
-        SetUserState (Err err) ->
-            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
-
         DocMsg (SetDocumentInDict (Ok ( documentsRecord, key ))) ->
             let
                 document =
@@ -500,6 +480,16 @@ update msg model =
                     Document.defaultDocument
             in
             createDocument model Document.blankDocument
+
+        DocMsg NewDiaryEntry ->
+            let
+                newDocument =
+                    Document.diaryEntry
+            in
+            createDocument model Document.diaryEntry
+
+        DocMsg GetDiary ->
+            Document.Search.withParameters "key=diary" Created Private ReaderPage model
 
         DocMsg AddToMasterDocument ->
             let
@@ -625,8 +615,32 @@ update msg model =
             in
             Action.Document.latexFullRender model
 
+        DocMsg TogglePublic ->
+            togglePublic model
+
+        PageMsg (GoTo p) ->
+            Action.Page.goToPage p model
+
+        Resize w h ->
+            ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
+
+        SelectTool t ->
+            ( { model | appState = updateToolStatus model t }, Cmd.none )
+
         SearchMsg (UseSearchDomain searchDomain) ->
             Document.Search.updateDomain model searchDomain
+
+        SetUserState (Ok result) ->
+            User.Synchronize.setUserState result model
+
+        SetUserState (Err err) ->
+            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
+
+        UserMsg (ReconnectUser jsonString) ->
+            User.Login.doReconnectUser jsonString model
+
+        UserMsg (RecoverUserState jsonString) ->
+            User.Synchronize.doRecoverUserState jsonString model
 
         UserMsg UpdateCurrentUser ->
             Action.User.updateCurrentUser model
@@ -638,9 +652,6 @@ update msg model =
 
         UserMsg (PutUser (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        DocMsg TogglePublic ->
-            togglePublic model
 
         ImageSelected ->
             ( { model | message = "Image selected" }
