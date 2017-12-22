@@ -1,6 +1,5 @@
 module Views.UserPreferences exposing (userPreferences)
 
-import Types exposing (Model)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick, onInput)
@@ -29,17 +28,17 @@ userPreferences model =
                 , submitBlurbButton model
                 ]
             )
-        , named "TOCHeader" (row TOC [] [ (Basic.label "User Preferences" Blue [ width (px 300), height (px 40) ]) ])
+        , named "TOCHeader" (row TOC [] [ Basic.label "User Preferences" Blue [ width (px 300), height (px 40) ] ])
         ]
     ]
 
 
 blurbPanel : Model -> Element Styles variation Msg
 blurbPanel model =
-    (Keyed.row PaleBlue
+    Keyed.row PaleBlue
         [ height (px 200) ]
-        [ ( (toString model.counter)
-          , (textArea Mono
+        [ ( toString model.counter
+          , textArea Mono
                 [ width (percent 100)
                 , height (px 150)
                 , yScrollbar
@@ -48,19 +47,17 @@ blurbPanel model =
 
                 -- , Utility.onKeyUp DoRender
                 ]
-                (model.current_user.blurb)
-            )
+                model.current_user.blurb
           )
         ]
-    )
 
 
 submitBlurbButton : Model -> Element Styles variation Msg
 submitBlurbButton model =
     Basic.button
-        ("Update")
+        "Update"
         Button
-        [ onClick UpdateCurrentUser
+        [ onClick (UserMsg UpdateCurrentUser)
         , width (px 120)
         , height (px 30)
         ]

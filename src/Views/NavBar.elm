@@ -53,7 +53,7 @@ goMenu model =
     row NavBar
         [ spacing 6, paddingRight 8, moveLeft 10 ]
         [ --   (startPageIcon model)
-          Basic.button "List" Charcoal [ width (px 40), onClick Types.InitStartPage ]
+          Basic.button "List" Charcoal [ width (px 40), onClick (PageMsg InitStartPage) ]
         , Basic.button "Read" Charcoal [ EE.onClick (PageMsg (GoTo ReaderPage)), width (px 55), center ]
         , Basic.button (signInOutText model) Button [ onClick (AuthMsg SignOutOrIn), width (px 60) ]
         ]
@@ -86,7 +86,7 @@ searchOptionsMenu model =
 
 searchElement model =
     inputText SearchField
-        [ EE.onInput UpdateSearchQueryInputBuffer
+        [ EE.onInput (SearchMsg << UpdateSearchQueryInputBuffer)
         , Utility.onKeyUp (DoSearch model.searchState.domain)
         , placeholder "Search: title, k:keyword .."
         , height (px 29)
@@ -126,7 +126,7 @@ basicSearchForm model =
         [ row Zero
             []
             [ inputText SearchField
-                [ EE.onInput UpdateSearchQueryInputBuffer
+                [ EE.onInput (SearchMsg << UpdateSearchQueryInputBuffer)
                 , Utility.onKeyUp (DoSearch model.searchState.domain)
                 , placeholder "Search: title, k:keyword .."
                 , height (px 29)
@@ -205,7 +205,7 @@ authenticationButtonText model =
 
 homepageIcon : Model -> Element Styles variation Msg
 homepageIcon model =
-    Basic.faIcon "Home Page" FontAwesome.home [ onClick Types.UserHomePage ]
+    Basic.faIcon "Home Page" FontAwesome.home [ onClick (PageMsg UserHomePage) ]
 
 
 randomDocumentIcon : Model -> Element Styles variation Msg
@@ -230,7 +230,7 @@ userPreferencesIcon model =
 
 startPageIcon : Model -> Element Styles variation Msg
 startPageIcon model =
-    Basic.faIcon "Start page" FontAwesome.asterisk [ onClick Types.InitStartPage ]
+    Basic.faIcon "Start page" FontAwesome.asterisk [ onClick (PageMsg InitStartPage) ]
 
 
 newDocumentButton : Model -> Element Styles variation Msg

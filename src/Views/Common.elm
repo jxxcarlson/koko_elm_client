@@ -216,7 +216,7 @@ homepage : Model -> Element Styles variation Msg
 homepage model =
     el FlatButtonBlue
         [ width (px 200)
-        , onClick Types.UserHomePage
+        , onClick (PageMsg UserHomePage)
         , height (px 30)
         , paddingXY 8 0
         , verticalCenter
@@ -248,7 +248,7 @@ editorTools model =
                 , alignTop
                 , width (px 250)
                 , height (px 100)
-                , onInput InputTags
+                , onInput (DocMsg << InputTags)
                 , placeholder "Keywords"
                 ]
                 (String.join ", " model.current_document.tags)
@@ -326,7 +326,7 @@ publicCheckbox model =
         [ paddingXY 10 2, spacing 20, verticalCenter ]
         [ node "input" <|
             el Zero
-                [ onClick TogglePublic
+                [ onClick (DocMsg TogglePublic)
                 , Element.Attributes.checked model.current_document.attributes.public
                 , width (px 18)
                 , type_ "checkbox"
@@ -414,7 +414,7 @@ searchOrderMenu model =
 
 recallLastSearchButton : Model -> Element Styles variation Msg
 recallLastSearchButton model =
-    Basic.faIcon "Recall last search" FontAwesome.rotate_left [ onClick RecallLastSearch ]
+    Basic.faIcon "Recall last search" FontAwesome.rotate_left [ onClick (SearchMsg RecallLastSearch) ]
 
 
 getDevice : Int -> Types.Device

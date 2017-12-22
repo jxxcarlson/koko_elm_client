@@ -27,11 +27,11 @@ registerUserForm1 model =
     column Blue
         [ padding 20, spacing 10.0, width (px 320), height (px 400) ]
         [ inputText Field [ EE.onInput (AuthMsg << Name), placeholder "Name" ] model.current_user.name
-        , inputText Field [ EE.onInput Username, placeholder "Username" ] model.current_user.username
+        , inputText Field [ EE.onInput (AuthMsg << Username), placeholder "Username" ] model.current_user.username
         , inputText Field [ EE.onInput Email, placeholder "Email" ] model.current_user.email
         , inputText Field [ EE.onInput (AuthMsg << Password), placeholder "Password" ] model.current_user.password
         , Basic.button "Register" Button [ onClick (AuthMsg Register), width (px 80) ]
-        , Basic.button "Toggle" Button [ onClick ToggleRegister, width (px 150) ]
+        , Basic.button "Toggle" Button [ onClick (AuthMsg ToggleRegister), width (px 150) ]
         , Component.cancelAuthentication Button model
         , el Blue [ paddingXY 20 40 ] (text model.message)
         ]
@@ -59,7 +59,7 @@ signinForm1 model =
         , node "input" <| el None [ type_ "password", onInput (AuthMsg << Password), placeholder "Password", value model.current_user.password ] empty
         , el Button [ EE.onClick (AuthMsg Login), alignBottom, height (px 30), width (px 90), padding 8 ] (text "Sign in")
         , el Button
-            [ onClick ToggleRegister
+            [ onClick (AuthMsg ToggleRegister)
             , alignBottom
             , height (px 30)
             , width (px 150)

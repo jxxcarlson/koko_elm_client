@@ -7,7 +7,7 @@ import Json.Decode exposing (field)
 import Json.Decode.Pipeline
 import Json.Encode
 import Request.Api
-import Types exposing (Model, Msg(GetUser, GetUserState, GetUsers, PutUser), User, UserStateRecord, Users, UsersRecord)
+import Types exposing (Model, Msg(UserMsg), User, UserMsg(GetUser, GetUserState, GetUsers, PutUser), UserStateRecord, Users, UsersRecord)
 
 
 getList : String -> Cmd Msg
@@ -28,7 +28,7 @@ getList query =
     HB.get url
         -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
         |> withExpect (Http.expectJson decodeUsers)
-        |> HB.send GetUsers
+        |> HB.send (UserMsg << GetUsers)
 
 
 get : Int -> Cmd Msg
@@ -40,7 +40,7 @@ get user_id =
     HB.get url
         -- |> HB.withHeader "Authorization" ("Bearer " ++ token)
         |> withExpect (Http.expectJson decodeUserRecord)
-        |> HB.send GetUser
+        |> HB.send (UserMsg << GetUser)
 
 
 getUserState : Int -> Cmd Msg
@@ -55,7 +55,7 @@ getUserState userId =
     HB.get url
         -- |> HB.withHeader "Authorization" ("Bearer " ++ model.current_user.token)
         |> withExpect (Http.expectJson userStateRecordDecoder2)
-        |> HB.send GetUserState
+        |> HB.send (UserMsg << GetUserState)
 
 
 putCurrentUserRB : Model -> RequestBuilder ()
@@ -79,7 +79,7 @@ putCurrentUser model =
             putCurrentUserRB model
                 |> HB.toRequest
     in
-    Http.send PutUser request
+    Http.send (UserMsg << PutUser) request
 
 
 putUserState : Model -> Cmd Msg
@@ -100,7 +100,7 @@ putUserState model =
                 |> withJsonBody params
                 |> HB.toRequest
     in
-    Http.send PutUser request
+    Http.send (UserMsg << PutUser) request
 
 
 putUserStateRecord : UserStateRecord -> Model -> Cmd Msg
@@ -118,7 +118,7 @@ putUserStateRecord userStateRecord model =
                 |> withJsonBody params
                 |> HB.toRequest
     in
-    Http.send PutUser request
+    Http.send (UserMsg << PutUser) request
 
 
 decodeUserRecord : Json.Decode.Decoder Types.BigUserRecord

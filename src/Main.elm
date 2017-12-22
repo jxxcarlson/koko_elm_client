@@ -140,7 +140,7 @@ update msg model =
         AuthMsg (Name name) ->
             User.Login.updateName model name
 
-        Username username ->
+        AuthMsg (Username username) ->
             User.Login.updateUsername model username
 
         Email email ->
@@ -164,10 +164,10 @@ update msg model =
         AuthMsg Login ->
             User.Login.doLogin model
 
-        ReconnectUser jsonString ->
+        UserMsg (ReconnectUser jsonString) ->
             User.Login.doReconnectUser jsonString model
 
-        RecoverUserState jsonString ->
+        UserMsg (RecoverUserState jsonString) ->
             User.Synchronize.doRecoverUserState jsonString model
 
         AuthMsg Register ->
@@ -185,7 +185,7 @@ update msg model =
         ToggleListView ->
             TOC.toggleListView model
 
-        ToggleRegister ->
+        AuthMsg ToggleRegister ->
             toggleRegister model
 
         ToggleUpdateRate ->
@@ -197,7 +197,7 @@ update msg model =
         SearchMsg (SetSearchTerm searchTerms) ->
             Document.Search.update model searchTerms
 
-        UpdateSearchQueryInputBuffer str ->
+        SearchMsg (UpdateSearchQueryInputBuffer str) ->
             ( { model | searchQueryInputBuffer = str }, Cmd.none )
 
         UpdateTextInputBuffer str ->
@@ -215,10 +215,10 @@ update msg model =
         DoSearch searchDomain key ->
             Action.Search.doSearch searchDomain key model
 
-        RecallLastSearch ->
+        SearchMsg RecallLastSearch ->
             Document.Search.recallLastSearch model
 
-        UserHomePage ->
+        PageMsg UserHomePage ->
             Action.Page.setHomePage model
 
         -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
@@ -228,7 +228,7 @@ update msg model =
         PageMsg (GetPublicPage searchTerm) ->
             Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
 
-        InitStartPage ->
+        PageMsg InitStartPage ->
             let
                 appState =
                     model.appState
@@ -319,7 +319,7 @@ update msg model =
             , Cmd.none
             )
 
-        GetUsers (Ok usersRecord) ->
+        UserMsg (GetUsers (Ok usersRecord)) ->
             let
                 userList =
                     usersRecord.users
@@ -335,10 +335,10 @@ update msg model =
             in
             ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
 
-        GetUsers (Err error) ->
+        UserMsg (GetUsers (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        GetUser (Ok userRecord) ->
+        UserMsg (GetUser (Ok userRecord)) ->
             let
                 _ =
                     Debug.log "userRecord" "yo!"
@@ -354,14 +354,14 @@ update msg model =
             in
             ( { model | current_user = updatedCurrentUser }, Cmd.none )
 
-        GetUser (Err error) ->
+        UserMsg (GetUser (Err error)) ->
             let
                 _ =
                     Debug.log "error" error
             in
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        GetUserState (Ok userStateRecord) ->
+        UserMsg (GetUserState (Ok userStateRecord)) ->
             let
                 _ =
                     Debug.log
@@ -393,7 +393,7 @@ update msg model =
             in
             ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
 
-        GetUserState (Err error) ->
+        UserMsg (GetUserState (Err error)) ->
             let
                 _ =
                     Debug.log
@@ -494,17 +494,6 @@ update msg model =
         DocMsg (PutDocument (Err error)) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
-        UpdateCurrentUser ->
-            Action.User.updateCurrentUser model
-
-        PutUser (Ok serverReply) ->
-            case serverReply of
-                () ->
-                    ( model, Cmd.none )
-
-        PutUser (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
         DocMsg NewDocument ->
             let
                 newDocument =
@@ -589,7 +578,7 @@ update msg model =
         DocMsg (SetParentId parentIdString) ->
             Document.MasterDocument.setParentId parentIdString model
 
-        InputTags tagString ->
+        DocMsg (InputTags tagString) ->
             updateTags tagString model
 
         DocMsg SaveCurrentDocument ->
@@ -619,7 +608,7 @@ update msg model =
         DocMsg (SelectMaster document) ->
             Document.MasterDocument.select document model
 
-        InputContent content ->
+        DocMsg (InputContent content) ->
             Action.Document.inputContent content model
 
         DocMsg UpdateDocument ->
@@ -639,7 +628,18 @@ update msg model =
         SearchMsg (UseSearchDomain searchDomain) ->
             Document.Search.updateDomain model searchDomain
 
-        TogglePublic ->
+        UserMsg UpdateCurrentUser ->
+            Action.User.updateCurrentUser model
+
+        UserMsg (PutUser (Ok serverReply)) ->
+            case serverReply of
+                () ->
+                    ( model, Cmd.none )
+
+        UserMsg (PutUser (Err error)) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+
+        DocMsg TogglePublic ->
             togglePublic model
 
         ImageSelected ->
@@ -719,7 +719,7 @@ update msg model =
         SendToJS str ->
             ( model, toJs str )
 
-        SetupPages ->
+        PageMsg SetupPages ->
             ( model, toJs (Views.External.windowData model model.appState.page) )
 
         SetMessage message ->
@@ -810,8 +810,8 @@ subscriptions model =
     Sub.batch
         [ Time.every (model.appState.tickInterval * Time.second) Tick
         , Window.resizes (\{ width, height } -> Resize width height)
-        , External.reconnectUser ReconnectUser
-        , External.recoverUserState RecoverUserState
+        , External.reconnectUser (UserMsg << ReconnectUser)
+        , External.recoverUserState (UserMsg << RecoverUserState)
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
         , External.fileContentRead ImageRead

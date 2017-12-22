@@ -288,6 +288,8 @@ type DocMsg
     | GetRenderedText String
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
+    | InputContent String
+    | InputTags String
     | LatexFullRender
     | NewDocument
     | PutDocument (Result Http.Error ())
@@ -302,6 +304,7 @@ type DocMsg
     | SetParentId String
     | SetTextType String
     | Title String
+    | TogglePublic
     | UpdateDocument
 
 
@@ -317,14 +320,18 @@ type AuthMsg
     | Register
     | Signout
     | SignOutOrIn
+    | ToggleRegister
+    | Username String
 
 
 type SearchMsg
     = ClearSearch
-    | SearchForUserHomePages Int
+    | RecallLastSearch
     | SelectSearchMode String
     | SelectSearchOrder String
+    | SearchForUserHomePages Int
     | SetSearchTerm String
+    | UpdateSearchQueryInputBuffer String
     | UseSearchDomain SearchDomain
 
 
@@ -335,6 +342,19 @@ type PageMsg
     | GoToPage (Maybe Page)
     | GotoUserHomePages
     | GotoUserPreferencesPage
+    | InitStartPage
+    | SetupPages
+    | UserHomePage
+
+
+type UserMsg
+    = UpdateCurrentUser
+    | GetUser (Result Http.Error BigUserRecord)
+    | GetUsers (Result Http.Error UsersRecord)
+    | GetUserState (Result Http.Error UserStateRecord)
+    | PutUser (Result Http.Error ())
+    | ReconnectUser String
+    | RecoverUserState String
 
 
 type Msg
@@ -343,6 +363,7 @@ type Msg
     | DocMsg DocMsg
     | PageMsg PageMsg
     | SearchMsg SearchMsg
+    | UserMsg UserMsg
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int
     | Email String
@@ -351,27 +372,17 @@ type Msg
     | Files (List NativeFile)
     | GenerateSeed
     | MigrateFromAsciidocLatex
-    | GetUser (Result Http.Error BigUserRecord)
-    | GetUserState (Result Http.Error UserStateRecord)
     | GetUploadCredentials
-    | GetUsers (Result Http.Error UsersRecord)
     | HandleSendError JsEncode.Value
     | ImageRead ImagePortData
     | ImageSelected
-    | InitStartPage
-    | InputContent String
-    | InputTags String
     | LinkTo String
     | Message String
     | NewSeed Int
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | PutUser (Result Http.Error ())
-    | RecallLastSearch
     | ReceiveChatMessage JsEncode.Value
     | ReceiveDate Date
     | ReceiveTime Time
-    | ReconnectUser String
-    | RecoverUserState String
     | Resize Int Int
     | RequestDate
     | RequestTime
@@ -380,19 +391,12 @@ type Msg
     | SendToJS String
     | SetMessage String
     | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
-    | SetupPages
     | Tick Time
     | ToggleListView
     | ToggleMenu String
-    | TogglePublic
-    | ToggleRegister
     | ToggleUpdateRate
-    | UpdateSearchQueryInputBuffer String
     | UpdateTextInputBuffer String
-    | UpdateCurrentUser
     | UploadComplete (Result Http.Error String)
-    | UserHomePage
-    | Username String
 
 
 type Page

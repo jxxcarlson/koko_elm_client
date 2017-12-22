@@ -17,7 +17,7 @@ form model =
         [ row Zero
             [ spacing -30 ]
             [ inputText SearchField
-                [ EE.onInput Types.UpdateSearchQueryInputBuffer
+                [ EE.onInput (SearchMsg << UpdateSearchQueryInputBuffer)
                 , Utility.onKeyUp (SearchMsg << SearchForUserHomePages)
                 , placeholder "Search for a user (name, keyword)"
                 , title "Enter a username or a keyword"

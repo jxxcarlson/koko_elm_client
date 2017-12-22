@@ -67,7 +67,7 @@ contentPanel model =
                 [ width (percent 100)
                 , yScrollbar
                 , padding 20
-                , onInput InputContent
+                , onInput (DocMsg << InputContent)
                 , Utility.onKeyUp (DocMsg << DoRender)
                 ]
                 model.current_document.content
