@@ -18,7 +18,6 @@ import Action.Document
         , updateTags
         )
 import Action.Error
-import Action.Page
 import Action.Periodic
 import Action.Search
 import Action.UI
@@ -57,7 +56,6 @@ import Image.Upload
 import Image.View
 import Jwt
 import MiniLatex.Differ exposing (EditRecord, emptyEditRecord)
-import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url
 import Navigation
@@ -73,6 +71,7 @@ import Time exposing (Time, second)
 import Types exposing (..)
 import Update.Auth
 import Update.Page
+import Update.Search
 import User.Display
 import User.Login
 import User.Request
@@ -128,46 +127,6 @@ updateYada submessage model =
             ( { model | message = "Yada: Bar" }, Cmd.none )
 
 
-updateSearch submessage model =
-    case submessage of
-        SetSearchTerm searchTerms ->
-            Document.Search.update model searchTerms
-
-        UpdateSearchQueryInputBuffer str ->
-            ( { model | searchQueryInputBuffer = str }, Cmd.none )
-
-        SelectSearchMode searchMode ->
-            Action.Search.selectSearchMode searchMode model
-
-        SelectSearchOrder searchOrder ->
-            Action.Search.selectSearchOrder searchOrder model
-
-        ClearSearch ->
-            ( { model | searchQueryInputBuffer = "" }, Cmd.none )
-
-        RecallLastSearch ->
-            Document.Search.recallLastSearch model
-
-        SearchForUserHomePages keyCode ->
-            if keyCode == 13 then
-                let
-                    query =
-                        "is_user=" ++ model.searchQueryInputBuffer
-
-                    searchState =
-                        model.searchState
-
-                    newSearchState =
-                        { searchState | domain = Public }
-                in
-                ( { model | searchState = newSearchState }, User.Request.getList query )
-            else
-                ( model, Cmd.none )
-
-        UseSearchDomain searchDomain ->
-            Document.Search.updateDomain model searchDomain
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -184,7 +143,7 @@ update msg model =
             Update.Page.update submessage model
 
         SearchMsg submessage ->
-            updateSearch submessage model
+            Update.Search.update submessage model
 
         ToggleListView ->
             TOC.toggleListView model
