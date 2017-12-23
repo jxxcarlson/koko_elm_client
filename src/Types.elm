@@ -358,18 +358,12 @@ type UserMsg
     | RecoverUserState String
 
 
-type Yada
-    = Foo
-    | Bar
-
-
 type Msg
     = NoOp
     | AuthMsg AuthMsg
     | DocMsg DocMsg
     | PageMsg PageMsg
     | SearchMsg SearchMsg
-    | Yada Yada
     | UserMsg UserMsg
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int

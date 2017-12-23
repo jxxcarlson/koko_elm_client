@@ -1,8 +1,5 @@
 module Main exposing (..)
 
--- 1
--- 2
-
 import Action.Channel
 import Action.Document
     exposing
@@ -70,6 +67,7 @@ import Task
 import Time exposing (Time, second)
 import Types exposing (..)
 import Update.Auth
+import Update.Document
 import Update.Page
 import Update.Search
 import User.Display
@@ -118,26 +116,17 @@ updateWindow model w h =
     }
 
 
-updateYada submessage model =
-    case submessage of
-        Foo ->
-            ( { model | message = "Yada: Foo" }, Cmd.none )
-
-        Bar ->
-            ( { model | message = "Yada: Bar" }, Cmd.none )
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp ->
             ( { model | message = "NoOp" }, Cmd.none )
 
-        Yada submessage ->
-            updateYada submessage model
-
         AuthMsg submessage ->
             Update.Auth.update submessage model
+
+        DocMsg submessage ->
+            Update.Document.update submessage model
 
         PageMsg submessage ->
             Update.Page.update submessage model
@@ -164,43 +153,8 @@ update msg model =
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
 
-        DocMsg RandomDocuments ->
-            Document.Search.getRandomDocuments model
-
-        DocMsg (DoRender key) ->
-            Document.Render.putWithKey key model
-
-        DocMsg (GetRenderedText str) ->
-            let
-                document =
-                    model.current_document
-
-                newDocument =
-                    { document | rendered_content = str }
-
-                newModel =
-                    { model | current_document = newDocument }
-
-                _ =
-                    Debug.log "GetRenderedText" "now"
-            in
-            -- Action.Document.saveCurrentDocument "" newModel
-            ( { model | current_document = newDocument }, Cmd.none )
-
         Email email ->
             User.Login.updateEmail model email
-
-        DocMsg EditSpecialDocument ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | page = EditorPage }
-            in
-            ( { model | current_document = model.specialDocument, appState = newAppState }
-            , Cmd.none
-            )
 
         UserMsg (GetUsers (Ok usersRecord)) ->
             let
@@ -285,235 +239,10 @@ update msg model =
             in
             ( model, Cmd.none )
 
-        DocMsg (GetDocuments (Ok documentsRecord)) ->
-            updateDocuments model documentsRecord
-
-        DocMsg (GetDocuments (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        DocMsg (GetUserDocuments (Ok documentsRecord)) ->
-            updateDocuments model documentsRecord
-
-        DocMsg (GetUserDocuments (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        DocMsg (GetSpecialDocument (Ok documentsRecord)) ->
-            let
-                specialDocument =
-                    case List.head documentsRecord.documents of
-                        Just document ->
-                            document
-
-                        Nothing ->
-                            Document.emptyDocument
-            in
-            ( { model | specialDocument = specialDocument }, Cmd.none )
-
-        DocMsg (GetSpecialDocument (Err err)) ->
-            ( { model | message = "Getting special document: error" }, Cmd.none )
-
-        DocMsg (SetDocumentInDict (Ok ( documentsRecord, key ))) ->
-            let
-                document =
-                    case List.head documentsRecord.documents of
-                        Just document ->
-                            document
-
-                        Nothing ->
-                            Document.emptyDocument
-
-                documentDict =
-                    model.documentDict
-
-                newDocumentDict =
-                    if document /= Document.emptyDocument then
-                        Document.Dictionary.set key document documentDict
-                    else
-                        documentDict
-            in
-            ( { model | documentDict = newDocumentDict }, Cmd.none )
-
-        DocMsg (SetDocumentInDict (Err err)) ->
-            ( { model | message = "Error setting key in documentDict" }, Cmd.none )
-
-        ---
-        DocMsg (GetMasterDocument (Ok documentsRecord)) ->
-            let
-                masterDocument =
-                    case List.head documentsRecord.documents of
-                        Just document ->
-                            document
-
-                        Nothing ->
-                            Document.emptyDocument
-
-                oldDocuments =
-                    model.documents
-
-                newDocuments =
-                    Utility.replaceIf (Action.Document.hasId masterDocument.id) masterDocument oldDocuments
-            in
-            ( { model | master_document = masterDocument }, Cmd.none )
-
-        DocMsg (GetMasterDocument (Err err)) ->
-            ( { model | message = "Getting master document: error" }, Cmd.none )
-
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         Message str ->
             ( { model | message = str }, Cmd.none )
-
-        DocMsg (PutDocument (Ok serverReply)) ->
-            case serverReply of
-                () ->
-                    ( model, Cmd.none )
-
-        DocMsg (PutDocument (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        DocMsg NewDocument ->
-            let
-                newDocument =
-                    Document.defaultDocument
-            in
-            createDocument model Document.blankDocument
-
-        DocMsg NewDiaryEntry ->
-            let
-                newDocument =
-                    Document.diaryEntry
-            in
-            createDocument model (Document.diaryEntry model.date)
-
-        DocMsg GetDiary ->
-            Document.Search.withParameters "key=diary" Created Private ReaderPage model
-
-        DocMsg AddToMasterDocument ->
-            let
-                _ =
-                    Debug.log "MAIN: AddToMasterDocument" "now"
-            in
-            Document.MasterDocument.addTo model
-
-        --( model , Request.Document.createDocument newDocument model.current_user.token )
-        DocMsg (AttachCurrentDocument location) ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | command = Document.MasterDocument.attach location model }
-            in
-            ( { model | appState = newAppState }, Cmd.none )
-
-        DocMsg (CreateDocument (Ok documentRecord)) ->
-            selectNewDocument model documentRecord.document
-
-        DocMsg (CreateDocument (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        DocMsg RequestDocumentDelete ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | deleteState = Pending }
-            in
-            ( { model | appState = newAppState }, Cmd.none )
-
-        DocMsg CancelDocumentDelete ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | deleteState = Resting }
-            in
-            ( { model | appState = newAppState }, Cmd.none )
-
-        DocMsg DeleteCurrentDocument ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | deleteState = Resting }
-            in
-            ( { model
-                | appState = newAppState
-                , message = "Delete current document"
-              }
-            , Request.Document.deleteCurrentDocument model
-            )
-
-        DocMsg (DeleteDocument serverReply) ->
-            Action.Document.deleteDocument serverReply model
-
-        DocMsg RenumberDocuments ->
-            Document.TOC.renumberMasterDocument model
-
-        DocMsg (Title title) ->
-            Action.Document.setTitle title model
-
-        DocMsg (SetTextType textType) ->
-            Action.Document.setTextType textType model
-
-        DocMsg (SetDocType docType) ->
-            Action.Document.setDocType docType model
-
-        DocMsg (SetParentId parentIdString) ->
-            Document.MasterDocument.setParentId parentIdString model
-
-        DocMsg (InputTags tagString) ->
-            updateTags tagString model
-
-        DocMsg SaveCurrentDocument ->
-            let
-                _ =
-                    Debug.log "SaveCurrentDocument" "now"
-            in
-            saveCurrentDocument "" model
-
-        DocMsg (SaveDocument result) ->
-            ( { model | message = "Document saved" }, Cmd.none )
-
-        DocMsg AdoptChildren ->
-            let
-                _ =
-                    Debug.log "AdoptChildren" "now"
-            in
-            saveCurrentDocument "adopt_children=yes" model
-
-        DocMsg (SelectDocument document) ->
-            let
-                _ =
-                    Debug.log "SelectDocument" "now"
-            in
-            Action.Document.selectDocument model document
-
-        DocMsg (SelectMaster document) ->
-            Document.MasterDocument.select document model
-
-        DocMsg (InputContent content) ->
-            Action.Document.inputContent content model
-
-        DocMsg UpdateDocument ->
-            let
-                _ =
-                    Debug.log "UpdateDocument" "now"
-            in
-            Action.Document.updateCurrentDocumentWithContent model
-
-        DocMsg LatexFullRender ->
-            let
-                _ =
-                    Debug.log "UpdateDocument" "now"
-            in
-            Action.Document.latexFullRender model
-
-        DocMsg TogglePublic ->
-            togglePublic model
 
         Resize w h ->
             ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
