@@ -486,7 +486,7 @@ update msg model =
                 newDocument =
                     Document.diaryEntry
             in
-            createDocument model Document.diaryEntry
+            createDocument model (Document.diaryEntry model.date)
 
         DocMsg GetDiary ->
             Document.Search.withParameters "key=diary" Created Private ReaderPage model

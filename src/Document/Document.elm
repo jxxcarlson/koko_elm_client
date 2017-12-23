@@ -11,6 +11,8 @@ module Document.Document
         , startDocument
         )
 
+import Date exposing (Date, day, dayOfWeek, month, year)
+import Date.Extra
 import Types exposing (Document, DocumentAttributes)
 
 
@@ -41,13 +43,23 @@ defaultDocument =
     }
 
 
-diaryEntry : Document
-diaryEntry =
+diaryEntry : Maybe Date -> Document
+diaryEntry maybeDate =
+    case maybeDate of
+        Just date ->
+            realDiaryEntry date
+
+        Nothing ->
+            blankDocument
+
+
+realDiaryEntry : Date -> Document
+realDiaryEntry date =
     { id = 0
     , identifier = "nullDocument"
     , author_id = 0
     , author_name = ""
-    , title = "Diary Entry"
+    , title = Date.Extra.toFormattedString "EEEE, MMMM d, y" date
     , content = "New diary entry"
     , rendered_content = "New diary entry"
     , attributes = defaultAttributes
