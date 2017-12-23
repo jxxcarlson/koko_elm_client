@@ -70,6 +70,7 @@ import Update.Auth
 import Update.Document
 import Update.Page
 import Update.Search
+import Update.User
 import User.Display
 import User.Login
 import User.Request
@@ -134,6 +135,9 @@ update msg model =
         SearchMsg submessage ->
             Update.Search.update submessage model
 
+        UserMsg submessage ->
+            Update.User.update submessage model
+
         ToggleListView ->
             TOC.toggleListView model
 
@@ -156,89 +160,6 @@ update msg model =
         Email email ->
             User.Login.updateEmail model email
 
-        UserMsg (GetUsers (Ok usersRecord)) ->
-            let
-                userList =
-                    usersRecord.users
-
-                user =
-                    List.head userList |> Maybe.withDefault model.current_user
-
-                query =
-                    "authorname=" ++ user.username ++ "&key=home"
-
-                ( model1, cmd ) =
-                    Document.Search.withParameters query Alphabetical Public UserHomePages model
-            in
-            ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
-
-        UserMsg (GetUsers (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        UserMsg (GetUser (Ok userRecord)) ->
-            let
-                _ =
-                    Debug.log "userRecord" "yo!"
-
-                user =
-                    userRecord.user
-
-                current_user =
-                    model.current_user
-
-                updatedCurrentUser =
-                    { current_user | blurb = user.blurb }
-            in
-            ( { model | current_user = updatedCurrentUser }, Cmd.none )
-
-        UserMsg (GetUser (Err error)) ->
-            let
-                _ =
-                    Debug.log "error" error
-            in
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
-        UserMsg (GetUserState (Ok userStateRecord)) ->
-            let
-                _ =
-                    Debug.log
-                        "in GetUserState"
-                        "SUCCESS"
-
-                _ =
-                    Debug.log
-                        "in GetUserState, userStateRecord"
-                        userStateRecord
-
-                appState =
-                    model.appState
-
-                searchState =
-                    model.searchState
-
-                newSearchState =
-                    { searchState | domain = All }
-
-                newAppState =
-                    { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
-
-                token =
-                    model.current_user.token
-
-                task =
-                    User.Synchronize.setUserStateTask userStateRecord token
-            in
-            ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
-
-        UserMsg (GetUserState (Err error)) ->
-            let
-                _ =
-                    Debug.log
-                        "in GetUserState ERROR"
-                        (toString error)
-            in
-            ( model, Cmd.none )
-
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         Message str ->
@@ -255,23 +176,6 @@ update msg model =
 
         SetUserState (Err err) ->
             ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
-
-        UserMsg (ReconnectUser jsonString) ->
-            User.Login.doReconnectUser jsonString model
-
-        UserMsg (RecoverUserState jsonString) ->
-            User.Synchronize.doRecoverUserState jsonString model
-
-        UserMsg UpdateCurrentUser ->
-            Action.User.updateCurrentUser model
-
-        UserMsg (PutUser (Ok serverReply)) ->
-            case serverReply of
-                () ->
-                    ( model, Cmd.none )
-
-        UserMsg (PutUser (Err error)) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         ImageSelected ->
             ( { model | message = "Image selected" }
