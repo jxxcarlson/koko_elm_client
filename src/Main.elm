@@ -120,56 +120,71 @@ updateWindow model w h =
     }
 
 
+updateYada submessage model =
+    case submessage of
+        Foo ->
+            ( { model | message = "Yada: Foo" }, Cmd.none )
+
+        Bar ->
+            ( { model | message = "Yada: Bar" }, Cmd.none )
+
+
+updateAuth submessage model =
+    case submessage of
+        Name name ->
+            User.Login.updateName model name
+
+        Username username ->
+            User.Login.updateUsername model username
+
+        Password password ->
+            User.Login.updatePassword model password
+
+        Signout ->
+            User.Login.signout "Please sign in" model
+
+        AuthenticationAction ->
+            if model.appState.signedIn then
+                User.Login.signout "You are now signed out." model
+            else
+                Action.UI.setAuthorizing model True
+
+        CancelAuthentication ->
+            Action.UI.toggleAuthorizing model
+
+        Login ->
+            User.Login.doLogin model
+
+        Register ->
+            ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
+
+        CompleteRegistration result ->
+            User.Login.completeRegistration result model
+
+        GetTokenCompleted result ->
+            User.Auth.getTokenCompleted model result
+
+        SignOutOrIn ->
+            User.Login.signOutOrIn model
+
+        ToggleRegister ->
+            toggleRegister model
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp ->
             ( { model | message = "NoOp" }, Cmd.none )
 
-        AuthMsg Foo ->
-            ( { model | message = "DocMsg: Foo" }, Cmd.none )
+        Yada submessage ->
+            updateYada submessage model
 
-        AuthMsg (Name name) ->
-            User.Login.updateName model name
-
-        AuthMsg (Username username) ->
-            User.Login.updateUsername model username
-
-        AuthMsg (Password password) ->
-            User.Login.updatePassword model password
-
-        AuthMsg Signout ->
-            User.Login.signout "Please sign in" model
-
-        AuthMsg AuthenticationAction ->
-            if model.appState.signedIn then
-                User.Login.signout "You are now signed out." model
-            else
-                Action.UI.setAuthorizing model True
-
-        AuthMsg CancelAuthentication ->
-            Action.UI.toggleAuthorizing model
-
-        AuthMsg Login ->
-            User.Login.doLogin model
-
-        AuthMsg Register ->
-            ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
-
-        AuthMsg (CompleteRegistration result) ->
-            User.Login.completeRegistration result model
-
-        AuthMsg (GetTokenCompleted result) ->
-            User.Auth.getTokenCompleted model result
-
-        AuthMsg SignOutOrIn ->
-            User.Login.signOutOrIn model
+        AuthMsg submessage ->
+            updateAuth submessage model
 
         ToggleListView ->
             TOC.toggleListView model
-
-        AuthMsg ToggleRegister ->
-            toggleRegister model
 
         ToggleUpdateRate ->
             ( Action.Document.toggleUpdateRate model, Cmd.none )

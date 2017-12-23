@@ -311,8 +311,7 @@ type DocMsg
 
 
 type AuthMsg
-    = Foo
-    | AuthenticationAction
+    = AuthenticationAction
     | CancelAuthentication
     | CompleteRegistration (Result Http.Error UserRecord)
     | GetTokenCompleted (Result Http.Error String)
@@ -359,12 +358,18 @@ type UserMsg
     | RecoverUserState String
 
 
+type Yada
+    = Foo
+    | Bar
+
+
 type Msg
     = NoOp
     | AuthMsg AuthMsg
     | DocMsg DocMsg
     | PageMsg PageMsg
     | SearchMsg SearchMsg
+    | Yada Yada
     | UserMsg UserMsg
     | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int
