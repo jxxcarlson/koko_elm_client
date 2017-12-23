@@ -97,7 +97,7 @@ getRenderedText macroDefinitions editRecord =
     in
     List.map (\para -> "<p>\n" ++ para ++ "\n</p>") paragraphs
         |> String.join "\n\n"
-        |> (\x -> x ++ "\n\n" ++ macroDefinitions)
+        |> (\x -> macroDefinitions ++ "\n\n" ++ x)
 
 
 {-| Create an EditRecord from a string of MiniLaTeX text:

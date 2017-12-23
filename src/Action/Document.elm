@@ -635,7 +635,8 @@ selectDocument model document =
                 model.appState
 
         maybeMacroFileId =
-            KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags
+            Debug.log "MACRO FILE ID"
+                (KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags)
 
         newAppState =
             { appState
