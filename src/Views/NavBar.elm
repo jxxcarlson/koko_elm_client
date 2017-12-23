@@ -182,8 +182,8 @@ modeSelector : Model -> Element Styles variation Msg
 modeSelector model =
     row NavBar
         [ spacing 8 ]
-        [ Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (getDiaryButton model)
-        , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (diaryEntryButton model)
+        [ Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (diaryEntryButton model)
+        , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (getDiaryButton model)
         , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth)) (newDocumentButton model)
         , Basic.button "Reader" (Component.activeButton ReaderPage model) [ EE.onClick (PageMsg (GoTo ReaderPage)), width (px 60), center ]
         , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth))
@@ -240,9 +240,9 @@ newDocumentButton model =
 
 diaryEntryButton : Model -> Element Styles variation Msg
 diaryEntryButton model =
-    Basic.button "D" Blue [ onClick (DocMsg NewDiaryEntry), width (px 28) ]
+    Basic.button "D+" Blue [ onClick (DocMsg NewDiaryEntry), width (px 36) ]
 
 
 getDiaryButton : Model -> Element Styles variation Msg
 getDiaryButton model =
-    Basic.button "D" BluishCharcoal [ onClick (DocMsg GetDiary), width (px 28) ]
+    Basic.button "D" Charcoal [ onClick (DocMsg GetDiary), width (px 28) ]
