@@ -171,6 +171,104 @@ updateAuth submessage model =
             toggleRegister model
 
 
+updatePage submessage model =
+    case submessage of
+        UserHomePage ->
+            Action.Page.setHomePage model
+
+        GetPublicPage searchTerm ->
+            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+
+        InitStartPage ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = StartPage, masterDocLoaded = False, authorizing = False }
+            in
+            ( { model | appState = newAppState }
+            , Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
+            )
+
+        GotoUserHomePages ->
+            User.Display.goToUserHomePages model
+
+        GotoUserPreferencesPage ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = UserPreferencesPage }
+            in
+            ( { model
+                | appState = newAppState
+                , textInputBuffer = model.current_user.blurb
+              }
+            , User.Request.get model.current_user.id
+            )
+
+        GetHomePageForUserHomePages searchTerm username ->
+            let
+                model2 =
+                    { model | selectedUserName = username }
+
+                ( newModel, cmd ) =
+                    Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
+            in
+            ( newModel, Cmd.batch [ cmd ] )
+
+        GoTo p ->
+            Action.Page.goToPage p model
+
+        SetupPages ->
+            ( model, toJs (Views.External.windowData model model.appState.page) )
+
+        GoToPage maybepage ->
+            Nav.Navigation.navigateTo maybepage model
+
+
+updateSearch submessage model =
+    case submessage of
+        SetSearchTerm searchTerms ->
+            Document.Search.update model searchTerms
+
+        UpdateSearchQueryInputBuffer str ->
+            ( { model | searchQueryInputBuffer = str }, Cmd.none )
+
+        SelectSearchMode searchMode ->
+            Action.Search.selectSearchMode searchMode model
+
+        SelectSearchOrder searchOrder ->
+            Action.Search.selectSearchOrder searchOrder model
+
+        ClearSearch ->
+            ( { model | searchQueryInputBuffer = "" }, Cmd.none )
+
+        RecallLastSearch ->
+            Document.Search.recallLastSearch model
+
+        SearchForUserHomePages keyCode ->
+            if keyCode == 13 then
+                let
+                    query =
+                        "is_user=" ++ model.searchQueryInputBuffer
+
+                    searchState =
+                        model.searchState
+
+                    newSearchState =
+                        { searchState | domain = Public }
+                in
+                ( { model | searchState = newSearchState }, User.Request.getList query )
+            else
+                ( model, Cmd.none )
+
+        UseSearchDomain searchDomain ->
+            Document.Search.updateDomain model searchDomain
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -183,6 +281,12 @@ update msg model =
         AuthMsg submessage ->
             updateAuth submessage model
 
+        PageMsg submessage ->
+            updatePage submessage model
+
+        SearchMsg submessage ->
+            updateSearch submessage model
+
         ToggleListView ->
             TOC.toggleListView model
 
@@ -192,51 +296,15 @@ update msg model =
         ToggleMenu menu ->
             toggleMenu menu model
 
-        SearchMsg (SetSearchTerm searchTerms) ->
-            Document.Search.update model searchTerms
-
-        SearchMsg (UpdateSearchQueryInputBuffer str) ->
-            ( { model | searchQueryInputBuffer = str }, Cmd.none )
-
         UpdateTextInputBuffer str ->
             ( { model | textInputBuffer = str }, Cmd.none )
-
-        SearchMsg (SelectSearchMode searchMode) ->
-            Action.Search.selectSearchMode searchMode model
-
-        SearchMsg (SelectSearchOrder searchOrder) ->
-            Action.Search.selectSearchOrder searchOrder model
-
-        SearchMsg ClearSearch ->
-            ( { model | searchQueryInputBuffer = "" }, Cmd.none )
 
         DoSearch searchDomain key ->
             Action.Search.doSearch searchDomain key model
 
-        SearchMsg RecallLastSearch ->
-            Document.Search.recallLastSearch model
-
-        PageMsg UserHomePage ->
-            Action.Page.setHomePage model
-
         -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
-
-        PageMsg (GetPublicPage searchTerm) ->
-            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-
-        PageMsg InitStartPage ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | page = StartPage, masterDocLoaded = False, authorizing = False }
-            in
-            ( { model | appState = newAppState }
-            , Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
-            )
 
         DocMsg RandomDocuments ->
             Document.Search.getRandomDocuments model
@@ -263,50 +331,6 @@ update msg model =
 
         Email email ->
             User.Login.updateEmail model email
-
-        PageMsg GotoUserHomePages ->
-            User.Display.goToUserHomePages model
-
-        PageMsg GotoUserPreferencesPage ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | page = UserPreferencesPage }
-            in
-            ( { model
-                | appState = newAppState
-                , textInputBuffer = model.current_user.blurb
-              }
-            , User.Request.get model.current_user.id
-            )
-
-        SearchMsg (SearchForUserHomePages keyCode) ->
-            if keyCode == 13 then
-                let
-                    query =
-                        "is_user=" ++ model.searchQueryInputBuffer
-
-                    searchState =
-                        model.searchState
-
-                    newSearchState =
-                        { searchState | domain = Public }
-                in
-                ( { model | searchState = newSearchState }, User.Request.getList query )
-            else
-                ( model, Cmd.none )
-
-        PageMsg (GetHomePageForUserHomePages searchTerm username) ->
-            let
-                model2 =
-                    { model | selectedUserName = username }
-
-                ( newModel, cmd ) =
-                    Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
-            in
-            ( newModel, Cmd.batch [ cmd ] )
 
         DocMsg EditSpecialDocument ->
             let
@@ -633,17 +657,11 @@ update msg model =
         DocMsg TogglePublic ->
             togglePublic model
 
-        PageMsg (GoTo p) ->
-            Action.Page.goToPage p model
-
         Resize w h ->
             ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
 
         SelectTool t ->
             ( { model | appState = updateToolStatus model t }, Cmd.none )
-
-        SearchMsg (UseSearchDomain searchDomain) ->
-            Document.Search.updateDomain model searchDomain
 
         SetUserState (Ok result) ->
             User.Synchronize.setUserState result model
@@ -745,9 +763,6 @@ update msg model =
         SendToJS str ->
             ( model, toJs str )
 
-        PageMsg SetupPages ->
-            ( model, toJs (Views.External.windowData model model.appState.page) )
-
         SetMessage message ->
             Action.Channel.setMessage message model
 
@@ -764,9 +779,6 @@ update msg model =
 
         PhoenixMsg msg ->
             Action.Channel.handleMsg msg model
-
-        PageMsg (GoToPage maybepage) ->
-            Nav.Navigation.navigateTo maybepage model
 
         LinkTo path ->
             ( model, Navigation.newUrl path )
