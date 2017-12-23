@@ -73,6 +73,7 @@ import StyleSheet exposing (..)
 import Task
 import Time exposing (Time, second)
 import Types exposing (..)
+import Update.Auth
 import User.Auth exposing (getTokenCompleted, loginUserCmd, registerUserCmd)
 import User.Display
 import User.Login
@@ -127,48 +128,6 @@ updateYada submessage model =
 
         Bar ->
             ( { model | message = "Yada: Bar" }, Cmd.none )
-
-
-updateAuth submessage model =
-    case submessage of
-        Name name ->
-            User.Login.updateName model name
-
-        Username username ->
-            User.Login.updateUsername model username
-
-        Password password ->
-            User.Login.updatePassword model password
-
-        Signout ->
-            User.Login.signout "Please sign in" model
-
-        AuthenticationAction ->
-            if model.appState.signedIn then
-                User.Login.signout "You are now signed out." model
-            else
-                Action.UI.setAuthorizing model True
-
-        CancelAuthentication ->
-            Action.UI.toggleAuthorizing model
-
-        Login ->
-            User.Login.doLogin model
-
-        Register ->
-            ( model, User.Auth.registerUserCmd model Request.Api.registerUserUrl )
-
-        CompleteRegistration result ->
-            User.Login.completeRegistration result model
-
-        GetTokenCompleted result ->
-            User.Auth.getTokenCompleted model result
-
-        SignOutOrIn ->
-            User.Login.signOutOrIn model
-
-        ToggleRegister ->
-            toggleRegister model
 
 
 updatePage submessage model =
@@ -279,7 +238,7 @@ update msg model =
             updateYada submessage model
 
         AuthMsg submessage ->
-            updateAuth submessage model
+            Update.Auth.update submessage model
 
         PageMsg submessage ->
             updatePage submessage model
