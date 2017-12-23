@@ -57,7 +57,6 @@ import Image.Upload
 import Image.View
 import Jwt
 import MiniLatex.Differ exposing (EditRecord, emptyEditRecord)
-import MiniLatex.LatexState exposing (emptyLatexState)
 import Nav.Navigation
 import Nav.Parser exposing (..)
 import Nav.UrlParseExtra as Url
@@ -66,7 +65,6 @@ import Parser
 import Phoenix.Channel
 import Phoenix.Socket
 import Random
-import Request.Api exposing (loginUrl, registerUserUrl)
 import Request.Document
 import String.Extra
 import StyleSheet exposing (..)
@@ -74,7 +72,6 @@ import Task
 import Time exposing (Time, second)
 import Types exposing (..)
 import Update.Auth
-import User.Auth exposing (getTokenCompleted, loginUserCmd, registerUserCmd)
 import User.Display
 import User.Login
 import User.Request
