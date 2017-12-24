@@ -14,7 +14,6 @@ import Action.Document
         , updateDocuments
         , updateTags
         )
-import Action.Error
 import Action.Periodic
 import Action.Search
 import Action.UI
@@ -27,24 +26,7 @@ import Action.UI
         , toggleRegister
         , updateToolStatus
         )
-import Action.User
-import Configuration
-import Date exposing (Date)
-import Dict
-import Document.Dictionary
-import Document.Document as Document
-    exposing
-        ( blankDocument
-        , defaultDocument
-        , defaultMasterDocument
-        , diaryEntry
-        , emptyDocument
-        , startDocument
-        )
-import Document.MasterDocument
-import Document.Render
-import Document.Search
-import Document.TOC
+import Date
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
 import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
@@ -53,16 +35,10 @@ import Image.Upload
 import Image.View
 import Init exposing (init)
 import Jwt
-import MiniLatex.Differ exposing (EditRecord, emptyEditRecord)
 import Nav.Parser exposing (..)
-import Nav.UrlParseExtra as Url
 import Navigation
-import Parser
-import Phoenix.Channel
 import Phoenix.Socket
 import Random
-import Request.Document
-import String.Extra
 import StyleSheet exposing (..)
 import Task
 import Time exposing (Time, second)
@@ -72,11 +48,8 @@ import Update.Document
 import Update.Page
 import Update.Search
 import Update.User
-import User.Display
 import User.Login
-import User.Request
 import User.Synchronize
-import Utility
 import Views.Admin exposing (admin)
 import Views.Common as Common
 import Views.Editor exposing (editor)
