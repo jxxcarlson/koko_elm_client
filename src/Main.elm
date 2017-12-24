@@ -28,9 +28,8 @@ import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Init exposing (init)
 import Nav.Parser
 import Navigation
-import Phoenix.Socket
 import Random
-import Time exposing (Time, second)
+import Subscriptions exposing (subscriptions)
 import Types exposing (..)
 import Update.Auth
 import Update.Document
@@ -42,7 +41,6 @@ import Update.User
 import Update.Window
 import Views.Main exposing (view)
 import Views.TOC as TOC exposing (toggleListView)
-import Window exposing (..)
 
 
 main : Program Flags Model Msg
@@ -161,17 +159,3 @@ update msg model =
                     { appState | seed = Debug.log "newSeed" newSeed }
             in
             ( { model | appState = newAppState }, Cmd.none )
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Time.every (model.appState.tickInterval * Time.second) (PeriodicMsg << Tick)
-        , Window.resizes (\{ width, height } -> WindowMsg (Resize width height))
-        , External.reconnectUser (UserMsg << ReconnectUser)
-        , External.recoverUserState (UserMsg << RecoverUserState)
-        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
-        , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
-        , External.fileContentRead (ImageMsg << ImageRead)
-        , fileUploaded FileUploaded
-        ]
