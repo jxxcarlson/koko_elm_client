@@ -20,6 +20,7 @@ import Types
         , Model
         , Msg(..)
         , Page(..)
+        , PeriodicMsg(..)
         , SearchDomain(..)
         , SearchOrder(..)
         )
@@ -52,7 +53,7 @@ completeRegistration result model =
                 newAppState =
                     { oldAppState | signedIn = True, authorizing = False }
             in
-            ( { model | current_user = newUser, appState = newAppState }, Task.perform ReceiveTime Time.now )
+            ( { model | current_user = newUser, appState = newAppState }, Task.perform (PeriodicMsg << ReceiveTime) Time.now )
 
         Err err ->
             let

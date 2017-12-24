@@ -308,6 +308,7 @@ type DocMsg
     | Title String
     | TogglePublic
     | UpdateDocument
+    | UpdateTextInputBuffer String
 
 
 type AuthMsg
@@ -356,6 +357,14 @@ type PageMsg
     | UserHomePage
 
 
+type PeriodicMsg
+    = Tick Time
+    | ReceiveDate Date
+    | ReceiveTime Time
+    | RequestDate
+    | RequestTime
+
+
 type UserMsg
     = UpdateCurrentUser
     | GetUser (Result Http.Error BigUserRecord)
@@ -372,6 +381,7 @@ type Msg
     | DocMsg DocMsg
     | ImageMsg ImageMsg
     | PageMsg PageMsg
+    | PeriodicMsg PeriodicMsg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | DoSearch SearchDomain Int
@@ -386,21 +396,15 @@ type Msg
     | NewSeed Int
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | ReceiveChatMessage JsEncode.Value
-    | ReceiveDate Date
-    | ReceiveTime Time
     | Resize Int Int
-    | RequestDate
-    | RequestTime
     | SelectTool Tool
     | SendMessage
     | SendToJS String
     | SetMessage String
     | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
-    | Tick Time
     | ToggleListView
     | ToggleMenu String
     | ToggleUpdateRate
-    | UpdateTextInputBuffer String
     | UploadComplete (Result Http.Error String)
 
 

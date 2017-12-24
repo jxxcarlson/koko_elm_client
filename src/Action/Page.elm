@@ -49,7 +49,7 @@ setEditPage model =
     ( { model | appState = newAppState, lastEditTime = lastEditTime }
     , Cmd.batch
         [ External.toJs (Views.External.windowData model EditorPage)
-        , Task.perform ReceiveTime Time.now
+        , Task.perform (PeriodicMsg << ReceiveTime) Time.now
 
         --, Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
         ]

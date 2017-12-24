@@ -29,7 +29,6 @@ import Action.UI
 import Date
 import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Init exposing (init)
-import Jwt
 import Nav.Parser exposing (..)
 import Navigation
 import Phoenix.Socket
@@ -41,6 +40,7 @@ import Update.Auth
 import Update.Document
 import Update.Image exposing (update)
 import Update.Page
+import Update.Periodic
 import Update.Search
 import Update.User
 import User.Login
@@ -96,6 +96,9 @@ update msg model =
         PageMsg submessage ->
             Update.Page.update submessage model
 
+        PeriodicMsg submessage ->
+            Update.Periodic.update submessage model
+
         SearchMsg submessage ->
             Update.Search.update submessage model
 
@@ -110,9 +113,6 @@ update msg model =
 
         ToggleMenu menu ->
             toggleMenu menu model
-
-        UpdateTextInputBuffer str ->
-            ( { model | textInputBuffer = str }, Cmd.none )
 
         DoSearch searchDomain key ->
             Action.Search.doSearch searchDomain key model
@@ -159,30 +159,6 @@ update msg model =
             -- obviously, set some state notifying failure
             ( model, Cmd.none )
 
-        Tick time ->
-            let
-                tick =
-                    model.tick + 1
-
-                newModel =
-                    { model | tick = tick }
-            in
-            if
-                model.appState.page
-                    == EditorPage
-                    && model.appState.textBufferDirty
-                    && model.current_document.attributes.docType
-                    /= "master"
-            then
-                if model.current_document.attributes.textType == "latex" then
-                    saveCurrentDocument "" newModel
-                else
-                    updateCurrentDocumentWithContent newModel
-            else if model.appState.online then
-                Action.Periodic.do newModel time
-            else
-                Action.Channel.joinChannel newModel
-
         -- (model, Cmd.none) --
         SendToJS str ->
             ( model, toJs str )
@@ -207,52 +183,6 @@ update msg model =
         LinkTo path ->
             ( model, Navigation.newUrl path )
 
-        RequestDate ->
-            ( model, Task.perform ReceiveDate Date.now )
-
-        ReceiveDate date ->
-            let
-                nextModel =
-                    { model | date = Just date }
-            in
-            ( nextModel, Cmd.none )
-
-        RequestTime ->
-            ( model, Task.perform ReceiveTime Time.now )
-
-        ReceiveTime time ->
-            let
-                time_ =
-                    Just time
-
-                token =
-                    model.current_user.token
-
-                ( expired, message ) =
-                    if token /= "" then
-                        case Jwt.isExpired time token of
-                            Ok False ->
-                                ( False, "Session valid" )
-
-                            Ok True ->
-                                ( True, "Session expired" )
-
-                            Err error ->
-                                ( True, "Session expired (2)" )
-                    else
-                        ( False, "Not signed in" )
-
-                ( newModel, cmd ) =
-                    if expired then
-                        User.Login.signout "You are now signed out." model
-                    else
-                        ( model, Cmd.none )
-
-                _ =
-                    Debug.log "TOK" message
-            in
-            ( { newModel | message = message, time = time_ }, cmd )
-
         GenerateSeed ->
             ( model, Random.generate NewSeed (Random.int 1 10000) )
 
@@ -270,7 +200,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Time.every (model.appState.tickInterval * Time.second) Tick
+        [ Time.every (model.appState.tickInterval * Time.second) (PeriodicMsg << Tick)
         , Window.resizes (\{ width, height } -> Resize width height)
         , External.reconnectUser (UserMsg << ReconnectUser)
         , External.recoverUserState (UserMsg << RecoverUserState)

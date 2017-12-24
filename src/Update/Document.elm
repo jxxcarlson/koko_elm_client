@@ -273,3 +273,6 @@ update submessage model =
 
         TogglePublic ->
             Action.Document.togglePublic model
+
+        UpdateTextInputBuffer str ->
+            ( { model | textInputBuffer = str }, Cmd.none )

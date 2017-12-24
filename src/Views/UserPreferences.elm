@@ -43,7 +43,7 @@ blurbPanel model =
                 , height (px 150)
                 , yScrollbar
                 , padding 20
-                , onInput UpdateTextInputBuffer
+                , onInput (DocMsg << UpdateTextInputBuffer)
 
                 -- , Utility.onKeyUp DoRender
                 ]

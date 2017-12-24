@@ -4,7 +4,7 @@ import Action.Channel as Channel
 import Action.Document
 import Task
 import Time
-import Types exposing (Model, Msg(..), Page(..), UserStateRecord)
+import Types exposing (Model, Msg(..), Page(..), PeriodicMsg(..), UserStateRecord)
 import User.Request
 
 
@@ -57,7 +57,7 @@ updateUserState model =
             computeUserStateRecord model
 
         cmd =
-            Task.perform ReceiveTime Time.now
+            Task.perform (PeriodicMsg << ReceiveTime) Time.now
     in
     if doUpdateUserRecord newUserStateRecord model then
         ( model, Cmd.batch [ User.Request.putUserStateRecord newUserStateRecord model, cmd ] )
@@ -90,7 +90,7 @@ doCycle model time =
                 (model.tick % 5)
 
         cmd2 =
-            Task.perform ReceiveTime Time.now
+            Task.perform (PeriodicMsg << ReceiveTime) Time.now
     in
     case cycle of
         0 ->

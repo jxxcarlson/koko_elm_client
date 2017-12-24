@@ -30,12 +30,12 @@ import Types
         , Msg
             ( DocMsg
             , NewSeed
+            , PeriodicMsg
             , PhoenixMsg
             , ReceiveChatMessage
-            , ReceiveDate
-            , ReceiveTime
             )
         , Page(..)
+        , PeriodicMsg(..)
         , SearchDomain(..)
         , SearchOrder(..)
         , SearchState
@@ -173,8 +173,8 @@ init flags location =
             , External.toJs ws
             , External.askToReconnectUser "reconnectUser"
             , External.askToRecoverUserState "recoverUserState"
-            , Task.perform ReceiveDate Date.now
-            , Task.perform ReceiveTime Time.now
+            , Task.perform (PeriodicMsg << ReceiveDate) Date.now
+            , Task.perform (PeriodicMsg << ReceiveTime) Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
             , Random.generate NewSeed (Random.int 1 10000)
             ]
