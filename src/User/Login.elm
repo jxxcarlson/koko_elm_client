@@ -7,7 +7,7 @@ import Data.User
 import Document.Dictionary
 import Document.Search
 import External
-import Initialization
+import Init
 import Request.Api
 import Request.Document
 import Task
@@ -186,7 +186,7 @@ signout message model =
         newAppState =
             { oldAppState | page = Types.StartPage, registerUser = False, signedIn = False, authorizing = False }
     in
-    ( Initialization.resetModel model
+    ( Init.resetModel model
     , Cmd.batch
         [ External.toJs (Views.External.windowData model StartPage)
         , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
