@@ -85,7 +85,7 @@ searchOptionsMenu model =
 searchElement model =
     inputText SearchField
         [ EE.onInput (SearchMsg << UpdateSearchQueryInputBuffer)
-        , Utility.onKeyUp (DoSearch model.searchState.domain)
+        , Utility.onKeyUp (SearchMsg << DoSearch model.searchState.domain)
         , placeholder "Search: title, k:keyword .."
         , height (px 29)
         , width (px 300)
@@ -125,7 +125,7 @@ basicSearchForm model =
             []
             [ inputText SearchField
                 [ EE.onInput (SearchMsg << UpdateSearchQueryInputBuffer)
-                , Utility.onKeyUp (DoSearch model.searchState.domain)
+                , Utility.onKeyUp (SearchMsg << DoSearch model.searchState.domain)
                 , placeholder "Search: title, k:keyword .."
                 , height (px 29)
                 , minWidth (px 180)
@@ -142,7 +142,7 @@ searchButton model =
         [ EA.width (px 25)
         , title "Search for my documents"
         , EA.alignRight
-        , EE.onClick (DoSearch model.searchState.domain 13)
+        , EE.onClick (SearchMsg (DoSearch model.searchState.domain 13))
         , EA.height (px 30)
         , paddingXY 0 4
         ]

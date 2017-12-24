@@ -8,7 +8,7 @@ import Http
 import MiniLatex.Driver
 import Request.Document
 import Task exposing (Task)
-import Types exposing (ActiveDocumentList(..), DocMsg(..), DocumentsRecord, Model, Msg(..), Page(..), UserStateRecord)
+import Types exposing (ActiveDocumentList(..), DocMsg(..), DocumentsRecord, Model, Msg(..), Page(..), UserMsg(SetUserState), UserStateRecord)
 
 
 {-| Recover state from local storage
@@ -42,7 +42,7 @@ doRecoverUserState jsonString model =
             in
             ( { model | appState = newAppState }
             , Cmd.batch
-                [ Task.attempt SetUserState innerSetUserStateTask
+                [ Task.attempt (UserMsg << SetUserState) innerSetUserStateTask
                 , Request.Document.getDocumentWithAuthenticatedQuery
                     (DocMsg << GetSpecialDocument)
                     token

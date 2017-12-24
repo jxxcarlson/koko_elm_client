@@ -14,8 +14,6 @@ import Action.Document
         , updateDocuments
         , updateTags
         )
-import Action.Periodic
-import Action.Search
 import Action.UI
     exposing
         ( appStateToggleAuthorizing
@@ -26,14 +24,12 @@ import Action.UI
         , toggleRegister
         , updateToolStatus
         )
-import Date
 import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Init exposing (init)
-import Nav.Parser exposing (..)
+import Nav.Parser
 import Navigation
 import Phoenix.Socket
 import Random
-import Task
 import Time exposing (Time, second)
 import Types exposing (..)
 import Update.Auth
@@ -43,10 +39,7 @@ import Update.Page
 import Update.Periodic
 import Update.Search
 import Update.User
-import User.Login
-import User.Synchronize
-import Views.Common as Common
-import Views.External exposing (windowData, windowSetup)
+import Update.Window
 import Views.Main exposing (view)
 import Views.TOC as TOC exposing (toggleListView)
 import Window exposing (..)
@@ -54,28 +47,12 @@ import Window exposing (..)
 
 main : Program Flags Model Msg
 main =
-    Navigation.programWithFlags urlParser
+    Navigation.programWithFlags Nav.Parser.urlParser
         { init = init
         , view = view
         , update = update
         , subscriptions = subscriptions
         }
-
-
-updateWindow : Model -> Int -> Int -> Model
-updateWindow model w h =
-    let
-        new_window =
-            KWindow w h
-
-        device =
-            Common.getDevice w
-    in
-    { model
-        | device = device
-        , window = new_window
-        , message = "w: " ++ toString model.window.width ++ ", h: " ++ toString model.window.height
-    }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -105,6 +82,9 @@ update msg model =
         UserMsg submessage ->
             Update.User.update submessage model
 
+        WindowMsg submessage ->
+            Update.Window.update submessage model
+
         ToggleListView ->
             TOC.toggleListView model
 
@@ -114,29 +94,15 @@ update msg model =
         ToggleMenu menu ->
             toggleMenu menu model
 
-        DoSearch searchDomain key ->
-            Action.Search.doSearch searchDomain key model
-
         -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
 
-        -- User.Login.signout "Error: could not get user documents." model
-        -- ( { model | message = "Error, cannot get documents" }, Cmd.none )
         Message str ->
             ( { model | message = str }, Cmd.none )
 
-        Resize w h ->
-            ( updateWindow model w h, toJs (Views.External.windowData model model.appState.page) )
-
         SelectTool t ->
             ( { model | appState = updateToolStatus model t }, Cmd.none )
-
-        SetUserState (Ok result) ->
-            User.Synchronize.setUserState result model
-
-        SetUserState (Err err) ->
-            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
 
         Files nativeFiles ->
             ( { model | fileToUpload = List.head nativeFiles }, Cmd.none )
@@ -201,7 +167,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Time.every (model.appState.tickInterval * Time.second) (PeriodicMsg << Tick)
-        , Window.resizes (\{ width, height } -> Resize width height)
+        , Window.resizes (\{ width, height } -> WindowMsg (Resize width height))
         , External.reconnectUser (UserMsg << ReconnectUser)
         , External.recoverUserState (UserMsg << RecoverUserState)
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg

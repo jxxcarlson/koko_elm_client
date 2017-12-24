@@ -94,7 +94,7 @@ update submessage model =
                 task =
                     User.Synchronize.setUserStateTask userStateRecord token
             in
-            ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt SetUserState task )
+            ( { model | appState = newAppState, searchState = newSearchState }, Task.attempt (UserMsg << SetUserState) task )
 
         GetUserState (Err error) ->
             let
@@ -121,3 +121,9 @@ update submessage model =
 
         PutUser (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+
+        SetUserState (Ok result) ->
+            User.Synchronize.setUserState result model
+
+        SetUserState (Err err) ->
+            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )

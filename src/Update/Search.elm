@@ -23,6 +23,9 @@ update submessage model =
         ClearSearch ->
             ( { model | searchQueryInputBuffer = "" }, Cmd.none )
 
+        DoSearch searchDomain key ->
+            Action.Search.doSearch searchDomain key model
+
         RecallLastSearch ->
             Document.Search.recallLastSearch model
 

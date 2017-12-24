@@ -336,6 +336,7 @@ type ImageMsg
 
 type SearchMsg
     = ClearSearch
+    | DoSearch SearchDomain Int
     | RecallLastSearch
     | SelectSearchMode String
     | SelectSearchOrder String
@@ -373,6 +374,11 @@ type UserMsg
     | PutUser (Result Http.Error ())
     | ReconnectUser String
     | RecoverUserState String
+    | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
+
+
+type WindowMsg
+    = Resize Int Int
 
 
 type Msg
@@ -384,7 +390,7 @@ type Msg
     | PeriodicMsg PeriodicMsg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
-    | DoSearch SearchDomain Int
+    | WindowMsg WindowMsg
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)
@@ -396,12 +402,10 @@ type Msg
     | NewSeed Int
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
     | ReceiveChatMessage JsEncode.Value
-    | Resize Int Int
     | SelectTool Tool
     | SendMessage
     | SendToJS String
     | SetMessage String
-    | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
     | ToggleListView
     | ToggleMenu String
     | ToggleUpdateRate
