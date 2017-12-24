@@ -313,6 +313,7 @@ type DocMsg
 type AuthMsg
     = AuthenticationAction
     | CancelAuthentication
+    | Email String
     | CompleteRegistration (Result Http.Error UserRecord)
     | GetTokenCompleted (Result Http.Error String)
     | Login
@@ -374,7 +375,6 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | DoSearch SearchDomain Int
-    | Email String
     | FileSelected
     | FileUploaded Bool
     | Files (List NativeFile)

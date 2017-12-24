@@ -28,7 +28,6 @@ import Action.UI
         )
 import Date
 import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
-import Image.Upload
 import Init exposing (init)
 import Jwt
 import Nav.Parser exposing (..)
@@ -121,9 +120,6 @@ update msg model =
         -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
-
-        Email email ->
-            User.Login.updateEmail model email
 
         -- User.Login.signout "Error: could not get user documents." model
         -- ( { model | message = "Error, cannot get documents" }, Cmd.none )

@@ -30,6 +30,9 @@ update submessage model =
         CancelAuthentication ->
             Action.UI.toggleAuthorizing model
 
+        Email email ->
+            User.Login.updateEmail model email
+
         Login ->
             User.Login.doLogin model
 
