@@ -40,6 +40,7 @@ import Time exposing (Time, second)
 import Types exposing (..)
 import Update.Auth
 import Update.Document
+import Update.Image exposing (update)
 import Update.Page
 import Update.Search
 import Update.User
@@ -90,6 +91,9 @@ update msg model =
         DocMsg submessage ->
             Update.Document.update submessage model
 
+        ImageMsg submessage ->
+            Update.Image.update submessage model
+
         PageMsg submessage ->
             Update.Page.update submessage model
 
@@ -137,34 +141,6 @@ update msg model =
 
         SetUserState (Err err) ->
             ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
-
-        ImageSelected ->
-            ( { model | message = "Image selected" }
-            , External.fileSelected model.imageRecord.id
-            )
-
-        ImageRead data ->
-            let
-                newImage =
-                    { contents = data.contents
-                    , filename = data.filename
-                    }
-
-                newImageRecord =
-                    { id = "ImageInputId", mImage = Just newImage }
-            in
-            ( { model | imageRecord = newImageRecord }
-            , Cmd.none
-            )
-
-        GetUploadCredentials ->
-            Image.Upload.getUploadCredentials model
-
-        CredentialsResult (Ok result) ->
-            Image.Upload.request result.credentials model
-
-        CredentialsResult (Err error) ->
-            ( model, Cmd.none )
 
         Files nativeFiles ->
             ( { model | fileToUpload = List.head nativeFiles }, Cmd.none )
@@ -304,6 +280,6 @@ subscriptions model =
         , External.recoverUserState (UserMsg << RecoverUserState)
         , Phoenix.Socket.listen model.phxSocket PhoenixMsg
         , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
-        , External.fileContentRead ImageRead
+        , External.fileContentRead (ImageMsg << ImageRead)
         , fileUploaded FileUploaded
         ]

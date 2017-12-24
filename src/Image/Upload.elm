@@ -2,14 +2,14 @@ module Image.Upload exposing (..)
 
 -- import Types exposing(Model, Image, defaultImage, Credentials, CredentialsResult)
 
-import Types exposing (..)
-import Date.Extra
 import Date exposing (Date)
-import Http exposing (stringPart, Request)
+import Date.Extra
+import Http exposing (Request, stringPart)
 import HttpBuilder as HB exposing (..)
 import Image.FileReader as FR exposing (NativeFile)
 import Json.Decode exposing (field)
 import Request.Api
+import Types exposing (..)
 
 
 getUploadCredentials1 model =
@@ -24,7 +24,7 @@ getUploadCredentials1 model =
             Http.get url decodeCredentialsWrapper
                 |> Http.send CredentialsResult
     in
-        ( { model | message = "image: " ++ image.filename }, cmd )
+    ( { model | message = "image: " ++ image.filename }, cmd )
 
 
 getUploadCredentials : Model -> ( Model, Cmd Msg )
@@ -70,9 +70,9 @@ getUploadCredentials model =
             HB.get url
                 |> HB.withHeader "authorization" ("Bearer " ++ model.current_user.token)
                 |> withExpect (Http.expectJson decodeCredentialsWrapper)
-                |> HB.send CredentialsResult
+                |> HB.send (ImageMsg << CredentialsResult)
     in
-        ( { model | message = "filename: " ++ filename }, cmd )
+    ( { model | message = "filename: " ++ filename }, cmd )
 
 
 dateString : Date -> String
@@ -90,7 +90,7 @@ dateString date =
         md =
             List.map (String.padLeft 2 '0') [ m, d ] |> String.join ""
     in
-        y ++ md
+    y ++ md
 
 
 getFormattedDate : Maybe Date -> String
@@ -118,7 +118,7 @@ awzCredential credentials =
         _ =
             Debug.log "cred:" cred
     in
-        cred
+    cred
 
 
 decodeCredentials : Json.Decode.Decoder Credentials
@@ -151,15 +151,15 @@ multiPartBody creds nf =
         _ =
             Debug.log "x-amz-credential" (awzCredential creds)
     in
-        Http.multipartBody
-            [ stringPart "key" (nf.name)
-            , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
-            , stringPart "x-amz-credential" (awzCredential creds)
-            , stringPart "x-amz-date" creds.date
-            , stringPart "policy" creds.policy
-            , stringPart "x-amz-signature" creds.signature
-            , FR.filePart "file" nf
-            ]
+    Http.multipartBody
+        [ stringPart "key" nf.name
+        , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
+        , stringPart "x-amz-credential" (awzCredential creds)
+        , stringPart "x-amz-date" creds.date
+        , stringPart "policy" creds.policy
+        , stringPart "x-amz-signature" creds.signature
+        , FR.filePart "file" nf
+        ]
 
 
 uploadRequest : Credentials -> NativeFile -> Request String
@@ -195,4 +195,4 @@ request result model =
                     )
                 |> Maybe.withDefault Cmd.none
     in
-        ( model, cmd )
+    ( model, cmd )

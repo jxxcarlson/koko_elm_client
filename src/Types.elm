@@ -325,6 +325,13 @@ type AuthMsg
     | Username String
 
 
+type ImageMsg
+    = ImageRead ImagePortData
+    | ImageSelected
+    | GetUploadCredentials
+    | CredentialsResult (Result Http.Error CredentialsWrapper)
+
+
 type SearchMsg
     = ClearSearch
     | RecallLastSearch
@@ -362,10 +369,10 @@ type Msg
     = NoOp
     | AuthMsg AuthMsg
     | DocMsg DocMsg
+    | ImageMsg ImageMsg
     | PageMsg PageMsg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
-    | CredentialsResult (Result Http.Error CredentialsWrapper)
     | DoSearch SearchDomain Int
     | Email String
     | FileSelected
@@ -373,10 +380,7 @@ type Msg
     | Files (List NativeFile)
     | GenerateSeed
     | MigrateFromAsciidocLatex
-    | GetUploadCredentials
     | HandleSendError JsEncode.Value
-    | ImageRead ImagePortData
-    | ImageSelected
     | LinkTo String
     | Message String
     | NewSeed Int

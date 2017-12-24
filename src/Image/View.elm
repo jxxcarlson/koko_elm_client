@@ -1,15 +1,15 @@
 module Image.View exposing (..)
 
-import Json.Decode
-import StyleSheet exposing (..)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Types exposing (..)
 import Html
 import Html.Attributes as HA
 import Html.Events as HE
 import Image.FileReader exposing (parseSelectedFiles)
+import Json.Decode
+import StyleSheet exposing (..)
+import Types exposing (..)
 
 
 imageEditor : Model -> List (Element Styles variation Msg)
@@ -50,10 +50,10 @@ imagePane model =
                 Nothing ->
                     viewImagePreview defaultImage
     in
-        row None
-            [ width (px 450) ]
-            [ html (chooseImageButton model imagePreview)
-            ]
+    row None
+        [ width (px 450) ]
+        [ html (chooseImageButton model imagePreview)
+        ]
 
 
 chooseImageButton : Model -> Html.Html Msg -> Html.Html Msg
@@ -63,7 +63,7 @@ chooseImageButton model imagePreview =
             [ HA.type_ "file"
             , HA.id model.imageRecord.id
             , HE.on "change"
-                (Json.Decode.succeed ImageSelected)
+                (Json.Decode.succeed (ImageMsg ImageSelected))
             ]
             []
         , imagePreview
@@ -74,11 +74,11 @@ uploadImageButton : Model -> Element Styles variation Msg
 uploadImageButton model =
     el FlatButton
         [ width (px 200)
-        , onClick GetUploadCredentials
+        , onClick (ImageMsg GetUploadCredentials)
         , height (px 30)
         , verticalCenter
         ]
-        (el Zero [ center, verticalCenter ] (text ("Upload image")))
+        (el Zero [ center, verticalCenter ] (text "Upload image"))
 
 
 viewImagePreview : Image -> Html.Html Msg
@@ -116,7 +116,7 @@ fileUploadPanel : Model -> Html.Html Msg
 fileUploadPanel model =
     Html.div []
         [ Html.div []
-            [ Html.form [ HA.id "file-form", HE.onSubmit GetUploadCredentials ]
+            [ Html.form [ HA.id "file-form", HE.onSubmit (ImageMsg GetUploadCredentials) ]
                 [ Html.input [ HA.type_ "file", HE.on "change" (Json.Decode.map Files parseSelectedFiles) ] []
                 , Html.button [] [ Html.text "Upload" ]
                 ]
