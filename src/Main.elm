@@ -67,27 +67,6 @@ update msg model =
             Update.Window.update submessage model
 
         ----
-        Files nativeFiles ->
-            ( { model | fileToUpload = List.head nativeFiles }, Cmd.none )
-
-        -----
-        UploadComplete (Ok result) ->
-            ( model, Cmd.none )
-
-        UploadComplete (Err error) ->
-            ( model, Cmd.none )
-
-        FileSelected ->
-            ( model, fileUpload model.fileInputId )
-
-        FileUploaded True ->
-            -- obviously, set some state notifying success
-            ( model, Cmd.none )
-
-        FileUploaded False ->
-            -- obviously, set some state notifying failure
-            ( model, Cmd.none )
-
         -- (model, Cmd.none) --
         SendToJS str ->
             ( model, toJs str )

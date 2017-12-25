@@ -191,7 +191,7 @@ request result model =
                 |> Maybe.map
                     (\file ->
                         uploadRequest result file
-                            |> Http.send UploadComplete
+                            |> Http.send (ImageMsg << UploadComplete)
                     )
                 |> Maybe.withDefault Cmd.none
     in

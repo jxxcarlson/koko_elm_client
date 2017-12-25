@@ -117,7 +117,7 @@ fileUploadPanel model =
     Html.div []
         [ Html.div []
             [ Html.form [ HA.id "file-form", HE.onSubmit (ImageMsg GetUploadCredentials) ]
-                [ Html.input [ HA.type_ "file", HE.on "change" (Json.Decode.map Files parseSelectedFiles) ] []
+                [ Html.input [ HA.type_ "file", HE.on "change" (Json.Decode.map (ImageMsg << Files) parseSelectedFiles) ] []
                 , Html.button [] [ Html.text "Upload" ]
                 ]
             ]

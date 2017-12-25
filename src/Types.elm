@@ -341,6 +341,10 @@ type ImageMsg
     | ImageSelected
     | GetUploadCredentials
     | CredentialsResult (Result Http.Error CredentialsWrapper)
+    | UploadComplete (Result Http.Error String)
+    | FileSelected
+    | FileUploaded Bool
+    | Files (List NativeFile)
 
 
 type SearchMsg
@@ -410,14 +414,10 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | WindowMsg WindowMsg
-    | FileSelected
-    | FileUploaded Bool
-    | Files (List NativeFile)
     | GenerateSeed
     | LinkTo String
     | NewSeed Int
     | SendToJS String
-    | UploadComplete (Result Http.Error String)
 
 
 type Page
