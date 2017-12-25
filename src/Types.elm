@@ -309,6 +309,7 @@ type DocMsg
     | TogglePublic
     | UpdateDocument
     | UpdateTextInputBuffer String
+    | MigrateFromAsciidocLatex
 
 
 type AuthMsg
@@ -374,6 +375,14 @@ type PeriodicMsg
     | RequestTime
 
 
+type UIMsg
+    = ToggleListView
+    | ToggleUpdateRate
+    | ToggleMenu String
+    | Message String
+    | SelectTool Tool
+
+
 type UserMsg
     = UpdateCurrentUser
     | GetUser (Result Http.Error BigUserRecord)
@@ -393,6 +402,7 @@ type Msg
     = NoOp
     | AuthMsg AuthMsg
     | ChannelMsg ChannelMsg
+    | UIMsg UIMsg
     | DocMsg DocMsg
     | ImageMsg ImageMsg
     | PageMsg PageMsg
@@ -404,15 +414,9 @@ type Msg
     | FileUploaded Bool
     | Files (List NativeFile)
     | GenerateSeed
-    | MigrateFromAsciidocLatex
     | LinkTo String
-    | Message String
     | NewSeed Int
-    | SelectTool Tool
     | SendToJS String
-    | ToggleListView
-    | ToggleMenu String
-    | ToggleUpdateRate
     | UploadComplete (Result Http.Error String)
 
 

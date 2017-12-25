@@ -124,12 +124,12 @@ innerSpecialContent model =
 
 selectTableOfContents : Model -> Element Styles variation Msg
 selectTableOfContents model =
-    Basic.faIcon "Table of contents" FontAwesome.list [ onClick (SelectTool TableOfContents) ]
+    Basic.faIcon "Table of contents" FontAwesome.list [ onClick (UIMsg (SelectTool TableOfContents)) ]
 
 
 toggleListView : Model -> Element Styles variation Msg
 toggleListView model =
-    Basic.faIcon "Home Page" FontAwesome.arrows_h [ onClick ToggleListView ]
+    Basic.faIcon "Home Page" FontAwesome.arrows_h [ onClick (UIMsg ToggleListView) ]
 
 
 tool : Model -> Element Styles variation Msg
@@ -317,7 +317,7 @@ addToMasterDocumentButton model =
 migrateFromADLButton : Model -> Element Styles variation Msg
 migrateFromADLButton model =
     when (model.current_document.attributes.textType == "latex")
-        (Basic.button "Migrate from Asciidoc-LaTeX" FlatButtonBlue [ onClick MigrateFromAsciidocLatex, width (px 250) ])
+        (Basic.button "Migrate from Asciidoc-LaTeX" FlatButtonBlue [ onClick (DocMsg MigrateFromAsciidocLatex), width (px 250) ])
 
 
 publicCheckbox : Model -> Element Styles variation Msg

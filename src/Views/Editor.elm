@@ -109,7 +109,7 @@ typeSetAllButton model =
 
 toggleUpdateRateButton : Model -> Element Styles variation Msg
 toggleUpdateRateButton model =
-    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [ onClick ToggleUpdateRate ]
+    Basic.faIcon "Toggle rate of update: very fast or very slow" (toggleUpdateRateIcon model) [ onClick (UIMsg ToggleUpdateRate) ]
 
 
 toggleUpdateRateIndicator : Model -> Element Styles variation Msg
@@ -176,7 +176,7 @@ selectEditTools : Model -> Element Styles variation Msg
 selectEditTools model =
     el Zero
         [ width (px 85)
-        , onClick (SelectTool EditorTools)
+        , onClick (UIMsg (SelectTool EditorTools))
         , title "Tools"
         , height (px 30)
         , padding 2

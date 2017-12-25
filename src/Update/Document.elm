@@ -276,3 +276,6 @@ update submessage model =
 
         UpdateTextInputBuffer str ->
             ( { model | textInputBuffer = str }, Cmd.none )
+
+        MigrateFromAsciidocLatex ->
+            Action.Document.migrateFromAsciidocLatex model

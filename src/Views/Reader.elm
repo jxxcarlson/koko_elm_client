@@ -158,4 +158,4 @@ toolSelectorPanel model =
 
 selectReaderTools : Model -> Element Styles variation Msg
 selectReaderTools model =
-    Basic.faIcon "Tools" FontAwesome.gear [ onClick (SelectTool ReaderTools) ]
+    Basic.faIcon "Tools" FontAwesome.gear [ onClick (UIMsg (SelectTool ReaderTools)) ]

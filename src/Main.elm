@@ -1,28 +1,5 @@
 module Main exposing (..)
 
-import Action.Document
-    exposing
-        ( createDocument
-        , deleteDocument
-        , saveCurrentDocument
-        , selectDocument
-        , selectNewDocument
-        , togglePublic
-        , toggleUpdateRate
-        , updateCurrentDocumentWithContent
-        , updateDocuments
-        , updateTags
-        )
-import Action.UI
-    exposing
-        ( appStateToggleAuthorizing
-        , appStateWithPage
-        , displayPage
-        , toggleAuthorizing
-        , toggleMenu
-        , toggleRegister
-        , updateToolStatus
-        )
 import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Init exposing (init)
 import Nav.Parser
@@ -37,10 +14,10 @@ import Update.Image exposing (update)
 import Update.Page
 import Update.Periodic
 import Update.Search
+import Update.UI
 import Update.User
 import Update.Window
 import Views.Main exposing (view)
-import Views.TOC as TOC exposing (toggleListView)
 
 
 main : Program Flags Model Msg
@@ -80,31 +57,16 @@ update msg model =
         SearchMsg submessage ->
             Update.Search.update submessage model
 
+        UIMsg submessage ->
+            Update.UI.update submessage model
+
         UserMsg submessage ->
             Update.User.update submessage model
 
         WindowMsg submessage ->
             Update.Window.update submessage model
 
-        ToggleListView ->
-            TOC.toggleListView model
-
-        ToggleUpdateRate ->
-            ( Action.Document.toggleUpdateRate model, Cmd.none )
-
-        ToggleMenu menu ->
-            toggleMenu menu model
-
-        -- Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
-        MigrateFromAsciidocLatex ->
-            Action.Document.migrateFromAsciidocLatex model
-
-        Message str ->
-            ( { model | message = str }, Cmd.none )
-
-        SelectTool t ->
-            ( { model | appState = updateToolStatus model t }, Cmd.none )
-
+        ----
         Files nativeFiles ->
             ( { model | fileToUpload = List.head nativeFiles }, Cmd.none )
 

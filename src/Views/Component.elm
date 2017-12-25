@@ -26,7 +26,7 @@ cancelAuthentication style model =
 
 textFormatMenu : Model -> Element Styles variation Msg
 textFormatMenu model =
-    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "textType") ] (EL.text "Format")
+    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (UIMsg (ToggleMenu "textType")) ] (EL.text "Format")
         |> below
             [ --when model.appState.textTypeMenuDropped <|
               column Menu
@@ -54,7 +54,7 @@ textFormatButton textFormat model =
 
 docTypeMenu : Model -> Element Styles variation Msg
 docTypeMenu model =
-    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (ToggleMenu "docType") ] (EL.text "Type")
+    el HeaderLabel [ EA.width (px 101), EA.height (px 30), paddingXY 8 14, EE.onClick (UIMsg (ToggleMenu "docType")) ] (EL.text "Type")
         |> below
             [ -- when model.appState.docTypeMenuDropped <|
               column Menu
