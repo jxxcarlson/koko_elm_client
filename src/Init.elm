@@ -31,7 +31,6 @@ import Types
         , Msg
             ( ChannelMsg
             , DocMsg
-            , NewSeed
             , PeriodicMsg
             )
         , Page(..)
@@ -176,7 +175,7 @@ init flags location =
             , Task.perform (PeriodicMsg << ReceiveDate) Date.now
             , Task.perform (PeriodicMsg << ReceiveTime) Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
-            , Random.generate NewSeed (Random.int 1 10000)
+            , Random.generate (DocMsg << NewSeed) (Random.int 1 10000)
             ]
 
         masterDocumentCommands =

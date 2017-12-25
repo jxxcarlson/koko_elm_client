@@ -310,6 +310,8 @@ type DocMsg
     | UpdateDocument
     | UpdateTextInputBuffer String
     | MigrateFromAsciidocLatex
+    | GenerateSeed
+    | NewSeed Int
 
 
 type AuthMsg
@@ -414,10 +416,11 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | WindowMsg WindowMsg
-    | GenerateSeed
-    | LinkTo String
-    | NewSeed Int
-    | SendToJS String
+
+
+
+-- | LinkTo String
+-- | SendToJS String
 
 
 type Page

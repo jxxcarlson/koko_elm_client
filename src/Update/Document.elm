@@ -8,8 +8,9 @@ import Document.MasterDocument
 import Document.Render
 import Document.Search
 import Document.TOC
+import Random
 import Request.Document
-import Types exposing (DeleteState(..), DocMsg(..), Page(..), SearchDomain(..), SearchOrder(..))
+import Types exposing (DeleteState(..), DocMsg(..), Msg(DocMsg), Page(..), SearchDomain(..), SearchOrder(..))
 import Utility
 
 
@@ -279,3 +280,16 @@ update submessage model =
 
         MigrateFromAsciidocLatex ->
             Action.Document.migrateFromAsciidocLatex model
+
+        GenerateSeed ->
+            ( model, Random.generate (DocMsg << NewSeed) (Random.int 1 10000) )
+
+        NewSeed newSeed ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | seed = Debug.log "newSeed" newSeed }
+            in
+            ( { model | appState = newAppState }, Cmd.none )

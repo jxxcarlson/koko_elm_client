@@ -260,10 +260,14 @@ updateCurrentDocument model document =
                 [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt (DocMsg << SaveDocument) saveTask
                 , External.saveUserState (Data.User.encodeUserState newModel)
-                , Random.generate NewSeed (Random.int 1 10000)
+                , Random.generate (DocMsg << NewSeed) (Random.int 1 10000)
                 ]
     in
     ( newModel, Cmd.batch cmds )
+
+
+
+-- (a -> msg) -> Generator a -> Cmd msg
 
 
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )

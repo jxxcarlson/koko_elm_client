@@ -4,7 +4,6 @@ import External exposing (fileUpload, fileUploaded, putTextToRender, toJs)
 import Init exposing (init)
 import Nav.Parser
 import Navigation
-import Random
 import Subscriptions exposing (subscriptions)
 import Types exposing (..)
 import Update.Auth
@@ -66,23 +65,10 @@ update msg model =
         WindowMsg submessage ->
             Update.Window.update submessage model
 
-        ----
-        -- (model, Cmd.none) --
-        SendToJS str ->
-            ( model, toJs str )
 
-        LinkTo path ->
-            ( model, Navigation.newUrl path )
 
-        GenerateSeed ->
-            ( model, Random.generate NewSeed (Random.int 1 10000) )
-
-        NewSeed newSeed ->
-            let
-                appState =
-                    model.appState
-
-                newAppState =
-                    { appState | seed = Debug.log "newSeed" newSeed }
-            in
-            ( { model | appState = newAppState }, Cmd.none )
+-- ----
+-- SendToJS str ->
+--     ( model, toJs str )
+-- LinkTo path ->
+--     ( model, Navigation.newUrl path )
