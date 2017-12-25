@@ -21,6 +21,7 @@ import Types
     exposing
         ( ActiveDocumentList(..)
         , AppState
+        , ChannelMsg(PhoenixMsg, ReceiveChatMessage)
         , DeleteState(..)
         , DocMsg(..)
         , Flags
@@ -28,11 +29,10 @@ import Types
         , KWindow
         , Model
         , Msg
-            ( DocMsg
+            ( ChannelMsg
+            , DocMsg
             , NewSeed
             , PeriodicMsg
-            , PhoenixMsg
-            , ReceiveChatMessage
             )
         , Page(..)
         , PeriodicMsg(..)
@@ -127,7 +127,7 @@ init flags location =
         ( initSocket, phxCmd ) =
             Phoenix.Socket.init Configuration.websocketHost
                 |> Phoenix.Socket.withDebug
-                |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
+                |> Phoenix.Socket.on "shout" "room:lobby" (ChannelMsg << ReceiveChatMessage)
                 |> Phoenix.Socket.join channel
 
         emptyUserStateRecord =
@@ -169,7 +169,7 @@ init flags location =
             }
 
         standardCommands =
-            [ Cmd.map PhoenixMsg phxCmd
+            [ Cmd.map (ChannelMsg << PhoenixMsg) phxCmd
             , External.toJs ws
             , External.askToReconnectUser "reconnectUser"
             , External.askToRecoverUserState "recoverUserState"

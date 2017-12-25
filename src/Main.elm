@@ -1,6 +1,5 @@
 module Main exposing (..)
 
-import Action.Channel
 import Action.Document
     exposing
         ( createDocument
@@ -32,6 +31,7 @@ import Random
 import Subscriptions exposing (subscriptions)
 import Types exposing (..)
 import Update.Auth
+import Update.Channel
 import Update.Document
 import Update.Image exposing (update)
 import Update.Page
@@ -61,6 +61,9 @@ update msg model =
 
         AuthMsg submessage ->
             Update.Auth.update submessage model
+
+        ChannelMsg submessage ->
+            Update.Channel.update submessage model
 
         DocMsg submessage ->
             Update.Document.update submessage model
@@ -126,23 +129,6 @@ update msg model =
         -- (model, Cmd.none) --
         SendToJS str ->
             ( model, toJs str )
-
-        SetMessage message ->
-            Action.Channel.setMessage message model
-
-        -- ( { model | messageInProgress = message }, Cmd.none )
-        SendMessage ->
-            Action.Channel.sendMessage model
-
-        ReceiveChatMessage raw ->
-            Action.Channel.receiveRaw raw model
-
-        -- ( { model | messages = "Failed to receive message" :: model.messages }, Cmd.none )
-        HandleSendError err ->
-            Action.Channel.handlePing False model
-
-        PhoenixMsg msg ->
-            Action.Channel.handleMsg msg model
 
         LinkTo path ->
             ( model, Navigation.newUrl path )

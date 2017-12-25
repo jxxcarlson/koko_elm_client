@@ -327,6 +327,14 @@ type AuthMsg
     | Username String
 
 
+type ChannelMsg
+    = SetMessage String
+    | SendMessage
+    | ReceiveChatMessage JsEncode.Value
+    | HandleSendError JsEncode.Value
+    | PhoenixMsg (Phoenix.Socket.Msg Msg)
+
+
 type ImageMsg
     = ImageRead ImagePortData
     | ImageSelected
@@ -384,6 +392,7 @@ type WindowMsg
 type Msg
     = NoOp
     | AuthMsg AuthMsg
+    | ChannelMsg ChannelMsg
     | DocMsg DocMsg
     | ImageMsg ImageMsg
     | PageMsg PageMsg
@@ -396,16 +405,11 @@ type Msg
     | Files (List NativeFile)
     | GenerateSeed
     | MigrateFromAsciidocLatex
-    | HandleSendError JsEncode.Value
     | LinkTo String
     | Message String
     | NewSeed Int
-    | PhoenixMsg (Phoenix.Socket.Msg Msg)
-    | ReceiveChatMessage JsEncode.Value
     | SelectTool Tool
-    | SendMessage
     | SendToJS String
-    | SetMessage String
     | ToggleListView
     | ToggleMenu String
     | ToggleUpdateRate

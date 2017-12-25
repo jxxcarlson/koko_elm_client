@@ -1,12 +1,12 @@
 module Action.Channel exposing (..)
 
-import Types exposing (..)
-import Phoenix.Socket
+import Configuration
+import Json.Decode as JsDecode
+import Json.Encode as JsEncode
 import Phoenix.Channel
 import Phoenix.Push
-import Json.Encode as JsEncode
-import Json.Decode as JsDecode
-import Configuration
+import Phoenix.Socket
+import Types exposing (..)
 
 
 setMessage : String -> Model -> ( Model, Cmd msg )
@@ -25,18 +25,18 @@ sendMessage model =
         phxPush =
             Phoenix.Push.init "shout" "room:lobby"
                 |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk ReceiveChatMessage
-                |> Phoenix.Push.onError HandleSendError
+                |> Phoenix.Push.onOk (ChannelMsg << ReceiveChatMessage)
+                |> Phoenix.Push.onError (ChannelMsg << HandleSendError)
 
         ( phxSocket, phxCmd ) =
             Phoenix.Socket.push phxPush model.phxSocket
     in
-        ( { model
-            | messageInProgress = ""
-            , phxSocket = phxSocket
-          }
-        , Cmd.map PhoenixMsg phxCmd
-        )
+    ( { model
+        | messageInProgress = ""
+        , phxSocket = phxSocket
+      }
+    , Cmd.map (ChannelMsg << PhoenixMsg) phxCmd
+    )
 
 
 sendImmediateMessage : String -> Model -> ( Model, Cmd Msg )
@@ -50,18 +50,18 @@ sendImmediateMessage message model =
         phxPush =
             Phoenix.Push.init "hello" "room:lobby"
                 |> Phoenix.Push.withPayload payload
-                |> Phoenix.Push.onOk ReceiveChatMessage
-                |> Phoenix.Push.onError HandleSendError
+                |> Phoenix.Push.onOk (ChannelMsg << ReceiveChatMessage)
+                |> Phoenix.Push.onError (ChannelMsg << HandleSendError)
 
         ( phxSocket, phxCmd ) =
             Phoenix.Socket.push phxPush model.phxSocket
     in
-        ( { model
-            | messageInProgress = ""
-            , phxSocket = phxSocket
-          }
-        , Cmd.map PhoenixMsg phxCmd
-        )
+    ( { model
+        | messageInProgress = ""
+        , phxSocket = phxSocket
+      }
+    , Cmd.map (ChannelMsg << PhoenixMsg) phxCmd
+    )
 
 
 handlePing : Bool -> Model -> ( Model, Cmd Msg )
@@ -73,7 +73,7 @@ handlePing value model =
         updatedAppState =
             { appState | online = value }
     in
-        ( { model | appState = updatedAppState }, Cmd.none )
+    ( { model | appState = updatedAppState }, Cmd.none )
 
 
 joinChannel :
@@ -87,10 +87,10 @@ joinChannel model =
         ( initSocket, phxCmd ) =
             Phoenix.Socket.init Configuration.websocketHost
                 |> Phoenix.Socket.withDebug
-                |> Phoenix.Socket.on "shout" "room:lobby" ReceiveChatMessage
+                |> Phoenix.Socket.on "shout" "room:lobby" (ChannelMsg << ReceiveChatMessage)
                 |> Phoenix.Socket.join channel
     in
-        ( { model | phxSocket = initSocket }, Cmd.map PhoenixMsg phxCmd )
+    ( { model | phxSocket = initSocket }, Cmd.map (ChannelMsg << PhoenixMsg) phxCmd )
 
 
 handleMsg : Phoenix.Socket.Msg Msg -> Model -> ( Model, Cmd Msg )
@@ -111,12 +111,12 @@ handleMsg msg model =
         updatedAppState =
             { appState | online = status }
     in
-        ( { model
-            | phxSocket = phxSocket
-            , appState = updatedAppState
-          }
-        , Cmd.map PhoenixMsg phxCmd
-        )
+    ( { model
+        | phxSocket = phxSocket
+        , appState = updatedAppState
+      }
+    , Cmd.map (ChannelMsg << PhoenixMsg) phxCmd
+    )
 
 
 receiveRaw : JsDecode.Value -> Model -> ( Model, Cmd Msg )
@@ -128,9 +128,9 @@ receiveRaw raw model =
         somePayload =
             JsDecode.decodeValue messageDecoder raw
     in
-        case somePayload of
-            Ok payload ->
-                handlePing True model
+    case somePayload of
+        Ok payload ->
+            handlePing True model
 
-            Err error ->
-                handlePing False model
+        Err error ->
+            handlePing False model

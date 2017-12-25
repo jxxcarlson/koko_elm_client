@@ -5,10 +5,11 @@ import Phoenix.Socket
 import Time
 import Types
     exposing
-        ( DocMsg(GetRenderedText)
+        ( ChannelMsg(PhoenixMsg)
+        , DocMsg(GetRenderedText)
         , ImageMsg(ImageRead)
         , Model
-        , Msg(DocMsg, FileUploaded, ImageMsg, PeriodicMsg, PhoenixMsg, UserMsg, WindowMsg)
+        , Msg(ChannelMsg, DocMsg, FileUploaded, ImageMsg, PeriodicMsg, UserMsg, WindowMsg)
         , PeriodicMsg(Tick)
         , UserMsg(ReconnectUser, RecoverUserState)
         , WindowMsg(Resize)
@@ -23,7 +24,7 @@ subscriptions model =
         , Window.resizes (\{ width, height } -> WindowMsg (Resize width height))
         , External.reconnectUser (UserMsg << ReconnectUser)
         , External.recoverUserState (UserMsg << RecoverUserState)
-        , Phoenix.Socket.listen model.phxSocket PhoenixMsg
+        , Phoenix.Socket.listen model.phxSocket (ChannelMsg << PhoenixMsg)
         , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
         , External.fileContentRead (ImageMsg << ImageRead)
         , External.fileUploaded FileUploaded
