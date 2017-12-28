@@ -134,7 +134,7 @@ deleteButton model =
 
 confirmDeleteButton : Model -> Element Styles variation Msg
 confirmDeleteButton model =
-    full PanelInfoRed [ padding 8, onClick (DocMsg DeleteCurrentDocument) ] (el Zero [ verticalCenter ] (text "Delete forever"))
+    full PanelInfoRed [ padding 8, onClick (DocMsg DeleteCurrentDocument) ] (el Zero [ verticalCenter ] (text "Delete"))
 
 
 cancelDeleteButton : Model -> Element Styles variation Msg
