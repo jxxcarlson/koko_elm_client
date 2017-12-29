@@ -260,10 +260,6 @@ type alias Model =
     }
 
 
-type alias SystemStatus =
-    { online : Bool }
-
-
 type alias ErrorMessage =
     String
 
@@ -416,11 +412,6 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | WindowMsg WindowMsg
-
-
-
--- | LinkTo String
--- | SendToJS String
 
 
 type Page

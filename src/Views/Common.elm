@@ -18,7 +18,7 @@ module Views.Common
         , tool
         )
 
-import Action.UI as UI
+import Array
 import Color
 import Configuration
 import Document.Document as Document exposing (hasTag)
@@ -259,11 +259,26 @@ editorTools model =
             , parentalControls model
             , el None [ height (px 10) ] (text "")
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ toString model.current_document.attributes.level))
-            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (UI.displayIdentifier model))
+            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (displayIdentifier model))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
+
+
+displayIdentifier : Model -> String
+displayIdentifier model =
+    let
+        parts =
+            String.split "." model.current_document.identifier |> Array.fromList
+
+        datePart =
+            Array.get 2 parts |> Maybe.withDefault "--"
+
+        hashPart =
+            Array.get 3 parts |> Maybe.withDefault "--"
+    in
+    datePart ++ "." ++ hashPart
 
 
 parentalControls : Model -> Element Styles variation Msg

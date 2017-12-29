@@ -28,18 +28,18 @@ toggleMenu menu model =
         newAppState =
             case menu of
                 "Main" ->
-                    { appState | menuDropped = (not appState.menuDropped) }
+                    { appState | menuDropped = not appState.menuDropped }
 
                 "textType" ->
-                    { appState | textTypeMenuDropped = (not appState.textTypeMenuDropped) }
+                    { appState | textTypeMenuDropped = not appState.textTypeMenuDropped }
 
                 "docType" ->
-                    { appState | docTypeMenuDropped = (not appState.docTypeMenuDropped) }
+                    { appState | docTypeMenuDropped = not appState.docTypeMenuDropped }
 
                 _ ->
                     appState
     in
-        ( { model | appState = newAppState }, Cmd.none )
+    ( { model | appState = newAppState }, Cmd.none )
 
 
 toggleTextMenu : Model -> ( Model, Cmd Msg )
@@ -49,9 +49,9 @@ toggleTextMenu model =
             model.appState
 
         newAppState =
-            { appState | menuDropped = (not appState.menuDropped) }
+            { appState | menuDropped = not appState.menuDropped }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+    ( { model | appState = newAppState }, Cmd.none )
 
 
 toggleRegister : Model -> ( Model, Cmd Msg )
@@ -61,9 +61,9 @@ toggleRegister model =
             model.appState
 
         newAppState =
-            { appState | registerUser = (not appState.registerUser) }
+            { appState | registerUser = not appState.registerUser }
     in
-        ( { model | appState = newAppState }, Cmd.none )
+    ( { model | appState = newAppState }, Cmd.none )
 
 
 appStateToggleAuthorizing : Model -> AppState
@@ -72,7 +72,7 @@ appStateToggleAuthorizing model =
         appState =
             model.appState
     in
-        { appState | authorizing = not appState.authorizing }
+    { appState | authorizing = not appState.authorizing }
 
 
 toggleAuthorizing : Model -> ( Model, Cmd Msg )
@@ -82,9 +82,9 @@ toggleAuthorizing model =
             model.appState
 
         newAppState =
-            { oldAppState | authorizing = (not oldAppState.authorizing), page = Types.StartPage }
+            { oldAppState | authorizing = not oldAppState.authorizing, page = Types.StartPage }
     in
-        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
+    ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
 
 
 setAuthorizing : Model -> Bool -> ( Model, Cmd Msg )
@@ -96,7 +96,7 @@ setAuthorizing model value =
         newAppState =
             { oldAppState | authorizing = value, page = Types.LoginPage }
     in
-        ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
+    ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
 
 
 appStateWithPage : Model -> Page -> AppState
@@ -105,7 +105,7 @@ appStateWithPage model page =
         appState =
             model.appState
     in
-        { appState | page = page, tool = updateTool model page }
+    { appState | page = page, tool = updateTool model page }
 
 
 updateToolStatus : Model -> Tool -> AppState
@@ -114,7 +114,7 @@ updateToolStatus model tool =
         appState =
             model.appState
     in
-        { appState | tool = tool }
+    { appState | tool = tool }
 
 
 updateTool : Model -> Page -> Tool
@@ -138,7 +138,7 @@ updateTool model page =
                 _ ->
                     currentAppState.tool
     in
-        newTool
+    newTool
 
 
 
@@ -163,29 +163,14 @@ queryMessage domain =
                 All ->
                     "all documents"
     in
-        "search " ++ domain_ ++ " for "
+    "search " ++ domain_ ++ " for "
 
 
 numberOfDocuments : String -> Model -> String
 numberOfDocuments title model =
-    title ++ ": " ++ (toString (List.length model.documents))
+    title ++ ": " ++ toString (List.length model.documents)
 
 
 tocNumberOfDocuments : Model -> String
 tocNumberOfDocuments model =
-    "Contents: " ++ (toString (List.length model.current_document.children)) ++ " documents"
-
-
-displayIdentifier : Model -> String
-displayIdentifier model =
-    let
-        parts =
-            (String.split "." model.current_document.identifier) |> Array.fromList
-
-        datePart =
-            Array.get 2 parts |> Maybe.withDefault "--"
-
-        hashPart =
-            Array.get 3 parts |> Maybe.withDefault "--"
-    in
-        datePart ++ "." ++ hashPart
+    "Contents: " ++ toString (List.length model.current_document.children) ++ " documents"
