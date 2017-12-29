@@ -1,18 +1,14 @@
 module Views.Common
     exposing
-        ( exportButton
-        , getDevice
+        ( getDevice
         , getDocument
         , homepage
-        , imageCatalogueButton
         , printButton
         , publicCheckbox
         , recallLastSearchButton
         , renderedContent
         , renderedContentForPhone
-        , renumberDocumentsButton
         , searchOrderMenu
-        , selectTableOfContents
         , specialContent
         , toggleListView
         , tool
@@ -31,7 +27,19 @@ import FontAwesome
 import Json.Encode
 import Request.Api
 import StyleSheet exposing (..)
-import Types exposing (..)
+import Types
+    exposing
+        ( Device(..)
+        , DocMsg(..)
+        , Document
+        , Model
+        , Msg(..)
+        , PageMsg(..)
+        , SearchDomain(..)
+        , SearchMsg(..)
+        , Tool(..)
+        , UIMsg(..)
+        )
 import Views.Basic as Basic
 import Views.Component as Component
 import Views.TOC as TOC
@@ -120,11 +128,6 @@ innerSpecialContent model =
             (Json.Encode.string model.specialDocument.rendered_content)
         ]
         (text "")
-
-
-selectTableOfContents : Model -> Element Styles variation Msg
-selectTableOfContents model =
-    Basic.faIcon "Table of contents" FontAwesome.list [ onClick (UIMsg (SelectTool TableOfContents)) ]
 
 
 toggleListView : Model -> Element Styles variation Msg
@@ -362,12 +365,6 @@ printUrl document =
     Request.Api.printUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
 
 
-exportButton : Document -> Element Styles variation Msg
-exportButton document =
-    link (exportUrl document) <|
-        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
-
-
 exportUrl : Document -> String
 exportUrl document =
     Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
@@ -376,17 +373,6 @@ exportUrl document =
 imageCatalogueUrl : Document -> String
 imageCatalogueUrl document =
     Request.Api.imageCatalogueUrl ++ "/" ++ toString document.id
-
-
-imageCatalogueButton : Document -> Element Styles variation Msg
-imageCatalogueButton document =
-    link (imageCatalogueUrl document) <|
-        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
-
-
-renumberDocumentsButton : Model -> Element Styles variation Msg
-renumberDocumentsButton model =
-    Basic.button "N" FlatButtonBlue [ onClick (DocMsg RenumberDocuments), width (px 30) ]
 
 
 printTypeString : Document -> String

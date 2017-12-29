@@ -162,14 +162,36 @@ toolSelectorPanel model =
         [ Common.printButton model.current_document
 
         --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
-        , Common.exportButton model.current_document
-        , Common.renumberDocumentsButton model
-        , Common.imageCatalogueButton model.current_document
-        , Common.selectTableOfContents model
+        , exportButton model.current_document
+        , renumberDocumentsButton model
+        , imageCatalogueButton model.current_document
+        , selectTableOfContents model
         , Common.toggleListView model
         , Common.recallLastSearchButton model
         , selectEditTools model
         ]
+
+
+imageCatalogueButton : Document -> Element Styles variation Msg
+imageCatalogueButton document =
+    link (imageCatalogueUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
+
+
+renumberDocumentsButton : Model -> Element Styles variation Msg
+renumberDocumentsButton model =
+    Basic.button "N" FlatButtonBlue [ onClick (DocMsg RenumberDocuments), width (px 30) ]
+
+
+exportButton : Document -> Element Styles variation Msg
+exportButton document =
+    link (exportUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
+
+
+selectTableOfContents : Model -> Element Styles variation Msg
+selectTableOfContents model =
+    Basic.faIcon "Table of contents" FontAwesome.list [ onClick (UIMsg (SelectTool TableOfContents)) ]
 
 
 selectEditTools : Model -> Element Styles variation Msg
