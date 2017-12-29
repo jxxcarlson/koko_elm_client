@@ -154,8 +154,3 @@ toolSelectorPanel model =
         , Common.recallLastSearchButton model
         , Common.toggleListView model
         ]
-
-
-selectReaderTools : Model -> Element Styles variation Msg
-selectReaderTools model =
-    Basic.faIcon "Tools" FontAwesome.gear [ onClick (UIMsg (SelectTool ReaderTools)) ]

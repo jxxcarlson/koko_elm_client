@@ -4,6 +4,7 @@ module Views.Common
         , getDocument
         , homepage
         , printButton
+        , printTypeString
         , publicCheckbox
         , recallLastSearchButton
         , renderedContent
@@ -141,36 +142,11 @@ tool model =
         TableOfContents ->
             TOC.documentListView model
 
-        ReaderTools ->
-            readerTools model
-
         EditorTools ->
             editorTools model
 
         NewDocumentTools ->
             newDocumentTools model
-
-
-searchOptionControl : Model -> Element Styles variation Msg
-searchOptionControl model =
-    radio "Search domain"
-        Radio
-        [ verticalCenter, padding 20, spacing 20, width (px 300) ]
-        [ option "My documents" (searchDomainChecked model Private) (el None [ onClick (SearchMsg (UseSearchDomain Private)) ] (text "My documents"))
-        , option "Public documents" (searchDomainChecked model Public) (el None [ onClick (SearchMsg (UseSearchDomain Public)) ] (text "Public documents"))
-        ]
-
-
-searchDomainChecked : Model -> SearchDomain -> Bool
-searchDomainChecked model domain =
-    model.searchState.domain == domain
-
-
-readerTools : Model -> Element Styles variation msg
-readerTools model =
-    column TOC
-        [ alignLeft, padding 20, spacing 10, height (px (toFloat model.window.height - 129.0)) ]
-        [ el Box [ padding 20, center ] (text "Reader tools") ]
 
 
 newDocumentTools : Model -> Element Styles variation Msg
@@ -363,16 +339,6 @@ printButton document =
 printUrl : Document -> String
 printUrl document =
     Request.Api.printUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
-
-
-exportUrl : Document -> String
-exportUrl document =
-    Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ printTypeString document
-
-
-imageCatalogueUrl : Document -> String
-imageCatalogueUrl document =
-    Request.Api.imageCatalogueUrl ++ "/" ++ toString document.id
 
 
 printTypeString : Document -> String

@@ -7,6 +7,7 @@ import Element.Attributes exposing (..)
 import Element.Events exposing (onClick, onInput)
 import Element.Keyed as Keyed
 import FontAwesome
+import Request.Api
 import StyleSheet exposing (..)
 import Types exposing (..)
 import Utility
@@ -178,6 +179,11 @@ imageCatalogueButton document =
         el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.image Color.white 25))
 
 
+imageCatalogueUrl : Document -> String
+imageCatalogueUrl document =
+    Request.Api.imageCatalogueUrl ++ "/" ++ toString document.id
+
+
 renumberDocumentsButton : Model -> Element Styles variation Msg
 renumberDocumentsButton model =
     Basic.button "N" FlatButtonBlue [ onClick (DocMsg RenumberDocuments), width (px 30) ]
@@ -187,6 +193,11 @@ exportButton : Document -> Element Styles variation Msg
 exportButton document =
     link (exportUrl document) <|
         el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
+
+
+exportUrl : Document -> String
+exportUrl document =
+    Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ Common.printTypeString document
 
 
 selectTableOfContents : Model -> Element Styles variation Msg

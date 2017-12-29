@@ -465,7 +465,6 @@ type Tool
     = TableOfContents
     | EditorTools
     | NewDocumentTools
-    | ReaderTools
 
 
 type alias Flags =

@@ -32,7 +32,7 @@ registerUserForm1 model =
         , inputText Field [ EE.onInput (AuthMsg << Password), placeholder "Password" ] model.current_user.password
         , Basic.button "Register" Button [ onClick (AuthMsg Register), width (px 80) ]
         , Basic.button "Toggle" Button [ onClick (AuthMsg ToggleRegister), width (px 150) ]
-        , Component.cancelAuthentication Button model
+        , cancelAuthentication Button model
         , el Blue [ paddingXY 20 40 ] (text model.message)
         ]
 
@@ -66,7 +66,7 @@ signinForm1 model =
             , padding 8
             ]
             (text "Need to register?")
-        , Component.cancelAuthentication Button model
+        , cancelAuthentication Button model
         , el Blue [ paddingXY 20 40 ] (text model.message)
         ]
 
@@ -103,7 +103,7 @@ signinInfoPanel1 model =
         [ el Zero [ width (px 320), height (px 40) ] (text "")
         , NavBar.loginButton Button model
         , el Zero [ height (px 20) ] (text "")
-        , Component.cancelAuthentication Button model
+        , cancelAuthentication Button model
         , el Blue [ paddingXY 0 40 ] (text model.message)
         ]
 
@@ -114,3 +114,14 @@ handleAuthentication model =
         ( { model | appState = appStateWithPage model StartPage }, Cmd.none )
     else
         ( { model | appState = appStateWithPage model StartPage }, Cmd.none )
+
+
+cancelAuthentication : Styles -> Model -> Element Styles variation Msg
+cancelAuthentication style model =
+    Basic.button
+        "Cancel"
+        Button
+        [ EE.onClick (AuthMsg CancelAuthentication)
+        , EA.width (px 85)
+        , EA.height (px 30)
+        ]

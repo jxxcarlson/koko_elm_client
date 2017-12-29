@@ -9,18 +9,6 @@ import Types exposing (..)
 import Views.Basic as Basic
 
 
-cancelAuthentication : Styles -> Model -> Element Styles variation Msg
-cancelAuthentication style model =
-    Basic.button
-        "Cancel"
-        Button
-        [ EE.onClick (AuthMsg CancelAuthentication)
-        , EA.width (px 85)
-        , EA.height (px 30)
-        ]
-
-
-
 -- https://ellie-app.com/3Gqxw7zLGzTa1/6
 
 
