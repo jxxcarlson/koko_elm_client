@@ -41,12 +41,12 @@ parseParagraph text =
         expr =
             Parser.run latexList text
     in
-    case expr of
-        Ok (LatexList list) ->
-            list
+        case expr of
+            Ok (LatexList list) ->
+                list
 
-        _ ->
-            []
+            _ ->
+                []
 
 
 
@@ -352,7 +352,7 @@ environmentOfType envType =
             else
                 envType
     in
-    environmentParser envKind endWord envType
+        environmentParser envKind endWord envType
 
 
 

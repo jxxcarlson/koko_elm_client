@@ -1,4 +1,4 @@
-module MiniLatex.LatexDiffer exposing (initialize, initialize2, safeUpdate)
+module MiniLatex.LatexDiffer exposing (initialize, initialize2, safeUpdate, prepareContentForLatex)
 
 import MiniLatex.Accumulator as Accumulator
 import MiniLatex.Differ as Differ exposing (EditRecord)
@@ -38,7 +38,7 @@ initialize2 latexState text =
 
         --|> List.map (\x -> "\n<p>\n" ++ x ++ "</p>")
     in
-    EditRecord paragraphs renderedParagraphs2 latexState2 [] 0
+        EditRecord paragraphs renderedParagraphs2 latexState2 [] 0
 
 
 

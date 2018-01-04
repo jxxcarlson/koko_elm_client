@@ -86,7 +86,7 @@ render latexState latexExpression =
             renderItem latexState level latexExpression
 
         InlineMath str ->
-            " $" ++ str ++ "$ "
+            "$" ++ str ++ "$"
 
         DisplayMath str ->
             "$$" ++ str ++ "$$"
