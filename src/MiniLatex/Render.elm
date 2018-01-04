@@ -195,6 +195,7 @@ renderEnvironmentDict =
     Dict.fromList
         [ ( "align", \x y -> renderAlignEnvironment x y )
         , ( "center", \x y -> renderCenterEnvironment x y )
+        , ( "comment", \x y -> renderCommentEnvironment x y )
         , ( "indent", \x y -> renderIndentEnvironment x y )
         , ( "enumerate", \x y -> renderEnumerate x y )
         , ( "eqnarray", \x y -> renderEqnArray x y )
@@ -276,6 +277,10 @@ renderCenterEnvironment latexState body =
             render latexState body
     in
         "\n<div class=\"center\" >\n" ++ r ++ "\n</div>\n"
+
+
+renderCommentEnvironment latexState body =
+    ""
 
 
 renderEquationEnvironment latexState body =
@@ -401,6 +406,7 @@ renderMacroDict =
         , ( "bigskip", \x y -> renderBigSkip x y )
         , ( "cite", \x y -> renderCite x y )
         , ( "code", \x y -> renderCode x y )
+        , ( "comment", \x y -> renderInlineComment x y )
         , ( "ellie", \x y -> renderEllie x y )
         , ( "emph", \x y -> renderItalic x y )
         , ( "eqref", \x y -> renderEqRef x y )
@@ -487,6 +493,11 @@ renderCite latexState args =
 renderCode : LatexState -> List LatexExpression -> String
 renderCode latexState args =
     " <span class=\"code\">" ++ (renderArg 0 latexState args) ++ "</span>"
+
+
+renderInlineComment : LatexState -> List LatexExpression -> String
+renderInlineComment latexState args =
+    ""
 
 
 renderEllie : LatexState -> List LatexExpression -> String
