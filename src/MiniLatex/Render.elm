@@ -51,8 +51,8 @@ renderString parser latexState str =
                 Ok latexExpression ->
                     render latexState latexExpression
 
-                Err _ ->
-                    "PARSE ERROR"
+                Err error ->
+                    "Error: " ++ (toString error)
     in
         renderOutput
 
@@ -568,7 +568,7 @@ renderHRef latexState args =
         label =
             renderArg 1 emptyLatexState args
     in
-        " <a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
+        "<a href=\"" ++ url ++ "\" target=_blank>" ++ label ++ "</a>"
 
 
 renderIFrame : LatexState -> List LatexExpression -> String
