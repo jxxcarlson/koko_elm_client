@@ -35,3 +35,5 @@
 #rendered_text2 .verse {
   white-space: pre-line;
 }
+
+.errormessage {white-space: pre-wrap;}

@@ -46,7 +46,7 @@ parseParagraph text =
                 list
 
             Err error ->
-                [ LXString ("<strong>Error:</strong> " ++ "<pre>" ++ (toString error.problem) ++ " </pre><strong>in </strong> </span><pre>" ++ error.source ++ "</pre>") ]
+                [ LXString ("<strong>Error:</strong> " ++ "<pre class=\"errormessage\">" ++ (toString error.problem) ++ " </pre><strong>in </strong> </span><pre class=\"errormessage\">" ++ error.source ++ "</pre>") ]
 
             _ ->
                 [ LXString "yada!" ]
