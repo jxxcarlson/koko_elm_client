@@ -88,7 +88,7 @@ getBeginArg line =
                 Err _ ->
                     ""
     in
-    arg
+        arg
 
 
 getEndArg : String -> String
@@ -105,7 +105,7 @@ getEndArg line =
                 Err _ ->
                     ""
     in
-    arg
+        arg
 
 
 lineType : String -> LineType
@@ -196,28 +196,28 @@ updateParserRecord line parserRecord =
         state2 =
             nextState line parserRecord.state
     in
-    case state2 of
-        Start ->
-            { parserRecord
-                | currentParagraph = ""
-                , paragraphList = parserRecord.paragraphList ++ [ joinLines parserRecord.currentParagraph line ]
-                , state = state2
-            }
+        case state2 of
+            Start ->
+                { parserRecord
+                    | currentParagraph = ""
+                    , paragraphList = parserRecord.paragraphList ++ [ joinLines parserRecord.currentParagraph line ]
+                    , state = state2
+                }
 
-        InParagraph ->
-            { parserRecord
-                | currentParagraph = joinLines parserRecord.currentParagraph line
-                , state = state2
-            }
+            InParagraph ->
+                { parserRecord
+                    | currentParagraph = joinLines parserRecord.currentParagraph line
+                    , state = state2
+                }
 
-        InBlock arg ->
-            { parserRecord
-                | currentParagraph = joinLines parserRecord.currentParagraph (fixLine line)
-                , state = state2
-            }
+            InBlock arg ->
+                { parserRecord
+                    | currentParagraph = joinLines parserRecord.currentParagraph (fixLine line)
+                    , state = state2
+                }
 
-        Error ->
-            parserRecord
+            Error ->
+                parserRecord
 
 
 logicalParagraphParse : String -> ParserRecord
@@ -230,7 +230,7 @@ logicalParagraphParse text =
 {-| logicalParagraphify text: split text into logical
 parapgraphs, where these are either normal paragraphs, i.e.,
 blocks text with no blank lines surrounded by blank lines,
-or outer blocks of the form \begin{_} ... \end{_}.
+or outer blocks of the form \begin{*} ... \end{*}.
 -}
 logicalParagraphify : String -> List String
 logicalParagraphify text =
@@ -238,7 +238,7 @@ logicalParagraphify text =
         lastState =
             logicalParagraphParse text
     in
-    lastState.paragraphList
+        lastState.paragraphList |> List.filter (\x -> x /= "")
 
 
 paragraphify : String -> List String
@@ -263,10 +263,10 @@ commonInitialSegment x y =
             b =
                 List.take 1 y
         in
-        if a == b then
-            a ++ commonInitialSegment (List.drop 1 x) (List.drop 1 y)
-        else
-            []
+            if a == b then
+                a ++ commonInitialSegment (List.drop 1 x) (List.drop 1 y)
+            else
+                []
 
 
 commonTerminalSegment : List String -> List String -> List String
@@ -288,7 +288,7 @@ initialize : (String -> String) -> String -> EditRecord
 initialize transformer text =
     let
         paragraphs =
-            paragraphify text
+            logicalParagraphify text
 
         n =
             List.length paragraphs
@@ -299,14 +299,14 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-    EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
+        EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
 
 
 initialize2 : (List String -> ( List String, LatexState )) -> String -> EditRecord
 initialize2 transformParagraphs text =
     let
         paragraphs =
-            paragraphify text
+            logicalParagraphify text
 
         n =
             List.length paragraphs
@@ -317,7 +317,7 @@ initialize2 transformParagraphs text =
         ( renderedParagraphs, latexState ) =
             transformParagraphs paragraphs
     in
-    EditRecord paragraphs renderedParagraphs latexState idList 0
+        EditRecord paragraphs renderedParagraphs latexState idList 0
 
 
 isEmpty : EditRecord -> Bool
@@ -329,7 +329,7 @@ update : Int -> (String -> String) -> EditRecord -> String -> EditRecord
 update seed transformer editorRecord text =
     let
         newParagraphs =
-            paragraphify text
+            logicalParagraphify text
 
         diffRecord =
             diff editorRecord.paragraphs newParagraphs
@@ -337,7 +337,7 @@ update seed transformer editorRecord text =
         diffPacket =
             renderDiff seed transformer diffRecord editorRecord.renderedParagraphs
     in
-    EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
+        EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
 
 
 diff : List String -> List String -> DiffRecord
@@ -367,7 +367,7 @@ diff u v =
             else
                 b
     in
-    DiffRecord a bb x y
+        DiffRecord a bb x y
 
 
 prefixer : Int -> Int -> String
@@ -399,7 +399,7 @@ renderDiff seed renderer diffRecord renderedStringList =
         middleSegmentRendered =
             List.map renderer diffRecord.middleSegmentInTarget
     in
-    { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
-    , idList = idList
-    , idListStart = ii
-    }
+        { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
+        , idList = idList
+        , idListStart = ii
+        }

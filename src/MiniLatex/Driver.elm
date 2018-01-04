@@ -55,7 +55,7 @@ parse : String -> List (List LatexExpression)
 parse text =
     text
         |> MiniLatexDiffer.prepareContentForLatex
-        |> Differ.paragraphify
+        |> Differ.logicalParagraphify
         |> List.map MiniLatexParser.parseParagraph
 
 
