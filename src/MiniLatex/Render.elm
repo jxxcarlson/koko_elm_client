@@ -123,11 +123,75 @@ spaceify str =
 
 
 {- RENDER ELEMENTS -}
+-- renderLatexList : LatexState -> List LatexExpression -> String
+-- renderLatexList latexState args =
+--     args |> List.map (render latexState) |> List.map spaceify |> String.join ("")
+{- New code -}
 
 
 renderLatexList : LatexState -> List LatexExpression -> String
 renderLatexList latexState args =
-    args |> List.map (render latexState) |> List.map spaceify |> String.join ("")
+    -- args |> List.map (render latexState) |> List.map spaceify |> String.join ("")
+    args |> List.map (render latexState) |> joinList
+
+
+type JoinType
+    = Space
+    | NoSpace
+
+
+lastChar =
+    String.right 1
+
+
+firstChar =
+    String.left 1
+
+
+joinType : String -> String -> JoinType
+joinType l r =
+    let
+        lastCharLeft =
+            lastChar l
+
+        firstCharRight =
+            firstChar r
+    in
+        if l == "" then
+            NoSpace
+        else if List.member lastCharLeft [ "(" ] then
+            NoSpace
+        else if List.member firstCharRight [ ")", ".", ",", "?", "!", ";", ":" ] then
+            NoSpace
+        else
+            Space
+
+
+joinList : List String -> String
+joinList stringList =
+    let
+        start =
+            List.head stringList |> Maybe.withDefault ""
+    in
+        List.foldl joinDatum2String ( "", "" ) stringList |> Tuple.first
+
+
+joinDatum2String : String -> ( String, String ) -> ( String, String )
+joinDatum2String current datum =
+    let
+        ( acc, previous ) =
+            datum
+    in
+        case joinType previous current of
+            NoSpace ->
+                ( acc ++ current, current )
+
+            Space ->
+                ( acc ++ " " ++ current, current )
+
+
+
+{- End new code -}
 
 
 renderArgList : LatexState -> List LatexExpression -> String
