@@ -63,7 +63,7 @@ clearEditRecord appState =
         newEditRecord =
             MiniLatex.Driver.emptyEditRecord
     in
-    { appState | editRecord = newEditRecord }
+        { appState | editRecord = newEditRecord }
 
 
 latexFullRender : Model -> ( Model, Cmd Msg )
@@ -94,7 +94,7 @@ latexFullRender model =
                 macrosString =
                     macros model.documentDict
             in
-            macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
+                macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
             MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord enrichedContent
@@ -111,7 +111,7 @@ latexFullRender model =
         newDocument =
             { document | rendered_content = rendered_content }
     in
-    updateCurrentDocument newModel newDocument
+        updateCurrentDocument newModel newDocument
 
 
 macros : DocumentDict -> String
@@ -154,7 +154,7 @@ inputContent content model =
         newCurrentDocument =
             { currentDocument | content = content }
     in
-    ( { model | appState = newAppState, current_document = newCurrentDocument }, Cmd.none )
+        ( { model | appState = newAppState, current_document = newCurrentDocument }, Cmd.none )
 
 
 {-| This is the function called when the user changes the document content
@@ -168,10 +168,10 @@ updateCurrentDocumentWithContent model =
         _ =
             Debug.log "updateCurrentDocumentWithContent" "now"
     in
-    if model.current_document.attributes.textType == "latex" then
-        updateCurrentLatexDocumentWithContent model
-    else
-        updateCurrentDocument model model.current_document
+        if model.current_document.attributes.textType == "latex" then
+            updateCurrentLatexDocumentWithContent model
+        else
+            updateCurrentDocument model model.current_document
 
 
 updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
@@ -188,7 +188,7 @@ updateCurrentLatexDocumentWithContent model =
                 macrosString =
                     macros model.documentDict
             in
-            macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
+                macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
         newEditRecord =
             MiniLatex.Driver.update model.appState.seed appState.editRecord document.content
@@ -205,7 +205,7 @@ updateCurrentLatexDocumentWithContent model =
         newDocument =
             { document | rendered_content = rendered_content }
     in
-    updateCurrentDocument newModel newDocument
+        updateCurrentDocument newModel newDocument
 
 
 updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
@@ -263,7 +263,7 @@ updateCurrentDocument model document =
                 , Random.generate (DocMsg << NewSeed) (Random.int 1 10000)
                 ]
     in
-    ( newModel, Cmd.batch cmds )
+        ( newModel, Cmd.batch cmds )
 
 
 
@@ -347,13 +347,13 @@ updateDocuments model documentsRecord =
                 , counter = Debug.log "updateDocuments" (model.counter + 1)
             }
     in
-    ( newModel
-    , Cmd.batch
-        [ toJs (windowData model model.appState.page)
-        , External.saveUserState (Data.User.encodeUserState newModel)
-        , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
-        ]
-    )
+        ( newModel
+        , Cmd.batch
+            [ toJs (windowData model model.appState.page)
+            , External.saveUserState (Data.User.encodeUserState newModel)
+            , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
+            ]
+        )
 
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
@@ -362,7 +362,7 @@ saveCurrentDocument queryString model =
         _ =
             Debug.log "saveCurrentDocument" "now"
     in
-    saveDocument queryString model.current_document model
+        saveDocument queryString model.current_document model
 
 
 saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
@@ -371,7 +371,7 @@ saveDocument queryString document model =
         _ =
             Debug.log "saveDocument" "now"
     in
-    ( model, saveDocumentCmd queryString document model )
+        ( model, saveDocumentCmd queryString document model )
 
 
 saveDocumentCmd : String -> Document -> Model -> Cmd Msg
@@ -386,7 +386,7 @@ saveDocumentCmd queryString document model =
             else
                 Cmd.none
     in
-    cmd
+        cmd
 
 
 saveDocumentListCmd : List Document -> Model -> Cmd Msg
@@ -396,7 +396,7 @@ saveDocumentListCmd documentList model =
             documentList
                 |> List.map (\doc -> saveDocumentCmd "" doc model)
     in
-    Cmd.batch cmds
+        Cmd.batch cmds
 
 
 
@@ -429,7 +429,7 @@ toggleUpdateRate model =
         newAppState =
             { oldAppState | tickerPaused = tickerPaused, tickInterval = tickInterval }
     in
-    { model | appState = newAppState }
+        { model | appState = newAppState }
 
 
 setTextType : String -> Model -> ( Model, Cmd Msg )
@@ -457,7 +457,7 @@ setTextType textType model =
         newDocument =
             { oldDocument | attributes = newDocumentAttributes }
     in
-    updateCurrentDocument newModel newDocument
+        updateCurrentDocument newModel newDocument
 
 
 setDocType : String -> Model -> ( Model, Cmd Msg )
@@ -485,7 +485,7 @@ setDocType docType model =
         newDocument =
             { oldDocument | attributes = newDocAttributes }
     in
-    updateCurrentDocument newModel newDocument
+        updateCurrentDocument newModel newDocument
 
 
 togglePublic : Model -> ( Model, Cmd Msg )
@@ -506,7 +506,7 @@ togglePublic model =
         updatedModel =
             { model | current_document = newDocument }
     in
-    updateCurrentDocument updatedModel newDocument
+        updateCurrentDocument updatedModel newDocument
 
 
 
@@ -538,7 +538,7 @@ updateTags tagText model =
         updatedDocument =
             { document | tags = updatedTags }
     in
-    ( { model | current_document = updatedDocument }, Cmd.none )
+        ( { model | current_document = updatedDocument }, Cmd.none )
 
 
 
@@ -582,7 +582,7 @@ createDocument model document =
         newAppState =
             { appState | tool = NewDocumentTools, page = EditorPage }
     in
-    ( { model | appState = newAppState }, Request.Document.createDocument document model.current_user.token )
+        ( { model | appState = newAppState }, Request.Document.createDocument document model.current_user.token )
 
 
 
@@ -651,9 +651,18 @@ selectDocument model document =
                 , textBufferDirty = False
             }
 
+        documentAttributes =
+            document.attributes
+
+        newDocumentAttributes =
+            { documentAttributes | lastViewed = model.time }
+
+        updatedDocument =
+            { document | attributes = newDocumentAttributes }
+
         newModel =
             { model
-                | current_document = document
+                | current_document = updatedDocument
                 , documentStack = Stack.push document model.documentStack
                 , appState = newAppState
                 , counter = model.counter + 1
@@ -676,9 +685,9 @@ selectDocument model document =
         additionalCommands =
             [ setTexMacroFileCmd ]
     in
-    ( newModel
-    , Cmd.batch (basicCommands ++ additionalCommands)
-    )
+        ( newModel
+        , Cmd.batch (basicCommands ++ additionalCommands)
+        )
 
 
 selectNewDocument : Model -> Document -> ( Model, Cmd Msg )
@@ -714,14 +723,14 @@ deleteDocument serverReply model =
                 newCurrentDocument =
                     List.head updatedDocuments |> Maybe.withDefault Document.errorDocument
             in
-            ( { model
-                | message = "Document deleted, remaining = " ++ toString (List.length updatedDocuments)
-                , documents = updatedDocuments
-                , documentStack = updatedDocumentStack
-                , current_document = newCurrentDocument
-              }
-            , Cmd.none
-            )
+                ( { model
+                    | message = "Document deleted, remaining = " ++ toString (List.length updatedDocuments)
+                    , documents = updatedDocuments
+                    , documentStack = updatedDocumentStack
+                    , current_document = newCurrentDocument
+                  }
+                , Cmd.none
+                )
 
         Err error ->
             ( { model | warning = toString error }, Cmd.none )
@@ -742,7 +751,7 @@ setTitle title model =
         newAppState =
             { appState | textBufferDirty = True }
     in
-    ( { model | current_document = updatedDocument, appState = newAppState }, Cmd.none )
+        ( { model | current_document = updatedDocument, appState = newAppState }, Cmd.none )
 
 
 
@@ -772,4 +781,4 @@ migrateFromAsciidocLatex model =
         newModel =
             { model | current_document = updatedDocument, counter = counter + 1 }
     in
-    updateCurrentDocumentWithContent newModel
+        updateCurrentDocumentWithContent newModel

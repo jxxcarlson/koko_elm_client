@@ -93,6 +93,7 @@ decodeDocumentAttributes =
         |> JPipeline.required "text_type" (Decode.string)
         |> JPipeline.required "doc_type" (Decode.string)
         |> JPipeline.required "level" (Decode.int)
+        |> JPipeline.hardcoded Nothing
 
 
 decodeChild : Decoder Child

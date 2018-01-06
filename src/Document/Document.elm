@@ -23,7 +23,7 @@ hasTag tagg document =
 
 defaultAttributes : DocumentAttributes
 defaultAttributes =
-    DocumentAttributes False "adoc" "standard" 0
+    DocumentAttributes False "adoc" "standard" 0 Nothing
 
 
 diaryEntry : Maybe Date -> Document

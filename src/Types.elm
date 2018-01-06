@@ -121,6 +121,7 @@ type alias DocumentAttributes =
     , textType : String
     , docType : String
     , level : Int
+    , lastViewed : Maybe Time
     }
 
 
