@@ -26,23 +26,6 @@ defaultAttributes =
     DocumentAttributes False "adoc" "standard" 0
 
 
-defaultDocument : Document
-defaultDocument =
-    { id = 0
-    , identifier = "nullDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Welcome"
-    , content = "Welcome to noteshare"
-    , rendered_content = "Welcome to noteshare"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
-
-
 diaryEntry : Maybe Date -> Document
 diaryEntry maybeDate =
     case maybeDate of
@@ -70,78 +53,40 @@ realDiaryEntry date =
     }
 
 
+defaultDocument : Document
+defaultDocument =
+    template "Welcome" "Welcome to noteshare"
+
+
 errorDocument : Document
 errorDocument =
-    { id = 0
-    , identifier = "errorDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Error"
-    , content = "Oops - something went wrong"
-    , rendered_content = "Oops - something went wrong"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
+    template "Error" "Oops - something went wrong"
 
 
 pageNotFoundDocument : Document
 pageNotFoundDocument =
-    { id = 0
-    , identifier = "pageNotFoundDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Page not found"
-    , content = "Sorry, page not found"
-    , rendered_content = "Sorry, page not found"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
+    template "Page not found" "Sorry, page not found"
 
 
 startDocument : Document
 startDocument =
-    { id = 0
-    , identifier = "nullDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Welcome"
-    , content = "Welcome to noteshare!"
-    , rendered_content = "Welcome to noteshare!"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
+    template "Welcome" "Welcome to noteshare!"
 
 
 blankDocument : Document
 blankDocument =
-    { id = 0
-    , identifier = "blank"
-    , author_id = 0
-    , author_name = ""
-    , title = "New Document"
-    , content = "Write content here"
-    , rendered_content = "Write content here"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
+    template "New Document" "Write content here"
+
+
+defaultMasterDocument : Document
+defaultMasterDocument =
+    template "Null master document" "nothing"
 
 
 emptyDocument : Document
 emptyDocument =
     { id = 0
-    , identifier = "empty"
+    , identifier = "-"
     , author_id = 0
     , author_name = ""
     , title = ""
@@ -151,22 +96,14 @@ emptyDocument =
     , tags = []
     , children = []
     , parent_id = 0
-    , parent_title = "String"
+    , parent_title = "-"
     }
 
 
-defaultMasterDocument : Document
-defaultMasterDocument =
-    { id = 0
-    , identifier = "nullMasterDocument"
-    , author_id = 0
-    , author_name = ""
-    , title = "Null master document"
-    , content = "nothing"
-    , rendered_content = "nothing"
-    , attributes = defaultAttributes
-    , tags = []
-    , children = []
-    , parent_id = 0
-    , parent_title = "String"
-    }
+template : String -> String -> Document
+template title content =
+    let
+        doc =
+            emptyDocument
+    in
+        { doc | title = title, content = content, rendered_content = content }
