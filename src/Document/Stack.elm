@@ -32,7 +32,7 @@ push document stack =
 
 sorted : DocumentStack -> DocumentStack
 sorted stack =
-    List.sortWith titleCompare stack
+    List.sortWith lastViewedCompare stack
 
 
 titleCompare : Document -> Document -> Order
@@ -46,6 +46,36 @@ titleCompare doc1 doc2 =
 
         ( _, False ) ->
             GT
+
+
+lastViewedCompare : Document -> Document -> Order
+lastViewedCompare doc1 doc2 =
+    let
+        t1 =
+            case doc1.attributes.lastViewed of
+                Just time ->
+                    time
+
+                Nothing ->
+                    0
+
+        t2 =
+            case doc2.attributes.lastViewed of
+                Just time ->
+                    time
+
+                Nothing ->
+                    0
+    in
+        case ( t1 == t2, t1 < t2 ) of
+            ( True, _ ) ->
+                EQ
+
+            ( _, True ) ->
+                LT
+
+            ( _, False ) ->
+                GT
 
 
 top : Int -> DocumentStack -> Document
