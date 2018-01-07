@@ -201,6 +201,7 @@ renderEnvironmentDict =
         , ( "eqnarray", \x y -> renderEqnArray x y )
         , ( "equation", \x y -> renderEquationEnvironment x y )
         , ( "itemize", \x y -> renderItemize x y )
+        , ( "listing", \x y -> renderListing x y )
         , ( "macros", \x y -> renderMacros x y )
         , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
@@ -393,6 +394,36 @@ renderTableBody body =
 
 renderVerbatim latexState body =
     "\n<pre class=\"verbatim\">" ++ (render latexState body) ++ "</pre>\n"
+
+
+renderListing latexState body =
+    let
+        text =
+            render latexState body
+    in
+        "\n<pre class=\"verbatim\">" ++ (addLineNumbers text) ++ "</pre>\n"
+
+
+addLineNumbers text =
+    text
+        |> String.trim
+        |> String.split "\n"
+        |> List.foldl addNumberedLine ( 0, [] )
+        |> Tuple.second
+        |> List.reverse
+        |> String.join "\n"
+
+
+addNumberedLine line data =
+    let
+        ( k, lines ) =
+            data
+    in
+        ( k + 1, [ numberedLine (k + 1) line ] ++ lines )
+
+
+numberedLine k line =
+    (String.padLeft 5 ' ' (toString k)) ++ "  " ++ line
 
 
 
