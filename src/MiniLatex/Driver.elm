@@ -48,7 +48,7 @@ then `render macros source` yields the HTML text
 -}
 render : String -> String -> String
 render macroDefinitions text =
-    MiniLatexDiffer.initialize2 emptyLatexState text |> getRenderedText macroDefinitions
+    MiniLatexDiffer.initialize emptyLatexState text |> getRenderedText macroDefinitions
 
 
 parse : String -> List (List LatexExpression)

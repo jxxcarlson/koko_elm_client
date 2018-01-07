@@ -12,6 +12,7 @@ module MiniLatex.Differ
         , logicalParagraphify
         , nextState
         , paragraphify
+        , prefixer
         , renderDiff
           -- for testing
         , update
@@ -198,9 +199,6 @@ updateParserRecord line parserRecord =
     let
         state2 =
             nextState line parserRecord.state
-
-        _ =
-            Debug.log "nextState" state2
     in
         case state2 of
             Start ->
@@ -318,7 +316,8 @@ initialize2 transformParagraphs text =
             List.length paragraphs
 
         idList =
-            List.range 1 n |> List.map (prefixer 0)
+            Debug.log "idList in initialize2"
+                (List.range 1 n |> List.map (prefixer 0))
 
         ( renderedParagraphs, latexState ) =
             transformParagraphs paragraphs
@@ -381,6 +380,8 @@ prefixer b k =
     "p." ++ toString b ++ "." ++ toString k
 
 
+{-| Among other things, generate a fresh id list for the changed elements.
+-}
 renderDiff : Int -> (String -> String) -> DiffRecord -> List String -> DiffPacket
 renderDiff seed renderer diffRecord renderedStringList =
     let
@@ -399,13 +400,22 @@ renderDiff seed renderer diffRecord renderedStringList =
         n =
             List.length diffRecord.middleSegmentInTarget
 
-        idList =
+        idListInitial =
+            List.range 1 ii |> List.map (prefixer 0)
+
+        idListMiddle =
             List.range 1 n |> List.map (prefixer seed)
+
+        idListTerminal =
+            List.range (ii + n + 1) (ii + n + it + 1) |> List.map (prefixer 0)
+
+        idList =
+            idListInitial ++ idListMiddle ++ idListTerminal
 
         middleSegmentRendered =
             List.map renderer diffRecord.middleSegmentInTarget
     in
         { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
-        , idList = idList
-        , idListStart = ii
+        , idList = Debug.log "idList in renderDiff" idList
+        , idListStart = 0
         }
