@@ -494,7 +494,7 @@ renderCode : LatexState -> List LatexExpression -> String
 renderCode latexState args =
     let
         arg =
-            renderArg 0 latexState args |> String.Extra.replace "\\#" "#"
+            renderArg 0 latexState args
     in
         " <span class=\"code\">" ++ arg ++ "</span>"
 
