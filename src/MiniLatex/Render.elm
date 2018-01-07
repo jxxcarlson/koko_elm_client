@@ -492,7 +492,11 @@ renderCite latexState args =
 
 renderCode : LatexState -> List LatexExpression -> String
 renderCode latexState args =
-    " <span class=\"code\">" ++ (renderArg 0 latexState args) ++ "</span>"
+    let
+        arg =
+            renderArg 0 latexState args |> String.Extra.replace "\\#" "#"
+    in
+        " <span class=\"code\">" ++ arg ++ "</span>"
 
 
 renderInlineComment : LatexState -> List LatexExpression -> String
