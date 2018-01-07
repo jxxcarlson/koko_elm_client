@@ -103,7 +103,6 @@ render latexState latexExpression =
 
 renderLatexList : LatexState -> List LatexExpression -> String
 renderLatexList latexState args =
-    -- args |> List.map (render latexState) |> List.map spaceify |> String.join ("")
     args |> List.map (render latexState) |> joinList
 
 

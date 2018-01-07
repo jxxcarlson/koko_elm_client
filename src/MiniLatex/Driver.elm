@@ -82,14 +82,18 @@ return a string representing the HTML of the paragraph list
 of the editRecord. Append the macroDefinitions for use
 by MathJax.
 -}
-getRenderedText2 : String -> EditRecord -> String
-getRenderedText2 macroDefinitions editRecord =
+getRenderedText : String -> EditRecord -> String
+getRenderedText macroDefinitions editRecord =
     let
         paragraphs =
             editRecord.renderedParagraphs
 
+        _ =
+            Debug.log "idList" editRecord.idList
+
         pTagList =
-            pTags editRecord
+            Debug.log "pTags"
+                (pTags editRecord)
     in
         List.map2 (\para pTag -> pTag ++ "\n" ++ para ++ "\n</p>") paragraphs pTagList
             |> String.join "\n\n"
@@ -99,8 +103,8 @@ getRenderedText2 macroDefinitions editRecord =
 {-| This version of getRenderedText ignores the idList.
 This give better mathJax performance.
 -}
-getRenderedText : String -> EditRecord -> String
-getRenderedText macroDefinitions editRecord =
+getRenderedText2 : String -> EditRecord -> String
+getRenderedText2 macroDefinitions editRecord =
     let
         paragraphs =
             editRecord.renderedParagraphs

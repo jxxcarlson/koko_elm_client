@@ -68,7 +68,7 @@ var mountNode = document.getElementById('main');
     }
 
 
-  function typeset() {
+   function typeset() {
      console.log("** plain typeset ... ")
      MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
    }
