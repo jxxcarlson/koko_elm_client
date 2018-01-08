@@ -37,7 +37,7 @@ initialize latexState text =
             Debug.log "idList in initialize"
                 (List.range 1 n |> List.map (Differ.prefixer 0))
     in
-    EditRecord paragraphs renderedParagraphs2 latexState2 idList 0
+    EditRecord paragraphs renderedParagraphs2 latexState2 idList Nothing Nothing
 
 
 update : Int -> EditRecord -> String -> EditRecord

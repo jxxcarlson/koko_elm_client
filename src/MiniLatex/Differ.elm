@@ -27,7 +27,8 @@ type alias DiffRecord =
 type alias DiffPacket =
     { renderedParagraphs : List String
     , idList : List String
-    , idListStart : Int
+    , newIdsStart : Maybe Int
+    , newIdsEnd : Maybe Int
     }
 
 
@@ -36,13 +37,14 @@ type alias EditRecord =
     , renderedParagraphs : List String
     , latexState : LatexState
     , idList : List String
-    , idListStart : Int
+    , newIdsStart : Maybe Int
+    , newIdsEnd : Maybe Int
     }
 
 
 emptyEditRecord : EditRecord
 emptyEditRecord =
-    EditRecord [] [] emptyLatexState [] 0
+    EditRecord [] [] emptyLatexState [] Nothing Nothing
 
 
 commonInitialSegment : List String -> List String -> List String
@@ -95,7 +97,7 @@ initialize transformer text =
         renderedParagraphs =
             List.map transformer paragraphs
     in
-    EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
+    EditRecord paragraphs renderedParagraphs emptyLatexState idList Nothing Nothing
 
 
 isEmpty : EditRecord -> Bool
@@ -115,7 +117,7 @@ update seed transformer editorRecord text =
         diffPacket =
             renderDiff seed transformer diffRecord editorRecord editorRecord.renderedParagraphs
     in
-    EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
+    EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.newIdsStart diffPacket.newIdsEnd
 
 
 diff : List String -> List String -> DiffRecord
@@ -191,8 +193,17 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
 
         middleSegmentRendered =
             List.map renderer diffRecord.middleSegmentInTarget
+
+        ( newDisStart, newIsEnd ) =
+            Debug.log "newId Info"
+                (if ns == 0 then
+                    ( Nothing, Nothing )
+                 else
+                    ( Just ii, Just (ii + nt - 1) )
+                )
     in
     { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
     , idList = idList
-    , idListStart = 0
+    , newIdsStart = Nothing
+    , newIdsEnd = Nothing
     }
