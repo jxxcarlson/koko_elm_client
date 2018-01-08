@@ -6,15 +6,11 @@ module MiniLatex.Differ
         , initialize
         , isEmpty
         , prefixer
-        , renderDiff
         , update
         )
 
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
 import MiniLatex.Paragraph as Paragraph
-import MiniLatex.Parser
-import Parser
-import Regex
 
 
 {- TYPES -}
@@ -102,25 +98,6 @@ initialize transformer text =
     EditRecord paragraphs renderedParagraphs emptyLatexState idList 0
 
 
-initialize2 : (List String -> ( List String, LatexState )) -> String -> EditRecord
-initialize2 transformParagraphs text =
-    let
-        paragraphs =
-            Paragraph.logicalParagraphify text
-
-        n =
-            List.length paragraphs
-
-        idList =
-            Debug.log "idList in initialize2"
-                (List.range 1 n |> List.map (prefixer 0))
-
-        ( renderedParagraphs, latexState ) =
-            transformParagraphs paragraphs
-    in
-    EditRecord paragraphs renderedParagraphs latexState idList 0
-
-
 isEmpty : EditRecord -> Bool
 isEmpty editRecord =
     editRecord.paragraphs == [] && editRecord.renderedParagraphs == []
@@ -136,7 +113,7 @@ update seed transformer editorRecord text =
             diff editorRecord.paragraphs newParagraphs
 
         diffPacket =
-            renderDiff seed transformer diffRecord editorRecord.renderedParagraphs
+            renderDiff seed transformer diffRecord editorRecord editorRecord.renderedParagraphs
     in
     EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.idListStart
 
@@ -178,8 +155,8 @@ prefixer b k =
 
 {-| Among other things, generate a fresh id list for the changed elements.
 -}
-renderDiff : Int -> (String -> String) -> DiffRecord -> List String -> DiffPacket
-renderDiff seed renderer diffRecord renderedStringList =
+renderDiff : Int -> (String -> String) -> DiffRecord -> EditRecord -> List String -> DiffPacket
+renderDiff seed renderer diffRecord editRecord renderedStringList =
     let
         ii =
             List.length diffRecord.commonInitialSegment
@@ -193,17 +170,21 @@ renderDiff seed renderer diffRecord renderedStringList =
         terminalSegmentRendered =
             takeLast it renderedStringList
 
-        n =
+        ns =
+            List.length diffRecord.middleSegmentInSource
+
+        nt =
             List.length diffRecord.middleSegmentInTarget
 
         idListInitial =
-            List.range 1 ii |> List.map (prefixer 0)
+            List.take ii editRecord.idList
 
         idListMiddle =
-            List.range 1 n |> List.map (prefixer seed)
+            List.range (ii + 1) (ii + nt) |> List.map (prefixer seed)
 
         idListTerminal =
-            List.range (ii + n + 1) (ii + n + it + 1) |> List.map (prefixer 0)
+            -- List.range (ii + n + 1) (ii + n + it + 1) |> List.map (prefixer 0)
+            List.drop (ii + ns) editRecord.idList
 
         idList =
             idListInitial ++ idListMiddle ++ idListTerminal
@@ -212,6 +193,6 @@ renderDiff seed renderer diffRecord renderedStringList =
             List.map renderer diffRecord.middleSegmentInTarget
     in
     { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
-    , idList = Debug.log "idList in renderDiff" idList
+    , idList = idList
     , idListStart = 0
     }

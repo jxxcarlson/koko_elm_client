@@ -62,20 +62,7 @@ parse text =
 
 pTags : EditRecord -> List String
 pTags editRecord =
-    let
-        prefix =
-            List.repeat editRecord.idListStart "<p>"
-
-        n =
-            List.length editRecord.paragraphs - (editRecord.idListStart + List.length editRecord.idList)
-
-        suffix =
-            List.repeat n "<p>"
-
-        infix =
-            editRecord.idList |> List.map (\x -> "<p id=\"" ++ x ++ "\">")
-    in
-    prefix ++ infix ++ suffix
+    editRecord.idList |> List.map (\x -> "<p id=\"" ++ x ++ "\">")
 
 
 {-| Using the renderedParagraph list of the editRecord,

@@ -14,6 +14,7 @@ cp src/MiniLatex/KeyValueUtilities.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/LatexDiffer.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Accumulator.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/LatexState.elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/Paragraph.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Parser.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/ParserTools.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Render.elm ../MiniLatex/src/MiniLatex/
@@ -26,6 +27,7 @@ cp src/MiniLatex/KeyValueUtilities.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/LatexDiffer.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Accumulator.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/LatexState.elm ../MiniLatexTester/src/MiniLatex/
+cp src/MiniLatex/Paragraph.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Parser.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/ParserTools.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Render.elm ../MiniLatexTester/src/MiniLatex/
