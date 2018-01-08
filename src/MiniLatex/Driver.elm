@@ -2,10 +2,10 @@ module MiniLatex.Driver
     exposing
         ( emptyEditRecord
         , getRenderedText
+        , parse
         , render
         , setup
         , update
-        , parse
         )
 
 {-| This library exposes functions for rendering MiniLaTeX text into HTML.
@@ -20,6 +20,7 @@ module MiniLatex.Driver
 import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.LatexDiffer as MiniLatexDiffer
 import MiniLatex.LatexState exposing (emptyLatexState)
+import MiniLatex.Paragraph as Paragraph
 import MiniLatex.Parser as MiniLatexParser exposing (LatexExpression)
 
 
@@ -55,7 +56,7 @@ parse : String -> List (List LatexExpression)
 parse text =
     text
         |> MiniLatexDiffer.prepareContentForLatex
-        |> Differ.logicalParagraphify
+        |> Paragraph.logicalParagraphify
         |> List.map MiniLatexParser.parseParagraph
 
 
@@ -74,7 +75,7 @@ pTags editRecord =
         infix =
             editRecord.idList |> List.map (\x -> "<p id=\"" ++ x ++ "\">")
     in
-        prefix ++ infix ++ suffix
+    prefix ++ infix ++ suffix
 
 
 {-| Using the renderedParagraph list of the editRecord,
@@ -95,9 +96,9 @@ getRenderedText macroDefinitions editRecord =
             Debug.log "pTags"
                 (pTags editRecord)
     in
-        List.map2 (\para pTag -> pTag ++ "\n" ++ para ++ "\n</p>") paragraphs pTagList
-            |> String.join "\n\n"
-            |> (\x -> x ++ "\n\n" ++ macroDefinitions)
+    List.map2 (\para pTag -> pTag ++ "\n" ++ para ++ "\n</p>") paragraphs pTagList
+        |> String.join "\n\n"
+        |> (\x -> x ++ "\n\n" ++ macroDefinitions)
 
 
 {-| This version of getRenderedText ignores the idList.
@@ -109,9 +110,9 @@ getRenderedText2 macroDefinitions editRecord =
         paragraphs =
             editRecord.renderedParagraphs
     in
-        List.map (\para -> "<p>\n" ++ para ++ "\n</p>") paragraphs
-            |> String.join "\n\n"
-            |> (\x -> macroDefinitions ++ "\n\n" ++ x)
+    List.map (\para -> "<p>\n" ++ para ++ "\n</p>") paragraphs
+        |> String.join "\n\n"
+        |> (\x -> macroDefinitions ++ "\n\n" ++ x)
 
 
 {-| Create an EditRecord from a string of MiniLaTeX text:

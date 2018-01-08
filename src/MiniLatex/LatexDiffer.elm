@@ -1,8 +1,9 @@
-module MiniLatex.LatexDiffer exposing (initialize, safeUpdate, prepareContentForLatex)
+module MiniLatex.LatexDiffer exposing (initialize, prepareContentForLatex, safeUpdate)
 
 import MiniLatex.Accumulator as Accumulator
 import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.LatexState exposing (LatexState, emptyLatexState)
+import MiniLatex.Paragraph as Paragraph
 import MiniLatex.Render as Render exposing (render, renderLatexList)
 import String.Extra
 
@@ -13,7 +14,7 @@ initialize latexState text =
         paragraphs =
             text
                 |> prepareContentForLatex
-                |> Differ.logicalParagraphify
+                |> Paragraph.logicalParagraphify
 
         ( latexExpressionList, latexState1 ) =
             paragraphs
@@ -36,7 +37,7 @@ initialize latexState text =
             Debug.log "idList in initialize"
                 (List.range 1 n |> List.map (Differ.prefixer 0))
     in
-        EditRecord paragraphs renderedParagraphs2 latexState2 idList 0
+    EditRecord paragraphs renderedParagraphs2 latexState2 idList 0
 
 
 update : Int -> EditRecord -> String -> EditRecord
