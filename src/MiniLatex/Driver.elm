@@ -89,7 +89,7 @@ getRenderedText macroDefinitions editRecord =
 
 
 {-| This version of getRenderedText ignores the idList.
-This give better mathJax performance.
+This give better mathJax performance. ??? NEED TO TEST THIS ASSERTION
 -}
 getRenderedText2 : String -> EditRecord -> String
 getRenderedText2 macroDefinitions editRecord =

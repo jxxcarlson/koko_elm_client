@@ -41,15 +41,15 @@ parseParagraph text =
         expr =
             Parser.run latexList text
     in
-        case expr of
-            Ok (LatexList list) ->
-                list
+    case expr of
+        Ok (LatexList list) ->
+            list
 
-            Err error ->
-                [ LXString ("<strong>Error:</strong> " ++ "<pre class=\"errormessage\">" ++ (toString error.problem) ++ " </pre><strong>in </strong> </span><pre class=\"errormessage\">" ++ error.source ++ "</pre>") ]
+        Err error ->
+            [ LXString ("<strong>Error:</strong> " ++ "<pre class=\"errormessage\">" ++ toString error.problem ++ " </pre><strong>in </strong> </span><pre class=\"errormessage\">" ++ error.source ++ "</pre>") ]
 
-            _ ->
-                [ LXString "yada!" ]
+        _ ->
+            [ LXString "yada!" ]
 
 
 
@@ -61,6 +61,7 @@ latexList : Parser LatexExpression
 latexList =
     inContext "latexList" <|
         (succeed identity
+            |. ws
             |= repeat oneOrMore parse
             |> map LatexList
         )
@@ -290,7 +291,7 @@ innerMacroName =
 allOrNothing : Parser a -> Parser a
 allOrNothing parser =
     inContext "allOrNothing" <|
-        (delayedCommitMap always parser (succeed ()))
+        delayedCommitMap always parser (succeed ())
 
 
 mustFail : Parser a -> Parser ()
@@ -328,7 +329,7 @@ reservedWord =
 environment : Parser LatexExpression
 environment =
     inContext "environment" <|
-        (lazy (\_ -> beginWord |> andThen environmentOfType))
+        lazy (\_ -> beginWord |> andThen environmentOfType)
 
 
 parseEnvirnomentDict =
@@ -352,7 +353,7 @@ environmentParser name =
 environmentOfType : String -> Parser LatexExpression
 environmentOfType envType =
     inContext "environmentOfType" <|
-        (let
+        let
             endWord =
                 "\\end{" ++ envType ++ "}"
 
@@ -361,9 +362,8 @@ environmentOfType envType =
                     "mathJax"
                 else
                     envType
-         in
-            environmentParser envKind endWord envType
-        )
+        in
+        environmentParser envKind endWord envType
 
 
 
@@ -451,12 +451,11 @@ tableRow =
 tableCellHelp : List LatexExpression -> Parser (List LatexExpression)
 tableCellHelp revCells =
     inContext "tableCellHelp" <|
-        (oneOf
+        oneOf
             [ nextCell
                 |> andThen (\c -> tableCellHelp (c :: revCells))
             , succeed (List.reverse revCells)
             ]
-        )
 
 
 nextCell : Parser LatexExpression
