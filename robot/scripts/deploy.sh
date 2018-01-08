@@ -18,8 +18,8 @@
 color=`tput setaf 48`
 reset=`tput setaf 7`
 
-echo "${color}push to GitHub${reset}"
-git push origin master
+echo "${color}not pushing to GitHub right now${reset}"
+# git push origin master
 
 echo
 echo "${color}use src/deployment configuration${reset}"
