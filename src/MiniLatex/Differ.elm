@@ -185,7 +185,6 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
             List.range (ii + 1) (ii + nt) |> List.map (prefixer seed)
 
         idListTerminal =
-            -- List.range (ii + n + 1) (ii + n + it + 1) |> List.map (prefixer 0)
             List.drop (ii + ns) editRecord.idList
 
         idList =
@@ -194,9 +193,9 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
         middleSegmentRendered =
             List.map renderer diffRecord.middleSegmentInTarget
 
-        ( newDisStart, newIsEnd ) =
+        ( newIdsStart, newIdsEnd ) =
             Debug.log "newId Info"
-                (if ns == 0 then
+                (if nt == 0 then
                     ( Nothing, Nothing )
                  else
                     ( Just ii, Just (ii + nt - 1) )
@@ -204,6 +203,6 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
     in
     { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
     , idList = idList
-    , newIdsStart = Nothing
-    , newIdsEnd = Nothing
+    , newIdsStart = newIdsStart
+    , newIdsEnd = newIdsEnd
     }
