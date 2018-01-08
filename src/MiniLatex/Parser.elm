@@ -25,6 +25,44 @@ type LatexExpression
     | LatexList (List LatexExpression)
 
 
+listHasMath : List LatexExpression -> Bool
+listHasMath list =
+    list |> List.foldr (\x acc -> hasMath x || acc) False
+
+
+hasMath : LatexExpression -> Bool
+hasMath expr =
+    case expr of
+        LXString str ->
+            False
+
+        Comment str ->
+            False
+
+        Item k expr ->
+            hasMath expr
+
+        InlineMath str ->
+            True
+
+        DisplayMath str ->
+            True
+
+        Macro str expr ->
+            expr |> List.foldr (\x acc -> hasMath x || acc) False
+
+        Environment str expr ->
+            envHasMath str expr
+
+        LatexList list ->
+            list |> List.foldr (\x acc -> hasMath x || acc) False
+
+
+envHasMath : String -> LatexExpression -> Bool
+envHasMath envType expr =
+    List.member envType [ "equation", "align", "eqnarray" ] || hasMath expr
+
+
 defaultLatexList : LatexExpression
 defaultLatexList =
     LatexList [ LXString "Parse Error" ]
