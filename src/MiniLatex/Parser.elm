@@ -259,24 +259,6 @@ texComment =
 
 
 
-{- ITEMIZED LISTS -}
-
-
-item : Parser LatexExpression
-item =
-    inContext "item" <|
-        (succeed identity
-            |. ws
-            |. keyword "\\item"
-            |. spaces
-            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, macro spaces ])
-            |. symbol "\n"
-            |. spaces
-            |> map (\x -> Item 1 (LatexList x))
-        )
-
-
-
 {- MATHEMATICAL TEXT -}
 
 
@@ -412,6 +394,10 @@ standardEnvironmentBody endWord envType =
         )
 
 
+
+{- ITEMIZED LISTS -}
+
+
 itemEnvironmentBody : String -> String -> Parser LatexExpression
 itemEnvironmentBody endWord envType =
     inContext "itemEnvironmentBody" <|
@@ -423,6 +409,20 @@ itemEnvironmentBody endWord envType =
             |. ws
             |> map LatexList
             |> map (Environment envType)
+        )
+
+
+item : Parser LatexExpression
+item =
+    inContext "item" <|
+        (succeed identity
+            |. ws
+            |. keyword "\\item"
+            |. spaces
+            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, macro spaces ])
+            |. symbol "\n"
+            |. spaces
+            |> map (\x -> Item 1 (LatexList x))
         )
 
 
