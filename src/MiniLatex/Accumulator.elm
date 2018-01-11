@@ -18,7 +18,7 @@ import MiniLatex.LatexState
         , setCrossReference
         , updateCounter
         )
-import MiniLatex.Parser as Parser exposing (LatexExpression(..), macro, parseParagraph)
+import MiniLatex.Parser as Parser exposing (LatexExpression(..), macro, parse)
 import MiniLatex.ParserTools as PT
 import MiniLatex.Render as Render exposing (renderLatexList)
 import Parser as P
@@ -37,7 +37,7 @@ type alias LatexInfo =
 -- transformParagraphs : LatexState -> List String -> ( List String, LatexState )
 -- transformParagraphs latexState paragraphs =
 --     paragraphs
---         |> accumulator Parser.parseParagraph renderParagraph updateState latexState
+--         |> accumulator Parser.parse renderParagraph updateState latexState
 --
 --
 -- renderParagraph : List LatexExpression -> LatexState -> String
@@ -53,7 +53,7 @@ paragraohs and the upodated LatexState.
 parseParagraphs : LatexState -> List String -> ( List (List LatexExpression), LatexState )
 parseParagraphs latexState paragraphs =
     paragraphs
-        |> parseAccumulator Parser.parseParagraph updateState latexState
+        |> parseAccumulator Parser.parse updateState latexState
 
 
 {-| renderParagraphs: take a list of (List LatexExpressions)

@@ -86,8 +86,8 @@ defaultLatexExpression =
     [ Macro "NULL" [] ]
 
 
-parseParagraph : String -> List LatexExpression
-parseParagraph text =
+parse : String -> List LatexExpression
+parse text =
     let
         expr =
             Parser.run latexList text
