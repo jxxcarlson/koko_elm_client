@@ -1,7 +1,6 @@
 module MiniLatex.Parser exposing (..)
 
 import Dict
-import List.Extra
 import Parser exposing (..)
 
 
@@ -105,39 +104,16 @@ parseParagraph text =
 
 
 
-{- PARSER: TOP LEVEL -}
+{- PARSER HELPERS
 
+   These have varaous types, e.g.,
 
-{-| Production: $ LatexList &\Rightarrow LatexExpression^+ $
+     - Parser ()
+     - String -> Parser String
+     - Parser a -> Parser a
+     - Parser a -> Parser ()
+
 -}
-latexList : Parser LatexExpression
-latexList =
-    inContext "latexList" <|
-        (succeed identity
-            |. ws
-            |= repeat oneOrMore parse
-            |> map LatexList
-        )
-
-
-{-| Production: $ LatexExpression &\Rightarrow Words\ |\ Comment
-|\ IMath\ |\ DMath\ |\ Macro\ |\ Env $
--}
-parse : Parser LatexExpression
-parse =
-    oneOf
-        [ texComment
-        , lazy (\_ -> environment)
-        , displayMathDollar
-        , displayMathBrackets
-        , inlineMath ws
-        , macro ws
-        , words
-        ]
-
-
-
-{- PARSER HELPERS -}
 
 
 spaces : Parser ()
@@ -159,8 +135,44 @@ parseUntil marker =
         )
 
 
+allOrNothing : Parser a -> Parser a
+allOrNothing parser =
+    inContext "allOrNothing" <|
+        delayedCommitMap always parser (succeed ())
 
-{- PARSE WORDS -}
+
+mustFail : Parser a -> Parser ()
+mustFail parser =
+    inContext "mustFail" <|
+        (oneOf
+            [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
+            , succeed (Ok ())
+            ]
+            |> andThen
+                (\res ->
+                    case res of
+                        Err e ->
+                            fail e
+
+                        Ok _ ->
+                            succeed ()
+                )
+        )
+
+
+reservedWord : Parser ()
+reservedWord =
+    inContext "reservedWord" <|
+        (succeed identity
+            |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
+        )
+
+
+
+{- PARSERS FOR TERMINALS -- Type Parser String
+
+   and helpers of type  Char -> Bool
+-}
 
 
 word : Parser String
@@ -191,6 +203,85 @@ specialWord =
 notSpecialTableOrMacroCharacter : Char -> Bool
 notSpecialTableOrMacroCharacter c =
     not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}' || c == '&')
+
+
+macroName : Parser String
+macroName =
+    inContext "macroName" <|
+        (allOrNothing <|
+            succeed identity
+                |. mustFail reservedWord
+                |= innerMacroName
+        )
+
+
+innerMacroName : Parser String
+innerMacroName =
+    inContext "innerMacroName" <|
+        succeed identity
+            |. spaces
+            |. symbol "\\"
+            |= keep zeroOrMore notMacroSpecialCharacter
+
+
+notMacroSpecialCharacter : Char -> Bool
+notMacroSpecialCharacter c =
+    not (c == '{' || c == ' ' || c == '\n')
+
+
+beginWord : Parser String
+beginWord =
+    inContext "beginWord" <|
+        (succeed identity
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "\\begin{"
+            |= parseUntil "}"
+        )
+
+
+endWord : Parser String
+endWord =
+    inContext "endWord" <|
+        (succeed identity
+            |. ignore zeroOrMore ((==) ' ')
+            |. symbol "\\end{"
+            |= parseUntil "}"
+        )
+
+
+
+{- PARSERS FOR NON-TERMINAS: Type Parser LatexExpression
+
+   or sometiemes Parser () -> Parser LatexExpresson
+
+-}
+
+
+{-| Production: $ LatexList &\Rightarrow LatexExpression^+ $
+-}
+latexList : Parser LatexExpression
+latexList =
+    inContext "latexList" <|
+        (succeed identity
+            |. ws
+            |= repeat oneOrMore parse
+            |> map LatexList
+        )
+
+
+{-| Production: $ LatexExpression &\Rightarrow Words\ |\ Comment\ |\ IMath\ |\ DMath\ |\ Macro\ |\ Env $
+-}
+parse : Parser LatexExpression
+parse =
+    oneOf
+        [ texComment
+        , lazy (\_ -> environment)
+        , displayMathDollar
+        , displayMathBrackets
+        , inlineMath ws
+        , macro ws
+        , words
+        ]
 
 
 words : Parser LatexExpression
@@ -304,63 +395,6 @@ arg =
         )
 
 
-macroName : Parser String
-macroName =
-    inContext "macroName" <|
-        (allOrNothing <|
-            succeed identity
-                |. mustFail reservedWord
-                |= innerMacroName
-        )
-
-
-innerMacroName : Parser String
-innerMacroName =
-    inContext "innerMacroName" <|
-        succeed identity
-            |. spaces
-            |. symbol "\\"
-            |= keep zeroOrMore notMacroSpecialCharacter
-
-
-notMacroSpecialCharacter : Char -> Bool
-notMacroSpecialCharacter c =
-    not (c == '{' || c == ' ' || c == '\n')
-
-
-allOrNothing : Parser a -> Parser a
-allOrNothing parser =
-    inContext "allOrNothing" <|
-        delayedCommitMap always parser (succeed ())
-
-
-mustFail : Parser a -> Parser ()
-mustFail parser =
-    inContext "mustFail" <|
-        (oneOf
-            [ delayedCommitMap always parser (succeed ()) |> map (always <| Err "I didn't fail")
-            , succeed (Ok ())
-            ]
-            |> andThen
-                (\res ->
-                    case res of
-                        Err e ->
-                            fail e
-
-                        Ok _ ->
-                            succeed ()
-                )
-        )
-
-
-reservedWord : Parser ()
-reservedWord =
-    inContext "reservedWord" <|
-        (succeed identity
-            |= oneOf [ symbol "\\begin", keyword "\\end", keyword "\\item" ]
-        )
-
-
 
 {- ENVIRONMENTS -}
 {- Dispatcher code -}
@@ -372,6 +406,7 @@ environment =
         lazy (\_ -> beginWord |> andThen environmentOfType)
 
 
+parseEnvirnomentDict : Dict.Dict String (String -> String -> Parser.Parser LatexExpression)
 parseEnvirnomentDict =
     Dict.fromList
         [ ( "enumerate", \endWord envType -> itemEnvironmentBody endWord envType )
@@ -381,6 +416,7 @@ parseEnvirnomentDict =
         ]
 
 
+environmentParser : String -> String -> String -> Parser.Parser LatexExpression
 environmentParser name =
     case Dict.get name parseEnvirnomentDict of
         Just p ->
@@ -410,6 +446,7 @@ environmentOfType envType =
 {- Subparsers -}
 
 
+standardEnvironmentBody : String -> String -> Parser LatexExpression
 standardEnvironmentBody endWord envType =
     inContext "standardEnvironmentBody" <|
         (succeed identity
@@ -423,6 +460,7 @@ standardEnvironmentBody endWord envType =
         )
 
 
+itemEnvironmentBody : String -> String -> Parser LatexExpression
 itemEnvironmentBody endWord envType =
     inContext "itemEnvironmentBody" <|
         (succeed identity
@@ -436,6 +474,7 @@ itemEnvironmentBody endWord envType =
         )
 
 
+tabularEnvironmentBody : String -> String -> Parser LatexExpression
 tabularEnvironmentBody endWord envType =
     inContext "tabularEnvironmentBody" <|
         (succeed identity
@@ -453,6 +492,7 @@ This parser is used for envronments whose body is to be
 passed to MathJax for processing and also for the verbatim
 environment.
 -}
+mathJaxBody : String -> String -> Parser LatexExpression
 mathJaxBody endWord envType =
     inContext "mathJaxBody" <|
         (succeed identity
@@ -517,28 +557,4 @@ tableBody =
             |. ws
             |= repeat oneOrMore tableRow
             |> map LatexList
-        )
-
-
-
-{- XXXX -}
-
-
-beginWord : Parser String
-beginWord =
-    inContext "beginWord" <|
-        (succeed identity
-            |. ignore zeroOrMore ((==) ' ')
-            |. symbol "\\begin{"
-            |= parseUntil "}"
-        )
-
-
-endWord : Parser String
-endWord =
-    inContext "endWord" <|
-        (succeed identity
-            |. ignore zeroOrMore ((==) ' ')
-            |. symbol "\\end{"
-            |= parseUntil "}"
         )
