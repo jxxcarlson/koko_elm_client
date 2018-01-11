@@ -406,8 +406,8 @@ environment =
         lazy (\_ -> beginWord |> andThen environmentOfType)
 
 
-parseEnvirnomentDict : Dict.Dict String (String -> String -> Parser.Parser LatexExpression)
-parseEnvirnomentDict =
+parseEnvironmentDict : Dict.Dict String (String -> String -> Parser LatexExpression)
+parseEnvironmentDict =
     Dict.fromList
         [ ( "enumerate", \endWord envType -> itemEnvironmentBody endWord envType )
         , ( "itemize", \endWord envType -> itemEnvironmentBody endWord envType )
@@ -416,9 +416,9 @@ parseEnvirnomentDict =
         ]
 
 
-environmentParser : String -> String -> String -> Parser.Parser LatexExpression
+environmentParser : String -> String -> String -> Parser LatexExpression
 environmentParser name =
-    case Dict.get name parseEnvirnomentDict of
+    case Dict.get name parseEnvironmentDict of
         Just p ->
             p
 

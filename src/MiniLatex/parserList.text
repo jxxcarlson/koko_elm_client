@@ -1,0 +1,70 @@
+INDEX OF FUNCTIONS IN MiniLatex.Parser 
+
+
+HELPERS
+notSpecialCharacter : Char -> Bool
+notSpecialTableOrMacroCharacter : Char -> Bool
+notMacroSpecialCharacter : Char -> Bool
+parseUntil : String -> Parser String
+allOrNothing : Parser a -> Parser a
+----
+5
+
+PARSER ()
+spaces : Parser ()
+ws : Parser ()
+mustFail : Parser a -> Parser ()
+reservedWord : Parser ()
+----
+4
+
+TERMINALS
+word : Parser String
+specialWord : Parser String
+macroName : Parser String
+innerMacroName : Parser String
+beginWord : Parser String
+endWord : Parser String
+----
+6
+
+
+NONTERMINALS
+latexList : Parser LatexExpression
+parse : Parser LatexExpression
+words : Parser LatexExpression
+specialWords : Parser LatexExpression
+texComment : Parser LatexExpression
+item : Parser LatexExpression
+inlineMath : Parser () -> Parser LatexExpression
+displayMathDollar : Parser LatexExpression
+displayMathBrackets : Parser LatexExpression
+macro : Parser () -> Parser LatexExpression
+arg : Parser LatexExpression
+----
+11
+
+ENVIRONMENTS
+environment : Parser LatexExpression
+environmentParser : String -> String -> String -> Parser LatexExpression
+environmentOfType : String -> Parser LatexExpression
+parseEnvironmentDict : Dict.Dict String (String -> String -> Parser LatexExpression)
+standardEnvironmentBody : String -> String -> Parser LatexExpression
+itemEnvironmentBody : String -> String -> Parser LatexExpression
+mathJaxBody : String -> String -> Parser LatexExpression
+--
+7
+
+TABLES
+tabularEnvironmentBody : String -> String -> Parser LatexExpression
+tableCell : Parser LatexExpression
+tableRow : Parser LatexExpression
+tableCellHelp : List LatexExpression -> Parser (List LatexExpression)
+nextCell : Parser LatexExpression
+----
+5
+
+====
+48
+
+
