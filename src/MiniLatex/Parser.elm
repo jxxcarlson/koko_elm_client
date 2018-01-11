@@ -334,7 +334,7 @@ envName : Parser String
 envName =
     inContext "envName" <|
         (succeed identity
-            |. ignore zeroOrMore ((==) ' ')
+            |. spaces
             |. symbol "\\begin{"
             |= parseUntil "}"
         )
