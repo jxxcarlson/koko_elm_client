@@ -60,6 +60,7 @@ innerRenderedContent model =
     in
     el (contentStyle model)
         [ yScrollbar
+        , xScrollbar
         , id "rendered_text2"
         , paddingXY 50 50
         , width (percent 100)

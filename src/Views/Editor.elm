@@ -20,7 +20,7 @@ import Views.Utility
 editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 3, fill 3 ]
+        { columns = [ fill 1, fill 3, fill 4 ]
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
