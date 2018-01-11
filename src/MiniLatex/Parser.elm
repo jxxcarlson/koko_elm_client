@@ -95,6 +95,8 @@ parseParagraph text =
 {- PARSER: TOP LEVEL -}
 
 
+{-| Production: $ LatexList &\Rightarrow LatexExpression^+ $
+-}
 latexList : Parser LatexExpression
 latexList =
     inContext "latexList" <|
@@ -105,6 +107,9 @@ latexList =
         )
 
 
+{-| Production: $ LatexExpression &\Rightarrow Words\ |\ Comment\
+|\ IMath\ |\ DMath\ |\ Macro\ |\ Env $
+-}
 parse : Parser LatexExpression
 parse =
     oneOf
