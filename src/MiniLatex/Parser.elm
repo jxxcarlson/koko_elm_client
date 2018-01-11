@@ -131,7 +131,7 @@ parse =
         , displayMathDollar
         , displayMathBrackets
         , inlineMath ws
-        , macro
+        , macro ws
         , words
         ]
 
@@ -168,28 +168,29 @@ word =
     inContext "word" <|
         succeed identity
             |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$'))
+            |= keep oneOrMore notSpecialCharacter
             |. ws
+
+
+notSpecialCharacter : Char -> Bool
+notSpecialCharacter c =
+    not (c == ' ' || c == '\n' || c == '\\' || c == '$')
 
 
 {-| Like `word`, but after a word is recognized spaces, not spaces + newlines are consumed
 -}
-word2 : Parser String
-word2 =
-    inContext "word2" <|
+specialWord : Parser String
+specialWord =
+    inContext "specialWord" <|
         succeed identity
             |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}' || c == '&'))
+            |= keep oneOrMore notSpecialTableOrMacroCharacter
             |. spaces
 
 
-word2a : Parser String
-word2a =
-    inContext "word" <|
-        succeed identity
-            |. spaces
-            |= keep oneOrMore (\c -> not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}'))
-            |. spaces
+notSpecialTableOrMacroCharacter : Char -> Bool
+notSpecialTableOrMacroCharacter c =
+    not (c == ' ' || c == '\n' || c == '\\' || c == '$' || c == '}' || c == '&')
 
 
 words : Parser LatexExpression
@@ -204,11 +205,11 @@ words =
 
 {-| Like `words`, but after a word is recognized spaces, not spaces + newlines are consumed
 -}
-words2 : Parser LatexExpression
-words2 =
-    inContext "words2" <|
+specialWords : Parser LatexExpression
+specialWords =
+    inContext "specialWords" <|
         (succeed identity
-            |= repeat oneOrMore word2
+            |= repeat oneOrMore specialWord
             |> map (String.join " ")
             |> map LXString
         )
@@ -235,7 +236,7 @@ item =
             |. ws
             |. keyword "\\item"
             |. spaces
-            |= repeat zeroOrMore (oneOf [ words2, inlineMath spaces, macro2 ])
+            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, macro spaces ])
             |. symbol "\n"
             |. spaces
             |> map (\x -> Item 1 (LatexList x))
@@ -269,7 +270,7 @@ displayMathBrackets : Parser LatexExpression
 displayMathBrackets =
     inContext "display math brackets" <|
         succeed DisplayMath
-            |. ignore zeroOrMore ((==) ' ')
+            |. spaces
             |. symbol "\\["
             |= parseUntil "\\]"
 
@@ -281,24 +282,13 @@ displayMathBrackets =
 -}
 
 
-macro : Parser LatexExpression
-macro =
+macro : Parser () -> Parser LatexExpression
+macro wsParser =
     inContext "macro" <|
         succeed Macro
             |= macroName
             |= repeat zeroOrMore arg
-            |. ws
-
-
-{-| Like macro, but only spaces, not spaces + nelines are consumed after recognition
--}
-macro2 : Parser LatexExpression
-macro2 =
-    inContext "macro2" <|
-        succeed Macro
-            |= macroName
-            |= repeat zeroOrMore arg
-            |. spaces
+            |. wsParser
 
 
 {-| Use to parse arguments for macros
@@ -308,7 +298,7 @@ arg =
     inContext "arg" <|
         (succeed identity
             |. keyword "{"
-            |= repeat zeroOrMore (oneOf [ words2, inlineMath spaces, lazy (\_ -> macro) ])
+            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, lazy (\_ -> macro ws) ])
             |. symbol "}"
             |> map LatexList
         )
@@ -330,7 +320,12 @@ innerMacroName =
         succeed identity
             |. spaces
             |. symbol "\\"
-            |= keep zeroOrMore (\c -> not (c == '{' || c == ' ' || c == '\n'))
+            |= keep zeroOrMore notMacroSpecialCharacter
+
+
+notMacroSpecialCharacter : Char -> Bool
+notMacroSpecialCharacter c =
+    not (c == '{' || c == ' ' || c == '\n')
 
 
 allOrNothing : Parser a -> Parser a
@@ -477,7 +472,7 @@ tableCell =
     inContext "tableCell" <|
         (succeed identity
             |. spaces
-            |= oneOf [ inlineMath spaces, words2 ]
+            |= oneOf [ inlineMath spaces, specialWords ]
         )
 
 
