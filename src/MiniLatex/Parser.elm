@@ -264,15 +264,15 @@ latexList =
     inContext "latexList" <|
         (succeed identity
             |. ws
-            |= repeat oneOrMore parse
+            |= repeat oneOrMore latexExpression
             |> map LatexList
         )
 
 
 {-| Production: $ LatexExpression &\Rightarrow Words\ |\ Comment\ |\ IMath\ |\ DMath\ |\ Macro\ |\ Env $
 -}
-parse : Parser LatexExpression
-parse =
+latexExpression : Parser LatexExpression
+latexExpression =
     oneOf
         [ texComment
         , lazy (\_ -> environment)
@@ -451,7 +451,7 @@ standardEnvironmentBody endWord envType =
     inContext "standardEnvironmentBody" <|
         (succeed identity
             |. ws
-            |= repeat zeroOrMore parse
+            |= repeat zeroOrMore latexExpression
             |. ws
             |. symbol endWord
             |. ws

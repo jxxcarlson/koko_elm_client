@@ -31,7 +31,7 @@ endWord : Parser String
 
 NONTERMINALS
 latexList : Parser LatexExpression
-parse : Parser LatexExpression
+latexExpression : Parser LatexExpression
 words : Parser LatexExpression
 specialWords : Parser LatexExpression
 texComment : Parser LatexExpression
