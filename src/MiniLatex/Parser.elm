@@ -173,7 +173,7 @@ innerMacroName =
         succeed identity
             |. spaces
             |. symbol "\\"
-            |= keep zeroOrMore notMacroSpecialCharacter
+            |= keep oneOrMore notMacroSpecialCharacter
 
 
 notMacroSpecialCharacter : Char -> Bool
