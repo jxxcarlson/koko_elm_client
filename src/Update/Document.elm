@@ -146,7 +146,7 @@ update submessage model =
             Action.Document.createDocument model (Document.diaryEntry model.date)
 
         GetDiary ->
-            Document.Search.withParameters "key=diary" Created Private ReaderPage model
+            Document.Search.searchWithParameters "key=diary" Created Private ReaderPage model
 
         AddToMasterDocument ->
             let

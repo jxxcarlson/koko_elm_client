@@ -34,7 +34,7 @@ update submessage model =
                     "authorname=" ++ user.username ++ "&key=home"
 
                 ( model1, cmd ) =
-                    Document.Search.withParameters query Alphabetical Public UserHomePages model
+                    Document.Search.searchWithParameters query Alphabetical Public UserHomePages model
             in
             ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
 

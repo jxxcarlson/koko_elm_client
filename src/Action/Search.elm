@@ -1,7 +1,7 @@
 module Action.Search exposing (..)
 
-import Types exposing (Model, SearchDomain(..), SearchState, Msg(..), SearchOrder(..), ActiveDocumentList(..))
 import Document.Search
+import Types exposing (ActiveDocumentList(..), Model, Msg(..), SearchDomain(..), SearchOrder(..), SearchState)
 
 
 selectSearchMode : String -> Model -> ( Model, Cmd Msg )
@@ -30,7 +30,7 @@ selectSearchMode searchMode model =
             else
                 { oldSearchState | domain = Public }
     in
-        ( { model | searchState = newSearchState }, Cmd.none )
+    ( { model | searchState = newSearchState }, Cmd.none )
 
 
 selectSearchOrder : String -> Model -> ( Model, Cmd Msg )
@@ -56,8 +56,8 @@ selectSearchOrder searchOrder model =
         newSearchState =
             { oldSearchState | order = order }
     in
-        -- ( { model | searchState = newSearchState }, Cmd.none )
-        Document.Search.search newSearchState model
+    -- ( { model | searchState = newSearchState }, Cmd.none )
+    Document.Search.searchWithSearchState newSearchState model
 
 
 doSearch : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
@@ -81,4 +81,4 @@ doSearch searchDomain key model =
         newModel =
             { model | searchState = newSearchState, appState = newAppState }
     in
-        Document.Search.onEnter searchDomain key newModel
+    Document.Search.searchOnEnter searchDomain key newModel

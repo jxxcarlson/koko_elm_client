@@ -1,12 +1,12 @@
 module Document.Search
     exposing
         ( getRandomDocuments
-        , onEnter
         , recallLastSearch
-        , search
+        , searchOnEnter
+        , searchWithParameters
+        , searchWithSearchState
         , update
         , updateDomain
-        , withParameters
         )
 
 import Action.UI
@@ -33,9 +33,9 @@ import Types
 
    API:
 
-   onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-   search : SearchState -> Model -> ( Model, Cmd Msg )
-   withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
+   searchOnEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+   searchWithSearchState : SearchState -> Model -> ( Model, Cmd Msg )
+   searchWithParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
 
    recallLastSearch : Model -> ( Model, Cmd Msg )
 
@@ -44,7 +44,7 @@ import Types
    update : Model -> String -> ( Model, Cmd Msg )
    updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
 
-   NOTE: onEnter, withParameters, and search all call dispatchSearch
+   NOTE: searchOnEnter, searchWithParameters, and searchWithSearchState all call dispatchSearch
 
 
    CMD MSG:
@@ -57,10 +57,10 @@ import Types
    Search methods.
 
    Main:
-   UserHomePage, GetPublicPage, GetHomePageForUserHomePages, UserHomePage  => withParameters
+   UserHomePage, GetPublicPage, GetHomePageForUserHomePages, UserHomePage  => searchWithParameters
    =============================
    Document.Search:
-     withParameters, onEnter >>> dispatchSearch
+     searchWithParameters, searchOnEnter >>> dispatchSearch
      ----------------------------------
      getDocuments searchState user_id token
      Note: user_id can be 0 (empty current_user)
@@ -70,16 +70,16 @@ import Types
 -}
 
 
-search : SearchState -> Model -> ( Model, Cmd Msg )
-search searchState model =
-    withParameters searchState.query searchState.order searchState.domain model.appState.page model
+searchWithSearchState : SearchState -> Model -> ( Model, Cmd Msg )
+searchWithSearchState searchState model =
+    searchWithParameters searchState.query searchState.order searchState.domain model.appState.page model
 
 
-withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
-withParameters query order domain page model =
+searchWithParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
+searchWithParameters query order domain page model =
     let
         _ =
-            Debug.log "withParameters" ( query, order, domain )
+            Debug.log "searchWithParameters" ( query, order, domain )
 
         searchState =
             SearchState query domain order
@@ -87,12 +87,12 @@ withParameters query order domain page model =
     dispatchSearch searchState page model
 
 
-onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-onEnter searchDomain key model =
+searchOnEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+searchOnEnter searchDomain key model =
     if Debug.log "key" key == 13 then
         let
             _ =
-                Debug.log "Firing Action.Document.onEnter" 1
+                Debug.log "Firing Action.Document.searchOnEnter" 1
 
             searchState =
                 model.searchState
@@ -105,7 +105,7 @@ onEnter searchDomain key model =
         ( model, Cmd.none )
 
 
-{-| Execute search stored in model.searchState and display results in Page.
+{-| Execute searchWithSearchState stored in model.searchState and display results in Page.
 All searches should be run through this function.
 -}
 dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
@@ -213,12 +213,12 @@ getRandomDocuments model =
             else
                 randomQuery ++ "&" ++ initialQuery
     in
-    withParameters query Alphabetical model.searchState.domain ReaderPage newModel
+    searchWithParameters query Alphabetical model.searchState.domain ReaderPage newModel
 
 
 
 {-
-   UPDATERS: These update the search parameters stored in model.searchState
+   UPDATERS: These update the searchWithSearchState parameters stored in model.searchState
 -}
 
 
@@ -265,7 +265,7 @@ makeSureSearchDomainIsAuthorized model searchDomain =
 unauthorizedSearchMessage : SearchDomain -> Model -> String
 unauthorizedSearchMessage searchDomain model =
     if searchDomain == Private && model.current_user.token /= "" then
-        "Sorry, you must sign in to search for private documents"
+        "Sorry, you must sign in to searchWithSearchState for private documents"
     else
         model.message
 

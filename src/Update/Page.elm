@@ -17,7 +17,7 @@ update submessage model =
             Action.Page.setHomePage model
 
         GetPublicPage searchTerm ->
-            Document.Search.withParameters searchTerm Alphabetical Public ReaderPage model
+            Document.Search.searchWithParameters searchTerm Alphabetical Public ReaderPage model
 
         InitStartPage ->
             let
@@ -55,7 +55,7 @@ update submessage model =
                     { model | selectedUserName = username }
 
                 ( newModel, cmd ) =
-                    Document.Search.withParameters searchTerm Alphabetical Public UserHomePages model2
+                    Document.Search.searchWithParameters searchTerm Alphabetical Public UserHomePages model2
             in
             ( newModel, Cmd.batch [ cmd ] )
 
