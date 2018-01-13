@@ -1,6 +1,7 @@
 module Document.Search
     exposing
-        ( getRandomDocuments
+        ( getDocumentsAndContent
+        , getRandomDocuments
         , recallLastSearch
         , searchOnEnter
         , searchWithParameters
@@ -294,6 +295,25 @@ getDocuments searchState user_id token =
             Request.Document.getDocumentsTask route adjustedQuery token
     in
     Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+
+
+getDocumentsAndContent : SearchState -> Int -> String -> Cmd Msg
+getDocumentsAndContent searchState user_id token =
+    let
+        searchDomain =
+            makeSureSearchDomainIsAuthorized2 searchState token
+
+        ( processor, route ) =
+            Debug.log "processor and route"
+                (Query.processorAndRoute searchDomain)
+
+        adjustedQuery =
+            Query.makeQuery searchState searchDomain user_id
+
+        searchTask =
+            Request.Document.getDocumentsTask route adjustedQuery token
+    in
+    Task.attempt (DocMsg << GetContent) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
 
