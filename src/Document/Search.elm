@@ -1,7 +1,6 @@
 module Document.Search
     exposing
-        ( dispatch
-        , getRandomDocuments
+        ( getRandomDocuments
         , onEnter
         , recallLastSearch
         , search
@@ -12,7 +11,7 @@ module Document.Search
 
 import Action.UI
 import Document.Document
-import Document.QueryParser exposing (parseQuery)
+import Document.Query as Query
 import Document.Render as Render
 import Http
 import Request.Document
@@ -31,7 +30,24 @@ import Types
         )
 
 
-{-
+{- FUNCTIONS
+
+   API:
+   getRandomDocuments : Model -> ( Model, Cmd Msg )
+   onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
+   recallLastSearch : Model -> ( Model, Cmd Msg )
+   search : SearchState -> Model -> ( Model, Cmd Msg )
+   update : Model -> String -> ( Model, Cmd Msg )
+   updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
+   withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
+
+   CMD MSG:
+   dispatch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
+   getDocuments : SearchState -> Int -> String -> Cmd Msg
+
+   HELPERS:
+   fixDomain : SearchState -> Model -> SearchDomain
+   processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> DocMsg, String )
 
    Search methods.
 
@@ -96,12 +112,6 @@ dispatch searchState page model =
             else
                 False
 
-        _ =
-            Debug.log "Search.dispatch, searchState" searchState
-
-        _ =
-            Debug.log "In Search.dispatch, masterDocLoaded_" masterDocLoaded_
-
         appState =
             model.appState
 
@@ -118,9 +128,6 @@ dispatch searchState page model =
 
         domain =
             fixDomain searchState model
-
-        _ =
-            Debug.log "fixDomain => domain" domain
 
         order =
             searchState.order
@@ -148,14 +155,6 @@ dispatch searchState page model =
 -- XXX
 
 
-fixDomain : SearchState -> Model -> SearchDomain
-fixDomain searchState model =
-    if model.current_user.token == "" then
-        Public
-    else
-        searchState.domain
-
-
 fixQueryIfEmpty : String -> SearchDomain -> Model -> String
 fixQueryIfEmpty query searchDomain model =
     if query == "" then
@@ -170,6 +169,14 @@ fixQueryIfEmpty query searchDomain model =
                 "random=all"
     else
         query
+
+
+fixDomain : SearchState -> Model -> SearchDomain
+fixDomain searchState model =
+    if model.current_user.token == "" then
+        Public
+    else
+        searchState.domain
 
 
 recallLastSearch : Model -> ( Model, Cmd Msg )
@@ -192,13 +199,8 @@ recallLastSearch model =
     )
 
 
-cleanQuery : String -> String
-cleanQuery query =
-    String.split "&" query
-        |> List.filter (\item -> not (String.contains "random" item))
-        |> String.join "&"
-
-
+{-| Return list of random documents
+-}
 getRandomDocuments : Model -> ( Model, Cmd Msg )
 getRandomDocuments model =
     let
@@ -215,7 +217,7 @@ getRandomDocuments model =
             { model | appState = newAppState }
 
         initialQuery =
-            cleanQuery model.searchState.query
+            Query.cleanQuery model.searchState.query
 
         randomQuery =
             case model.searchState.domain of
@@ -239,7 +241,7 @@ getRandomDocuments model =
 
 
 {-
-   UPDATERS: Thes updated the search parameters stored in model.searchState
+   UPDATERS: These update the search parameters stored in model.searchState
 -}
 
 
@@ -313,9 +315,6 @@ refreshMasterDocumentTask route token documentsRecord =
 getDocuments : SearchState -> Int -> String -> Cmd Msg
 getDocuments searchState user_id token =
     let
-        _ =
-            Debug.log "IN getDocuments, searchState is" searchState
-
         searchDomain =
             if token == "" then
                 Public
@@ -323,112 +322,15 @@ getDocuments searchState user_id token =
                 searchState.domain
 
         ( processor, route ) =
-            processorAndRoute searchDomain
+            Query.processorAndRoute searchDomain
 
         adjustedQuery =
-            makeQuery searchState searchDomain user_id
-
-        _ =
-            Debug.log "adjustedQuery" adjustedQuery
-
-        _ =
-            Debug.log "route" route
-
-        _ =
-            Debug.log "Firing search ...., order " searchState.order
+            Query.makeQuery searchState searchDomain user_id
 
         searchTask =
             Request.Document.getDocumentsTask route adjustedQuery token
     in
     Task.attempt (DocMsg << GetUserDocuments) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
-
-
-makeQuery : SearchState -> SearchDomain -> Int -> String
-makeQuery searchState updatedSearchDomain user_id =
-    let
-        rawQuery =
-            searchState.query
-
-        cmd =
-            rawQuery |> String.split "=" |> List.head |> Maybe.withDefault "NoCommand"
-    in
-    if List.member cmd [ "idlist" ] then
-        rawQuery
-    else
-        makeQueryHelper searchState updatedSearchDomain user_id
-
-
-makeQueryHelper : SearchState -> SearchDomain -> Int -> String
-makeQueryHelper searchState updatedSearchDomain user_id =
-    let
-        basicQuery =
-            -- if searchState.query == "" then
-            --     "publicdocs=all"
-            -- else
-            parseQuery searchState.query
-
-        soq =
-            searchOrderQuery searchState.order
-
-        prefix =
-            case ( updatedSearchDomain, searchState.query ) of
-                ( All, "" ) ->
-                    "random=all"
-
-                ( Public, "" ) ->
-                    "random=public"
-
-                -- ( Public, _ ) ->
-                --     "public=yes"
-                ( Private, "" ) ->
-                    "random_user=" ++ toString user_id
-
-                ( All, _ ) ->
-                    "docs=any"
-
-                ( _, _ ) ->
-                    ""
-
-        queryList =
-            [ prefix ] ++ [ parseQuery searchState.query, soq ]
-    in
-    buildQuery queryList
-
-
-processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> DocMsg, String )
-processorAndRoute searchDomain =
-    case searchDomain of
-        Public ->
-            ( GetDocuments, "public/documents" )
-
-        Private ->
-            ( GetUserDocuments, "documents" )
-
-        All ->
-            ( GetUserDocuments, "documents" )
-
-
-searchOrderQuery : SearchOrder -> String
-searchOrderQuery searchOrder =
-    case searchOrder of
-        Viewed ->
-            "sort=viewed"
-
-        Updated ->
-            "sort=updated"
-
-        Created ->
-            "sort=created"
-
-        Alphabetical ->
-            "sort=title"
-
-
-buildQuery : List String -> String
-buildQuery queryParts =
-    queryParts
-        |> List.filter (\x -> x /= "")
-        |> String.join "&"
 
 
 
