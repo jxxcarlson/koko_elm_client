@@ -13,7 +13,6 @@ import Action.UI
 import Document.Document
 import Document.Query as Query
 import Document.Render as Render
-import Http
 import Request.Document
 import Task
 import Types
@@ -33,20 +32,26 @@ import Types
 {- FUNCTIONS
 
    API:
-   getRandomDocuments : Model -> ( Model, Cmd Msg )
+
    onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
-   recallLastSearch : Model -> ( Model, Cmd Msg )
    search : SearchState -> Model -> ( Model, Cmd Msg )
-   update : Model -> String -> ( Model, Cmd Msg )
-   updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
    withParameters : String -> SearchOrder -> SearchDomain -> Page -> Model -> ( Model, Cmd Msg )
 
+   recallLastSearch : Model -> ( Model, Cmd Msg )
+
+   getRandomDocuments : Model -> ( Model, Cmd Msg )
+
+   update : Model -> String -> ( Model, Cmd Msg )
+   updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
+
+   NOTE: onEnter, withParameters, and search all call dispatchSearch
+
+
    CMD MSG:
-   dispatch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
+   dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
    getDocuments : SearchState -> Int -> String -> Cmd Msg
 
    HELPERS:
-   fixDomain : SearchState -> Model -> SearchDomain
    processorAndRoute : SearchDomain -> ( Result Http.Error Types.DocumentsRecord -> DocMsg, String )
 
    Search methods.
@@ -55,7 +60,7 @@ import Types
    UserHomePage, GetPublicPage, GetHomePageForUserHomePages, UserHomePage  => withParameters
    =============================
    Document.Search:
-     withParameters, onEnter >>> dispatch
+     withParameters, onEnter >>> dispatchSearch
      ----------------------------------
      getDocuments searchState user_id token
      Note: user_id can be 0 (empty current_user)
@@ -79,7 +84,7 @@ withParameters query order domain page model =
         searchState =
             SearchState query domain order
     in
-    dispatch searchState page model
+    dispatchSearch searchState page model
 
 
 onEnter : SearchDomain -> Int -> Model -> ( Model, Cmd Msg )
@@ -95,7 +100,7 @@ onEnter searchDomain key model =
             newSearchState =
                 { searchState | domain = searchDomain }
         in
-        dispatch newSearchState (Action.UI.displayPage model) model
+        dispatchSearch newSearchState (Action.UI.displayPage model) model
     else
         ( model, Cmd.none )
 
@@ -103,8 +108,8 @@ onEnter searchDomain key model =
 {-| Execute search stored in model.searchState and display results in Page.
 All searches should be run through this function.
 -}
-dispatch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
-dispatch searchState page model =
+dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
+dispatchSearch searchState page model =
     let
         masterDocLoaded_ =
             if String.contains "master" searchState.query then
@@ -124,10 +129,10 @@ dispatch searchState page model =
             }
 
         query =
-            fixQueryIfEmpty searchState.query searchState.domain model
+            Query.fixQueryIfEmpty searchState.query searchState.domain model.current_user.id
 
         domain =
-            fixDomain searchState model
+            makeSureSearchDomainIsAuthorized2 searchState model.current_user.token
 
         order =
             searchState.order
@@ -149,34 +154,6 @@ dispatch searchState page model =
         , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
         ]
     )
-
-
-
--- XXX
-
-
-fixQueryIfEmpty : String -> SearchDomain -> Model -> String
-fixQueryIfEmpty query searchDomain model =
-    if query == "" then
-        case searchDomain of
-            Public ->
-                "random=public"
-
-            Private ->
-                "random_user=" ++ toString model.current_user.id
-
-            All ->
-                "random=all"
-    else
-        query
-
-
-fixDomain : SearchState -> Model -> SearchDomain
-fixDomain searchState model =
-    if model.current_user.token == "" then
-        Public
-    else
-        searchState.domain
 
 
 recallLastSearch : Model -> ( Model, Cmd Msg )
@@ -264,18 +241,10 @@ updateDomain model searchDomain =
             model.searchState
 
         newSearchDomain =
-            if searchDomain == Private && model.current_user.token /= "" then
-                Private
-            else if searchDomain == Public then
-                Public
-            else
-                Public
+            makeSureSearchDomainIsAuthorized model searchDomain
 
         newMessage =
-            if searchDomain == Private && model.current_user.token /= "" then
-                "Sorry, you must sign in to search for private documents"
-            else
-                model.message
+            unauthorizedSearchMessage searchDomain model
 
         new_searchState =
             { searchState | domain = newSearchDomain }
@@ -283,10 +252,57 @@ updateDomain model searchDomain =
     ( { model | searchState = new_searchState, message = newMessage }, Cmd.none )
 
 
+makeSureSearchDomainIsAuthorized : Model -> SearchDomain -> SearchDomain
+makeSureSearchDomainIsAuthorized model searchDomain =
+    if searchDomain == Private && model.current_user.token /= "" then
+        Private
+    else if searchDomain == Public then
+        Public
+    else
+        Public
 
-{- Code below was moved from Request.Document -}
+
+unauthorizedSearchMessage : SearchDomain -> Model -> String
+unauthorizedSearchMessage searchDomain model =
+    if searchDomain == Private && model.current_user.token /= "" then
+        "Sorry, you must sign in to search for private documents"
+    else
+        model.message
 
 
+
+{- REQUEST THE DOCUMENTS: HERE IS WHERE THE ACTION HAPPENS -}
+
+
+getDocuments : SearchState -> Int -> String -> Cmd Msg
+getDocuments searchState user_id token =
+    let
+        searchDomain =
+            makeSureSearchDomainIsAuthorized2 searchState token
+
+        ( processor, route ) =
+            Debug.log "processor and route"
+                (Query.processorAndRoute searchDomain)
+
+        adjustedQuery =
+            Query.makeQuery searchState searchDomain user_id
+
+        searchTask =
+            Request.Document.getDocumentsTask route adjustedQuery token
+    in
+    Task.attempt (DocMsg << GetUserDocuments) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+
+
+makeSureSearchDomainIsAuthorized2 : SearchState -> String -> SearchDomain
+makeSureSearchDomainIsAuthorized2 searchState token =
+    if token == "" then
+        Public
+    else
+        searchState.domain
+
+
+{-| Called by getDocuments
+-}
 refreshMasterDocumentTask route token documentsRecord =
     let
         documents =
@@ -310,27 +326,6 @@ refreshMasterDocumentTask route token documentsRecord =
                 Task.succeed documentsRecord
     in
     task
-
-
-getDocuments : SearchState -> Int -> String -> Cmd Msg
-getDocuments searchState user_id token =
-    let
-        searchDomain =
-            if token == "" then
-                Public
-            else
-                searchState.domain
-
-        ( processor, route ) =
-            Query.processorAndRoute searchDomain
-
-        adjustedQuery =
-            Query.makeQuery searchState searchDomain user_id
-
-        searchTask =
-            Request.Document.getDocumentsTask route adjustedQuery token
-    in
-    Task.attempt (DocMsg << GetUserDocuments) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
 

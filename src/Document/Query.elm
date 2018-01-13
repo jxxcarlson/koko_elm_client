@@ -1,4 +1,4 @@
-module Document.Query exposing (cleanQuery, makeQuery, processorAndRoute)
+module Document.Query exposing (cleanQuery, fixQueryIfEmpty, makeQuery, processorAndRoute)
 
 import Document.QueryParser exposing (parseQuery)
 import Http
@@ -16,6 +16,22 @@ cleanQuery query =
     String.split "&" query
         |> List.filter (\item -> not (String.contains "random" item))
         |> String.join "&"
+
+
+fixQueryIfEmpty : String -> SearchDomain -> Int -> String
+fixQueryIfEmpty query searchDomain user_id =
+    if query == "" then
+        case searchDomain of
+            Public ->
+                "random=public"
+
+            Private ->
+                "random_user=" ++ toString user_id
+
+            All ->
+                "random=all"
+    else
+        query
 
 
 makeQuery : SearchState -> SearchDomain -> Int -> String
