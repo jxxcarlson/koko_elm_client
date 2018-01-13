@@ -52,7 +52,10 @@ selectAux document_id document model =
         updatedModel =
             { model | appState = newAppState }
 
-        query =
+        query1 =
+            "master=" ++ toString document_id ++ "&loading"
+
+        query2 =
             "master=" ++ toString document_id
 
         token =
@@ -60,9 +63,9 @@ selectAux document_id document model =
 
         cmd =
             if model.appState.signedIn then
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query token)
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query1 token |> Task.andThen (\_ -> Request.Document.getDocumentsTask "documents" query2 token))
             else
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query token)
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query1 token |> Task.andThen (\_ -> Request.Document.getDocumentsTask "documents" query2 token))
     in
     ( updatedModel, cmd )
 

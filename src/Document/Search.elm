@@ -296,6 +296,10 @@ getDocuments searchState user_id token =
     Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord) |> Task.andThen (\_ -> searchTask))
 
 
+
+-- Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+
+
 makeSureSearchDomainIsAuthorized2 : SearchState -> String -> SearchDomain
 makeSureSearchDomainIsAuthorized2 searchState token =
     if token == "" then

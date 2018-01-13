@@ -18,7 +18,7 @@ websocketHost =
 
 tickInterval : Float
 tickInterval =
-    60.0
+    1.0
 
 
 tabletWidth : Int
