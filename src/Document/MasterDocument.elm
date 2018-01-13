@@ -49,14 +49,20 @@ selectAux document_id document model =
                 , activeDocumentList = SearchResultList
             }
 
-        updatedModel =
-            { model | appState = newAppState }
-
         query1 =
             "master=" ++ toString document_id ++ "&loading"
 
         query2 =
             "master=" ++ toString document_id
+
+        searchState =
+            model.searchState
+
+        newSearchState =
+            { searchState | query = query2 }
+
+        updatedModel =
+            { model | appState = newAppState, searchState = newSearchState }
 
         task2 =
             if model.appState.signedIn then
@@ -69,9 +75,9 @@ selectAux document_id document model =
 
         cmd =
             if model.appState.signedIn then
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query1 token)
+                Task.attempt (DocMsg << GetUserDocuments) (Request.Document.getDocumentsTask "documents" query1 token)
             else
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query1 token)
+                Task.attempt (DocMsg << GetUserDocuments) (Request.Document.getDocumentsTask "public/documents" query1 token)
 
         commands =
             [ cmd ]
