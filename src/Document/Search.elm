@@ -293,7 +293,7 @@ getDocuments searchState user_id token =
         searchTask =
             Request.Document.getDocumentsTask route adjustedQuery token
     in
-    Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord) |> Task.andThen (\_ -> searchTask))
+    Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
 

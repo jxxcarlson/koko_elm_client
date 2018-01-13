@@ -58,16 +58,25 @@ selectAux document_id document model =
         query2 =
             "master=" ++ toString document_id
 
+        task2 =
+            if model.appState.signedIn then
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query2 token)
+            else
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query2 token)
+
         token =
             model.current_user.token
 
         cmd =
             if model.appState.signedIn then
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query1 token |> Task.andThen (\_ -> Request.Document.getDocumentsTask "documents" query2 token))
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "documents" query1 token)
             else
-                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query1 token |> Task.andThen (\_ -> Request.Document.getDocumentsTask "documents" query2 token))
+                Task.attempt (DocMsg << GetDocuments) (Request.Document.getDocumentsTask "public/documents" query1 token)
+
+        commands =
+            [ cmd ]
     in
-    ( updatedModel, cmd )
+    ( updatedModel, Cmd.batch commands )
 
 
 setParentId : String -> Model -> ( Model, Cmd Msg )

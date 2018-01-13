@@ -51,6 +51,9 @@ update submessage model =
             , Cmd.none
             )
 
+        GetContent query ->
+            ( model, Cmd.none )
+
         GetDocuments (Ok documentsRecord) ->
             Action.Document.updateDocuments model documentsRecord
 
