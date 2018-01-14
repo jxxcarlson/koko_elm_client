@@ -4,7 +4,7 @@ import Dict
 import Platform.Cmd
 import Request.Document
 import Task
-import Types exposing (DocMsg(..), Document, DocumentDict)
+import Types exposing (DocMsg(..), Document, DocumentDict, Msg)
 
 
 empty : DocumentDict
@@ -54,37 +54,25 @@ getContent key dict =
             ""
 
 
-setItemInDict : String -> String -> String -> Platform.Cmd.Cmd Types.Msg
+setItemInDict : String -> String -> String -> Cmd Msg
 setItemInDict query key token =
     let
-        _ =
-            Debug.log "setItemInDict" query
-
         getDocsTask =
             Request.Document.getDocumentsTask "documents" query token
 
         setItemTask =
             Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
     in
-    -- Task.attempt Types.GetDocuments getDocsTask
     Task.attempt (Types.DocMsg << SetDocumentInDict) setItemTask
 
 
-setPublicItemInDict : String -> String -> Platform.Cmd.Cmd Types.Msg
+setPublicItemInDict : String -> String -> Cmd Msg
 setPublicItemInDict query key =
     let
-        _ =
-            Debug.log "setItemInDict" query
-
         getDocsTask =
             Request.Document.getPublicDocumentsTask "public/documents" query
 
         setItemTask =
             Task.map (\docsRecordResult -> ( docsRecordResult, key )) getDocsTask
     in
-    -- Task.attempt Types.GetDocuments getDocsTask
     Task.attempt (Types.DocMsg << SetDocumentInDict) setItemTask
-
-
-
--- Task.attempt Types.GetDocuments (Task.map (\x -> x) getDocsTask)
