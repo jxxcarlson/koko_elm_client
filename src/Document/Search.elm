@@ -20,6 +20,7 @@ import Types
     exposing
         ( ActiveDocumentList(SearchResultList)
         , DocMsg(..)
+        , Document
         , Model
         , Msg(..)
         , Page(..)
@@ -46,6 +47,16 @@ import Types
    updateDomain : Model -> SearchDomain -> ( Model, Cmd Msg )
 
    NOTE: searchOnEnter, searchWithParameters, and searchWithSearchState all call dispatchSearch
+         Then dispatchSearch calls getDocuments, which makes the HTTP request via
+
+           Task.attempt (DocMsg << GetUserDocuments)
+              (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+
+        where
+
+            searchTask1 =
+              Request.Document.getDocumentsTask route (adjustedQuery ++ "&loading") token
+
 
 
    CMD MSG:
@@ -112,6 +123,20 @@ All searches should be run through this function.
 dispatchSearch : SearchState -> Page -> Model -> ( Model, Cmd Msg )
 dispatchSearch searchState page model =
     let
+        updatedModel =
+            prepareModelForSearch searchState page model
+    in
+    ( updatedModel
+    , Cmd.batch
+        [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
+        , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
+        ]
+    )
+
+
+prepareModelForSearch : SearchState -> Page -> Model -> Model
+prepareModelForSearch searchState page model =
+    let
         masterDocLoaded_ =
             if String.contains "master" searchState.query then
                 True
@@ -135,26 +160,15 @@ dispatchSearch searchState page model =
         domain =
             makeSureSearchDomainIsAuthorized2 searchState model.current_user.token
 
-        order =
-            searchState.order
-
         newSearchState =
-            SearchState query domain order
-
-        updatedModel =
-            { model
-                | appState = newAppState
-                , master_document = Document.Document.defaultMasterDocument
-                , searchState = newSearchState
-                , documents2 = model.documents
-            }
+            SearchState query domain searchState.order
     in
-    ( updatedModel
-    , Cmd.batch
-        [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-        , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
-        ]
-    )
+    { model
+        | appState = newAppState
+        , master_document = Document.Document.defaultMasterDocument
+        , searchState = newSearchState
+        , documents2 = model.documents
+    }
 
 
 recallLastSearch : Model -> ( Model, Cmd Msg )
@@ -297,8 +311,8 @@ getDocuments searchState user_id token =
     Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
-getDocumentsAndContent : SearchState -> Int -> String -> Cmd Msg
-getDocumentsAndContent searchState user_id token =
+getDocumentsAndContent1 : SearchState -> Int -> String -> Cmd Msg
+getDocumentsAndContent1 searchState user_id token =
     let
         searchDomain =
             makeSureSearchDomainIsAuthorized2 searchState token
@@ -316,8 +330,16 @@ getDocumentsAndContent searchState user_id token =
     Task.attempt (DocMsg << GetContent) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
+getDocumentsAndContent : List Document -> Int -> String -> Cmd Msg
+getDocumentsAndContent documents user_id token =
+    let
+        idList =
+            List.map (\doc -> doc.id) documents
 
--- Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+        commands =
+            List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) idList
+    in
+    Cmd.batch commands
 
 
 makeSureSearchDomainIsAuthorized2 : SearchState -> String -> SearchDomain

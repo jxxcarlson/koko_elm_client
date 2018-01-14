@@ -4,8 +4,10 @@ module Request.Document
         , deleteCurrentDocument
         , getDocumentWithAuthenticatedQuery
         , getDocumentWithAuthenticatedQueryTask
+        , getDocumentWithId
         , getDocumentWithQuery
         , getDocuments
+        , getDocumentsRequest
         , getDocumentsTask
         , getPublicDocumentsTask
         , put
@@ -30,20 +32,33 @@ import Types exposing (..)
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
+-- getDocumentsRequest : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
 
 
-getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
-getDocuments route query message token =
+getDocumentsRequest : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> HB.RequestBuilder Types.DocumentsRecord
+getDocumentsRequest route query message token =
     let
         url =
             api ++ route ++ "?" ++ parseQuery query
-
-        _ =
-            Debug.log "getDocuments with URL" url
     in
     HB.get url
         |> HB.withHeader "Authorization" ("Bearer " ++ token)
         |> withExpect (Http.expectJson decodeDocumentsRecord)
+
+
+getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocuments route query message token =
+    getDocumentsRequest route query message token
+        |> HB.send message
+
+
+getDocumentWithId : String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Int -> Cmd Msg
+getDocumentWithId route message token id =
+    let
+        query =
+            "id=" ++ toString id
+    in
+    getDocumentsRequest route query message token
         |> HB.send message
 
 
@@ -52,9 +67,6 @@ getDocumentsTask route query token =
     let
         url =
             api ++ route ++ "?" ++ parseQuery query
-
-        _ =
-            Debug.log "getDocumentsTask with URL" url
 
         request =
             HB.get url
@@ -70,9 +82,6 @@ getPublicDocumentsTask route query =
     let
         url =
             api ++ route ++ "?" ++ parseQuery query
-
-        _ =
-            Debug.log "getDocumentsTask with URL" url
 
         request =
             HB.get url
