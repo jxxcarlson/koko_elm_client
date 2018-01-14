@@ -50,6 +50,54 @@ import Utility.KeyValue as KeyValue
 import Views.External exposing (windowData)
 
 
+{-
+
+    clearEditRecord : AppState -> AppState
+
+    createDocument : Model -> Document -> ( Model, Cmd Msg )
+    deleteDocument : Result a value -> Model -> ( Model, Cmd Msg )
+
+    hasId : Int -> Document -> Bool
+
+    inputContent : String -> Model -> ( Model, Cmd Msg )
+    latexFullRender : Model -> ( Model, Cmd Msg )
+    macros : DocumentDict -> String
+
+    masterDocLoaded : Model -> Document -> Bool
+    masterDocOpened : Model -> Document -> Bool
+
+    migrateFromAsciidocLatex : Model -> ( Model, Cmd Msg )
+
+    parseTagString : String -> List String
+
+    saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )
+    saveDocument : String -> Document -> Model -> ( Model, Cmd Msg )
+    saveDocumentCmd : String -> Document -> Model -> Cmd Msg
+    saveDocumentListCmd : List Document -> Model -> Cmd Msg
+
+    selectDocument : Model -> Document -> ( Model, Cmd Msg )
+    selectNewDocument : Model -> Document -> ( Model, Cmd Msg )
+
+    setDocType : String -> Model -> ( Model, Cmd Msg )
+    setTextType : String -> Model -> ( Model, Cmd Msg )
+    setTitle : String -> Model -> ( Model, Cmd Msg )
+
+    togglePublic : Model -> ( Model, Cmd Msg )
+    toggleUpdateRate : Model -> Model
+
+    updateContent : Model -> DocumentsRecord -> ( Model, Cmd Msg )
+    updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
+    updateCurrentDocumentWithContent : Model -> ( Model, Cmd Msg )
+    updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
+    updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
+    updateTags : String -> Model -> ( Model, Cmd Msg )
+
+    wordCount : Document -> Int
+    ===========
+   29
+
+
+-}
 {- LaTeX Processing
 
    clearEditRecord : AppState -> AppState
@@ -556,29 +604,9 @@ updateTags tagText model =
     ( { model | current_document = updatedDocument }, Cmd.none )
 
 
-
-{- DOCUMENT ID
-
-   hasId : Int -> Document -> Bool
-   getDocumentsById : Model -> Int -> List Document
-   getDocumentById : Model -> Int -> Maybe Document
-
--}
-
-
 hasId : Int -> Document -> Bool
 hasId id document =
     document.id == id
-
-
-getDocumentsById : Model -> Int -> List Document
-getDocumentsById model k =
-    List.filter (\doc -> doc.id == k) model.documents
-
-
-getDocumentById : Model -> Int -> Maybe Document
-getDocumentById model k =
-    List.head (getDocumentsById model k)
 
 
 wordCount : Document -> Int
@@ -654,8 +682,7 @@ selectDocument model document =
                 model.appState
 
         maybeMacroFileId =
-            Debug.log "MACRO FILE ID"
-                (KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags)
+            KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags
 
         newAppState =
             { appState
