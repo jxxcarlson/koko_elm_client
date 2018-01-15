@@ -235,27 +235,15 @@ update submessage model =
             Action.Document.updateTags tagString model
 
         SaveCurrentDocument ->
-            let
-                _ =
-                    Debug.log "SaveCurrentDocument" "now"
-            in
             Action.Document.saveCurrentDocument "" model
 
         SaveDocument result ->
             ( { model | message = "Document saved" }, Cmd.none )
 
         AdoptChildren ->
-            let
-                _ =
-                    Debug.log "AdoptChildren" "now"
-            in
             Action.Document.saveCurrentDocument "adopt_children=yes" model
 
         SelectDocument document ->
-            let
-                _ =
-                    Debug.log "SelectDocument" "now"
-            in
             Action.Document.selectDocument model document
 
         SelectMaster document ->
@@ -265,17 +253,9 @@ update submessage model =
             Action.Document.inputContent content model
 
         UpdateDocument ->
-            let
-                _ =
-                    Debug.log "UpdateDocument" "now"
-            in
             Action.Document.updateCurrentDocumentWithContent model
 
         LatexFullRender ->
-            let
-                _ =
-                    Debug.log "UpdateDocument" "now"
-            in
             Action.Document.latexFullRender model
 
         TogglePublic ->
