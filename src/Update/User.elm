@@ -39,7 +39,7 @@ update submessage model =
             ( { model1 | userList = userList, selectedUserName = user.username }, cmd )
 
         GetUsers (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "GU: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         GetUser (Ok userRecord) ->
             let
@@ -62,7 +62,7 @@ update submessage model =
                 _ =
                     Debug.log "error" error
             in
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "GU2: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         GetUserState (Ok userStateRecord) ->
             let
@@ -120,7 +120,7 @@ update submessage model =
                     ( model, Cmd.none )
 
         PutUser (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "PU2: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         SetUserState (Ok result) ->
             User.Synchronize.setUserState result model

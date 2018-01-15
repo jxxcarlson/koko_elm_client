@@ -55,25 +55,25 @@ update submessage model =
             Action.Document.loadContent model documentsRecord
 
         LoadContent (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "LC: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         LoadContentAndRender (Ok documentsRecord) ->
             Action.Document.loadContentAndRender model documentsRecord
 
         LoadContentAndRender (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "LCAR:" ++ Action.Error.httpErrorString error }, Cmd.none )
 
         GetDocuments (Ok documentsRecord) ->
             Action.Document.updateDocuments model documentsRecord
 
         GetDocuments (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "GD:" ++ Action.Error.httpErrorString error }, Cmd.none )
 
         GetUserDocuments (Ok documentsRecord) ->
             Action.Document.updateDocuments model documentsRecord
 
         GetUserDocuments (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "GUD:" ++ Action.Error.httpErrorString error }, Cmd.none )
 
         GetSpecialDocument (Ok documentsRecord) ->
             let
@@ -141,7 +141,7 @@ update submessage model =
                     ( model, Cmd.none )
 
         PutDocument (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "PD: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         NewDocument ->
             let
@@ -182,7 +182,7 @@ update submessage model =
             Action.Document.selectNewDocument model documentRecord.document
 
         CreateDocument (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+            ( { model | message = "CD: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         RequestDocumentDelete ->
             let
