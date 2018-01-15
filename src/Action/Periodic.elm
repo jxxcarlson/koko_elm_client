@@ -18,7 +18,7 @@ computeUserStateRecord model =
 
 doUpdateUserRecord : UserStateRecord -> Model -> Bool
 doUpdateUserRecord userStateRecord model =
-    model.userStateRecord /= userStateRecord
+    (model.current_user.token /= "") && (model.userStateRecord /= userStateRecord)
 
 
 gotoReader time model =
