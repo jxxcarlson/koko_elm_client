@@ -91,7 +91,7 @@ publicLink model =
 
 messageBox : Model -> Element Styles variation msg
 messageBox model =
-    el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message)
+    el (messageWarningStyle model.message) [ alignBottom, padding 8, width (px 200) ] (text model.message)
 
 
 shareUrl : Model -> Element Styles variation msg
