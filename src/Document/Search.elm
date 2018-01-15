@@ -325,10 +325,15 @@ getDocumentsAndContent documents user_id token =
                 Nothing ->
                     Cmd.none
 
-        commands =
-            List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) idList
+        tailCommand =
+            case List.tail idList of
+                Just ids ->
+                    List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) (List.reverse ids)
+
+                Nothing ->
+                    [ Cmd.none ]
     in
-    Cmd.batch ([ headCommand ] ++ commands)
+    Cmd.batch (tailCommand ++ [ headCommand ])
 
 
 makeSureSearchDomainIsAuthorized2 : SearchState -> String -> SearchDomain

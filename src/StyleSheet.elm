@@ -77,6 +77,7 @@ type Styles
     | StatusSuccess
     | TOC
     | TOCItem
+    | TOCItemLoading
     | TOCItemChild
     | TOCItemChildSelected
     | TOCItemMaster
@@ -293,6 +294,8 @@ stylesheet =
             [ Color.background Color.gray, Border.none ]
         , style TOCItem
             [ Color.text Color.blue ]
+        , style TOCItemLoading
+            [ Color.text Color.lightBlue ]
         , style TOCItemChild
             [ Color.text Color.blue ]
         , style TOCItemMaster

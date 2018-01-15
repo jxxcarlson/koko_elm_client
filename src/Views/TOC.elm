@@ -217,7 +217,9 @@ titleDisplay model selectedDocument document =
 
 tocStyle : Document -> Document -> Styles
 tocStyle selectedDocument document =
-    if selectedDocument.id == document.id then
+    if String.left 7 document.content == "Loading" then
+        TOCItemLoading
+    else if selectedDocument.id == document.id then
         if document.attributes.docType == "master" then
             TOCItemMasterSelected
         else if document.parent_id /= 0 then

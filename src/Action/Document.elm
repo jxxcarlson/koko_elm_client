@@ -430,6 +430,9 @@ loadContent model documentsRecord =
         document =
             List.head documentsFound |> Maybe.withDefault Document.defaultDocument
 
+        _ =
+            Debug.log "loading document" [ document.id, String.length document.content ]
+
         documentsInModel =
             model.documents
 
@@ -460,7 +463,7 @@ loadContentAndRender model documentsRecord =
         command =
             Render.put True [] False document
     in
-    ( { model | message = "Get Content", documents = new_documents }, command )
+    ( { model | message = "Get Content", documents = new_documents, current_document = document }, command )
 
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )

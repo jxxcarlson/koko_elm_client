@@ -28,13 +28,13 @@ update submessage model =
                     model.current_document
 
                 newDocument =
-                    { document | rendered_content = str }
+                    { document | rendered_content = Debug.log "::port, GetRenderedText" str }
 
                 newModel =
                     { model | current_document = newDocument }
 
                 _ =
-                    Debug.log "GetRenderedText for document" document.id
+                    Debug.log "::port, GetRenderedText for document" document.id
             in
             -- Action.Document.saveCurrentDocument "" newModel
             ( { model | current_document = newDocument }, Cmd.none )
