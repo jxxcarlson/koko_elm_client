@@ -311,25 +311,6 @@ getDocuments searchState user_id token =
     Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
-getDocumentsAndContent1 : SearchState -> Int -> String -> Cmd Msg
-getDocumentsAndContent1 searchState user_id token =
-    let
-        searchDomain =
-            makeSureSearchDomainIsAuthorized2 searchState token
-
-        ( processor, route ) =
-            Debug.log "processor and route"
-                (Query.processorAndRoute searchDomain)
-
-        adjustedQuery =
-            Query.makeQuery searchState searchDomain user_id
-
-        searchTask =
-            Request.Document.getDocumentsTask route adjustedQuery token
-    in
-    Task.attempt (DocMsg << GetContent) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
-
-
 getDocumentsAndContent : List Document -> Int -> String -> Cmd Msg
 getDocumentsAndContent documents user_id token =
     let

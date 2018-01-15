@@ -51,12 +51,6 @@ update submessage model =
             , Cmd.none
             )
 
-        GetContent (Ok documentsRecord) ->
-            Action.Document.updateContent model documentsRecord
-
-        GetContent (Err error) ->
-            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
-
         LoadContent (Ok documentsRecord) ->
             Action.Document.loadContent model documentsRecord
 

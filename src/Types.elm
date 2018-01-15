@@ -280,7 +280,6 @@ type DocMsg
     | DeleteDocument (Result Http.Error ())
     | DoRender Int
     | EditSpecialDocument
-    | GetContent (Result Http.Error DocumentsRecord)
     | GetDiary
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
