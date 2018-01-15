@@ -3,13 +3,11 @@ module Views.Footer exposing (footer)
 import Configuration
 import Element as EL exposing (..)
 import Element.Attributes as EA exposing (..)
-import FontAwesome
 import List.Extra
 import Request.Api as Api
 import String.Extra
 import StyleSheet exposing (..)
 import Types exposing (..)
-import Views.Basic as Basic
 
 
 warningStyle : String -> Styles
@@ -96,7 +94,14 @@ messageBox model =
 
 shareUrl : Model -> Element Styles variation msg
 shareUrl model =
-    el FooterNote [ alignBottom, padding 8 ] (text ("http://www.knode.io/#@public/" ++ toString model.current_document.id))
+    let
+        urlText =
+            if model.current_document.attributes.public then
+                Configuration.client ++ "/#@public/" ++ toString model.current_document.id
+            else
+                ""
+    in
+    el FooterNote [ alignBottom, padding 8 ] (text urlText)
 
 
 documentId : Model -> Element Styles variation msg
