@@ -1,8 +1,9 @@
 port module External exposing (..)
 
-import Json.Encode as Encode
-import Types exposing (Document, ImagePortData)
 import Document.Preprocess
+import Json.Encode as Encode
+import String.Extra
+import Types exposing (Document, ImagePortData)
 
 
 {-| }
@@ -45,13 +46,25 @@ encodeDocument force idList textBufferDirty document =
 
         idValueList =
             List.map Encode.string idList
+
+        _ =
+            Debug.log "port:: send to JSw, id:" document.id
+
+        _ =
+            Debug.log "port:: send to JSw, sc:" (String.left 15 (content_to_render |> compress))
     in
-        [ ( "force", Encode.bool force )
-        , ( "idList", Encode.list idValueList )
-        , ( "content", Encode.string content_to_render )
-        , ( "textType", Encode.string document.attributes.textType )
-        ]
-            |> Encode.object
+    [ ( "force", Encode.bool force )
+    , ( "idList", Encode.list idValueList )
+    , ( "id", Encode.int document.id )
+    , ( "content", Encode.string content_to_render )
+    , ( "textType", Encode.string document.attributes.textType )
+    ]
+        |> Encode.object
+
+
+compress : String -> String
+compress str =
+    str |> String.Extra.replace " " "" |> String.Extra.replace "\n" ""
 
 
 port toJs : String -> Cmd msg

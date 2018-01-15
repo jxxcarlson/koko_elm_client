@@ -7,6 +7,7 @@ module Action.Document
         , inputContent
         , latexFullRender
         , loadContent
+        , loadContentAndRender
         , migrateFromAsciidocLatex
         , saveCurrentDocument
         , saveDocumentCmd
@@ -403,8 +404,6 @@ updateDocuments model documentsRecord =
         [ toJs (windowData model model.appState.page)
         , External.saveUserState (Data.User.encodeUserState newModel)
         , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
-
-        -- , Document.Search.getDocumentsAndContent model.searchState model.current_user.id model.current_user.token
         , Document.Search.getDocumentsAndContent newDocumentList model.current_user.id model.current_user.token
         ]
     )
@@ -438,6 +437,30 @@ loadContent model documentsRecord =
             Utility.replaceIf (hasId document.id) document documentsInModel
     in
     ( { model | message = "Get Content", documents = new_documents }, Cmd.none )
+
+
+loadContentAndRender : Model -> DocumentsRecord -> ( Model, Cmd Msg )
+loadContentAndRender model documentsRecord =
+    let
+        documentsFound =
+            documentsRecord.documents
+
+        document =
+            List.head documentsFound |> Maybe.withDefault Document.defaultDocument
+
+        documentsInModel =
+            model.documents
+
+        new_documents =
+            Utility.replaceIf (hasId document.id) document documentsInModel
+
+        _ =
+            Debug.log "loadContentAndRender, id to PUT" document.id
+
+        command =
+            Render.put True [] False document
+    in
+    ( { model | message = "Get Content", documents = new_documents }, command )
 
 
 saveCurrentDocument : String -> Model -> ( Model, Cmd Msg )

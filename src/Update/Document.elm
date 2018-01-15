@@ -34,7 +34,7 @@ update submessage model =
                     { model | current_document = newDocument }
 
                 _ =
-                    Debug.log "GetRenderedText" "now"
+                    Debug.log "GetRenderedText for document" document.id
             in
             -- Action.Document.saveCurrentDocument "" newModel
             ( { model | current_document = newDocument }, Cmd.none )
@@ -55,6 +55,12 @@ update submessage model =
             Action.Document.loadContent model documentsRecord
 
         LoadContent (Err error) ->
+            ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
+
+        LoadContentAndRender (Ok documentsRecord) ->
+            Action.Document.loadContentAndRender model documentsRecord
+
+        LoadContentAndRender (Err error) ->
             ( { model | message = Action.Error.httpErrorString error }, Cmd.none )
 
         GetDocuments (Ok documentsRecord) ->

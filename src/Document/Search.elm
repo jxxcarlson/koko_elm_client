@@ -317,10 +317,18 @@ getDocumentsAndContent documents user_id token =
         idList =
             List.map (\doc -> doc.id) documents
 
+        headCommand =
+            case List.head idList of
+                Just id ->
+                    Request.Document.getDocumentWithId "documents" (DocMsg << LoadContentAndRender) token id
+
+                Nothing ->
+                    Cmd.none
+
         commands =
             List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) idList
     in
-    Cmd.batch commands
+    Cmd.batch ([ headCommand ] ++ commands)
 
 
 makeSureSearchDomainIsAuthorized2 : SearchState -> String -> SearchDomain

@@ -290,6 +290,7 @@ type DocMsg
     | InputTags String
     | LatexFullRender
     | LoadContent (Result Http.Error DocumentsRecord)
+    | LoadContentAndRender (Result Http.Error DocumentsRecord)
     | NewDocument
     | NewDiaryEntry
     | PutDocument (Result Http.Error ())

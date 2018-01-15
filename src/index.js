@@ -24,7 +24,7 @@ var mountNode = document.getElementById('main');
   var asciidoctor = Asciidoctor();
 
   var render_asciidoc = function(content) {
-      console.log("render_asciidoc, ontent length = " + content.length)
+      console.log("render_asciidoc, content length = " + content.length)
       request_in_progress = true;
       console.log("** Rendering ... ")
       var millisecondsToWait = 100;
@@ -34,6 +34,9 @@ var mountNode = document.getElementById('main');
           if (content !== current_content) {
             var rt = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'})
             app.ports.getRenderedText.send(rt); // Send rendered text to Elm
+            console.log("port rad:: send to Elm, id:: " + data.id)
+            console.log("port rad:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
+            // app.ports.getRenderedText.send("RT!!"); // Send rendered text to Elm
             current_content = content
           }
       }  , millisecondsToWait);
@@ -64,14 +67,22 @@ var mountNode = document.getElementById('main');
 
     function sendRenderedTextToElm(){
       var rendered_text = document.getElementById('rendered_text2').innerHTML
+      console.log("port srt:: send to Elm, id:: " + data.id)
+      console.log("port srt:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
       app.ports.getRenderedText.send(rendered_text)
+      // app.ports.getRenderedText.send("BAR!!")
     }
 
 
+  //  function typeset() {
+  //    console.log("** plain typeset ... ")
+  //    MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
+  //  }
+
    function typeset() {
-     console.log("** plain typeset ... ")
-     MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
-   }
+    console.log("** plain typeset ... ")
+    MathJax.Hub.Queue( ["Typeset", MathJax.Hub] );
+  }
 
   var render_latex = function(force, idList, content) {
     console.log("render_latex, content length = " + content.length)
@@ -95,7 +106,8 @@ var mountNode = document.getElementById('main');
 
   app.ports.putTextToRender.subscribe(function(data) {
 
-      console.log("JS-world: app.ports.putTextToRender")
+      console.log("port ptr:: send to Elm, id:: " + data.id)
+      console.log("port ptr:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
       if (data.force == true) {
          console.log("DEBOUNCE = TRUE")
       } else {
