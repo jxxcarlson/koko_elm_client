@@ -8,7 +8,6 @@ import List.Extra
 import Request.Api as Api
 import String.Extra
 import StyleSheet exposing (..)
-import StyleSheet exposing (..)
 import Types exposing (..)
 import Views.Basic as Basic
 
@@ -43,32 +42,30 @@ footer model =
 
 standardFooter : Model -> Element Styles variation msg
 standardFooter model =
-    (row Footer
+    row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
-        [ (messageBox model)
-        , (documentId model)
-        , (publicLink model)
-        , (warningMessage model)
-        , (onlineStatusIndicator model)
+        [ messageBox model
+        , documentId model
+        , shareUrl model
+        , warningMessage model
+        , onlineStatusIndicator model
         ]
-    )
 
 
 phoneFooter : Model -> Element Styles variation msg
 phoneFooter model =
-    (row Footer
+    row Footer
         [ justify, paddingXY 30 4, alignBottom, width (percent 100) ]
-        [ (publicLink model)
-        , (smallOnlineStatusIndicator model)
+        [ publicLink model
+        , smallOnlineStatusIndicator model
         ]
-    )
 
 
 publicLink : Model -> Element Styles variation msg
 publicLink model =
     let
         linkInfo =
-            ". Please follow this link http://www.knode.io/#@public/" ++ (toString model.current_document.id)
+            ". Please follow this link http://www.knode.io/#@public/" ++ toString model.current_document.id
 
         body =
             "&body=You might be interesed in the article " ++ model.current_document.title ++ linkInfo
@@ -81,11 +78,11 @@ publicLink model =
 
         linkText =
             if model.current_document.attributes.public == True then
-                link linkUrl <| el FooterNote [] <| text ("Share " ++ (String.Extra.quote model.current_document.title))
+                link linkUrl <| el FooterNote [] <| text ("Share " ++ String.Extra.quote model.current_document.title)
             else
                 link "mailto:hey@mail.me" <| el FooterNote [] <| text ""
     in
-        el FooterNote [ verticalCenter ] (linkText)
+    el FooterNote [ verticalCenter ] linkText
 
 
 
@@ -94,12 +91,17 @@ publicLink model =
 
 messageBox : Model -> Element Styles variation msg
 messageBox model =
-    (el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message))
+    el (messageWarningStyle model.message) [ alignBottom, padding 8 ] (text model.message)
+
+
+shareUrl : Model -> Element Styles variation msg
+shareUrl model =
+    el FooterNote [ alignBottom, padding 8 ] (text ("http://www.knode.io/#@public/" ++ toString model.current_document.id))
 
 
 documentId : Model -> Element Styles variation msg
 documentId model =
-    (el FooterNote [ alignBottom, padding 8 ] (text ("ID " ++ (toString model.current_document.id))))
+    el FooterNote [ alignBottom, padding 8 ] (text ("ID " ++ toString model.current_document.id))
 
 
 
@@ -112,19 +114,19 @@ documentId model =
 warningMessage : Model -> Element Styles variation msg
 warningMessage model =
     if model.appState.signedIn then
-        (el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning))
+        el (warningStyle model.warning) [ alignBottom, padding 8 ] (text model.warning)
     else
-        (el Zero [ alignBottom, padding 8 ] (text ""))
+        el Zero [ alignBottom, padding 8 ] (text "")
 
 
 hostString : String
 hostString =
-    Api.host |> String.split ("//") |> List.Extra.last |> Maybe.withDefault ""
+    Api.host |> String.split "//" |> List.Extra.last |> Maybe.withDefault ""
 
 
 onlineStatusIndicator : Model -> Element Styles variation msg
 onlineStatusIndicator model =
-    el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text ((onlineStatus model) ++ " at " ++ hostString))
+    el (onlineStatusStyle model) [ alignBottom, padding 8 ] (text (onlineStatus model ++ " at " ++ hostString))
 
 
 
