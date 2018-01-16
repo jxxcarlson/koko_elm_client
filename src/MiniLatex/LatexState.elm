@@ -14,12 +14,16 @@ type alias Counters =
     Dict.Dict String Int
 
 
+type alias Dictionary =
+    Dict.Dict String String
+
+
 type alias TableOfContents =
     List TocEntry
 
 
 type alias TocEntry =
-    { name : String, level : Int }
+    { name : String, label : String, level : Int }
 
 
 emptyDict : Dict.Dict k v
@@ -31,19 +35,18 @@ type alias LatexState =
     { counters : Counters
     , crossReferences : CrossReferences
     , tableOfContents : TableOfContents
+    , dictionary : Dictionary
     }
 
 
-addSection : String -> Int -> LatexState -> LatexState
-addSection sectionName level latexState =
+addSection : String -> String -> Int -> LatexState -> LatexState
+addSection sectionName label level latexState =
     let
         newEntry =
-            Debug.log "newEntry"
-                (TocEntry sectionName level)
+            TocEntry sectionName label level
 
         toc =
-            Debug.log "newTOC"
-                (latexState.tableOfContents ++ [ newEntry ])
+            latexState.tableOfContents ++ [ newEntry ]
     in
     { latexState | tableOfContents = toc }
 
@@ -66,6 +69,16 @@ getCrossReference label latexState =
 
         Nothing ->
             "??"
+
+
+getDictionaryItem : String -> LatexState -> String
+getDictionaryItem key latexState =
+    case Dict.get key latexState.dictionary of
+        Just value ->
+            value
+
+        Nothing ->
+            ""
 
 
 incrementCounter : String -> LatexState -> LatexState
@@ -104,6 +117,19 @@ setCrossReference label value latexState =
     { latexState | crossReferences = newCrossReferences }
 
 
+setDictionaryItem : String -> String -> LatexState -> LatexState
+setDictionaryItem key value latexState =
+    let
+        dictionary =
+            latexState.dictionary
+
+        newDictionary =
+            Debug.log "newDictionay"
+                (Dict.insert key value dictionary)
+    in
+    { latexState | dictionary = newDictionary }
+
+
 initialCounters : Dict.Dict String number
 initialCounters =
     Dict.fromList [ ( "s1", 0 ), ( "s2", 0 ), ( "s3", 0 ), ( "tno", 0 ), ( "eqno", 0 ) ]
@@ -111,4 +137,8 @@ initialCounters =
 
 emptyLatexState : LatexState
 emptyLatexState =
-    { counters = initialCounters, crossReferences = Dict.empty, tableOfContents = [] }
+    { counters = initialCounters
+    , crossReferences = Dict.empty
+    , dictionary = Dict.empty
+    , tableOfContents = []
+    }

@@ -7,7 +7,6 @@ module MiniLatex.Accumulator
         )
 
 import List.Extra
-import MiniLatex.Differ as Differ exposing (EditRecord)
 import MiniLatex.LatexState
     exposing
         ( Counters
@@ -17,6 +16,7 @@ import MiniLatex.LatexState
         , getCounter
         , incrementCounter
         , setCrossReference
+        , setDictionaryItem
         , updateCounter
         )
 import MiniLatex.Parser as Parser exposing (LatexExpression(..), macro, parse)
@@ -190,25 +190,60 @@ updateState parsedParagraph latexState =
 
                 ( "macro", "section" ) ->
                     let
-                        _ =
-                            Debug.log "xxx sectionName" (PT.unpackTocData headElement.value)
+                        label =
+                            getCounter "s1" latexState |> (\x -> x + 1) |> toString
                     in
                     latexState
                         |> incrementCounter "s1"
                         |> updateCounter "s2" 0
                         |> updateCounter "s3" 0
-                        |> addSection (PT.unpackTocData headElement.value) 1
+                        |> addSection (PT.unpackString headElement.value) label 1
 
                 ( "macro", "subsection" ) ->
+                    let
+                        s1 =
+                            getCounter "s1" latexState |> toString
+
+                        s2 =
+                            getCounter "s2" latexState |> (\x -> x + 1) |> toString
+
+                        label =
+                            s1 ++ "." ++ s2
+                    in
                     latexState
                         |> incrementCounter "s2"
                         |> updateCounter "s3" 0
-                        |> addSection (PT.unpackTocData headElement.value) 2
+                        |> addSection (PT.unpackString headElement.value) label 2
 
                 ( "macro", "subsubsection" ) ->
+                    let
+                        s1 =
+                            getCounter "s1" latexState |> toString
+
+                        s2 =
+                            getCounter "s2" latexState |> toString
+
+                        s3 =
+                            getCounter "s3" latexState |> (\x -> x + 1) |> toString
+
+                        label =
+                            s1 ++ "." ++ s2 ++ "." ++ s3
+                    in
                     latexState
                         |> incrementCounter "s3"
-                        |> addSection (PT.unpackTocData headElement.value) 3
+                        |> addSection (PT.unpackString headElement.value) label 3
+
+                ( "macro", "title" ) ->
+                    setDictionaryItemForMacro "title" headElement latexState
+
+                ( "macro", "author" ) ->
+                    setDictionaryItemForMacro "author" headElement latexState
+
+                ( "macro", "date" ) ->
+                    setDictionaryItemForMacro "date" headElement latexState
+
+                ( "macro", "email" ) ->
+                    setDictionaryItemForMacro "email" headElement latexState
 
                 ( "env", "theorem" ) ->
                     handleTheoremNumbers latexState headElement
@@ -235,6 +270,14 @@ updateState parsedParagraph latexState =
                     latexState
     in
     newLatexState
+
+
+setDictionaryItemForMacro macroname headElement latexState =
+    let
+        value =
+            PT.unpackString headElement.value
+    in
+    setDictionaryItem macroname value latexState
 
 
 updateSection : LatexState -> String -> String
