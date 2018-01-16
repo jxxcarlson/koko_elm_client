@@ -14,14 +14,41 @@ type alias Counters =
     Dict.Dict String Int
 
 
+type alias TableOfContents =
+    List TocEntry
+
+
+type alias TocEntry =
+    { name : String, level : Int }
+
+
+emptyDict : Dict.Dict k v
 emptyDict =
     Dict.empty
 
 
 type alias LatexState =
-    { counters : Counters, crossReferences : CrossReferences }
+    { counters : Counters
+    , crossReferences : CrossReferences
+    , tableOfContents : TableOfContents
+    }
 
 
+addSection : String -> Int -> LatexState -> LatexState
+addSection sectionName level latexState =
+    let
+        newEntry =
+            Debug.log "newEntry"
+                (TocEntry sectionName level)
+
+        toc =
+            Debug.log "newTOC"
+                (latexState.tableOfContents ++ [ newEntry ])
+    in
+    { latexState | tableOfContents = toc }
+
+
+getCounter : String -> LatexState -> Int
 getCounter name latexState =
     case Dict.get name latexState.counters of
         Just k ->
@@ -31,6 +58,7 @@ getCounter name latexState =
             0
 
 
+getCrossReference : String -> LatexState -> String
 getCrossReference label latexState =
     case Dict.get label latexState.crossReferences of
         Just ref ->
@@ -40,6 +68,7 @@ getCrossReference label latexState =
             "??"
 
 
+incrementCounter : String -> LatexState -> LatexState
 incrementCounter name latexState =
     let
         maybeInc =
@@ -48,9 +77,10 @@ incrementCounter name latexState =
         newCounters =
             Dict.update name maybeInc latexState.counters
     in
-        { latexState | counters = newCounters }
+    { latexState | counters = newCounters }
 
 
+updateCounter : String -> Int -> LatexState -> LatexState
 updateCounter name value latexState =
     let
         maybeSet =
@@ -59,9 +89,10 @@ updateCounter name value latexState =
         newCounters =
             Dict.update name maybeSet latexState.counters
     in
-        { latexState | counters = newCounters }
+    { latexState | counters = newCounters }
 
 
+setCrossReference : String -> String -> LatexState -> LatexState
 setCrossReference label value latexState =
     let
         crossReferences =
@@ -70,12 +101,14 @@ setCrossReference label value latexState =
         newCrossReferences =
             Dict.insert label value crossReferences
     in
-        { latexState | crossReferences = newCrossReferences }
+    { latexState | crossReferences = newCrossReferences }
 
 
+initialCounters : Dict.Dict String number
 initialCounters =
     Dict.fromList [ ( "s1", 0 ), ( "s2", 0 ), ( "s3", 0 ), ( "tno", 0 ), ( "eqno", 0 ) ]
 
 
+emptyLatexState : LatexState
 emptyLatexState =
-    { counters = initialCounters, crossReferences = Dict.empty }
+    { counters = initialCounters, crossReferences = Dict.empty, tableOfContents = [] }

@@ -20,6 +20,9 @@ initialize latexState text =
             paragraphs
                 |> Accumulator.parseParagraphs emptyLatexState
 
+        _ =
+            Debug.log "latexState(1)" latexState1
+
         latexState2 =
             { emptyLatexState | crossReferences = latexState1.crossReferences }
 

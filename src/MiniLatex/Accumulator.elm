@@ -13,6 +13,7 @@ import MiniLatex.LatexState
         ( Counters
         , CrossReferences
         , LatexState
+        , addSection
         , getCounter
         , incrementCounter
         , setCrossReference
@@ -188,19 +189,26 @@ updateState parsedParagraph latexState =
                         latexState
 
                 ( "macro", "section" ) ->
+                    let
+                        _ =
+                            Debug.log "xxx sectionName" (PT.unpackTocData headElement.value)
+                    in
                     latexState
                         |> incrementCounter "s1"
                         |> updateCounter "s2" 0
                         |> updateCounter "s3" 0
+                        |> addSection (PT.unpackTocData headElement.value) 1
 
                 ( "macro", "subsection" ) ->
                     latexState
                         |> incrementCounter "s2"
                         |> updateCounter "s3" 0
+                        |> addSection (PT.unpackTocData headElement.value) 2
 
                 ( "macro", "subsubsection" ) ->
                     latexState
                         |> incrementCounter "s3"
+                        |> addSection (PT.unpackTocData headElement.value) 3
 
                 ( "env", "theorem" ) ->
                     handleTheoremNumbers latexState headElement
