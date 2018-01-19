@@ -1,7 +1,6 @@
 module MiniLatex.Render
     exposing
-        ( compress
-        , makeTableOfContents
+        ( makeTableOfContents
         , render
         , renderLatexList
         , renderString
@@ -23,8 +22,8 @@ import MiniLatex.LatexState
         )
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 import Parser
-import Regex
 import String.Extra
+import Utility
 
 
 transformText : LatexState -> String -> String
@@ -735,17 +734,9 @@ renderRef latexState args =
     getCrossReference key latexState
 
 
-compress : String -> String
-compress str =
-    str
-        |> String.toLower
-        |> String.Extra.replace " " ":"
-        |> Regex.replace Regex.All (Regex.regex "[,;.!?&_]") (\_ -> "")
-
-
 makeId : String -> String -> String
 makeId prefix name =
-    String.join ":" [ prefix, compress name ]
+    String.join ":" [ prefix, Utility.compress ":" name ]
 
 
 idPhrase : String -> String -> String

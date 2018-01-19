@@ -6,6 +6,8 @@ import External exposing (toJs)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Json.Decode as Json exposing (Decoder, float, int, list, string)
+import Regex
+import String.Extra
 import Types exposing (Model, Page)
 import Views.External exposing (windowData)
 
@@ -68,6 +70,16 @@ replaceIf predicate replacement list =
 removeWhen : (a -> Bool) -> List a -> List a
 removeWhen pred list =
     List.filter (not << pred) list
+
+
+{-| map str to lower case and squeeze out bad characters
+-}
+compress : String -> String -> String
+compress replaceBlank str =
+    str
+        |> String.toLower
+        |> String.Extra.replace " " replaceBlank
+        |> Regex.replace Regex.All (Regex.regex "[,;.!?&_]") (\_ -> "")
 
 
 

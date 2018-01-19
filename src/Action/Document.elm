@@ -41,6 +41,7 @@ import Document.Search
 import Document.Stack as Stack
 import External exposing (putTextToRender, toJs)
 import MiniLatex.Driver
+import MiniLatex.Source as Source
 import Random
 import Regex
 import Request.Document
@@ -154,11 +155,14 @@ latexFullRender model =
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
+        textToExport =
+            Source.texPrefix ++ rendered_content ++ Source.texSuffix
+
         newAppState =
             { appState | editRecord = newEditRecord }
 
         newModel =
-            { model | appState = newAppState }
+            { model | appState = newAppState, textToExport = textToExport }
 
         newDocument =
             { document | rendered_content = rendered_content }

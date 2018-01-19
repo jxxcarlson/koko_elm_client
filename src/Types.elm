@@ -232,6 +232,7 @@ type alias Model =
     , appState : AppState
     , message : String
     , textInputBuffer : String
+    , textToExport : String
     , searchQueryInputBuffer : String
     , current_user : User
     , errorMsg : String
@@ -288,6 +289,7 @@ type DocMsg
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | InputContent String
     | InputTags String
+    | InputTextForExport String
     | LatexFullRender
     | LoadContent (Result Http.Error DocumentsRecord)
     | LoadContentAndRender (Result Http.Error DocumentsRecord)

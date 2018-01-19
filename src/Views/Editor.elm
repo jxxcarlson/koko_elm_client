@@ -7,6 +7,7 @@ import Element.Attributes exposing (..)
 import Element.Events exposing (onClick, onInput)
 import Element.Keyed as Keyed
 import FontAwesome
+import Http
 import Request.Api
 import StyleSheet exposing (..)
 import Types exposing (..)
@@ -162,8 +163,8 @@ toolSelectorPanel model =
         [ paddingXY 10 6, spacing 12, justify ]
         [ Common.printButton model.current_document
 
-        --, Utility.visibleIf (model.current_document.attributes.textType == "latex") (Common.exportButton model.current_document)
-        , exportButton model.current_document
+        -- , exportButton model.current_document
+        , exportButton2 model
         , renumberDocumentsButton model
         , imageCatalogueButton model.current_document
         , selectTableOfContents model
@@ -195,9 +196,52 @@ exportButton document =
         el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
 
 
+
+-- exportButton : Document -> Element Styles variation Msg
+-- exportButton document =
+--     link (exportUrl document) <|
+--         el Zero [ verticalCenter, target "_blank" ] (html (FontAwesome.cloud_download Color.white 25))
+-- exportUrl : Document -> String
+-- exportUrl document =
+--     Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ Common.printTypeString document
+
+
 exportUrl : Document -> String
 exportUrl document =
     Request.Api.exportUrl ++ "/" ++ toString document.id ++ "?" ++ Common.printTypeString document
+
+
+exporterTextArea model =
+    Keyed.row None
+        [ height (px 0) ]
+        [ ( toString model.counter
+          , textArea Zero
+                [ onInput (DocMsg << InputTextForExport)
+                , Element.Attributes.value model.textToExport
+                , height (px 0)
+                , width (px 0)
+                ]
+                model.textToExport
+          )
+        ]
+
+
+exportButton2 : Model -> Element Styles variation Msg
+exportButton2 model =
+    let
+        prefix =
+            Utility.compress "-" model.current_document.title
+
+        fileName =
+            prefix ++ ".tex"
+    in
+    link (dataUrl model.textToExport) <|
+        el Zero [ verticalCenter, Element.Attributes.downloadAs fileName ] (html (FontAwesome.cloud_download Color.white 25))
+
+
+dataUrl : String -> String
+dataUrl data =
+    "data:text/plain;charset=utf-8," ++ Http.encodeUri data
 
 
 selectTableOfContents : Model -> Element Styles variation Msg

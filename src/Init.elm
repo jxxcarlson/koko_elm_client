@@ -141,6 +141,7 @@ init flags location =
             , errorMsg = ""
             , searchQueryInputBuffer = ""
             , textInputBuffer = ""
+            , textToExport = "export this text!"
             , warning = ""
             , current_user = current_user
             , current_document = Document.startDocument

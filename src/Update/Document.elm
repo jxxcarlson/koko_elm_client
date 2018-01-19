@@ -240,6 +240,9 @@ update submessage model =
         InputTags tagString ->
             Action.Document.updateTags tagString model
 
+        InputTextForExport exportText ->
+            ( { model | message = "exportText: " ++ (toString <| String.length exportText) }, Cmd.none )
+
         SaveCurrentDocument ->
             Action.Document.saveCurrentDocument "" model
 
