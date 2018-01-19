@@ -156,7 +156,7 @@ latexFullRender model =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
         textToExport =
-            Source.texPrefix ++ rendered_content ++ Source.texSuffix
+            Source.texPrefix ++ document.content ++ Source.texSuffix
 
         newAppState =
             { appState | editRecord = newEditRecord }
