@@ -108,7 +108,7 @@ render latexExpression =
 
 renderLatexList : List LatexExpression -> String
 renderLatexList args =
-    args |> List.map render |> JoinStringgs.joinList
+    args |> List.map render |> JoinStrings.joinList
 
 
 renderArgList : List LatexExpression -> String
