@@ -21,6 +21,8 @@ cp src/MiniLatex/Render.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/RenderToLaTex.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Image.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Html.elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/JoinStrings.elm ../MiniLatex/src/MiniLatex/
+
 
 cp src/MiniLatex/Accumulator.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Configuration.elm ../MiniLatexTester/src/MiniLatex/
@@ -37,6 +39,8 @@ cp src/MiniLatex/Render.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/RenderToLatex.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Image.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Html.elm ../MiniLatexTester/src/MiniLatex/
+cp src/MiniLatex/JoinStrings.elm ../MiniLatexTester/src/MiniLatex/
+
 
 
 
