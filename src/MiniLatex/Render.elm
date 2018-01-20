@@ -22,8 +22,8 @@ import MiniLatex.LatexState
         )
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 import Parser
+import Regex
 import String.Extra
-import Utility
 
 
 transformText : LatexState -> String -> String
@@ -736,7 +736,17 @@ renderRef latexState args =
 
 makeId : String -> String -> String
 makeId prefix name =
-    String.join ":" [ prefix, Utility.compress ":" name ]
+    String.join ":" [ prefix, compress ":" name ]
+
+
+{-| map str to lower case and squeeze out bad characters
+-}
+compress : String -> String -> String
+compress replaceBlank str =
+    str
+        |> String.toLower
+        |> String.Extra.replace " " replaceBlank
+        |> Regex.replace Regex.All (Regex.regex "[,;.!?&_]") (\_ -> "")
 
 
 idPhrase : String -> String -> String
