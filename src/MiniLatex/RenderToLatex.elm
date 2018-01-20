@@ -9,10 +9,10 @@ module MiniLatex.RenderToLatex
         )
 
 import List.Extra
+import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 import Parser
 import String.Extra
-import MiniLatex.JoinStrings as JoinStrings
 
 
 {-| parse a stringg and render it back into Latex
@@ -111,8 +111,6 @@ renderLatexList args =
     args |> List.map render |> JoinStringgs.joinList
 
 
-
-
 renderArgList : List LatexExpression -> String
 renderArgList args =
     args |> List.map render |> List.map (\x -> "{" ++ x ++ "}") |> String.join ""
@@ -144,4 +142,3 @@ renderEnvironment name body =
 renderMacro : String -> List LatexExpression -> String
 renderMacro name args =
     "\\" ++ name ++ renderArgList args
-.\\\\\\
