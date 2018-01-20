@@ -18,6 +18,7 @@ cp src/MiniLatex/Paragraph.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Parser.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/ParserTools.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Render.elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/RenderToLaTex.elm ../MiniLatex/src/MiniLatex/
 
 cp src/MiniLatex/Accumulator.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Configuration.elm ../MiniLatexTester/src/MiniLatex/
@@ -31,6 +32,7 @@ cp src/MiniLatex/Paragraph.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Parser.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/ParserTools.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Render.elm ../MiniLatexTester/src/MiniLatex/
+cp src/MiniLatex/RenderToLatex.elm ../MiniLatexTester/src/MiniLatex/
 
 
 echo
