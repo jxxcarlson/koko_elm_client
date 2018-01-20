@@ -10,6 +10,7 @@ module MiniLatex.Render
 import Dict
 import List.Extra
 import MiniLatex.Configuration as Configuration
+import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.KeyValueUtilities as KeyValueUtilities
 import MiniLatex.LatexState
     exposing
@@ -107,76 +108,7 @@ render latexState latexExpression =
 
 renderLatexList : LatexState -> List LatexExpression -> String
 renderLatexList latexState args =
-    args |> List.map (render latexState) |> joinList
-
-
-
-{- joinList : List String -> String
-   join a list of strings to make a single string.
-   Adjacent strings l and r are joined by either an empty
-   string or a spaxel depending on the terminal character
-   of l and the leading character of r.  This is operation
-   is a matter of style, but it is important.
--}
-
-
-joinList : List String -> String
-joinList stringList =
-    let
-        start =
-            List.head stringList |> Maybe.withDefault ""
-    in
-    List.foldl joinDatum2String ( "", "" ) stringList |> Tuple.first
-
-
-joinDatum2String : String -> ( String, String ) -> ( String, String )
-joinDatum2String current datum =
-    let
-        ( acc, previous ) =
-            datum
-    in
-    case joinType previous current of
-        NoSpace ->
-            ( acc ++ current, current )
-
-        Space ->
-            ( acc ++ " " ++ current, current )
-
-
-type JoinType
-    = Space
-    | NoSpace
-
-
-lastChar =
-    String.right 1
-
-
-firstChar =
-    String.left 1
-
-
-joinType : String -> String -> JoinType
-joinType l r =
-    let
-        lastCharLeft =
-            lastChar l
-
-        firstCharRight =
-            firstChar r
-    in
-    if l == "" then
-        NoSpace
-    else if List.member lastCharLeft [ "(" ] then
-        NoSpace
-    else if List.member firstCharRight [ ")", ".", ",", "?", "!", ";", ":" ] then
-        NoSpace
-    else
-        Space
-
-
-
-{- End new code -}
+    args |> List.map (render latexState) |> JoinStrings.joinList
 
 
 renderArgList : LatexState -> List LatexExpression -> String
