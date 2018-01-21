@@ -173,7 +173,7 @@ imageFloatRight exportUrl label width =
 
 
 imageAlignCenter exportUrl label width =
-    "\\imagealigncenter{" ++ exportUrl ++ "}{" ++ label ++ "}{" ++ width ++ "}"
+    "\\imagecenter{" ++ exportUrl ++ "}{" ++ label ++ "}{" ++ width ++ "}"
 
 
 renderArg : Int -> List LatexExpression -> String

@@ -146,7 +146,7 @@ latexFullRender model =
         macroDefinitions =
             let
                 macrosString =
-                    macros model.documentDict
+                    macros model.documentDict |> (\x -> "\n$$\n" ++ String.trim x ++ "\n$$\n")
             in
             macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
@@ -156,8 +156,11 @@ latexFullRender model =
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
+        texmacros =
+            macros model.documentDict
+
         textToExport =
-            Source.texPrefix ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
+            Source.texPrefix ++ texmacros ++ "\n\n\n" ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
 
         newAppState =
             { appState | editRecord = newEditRecord }
@@ -176,7 +179,6 @@ macros documentDict =
     if Dictionary.member "texmacros" documentDict then
         Dictionary.getContent "texmacros" documentDict
             |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
-            |> String.Extra.replace "$$" "\n$$\n"
     else
         ""
 
@@ -245,7 +247,7 @@ updateCurrentLatexDocumentWithContent model =
                 macrosString =
                     macros model.documentDict
             in
-            macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
+            "\n\n$$\n" ++ macrosString ++ "\n\\newcommand{\\label}[1]{}\n$$\n\n"
 
         newEditRecord =
             MiniLatex.Driver.update model.appState.seed appState.editRecord document.content
