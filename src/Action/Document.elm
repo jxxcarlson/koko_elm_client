@@ -120,6 +120,19 @@ clearEditRecord appState =
     { appState | editRecord = newEditRecord }
 
 
+sectionNumberCommand shift document =
+    let
+        maybeSectionNumber =
+            KeyValue.getIntValueForKeyFromTagList "sectionNumber" document.tags
+    in
+    case maybeSectionNumber of
+        Just id ->
+            "\\setcounter{section}{" ++ toString (id + shift) ++ "}"
+
+        Nothing ->
+            ""
+
+
 latexFullRender : Model -> ( Model, Cmd Msg )
 latexFullRender model =
     let
@@ -132,16 +145,11 @@ latexFullRender model =
         maybeSectionNumber =
             KeyValue.getIntValueForKeyFromTagList "sectionNumber" document.tags
 
-        sectionNumberCommand =
-            case maybeSectionNumber of
-                Just id ->
-                    "\\setcounter{section}{" ++ toString id ++ "}"
-
-                Nothing ->
-                    ""
+        sectionNumberCommand_ =
+            sectionNumberCommand 0 document
 
         enrichedContent =
-            sectionNumberCommand ++ "\n\n" ++ document.content
+            sectionNumberCommand_ ++ "\n\n" ++ document.content
 
         macroDefinitions =
             let
@@ -160,7 +168,7 @@ latexFullRender model =
             macros model.documentDict
 
         textToExport =
-            Source.texPrefix ++ texmacros ++ "\n\n\n" ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
+            Source.texPrefix ++ texmacros ++ "\n\n" ++ sectionNumberCommand -1 document ++ "\n\n" ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
 
         newAppState =
             { appState | editRecord = newEditRecord }
