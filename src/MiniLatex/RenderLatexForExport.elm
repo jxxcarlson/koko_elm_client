@@ -75,7 +75,7 @@ renderEnvironment name body =
         slimBody =
             Debug.log "body" (String.trim <| render body)
     in
-    "\\begin{" ++ name ++ "}\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n\n"
+    "\\begin{" ++ name ++ "}\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n"
 
 
 
