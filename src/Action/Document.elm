@@ -46,9 +46,9 @@ import MiniLatex.Source as Source
 import Random
 import Regex
 import Request.Document
-import String.Extra
 import Task
 import Types exposing (..)
+import User.Synchronize
 import Utility exposing (replaceIf)
 import Utility.KeyValue as KeyValue
 import Views.External exposing (windowData)
@@ -420,6 +420,7 @@ updateDocuments model documentsRecord =
         , External.saveUserState (Data.User.encodeUserState newModel)
         , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
         , Document.Search.getDocumentsAndContent newDocumentList model.current_user.id model.current_user.token
+        , User.Synchronize.setTexMacroDocument newModel
         ]
     )
 
