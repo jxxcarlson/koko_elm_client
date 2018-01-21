@@ -754,6 +754,11 @@ selectDocument model document =
         updatedDocument =
             { document | attributes = newDocumentAttributes }
 
+        -- textToExport =
+        --     if (model.appState.page == EditorPage) && (document.attributes.textType == "latex") then
+        --         Source.texPrefix ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
+        --     else
+        --         ""
         newModel =
             { model
                 | current_document = updatedDocument
