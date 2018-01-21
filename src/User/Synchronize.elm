@@ -1,6 +1,7 @@
 module User.Synchronize exposing (..)
 
 import Data.User
+import Document.Dictionary
 import Document.Document exposing (pageNotFoundDocument)
 import Document.Render as Render
 import External
@@ -8,7 +9,41 @@ import Http
 import MiniLatex.Driver
 import Request.Document
 import Task exposing (Task)
-import Types exposing (ActiveDocumentList(..), DocMsg(..), DocumentsRecord, Model, Msg(..), Page(..), UserMsg(SetUserState), UserStateRecord)
+import Types
+    exposing
+        ( ActiveDocumentList(..)
+        , DocMsg(..)
+        , Document
+        , DocumentsRecord
+        , Model
+        , Msg(..)
+        , Page(..)
+        , UserMsg(SetUserState)
+        , UserStateRecord
+        )
+import Utility.KeyValue as KeyValue
+
+
+setTexMacroDocument : Model -> Cmd Msg
+setTexMacroDocument model =
+    let
+        maybeTexMacroDocumentID =
+            texMacroDocmentID model.current_document
+
+        command =
+            case maybeTexMacroDocumentID of
+                Just id ->
+                    Document.Dictionary.setItemInDict ("id=" ++ toString id) "texmacros" model.current_user.token
+
+                Nothing ->
+                    Cmd.none
+    in
+    command
+
+
+texMacroDocmentID : Document -> Maybe Int
+texMacroDocmentID document =
+    KeyValue.getIntValueForKeyFromTagList "texmacros" document.tags
 
 
 {-| Recover state from local storage
@@ -103,7 +138,7 @@ setUserState data model =
             Render.put False newModel.appState.editRecord.idList model.appState.textBufferDirty currentDocument
     in
     ( newModel
-    , Cmd.batch [ saveUserStateToLocalStorageCommand, renderCommand ]
+    , Cmd.batch [ saveUserStateToLocalStorageCommand, renderCommand, setTexMacroDocument newModel ]
     )
 
 
