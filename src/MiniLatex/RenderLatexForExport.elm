@@ -105,7 +105,7 @@ reproduceMacro name args =
         _ =
             Debug.log "reproduceMacro"
     in
-    "\\" ++ name ++ renderArgList args
+    " \\" ++ name ++ renderArgList args
 
 
 renderMacroDict : Dict.Dict String (List LatexExpression -> String)
