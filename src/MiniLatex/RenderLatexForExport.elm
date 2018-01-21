@@ -51,7 +51,7 @@ render latexExpression =
 
 renderLatexList : List LatexExpression -> String
 renderLatexList args =
-    args |> List.map render |> List.foldl (\x acc -> x ++ acc) ""
+    args |> List.map render |> List.foldl (\x acc -> acc ++ x) ""
 
 
 renderArgList : List LatexExpression -> String
