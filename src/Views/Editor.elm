@@ -18,10 +18,19 @@ import Views.Component as Component
 import Views.Utility
 
 
+fWidth fraction model =
+    width <| px <| toFloat model.window.width * fraction
+
+
+
+-- columns = [ fill 1, fill 3, fill 5 ]
+-- [ fWidth 0.15 model, fWidth 0.3 model, fWidth 0.45 model ]
+
+
 editor : Model -> List (Element Styles variation Msg)
 editor model =
     [ namedGrid Container
-        { columns = [ fill 1, fill 3, fill 4 ]
+        { columns = [ percent 22, percent 39, percent 39 ]
         , rows =
             [ px 1 => [ spanAll "e_separator" ]
             , px 40 => [ span 1 "e_TOCHeader", span 1 "e_contentHeader", span 1 "e_editorPanel" ]
