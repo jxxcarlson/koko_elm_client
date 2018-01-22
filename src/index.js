@@ -68,25 +68,16 @@ var mountNode = document.getElementById('main');
     function sendRenderedTextToElm(){
       var rendered_text = document.getElementById('rendered_text2').innerHTML
       console.log("port srt:: send to Elm, id:: " + data.id)
-      console.log("port srt:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
       app.ports.getRenderedText.send(rendered_text)
-      // app.ports.getRenderedText.send("BAR!!")
     }
 
-
-  //  function typeset() {
-  //    console.log("** plain typeset ... ")
-  //    MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
-  //  }
-
    function typeset() {
-    console.log("** plain typeset ... ")
+    console.log(":: typesetting document ... ")
     MathJax.Hub.Queue( ["Typeset", MathJax.Hub] );
   }
 
   var render_latex = function(force, idList, content) {
-    console.log("render_latex, content length = " + content.length)
-    console.log("idList = " + idList)
+    console.log(":: render_latex, putting content in DOM")
     document.getElementById('rendered_text2').innerHTML = content;
     typeset()
   }
@@ -106,14 +97,12 @@ var mountNode = document.getElementById('main');
 
   app.ports.putTextToRender.subscribe(function(data) {
 
-      console.log("port ptr:: send to Elm, id:: " + data.id)
-      console.log("port ptr:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
+      console.log("port ptr:: received id:: " + data.id)
       if (data.force == true) {
          console.log("DEBOUNCE = TRUE")
       } else {
         console.log("DEBOUNCE = FALSE")
       }
-
 
       requestAnimationFrame(function() {
 
