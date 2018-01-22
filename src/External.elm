@@ -35,11 +35,10 @@ encodeDocument force idList textBufferDirty document =
         content_to_render =
             case ( textType, textBufferDirty ) of
                 ( "latex", True ) ->
-                    -- Document.Preprocess.preprocess document.content document
-                    Debug.log "encode, latex, true" document.rendered_content
+                    document.rendered_content
 
                 ( "latex", False ) ->
-                    Debug.log "encode, latex, false" document.rendered_content
+                    document.rendered_content
 
                 ( _, _ ) ->
                     Document.Preprocess.preprocess document.content document
@@ -49,9 +48,6 @@ encodeDocument force idList textBufferDirty document =
 
         _ =
             Debug.log "port:: send to JSw, id:" document.id
-
-        _ =
-            Debug.log "port:: send to JSw, sc:" (String.left 15 (content_to_render |> compress))
     in
     [ ( "force", Encode.bool force )
     , ( "idList", Encode.list idValueList )
