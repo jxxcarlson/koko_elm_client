@@ -1,22 +1,22 @@
 module Nav.UrlParser
     exposing
-        ( Parser
-        , string
+        ( (</>)
+        , (<?>)
+        , Parser
+        , QueryParser
+        , custom
+        , customParam
         , int
-        , s
-        , (</>)
+        , intParam
         , map
         , oneOf
-        , top
-        , custom
-        , QueryParser
-        , (<?>)
-        , stringParam
-        , intParam
-        , customParam
-        , parsePath
         , parseHash
         , parseHash2
+        , parsePath
+        , s
+        , string
+        , stringParam
+        , top
         )
 
 {-|
@@ -364,7 +364,7 @@ a document with id 123 and #123 refers to something in the current document.
 -}
 parseHash2 : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parseHash2 parser location =
-    Debug.log "parseHash2" (parse parser (String.dropLeft 2 (Debug.log "location" location.hash)) (parseParams location.search))
+    Debug.log "log parseHash2" (parse parser (String.dropLeft 2 (Debug.log "location" location.hash)) (parseParams location.search))
 
 
 
