@@ -2,11 +2,15 @@ module Document.MasterDocument
     exposing
         ( addTo
         , attach
+        , prepareExportLatexFromMaster
         , select
         , setParentId
         )
 
+import Document.MiniLatex
 import Document.Stack as Stack
+import MiniLatex.RenderLatexForExport
+import MiniLatex.Source as Source
 import Request.Document
 import Task
 import Types
@@ -151,3 +155,23 @@ attach location model =
 update : Model -> Document -> Cmd Msg
 update model masterDocument =
     Request.Document.reloadMasterDocument masterDocument.id model.current_user.token
+
+
+concatenateText : List Document -> String
+concatenateText documentList =
+    documentList |> List.foldl (\doc acc -> acc ++ "\n\n" ++ doc.content) ""
+
+
+prepareExportLatexFromMaster : Model -> ( Model, Cmd Msg )
+prepareExportLatexFromMaster model =
+    let
+        macroDefinitions =
+            Document.MiniLatex.macros model.documentDict
+
+        sourceText =
+            List.drop 1 model.documents |> concatenateText |> MiniLatex.RenderLatexForExport.renderLatexForExport
+
+        textToExport =
+            Source.texPrefix ++ "\n\n" ++ macroDefinitions ++ "\n\n" ++ sourceText ++ "\n\n" ++ Source.texSuffix
+    in
+    ( { model | textToExport = textToExport }, Cmd.none )

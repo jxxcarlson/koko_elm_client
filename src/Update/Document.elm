@@ -19,6 +19,9 @@ update submessage model =
         RandomDocuments ->
             Document.Search.getRandomDocuments model
 
+        CompileMaster ->
+            Document.MasterDocument.prepareExportLatexFromMaster model
+
         DoRender key ->
             Document.Render.putWithKey key model
 

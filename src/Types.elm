@@ -277,6 +277,7 @@ type DocMsg
     | CreateDocument (Result Http.Error DocumentRecord)
     | RequestDocumentDelete
     | CancelDocumentDelete
+    | CompileMaster
     | DeleteCurrentDocument
     | DeleteDocument (Result Http.Error ())
     | DoRender Int

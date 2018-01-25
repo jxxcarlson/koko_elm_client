@@ -234,7 +234,7 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
-            , migrateFromADLButton model
+            , compileMasterButton model
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
@@ -297,6 +297,11 @@ parentIdPane model =
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =
     Basic.button "Adopt children" FlatButtonBlue [ onClick (DocMsg AdoptChildren), width (px 250) ]
+
+
+compileMasterButton : Model -> Element Styles variation Msg
+compileMasterButton model =
+    Basic.button "Compile Master" FlatButtonBlue [ onClick (DocMsg CompileMaster), width (px 250) ]
 
 
 updateTagsButton : Model -> Element Styles variation Msg

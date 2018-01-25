@@ -36,6 +36,7 @@ import Data.User
 import Document.Dictionary as Dictionary
 import Document.Document as Document exposing (defaultDocument, defaultMasterDocument, pageNotFoundDocument)
 import Document.Edit
+import Document.MiniLatex
 import Document.Render as Render
 import Document.Search
 import Document.Stack as Stack
@@ -154,7 +155,7 @@ latexFullRender model =
         macroDefinitions =
             let
                 macrosString =
-                    macros model.documentDict |> (\x -> "\n$$\n" ++ String.trim x ++ "\n$$\n")
+                    Document.MiniLatex.macros model.documentDict |> (\x -> "\n$$\n" ++ String.trim x ++ "\n$$\n")
             in
             macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
 
@@ -165,7 +166,7 @@ latexFullRender model =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
         texmacros =
-            macros model.documentDict
+            Document.MiniLatex.macros model.documentDict
 
         textToExport =
             Source.texPrefix ++ texmacros ++ "\n\n" ++ sectionNumberCommand -1 document ++ "\n\n" ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
@@ -180,15 +181,6 @@ latexFullRender model =
             { document | rendered_content = rendered_content }
     in
     updateCurrentDocument newModel newDocument
-
-
-macros : DocumentDict -> String
-macros documentDict =
-    if Dictionary.member "texmacros" documentDict then
-        Dictionary.getContent "texmacros" documentDict
-            |> Regex.replace Regex.All (Regex.regex "\n+") (\_ -> "\n")
-    else
-        ""
 
 
 
@@ -253,7 +245,7 @@ updateCurrentLatexDocumentWithContent model =
         macroDefinitions =
             let
                 macrosString =
-                    macros model.documentDict
+                    Document.MiniLatex.macros model.documentDict
             in
             "\n\n$$\n" ++ macrosString ++ "\n\\newcommand{\\label}[1]{}\n$$\n\n"
 
