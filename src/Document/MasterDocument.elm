@@ -9,6 +9,7 @@ module Document.MasterDocument
 
 import Document.MiniLatex
 import Document.Stack as Stack
+import MiniLatex.FastExportToLatex as FastExportToLatex
 import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
 import Request.Document
@@ -169,7 +170,8 @@ prepareExportLatexFromMaster model =
             Document.MiniLatex.macros model.documentDict
 
         sourceText =
-            List.drop 1 model.documents |> concatenateText |> MiniLatex.RenderLatexForExport.renderLatexForExport
+            -- List.drop 1 model.documents |> concatenateText |> MiniLatex.RenderLatexForExport.renderLatexForExport
+            List.drop 1 model.documents |> concatenateText |> FastExportToLatex.export
 
         textToExport =
             Source.texPrefix ++ "\n\n" ++ macroDefinitions ++ "\n\n" ++ sourceText ++ "\n\n" ++ Source.texSuffix

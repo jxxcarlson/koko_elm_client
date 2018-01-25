@@ -9,6 +9,7 @@ import MiniLatex.Image as Image
 import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
+import Utility
 
 
 {-| parse a stringg and render it back into Latex
@@ -73,6 +74,16 @@ renderComment str =
 
 renderEnvironment : String -> LatexExpression -> String
 renderEnvironment name body =
+    case Dict.get name renderEnvironmentDict of
+        Just f ->
+            f body
+
+        Nothing ->
+            renderDefaultEnvironment name body
+
+
+renderDefaultEnvironment : String -> LatexExpression -> String
+renderDefaultEnvironment name body =
     let
         slimBody =
             Debug.log "body" (String.trim <| render body)
@@ -80,10 +91,35 @@ renderEnvironment name body =
     "\\begin{" ++ name ++ "}\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n"
 
 
+renderEnvironmentDict : Dict.Dict String (LatexExpression -> String)
+renderEnvironmentDict =
+    Dict.fromList
+        [ ( "listing", \x -> renderListing x )
+        ]
+
+
+renderListing body =
+    let
+        text =
+            render body
+
+        _ =
+            Debug.log "RENDERING LISTING" "NOW"
+    in
+    "\n\\begin{verbatim}\n" ++ Utility.addLineNumbers text ++ "\n\\end{verbatim}\n"
+
+
 
 -- renderMacro : String -> List LatexExpression -> String
 -- renderMacro name args =
 --     "\\" ++ name ++ renderArgList args
+
+
+renderMacroDict : Dict.Dict String (List LatexExpression -> String)
+renderMacroDict =
+    Dict.fromList
+        [ ( "image", \x -> renderImage x )
+        ]
 
 
 renderMacro : String -> List LatexExpression -> String
@@ -108,13 +144,6 @@ reproduceMacro name args =
             Debug.log "reproduceMacro"
     in
     " \\" ++ name ++ renderArgList args
-
-
-renderMacroDict : Dict.Dict String (List LatexExpression -> String)
-renderMacroDict =
-    Dict.fromList
-        [ ( "image", \x -> renderImage x )
-        ]
 
 
 getExportUrl url =
