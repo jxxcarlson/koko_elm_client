@@ -1,4 +1,10 @@
-module Utility.KeyValue exposing (..)
+module Utility.KeyValue
+    exposing
+        ( getIntValueForKeyFromTagList
+        , getStringValueForKeyFromTagList
+        , removeKeyInTagList
+        , setIntValueForKeyInTagList
+        )
 
 {-| Tags the form k:v define a key-value pair.
 The function extractValue key taglist resturns
@@ -22,7 +28,26 @@ getIntValueForKeyFromTagList key tags =
                     Nothing
 
                 Just tag ->
-                    keyValueHelper tag
+                    keyValueIntHelper tag
+    in
+    value
+
+
+getStringValueForKeyFromTagList : String -> List String -> Maybe String
+getStringValueForKeyFromTagList key tags =
+    let
+        maybeMacrotag =
+            tags
+                |> List.filter (\tag -> String.startsWith (key ++ ":") tag)
+                |> List.head
+
+        value =
+            case maybeMacrotag of
+                Nothing ->
+                    Nothing
+
+                Just tag ->
+                    keyValueStringHelper tag
     in
     value
 
@@ -37,18 +62,23 @@ setIntValueForKeyInTagList key value tags =
     tags |> removeKeyInTagList key |> (\list -> list ++ [ key ++ ":" ++ toString value ])
 
 
-keyValueHelper : String -> Maybe Int
-keyValueHelper tag =
+keyValueIntHelper : String -> Maybe Int
+keyValueIntHelper tag =
     let
         maybeIdString =
             tag |> String.split ":" |> List.drop 1 |> List.head
-
-        id =
-            case maybeIdString of
-                Nothing ->
-                    Nothing
-
-                Just idString ->
-                    idString |> String.toInt |> Result.toMaybe
     in
-    id
+    case maybeIdString of
+        Nothing ->
+            Nothing
+
+        Just idString ->
+            idString |> String.toInt |> Result.toMaybe
+
+
+keyValueStringHelper : String -> Maybe String
+keyValueStringHelper tag =
+    tag
+        |> String.split ":"
+        |> List.drop 1
+        |> List.head

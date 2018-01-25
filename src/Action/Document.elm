@@ -27,10 +27,6 @@ module Action.Document
         , wordCount
         )
 
--- import MiniLatex.Driver as MiniLatex
--- import MiniLatex.Differ as Differ exposing (EditRecord)
--- import MiniLatex.LatexState exposing (emptyLatexState)
-
 import Action.UI exposing (appStateWithPage, displayPage, updateToolStatus)
 import Data.User
 import Document.Dictionary as Dictionary
@@ -134,6 +130,23 @@ sectionNumberCommand shift document =
             ""
 
 
+tableOfContentsMacro : Document -> String
+tableOfContentsMacro document =
+    let
+        maybeTOCSwitch =
+            KeyValue.getStringValueForKeyFromTagList "toc" document.tags
+    in
+    case maybeTOCSwitch of
+        Just "yes" ->
+            "\n\n\\tableofcontents\n\n"
+
+        Just _ ->
+            "\n\n"
+
+        Nothing ->
+            "\n\n"
+
+
 latexFullRender : Model -> ( Model, Cmd Msg )
 latexFullRender model =
     let
@@ -149,8 +162,12 @@ latexFullRender model =
         sectionNumberCommand_ =
             sectionNumberCommand 0 document
 
+        tableOfContentsMacro_ =
+            Debug.log "TOC"
+                (tableOfContentsMacro model.current_document)
+
         enrichedContent =
-            sectionNumberCommand_ ++ "\n\n" ++ document.content
+            sectionNumberCommand_ ++ tableOfContentsMacro_ ++ document.content
 
         macroDefinitions =
             let
@@ -169,7 +186,7 @@ latexFullRender model =
             Document.MiniLatex.macros model.documentDict
 
         textToExport =
-            Source.texPrefix ++ texmacros ++ "\n\n" ++ sectionNumberCommand -1 document ++ "\n\n" ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
+            Source.texPrefix ++ texmacros ++ sectionNumberCommand -1 document ++ tableOfContentsMacro_ ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
 
         newAppState =
             { appState | editRecord = newEditRecord }
