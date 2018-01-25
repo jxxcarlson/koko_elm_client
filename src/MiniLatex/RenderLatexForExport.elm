@@ -86,7 +86,7 @@ renderDefaultEnvironment : String -> LatexExpression -> String
 renderDefaultEnvironment name body =
     let
         slimBody =
-            Debug.log "body" (String.trim <| render body)
+            String.trim <| render body
     in
     "\\begin{" ++ name ++ "}\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n"
 
@@ -102,9 +102,6 @@ renderListing body =
     let
         text =
             render body
-
-        _ =
-            Debug.log "RENDERING LISTING" "NOW"
     in
     "\n\\begin{verbatim}\n" ++ Utility.addLineNumbers text ++ "\n\\end{verbatim}\n"
 
@@ -139,10 +136,6 @@ macroRenderer name =
 
 reproduceMacro : String -> List LatexExpression -> String
 reproduceMacro name args =
-    let
-        _ =
-            Debug.log "reproduceMacro"
-    in
     " \\" ++ name ++ renderArgList args
 
 

@@ -25,9 +25,6 @@ processParagraph par =
                 String.dropLeft 7 prefix |> String.dropRight 1
             else
                 String.left 6 prefix
-
-        _ =
-            Debug.log "YADA" ( signature, prefix )
     in
     case signature of
         "\\image" ->

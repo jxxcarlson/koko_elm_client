@@ -41,9 +41,6 @@ select document model =
 selectAux : Int -> Document -> Model -> ( Model, Cmd Msg )
 selectAux document_id document model =
     let
-        _ =
-            Debug.log "Enter Document.MasterDocument.selectAux for id = " document_id
-
         appState =
             model.appState
 
@@ -109,12 +106,6 @@ setParentId parentIdString model =
 addTo : Model -> ( Model, Cmd Msg )
 addTo model =
     let
-        _ =
-            Debug.log "addTo" model.master_document.id
-
-        _ =
-            Debug.log "In addTo, command" model.appState.command
-
         appState =
             model.appState
 
@@ -170,8 +161,10 @@ prepareExportLatexFromMaster model =
             Document.MiniLatex.macros model.documentDict
 
         sourceText =
-            -- List.drop 1 model.documents |> concatenateText |> MiniLatex.RenderLatexForExport.renderLatexForExport
-            List.drop 1 model.documents |> concatenateText |> FastExportToLatex.export
+            List.drop 1 model.documents
+                |> concatenateText
+                |> (\x -> "\n\ntablefcontents\n\n" ++ x)
+                |> FastExportToLatex.export
 
         textToExport =
             Source.texPrefix ++ "\n\n" ++ macroDefinitions ++ "\n\n" ++ sourceText ++ "\n\n" ++ Source.texSuffix
