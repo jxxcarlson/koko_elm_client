@@ -6,6 +6,7 @@ module MiniLatex.RenderLatexForExport
 import Dict
 import List.Extra
 import MiniLatex.Image as Image
+import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 
@@ -51,7 +52,8 @@ render latexExpression =
 
 renderLatexList : List LatexExpression -> String
 renderLatexList args =
-    args |> List.map render |> List.foldl (\x acc -> acc ++ x) ""
+    -- args |> List.map render |> List.foldl (\x acc -> acc ++ x) ""
+    args |> List.map render |> JoinStrings.joinList
 
 
 renderArgList : List LatexExpression -> String
