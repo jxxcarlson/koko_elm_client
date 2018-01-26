@@ -17,6 +17,7 @@ texPrefix =
 
 \\usepackage{amssymb}
 \\usepackage{amsmath}
+\\usepackage{amscd}
 \\usepackage{hyperref}
 \\hypersetup{
     colorlinks=true,
@@ -77,7 +78,7 @@ texPrefix =
 %%%
 \\newcommand{\\term}[1]{{\\sl #1}}
 \\newtheorem{remark}{Remark}
-
+\\newcommand{\\comment}[1]{}
 
 
 \\parindent0pt
