@@ -33,5 +33,8 @@ processParagraph par =
         "listin" ->
             RLE.renderLatexForExport par
 
+        "usefor" ->
+            RLE.renderLatexForExport par
+
         _ ->
             par
