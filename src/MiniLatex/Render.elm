@@ -153,6 +153,7 @@ renderEnvironmentDict =
         , ( "macros", \x y -> renderMacros x y )
         , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
+        , ( "thebibliography", \x y -> renderTheBiblography x y )
         , ( "maskforweb", \x y -> renderCommentEnvironment x y )
         , ( "useforweb", \x y -> renderUseForWeb x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
@@ -306,6 +307,10 @@ renderVerse latexState body =
 
 renderUseForWeb latexState body =
     "\n$$\n" ++ render latexState body ++ "\n$$\n"
+
+
+renderTheBiblography latexState body =
+    Html.div [ "class=\"verse\"" ] [ String.trim <| render latexState body ]
 
 
 renderTabular latexState body =
