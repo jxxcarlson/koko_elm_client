@@ -9,7 +9,7 @@ import MiniLatex.Image as Image
 import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
-import Utility
+import MiniLatex.Utility as Utility
 
 
 {-| parse a stringg and render it back into Latex

@@ -24,10 +24,10 @@ import MiniLatex.LatexState
         , getDictionaryItem
         )
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
+import MiniLatex.Utility as Utility
 import Parser
 import Regex
 import String.Extra
-import Utility
 
 
 transformText : LatexState -> String -> String
@@ -153,6 +153,8 @@ renderEnvironmentDict =
         , ( "macros", \x y -> renderMacros x y )
         , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
+        , ( "maskforweb", \x y -> renderCommentEnvironment x y )
+        , ( "userforweb", \x y -> renderUseForWeb x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
         , ( "verse", \x y -> renderVerse x y )
         ]
@@ -300,6 +302,10 @@ renderQuotation latexState body =
 
 renderVerse latexState body =
     Html.div [ "class=\"verse\"" ] [ String.trim <| render latexState body ]
+
+
+renderUseForWeb latexState body =
+    "\n$$\n" ++ render latexState body ++ "\n$$\n"
 
 
 renderTabular latexState body =
