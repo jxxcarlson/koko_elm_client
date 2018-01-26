@@ -12,7 +12,7 @@ import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexLi
 import MiniLatex.Utility as Utility
 
 
-{-| parse a stringg and render it back into Latex
+{-| parse a string and render it back into Latex
 -}
 renderLatexForExport : String -> String
 renderLatexForExport str =
@@ -95,6 +95,7 @@ renderEnvironmentDict : Dict.Dict String (LatexExpression -> String)
 renderEnvironmentDict =
     Dict.fromList
         [ ( "listing", \x -> renderListing x )
+        , ( "useforweb", \x -> renderUseForWeb x )
         ]
 
 
@@ -104,6 +105,10 @@ renderListing body =
             render body
     in
     "\n\\begin{verbatim}\n" ++ Utility.addLineNumbers text ++ "\n\\end{verbatim}\n"
+
+
+renderUseForWeb body =
+    ""
 
 
 
