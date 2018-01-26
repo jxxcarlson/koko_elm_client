@@ -309,8 +309,20 @@ renderUseForWeb latexState body =
     "\n$$\n" ++ render latexState body ++ "\n$$\n"
 
 
+renderTheBiblography : LatexState -> LatexExpression -> String
 renderTheBiblography latexState body =
-    Html.div [ "class=\"verse\"" ] [ String.trim <| render latexState body ]
+    "xxx"
+
+
+
+-- let
+--     bibText =
+--         body
+--             |> List.map render
+--             |> List.map (\par -> "<p>" ++ par ++ "</p>")
+--             |> List.foldr (\par acc -> par ++ "\n\n" ++ acc)
+-- in
+-- Html.div [ "class=\"verse\"" ] [ bibText ]
 
 
 renderTabular latexState body =

@@ -684,7 +684,7 @@ hasId id document =
 wordCount : Document -> Int
 wordCount document =
     document.content
-        |> String.split " "
+        |> String.words
         |> List.length
 
 

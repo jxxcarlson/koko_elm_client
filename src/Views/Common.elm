@@ -19,6 +19,7 @@ import Array
 import Color
 import Configuration
 import Document.Document as Document exposing (hasTag)
+import Document.MasterDocument
 import Document.Stack as Stack
 import Element exposing (..)
 import Element.Attributes exposing (..)
@@ -234,7 +235,8 @@ editorTools model =
                 (String.join ", " model.current_document.tags)
             , updateTagsButton model
             , el None [ height (px 10) ] (text "")
-            , compileMasterButton model
+            , Utility.visibleIf (currentDocumentIsMaster model) (compileMasterButton model)
+            , Utility.visibleIf (currentDocumentIsMaster model) (displayMasterDocumentWordCount model)
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
@@ -244,6 +246,46 @@ editorTools model =
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             ]
         ]
+
+
+
+-- el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ toString model.current_document.attributes.level))
+
+
+displayLine line =
+    el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text line)
+
+
+displayMasterDocumentWordCount : Model -> Element Styles variation msg
+displayMasterDocumentWordCount model =
+    displayLine (masterDocumentWordCount model)
+
+
+currentDocumentIsMaster : Model -> Bool
+currentDocumentIsMaster model =
+    model.current_document.attributes.docType == "master"
+
+
+masterDocumentWordCount : Model -> String
+masterDocumentWordCount model =
+    case currentDocumentIsMaster model of
+        True ->
+            wordCountDisplay <| model
+
+        False ->
+            ""
+
+
+wordCountDisplay : Model -> String
+wordCountDisplay model =
+    let
+        words =
+            Document.MasterDocument.wordCount <| model
+
+        pages =
+            toString <| truncate <| toFloat words / 500.0
+    in
+    "Word count: " ++ toString words ++ " (" ++ pages ++ " pages)"
 
 
 displayIdentifier : Model -> String

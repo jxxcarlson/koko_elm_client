@@ -5,6 +5,7 @@ module Document.MasterDocument
         , prepareExportLatexFromMaster
         , select
         , setParentId
+        , wordCount
         )
 
 import Document.MiniLatex
@@ -154,6 +155,14 @@ concatenateText documentList =
     documentList |> List.foldl (\doc acc -> acc ++ "\n\n" ++ doc.content) ""
 
 
+wordCount : Model -> Int
+wordCount model =
+    List.drop 1 model.documents
+        |> concatenateText
+        |> String.words
+        |> List.length
+
+
 prepareExportLatexFromMaster : Model -> ( Model, Cmd Msg )
 prepareExportLatexFromMaster model =
     let
@@ -163,7 +172,6 @@ prepareExportLatexFromMaster model =
         sourceText =
             List.drop 1 model.documents
                 |> concatenateText
-                -- |> (\x -> "\n\n\\tablefcontents\n\n" ++ x)
                 |> FastExportToLatex.export
 
         textToExport =
