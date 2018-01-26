@@ -154,7 +154,7 @@ renderEnvironmentDict =
         , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
         , ( "maskforweb", \x y -> renderCommentEnvironment x y )
-        , ( "userforweb", \x y -> renderUseForWeb x y )
+        , ( "useforweb", \x y -> renderUseForWeb x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
         , ( "verse", \x y -> renderVerse x y )
         ]
