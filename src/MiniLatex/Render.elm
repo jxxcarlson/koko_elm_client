@@ -466,7 +466,7 @@ renderSmallSkip latexState args =
 -}
 renderCite : LatexState -> List LatexExpression -> String
 renderCite latexState args =
-    " <strong>" ++ renderArg 0 latexState args ++ "</strong>"
+    " [" ++ renderArg 0 latexState args ++ "]"
 
 
 renderCode : LatexState -> List LatexExpression -> String
