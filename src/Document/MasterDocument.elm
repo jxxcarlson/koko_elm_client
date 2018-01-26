@@ -163,7 +163,7 @@ prepareExportLatexFromMaster model =
         sourceText =
             List.drop 1 model.documents
                 |> concatenateText
-                |> (\x -> "\n\ntablefcontents\n\n" ++ x)
+                -- |> (\x -> "\n\n\\tablefcontents\n\n" ++ x)
                 |> FastExportToLatex.export
 
         textToExport =

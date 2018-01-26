@@ -53,7 +53,6 @@ render latexExpression =
 
 renderLatexList : List LatexExpression -> String
 renderLatexList args =
-    -- args |> List.map render |> List.foldl (\x acc -> acc ++ x) ""
     args |> List.map render |> JoinStrings.joinList
 
 
@@ -109,12 +108,6 @@ renderListing body =
 
 renderUseForWeb body =
     ""
-
-
-
--- renderMacro : String -> List LatexExpression -> String
--- renderMacro name args =
---     "\\" ++ name ++ renderArgList args
 
 
 renderMacroDict : Dict.Dict String (List LatexExpression -> String)
