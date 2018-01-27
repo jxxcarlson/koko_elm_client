@@ -10,6 +10,8 @@ texPrefix =
 \\documentclass[11pt, oneside]{article}
 \\usepackage{geometry}
 \\geometry{letterpaper}
+\\usepackage{changepage}   % for the adjustwidth environment
+
 
 \\usepackage{graphicx}
 \\usepackage{wrapfig}
@@ -79,6 +81,10 @@ texPrefix =
 \\newcommand{\\term}[1]{{\\sl #1}}
 \\newtheorem{remark}{Remark}
 \\newcommand{\\comment}[1]{}
+
+\\renewenvironment{quotation}
+  {\\begin{adjustwidth}{2cm}{} \\footnotesize}
+  {\\end{adjustwidth}}
 
 
 \\parindent0pt
