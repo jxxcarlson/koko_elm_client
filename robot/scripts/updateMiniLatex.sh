@@ -25,7 +25,7 @@ cp src/MiniLatex/JoinStrings.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/RenderLatexForExport.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/FastExportToLatex.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Utility.elm ../MiniLatex/src/MiniLatex/
-cp src/MiniLatex/Source .elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/Source.elm ../MiniLatex/src/MiniLatex/
 
 
 

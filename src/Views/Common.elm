@@ -283,7 +283,7 @@ wordCountDisplay model =
             Document.MasterDocument.wordCount <| model
 
         pages =
-            toString <| truncate <| toFloat words / 500.0
+            toString <| truncate <| toFloat words / 300.0
     in
     "Word count: " ++ toString words ++ " (" ++ pages ++ " pages)"
 
