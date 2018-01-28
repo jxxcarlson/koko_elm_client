@@ -115,7 +115,7 @@ update seed transformer editorRecord text =
             diff editorRecord.paragraphs newParagraphs
 
         diffPacket =
-            renderDiff seed transformer diffRecord editorRecord editorRecord.renderedParagraphs
+            renderDiff seed transformer diffRecord editorRecord
     in
     EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.newIdsStart diffPacket.newIdsEnd
 
@@ -161,18 +161,27 @@ prefixer b k =
 
 {-| Given:
 
-     - a `renderer` which maps strings to strings
-     - a `diffRecord`, which identifies the locaton of changed strings in a list of strings
-     - an `editRecord`, which gives
-       -- paragraphs : List String
-    , renderedParagraphs : List String
-    , latexState : LatexState
+  - a seed : Int
+
+  - a `renderer` which maps strings to strings
+
+  - a `diffRecord`, which identifies the locaton of changed strings in a list of strings
+
+  - an `editRecord`, which gives existing state as follows:
+    -- paragraphs : List String
+    -- renderedParagraphs : List String
+    -- latexState : LatexState
+
+    The renderer is applied to the source text of the paragraphs
+    that have changed an updated renderedParagraphs list is returned
+    as part of a diffPacket. That packet also contains information
+    on paragrah ids. (This may be unnecessary).
 
 Among other things, generate a fresh id list for the changed elements.
 
 -}
-renderDiff : Int -> (String -> String) -> DiffRecord -> EditRecord -> List String -> DiffPacket
-renderDiff seed renderer diffRecord editRecord renderedStringList =
+renderDiff : Int -> (String -> String) -> DiffRecord -> EditRecord -> DiffPacket
+renderDiff seed renderer diffRecord editRecord =
     let
         ii =
             List.length diffRecord.commonInitialSegment
@@ -181,11 +190,15 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
             List.length diffRecord.commonTerminalSegment
 
         initialSegmentRendered =
-            List.take ii renderedStringList
+            List.take ii editRecord.renderedParagraphs
 
         terminalSegmentRendered =
-            takeLast it renderedStringList
+            takeLast it editRecord.renderedParagraphs
 
+        middleSegmentRendered =
+            List.map renderer diffRecord.middleSegmentInTarget
+
+        {- id list stuff -}
         ns =
             List.length diffRecord.middleSegmentInSource
 
@@ -203,9 +216,6 @@ renderDiff seed renderer diffRecord editRecord renderedStringList =
 
         idList =
             idListInitial ++ idListMiddle ++ idListTerminal
-
-        middleSegmentRendered =
-            List.map renderer diffRecord.middleSegmentInTarget
 
         ( newIdsStart, newIdsEnd ) =
             if nt == 0 then
