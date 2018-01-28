@@ -57,7 +57,7 @@ render macroDefinitions text =
 parse : String -> List (List LatexExpression)
 parse text =
     text
-        |> MiniLatexDiffer.prepareContentForLatex
+        -- |> MiniLatexDiffer.prepareContentForLatex
         |> Paragraph.logicalParagraphify
         |> List.map MiniLatexParser.parse
 
