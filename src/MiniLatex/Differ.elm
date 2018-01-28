@@ -24,9 +24,8 @@ type alias DiffRecord =
     }
 
 
-type alias DiffPacket =
-    { renderedParagraphs : List String
-    , idList : List String
+type alias IdListPacket =
+    { idList : List String
     , newIdsStart : Maybe Int
     , newIdsEnd : Maybe Int
     }
@@ -106,18 +105,21 @@ isEmpty editRecord =
 
 
 update : Int -> (String -> String) -> EditRecord -> String -> EditRecord
-update seed transformer editorRecord text =
+update seed transformer editRecord text =
     let
         newParagraphs =
             Paragraph.logicalParagraphify text
 
         diffRecord =
-            diff editorRecord.paragraphs newParagraphs
+            diff editRecord.paragraphs newParagraphs
 
-        diffPacket =
-            renderDiff seed transformer diffRecord editorRecord
+        newRenderedParagraphs =
+            differentialRender transformer diffRecord editRecord
+
+        p =
+            differentialIdList seed diffRecord editRecord
     in
-    EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.newIdsStart diffPacket.newIdsEnd
+    EditRecord newParagraphs newRenderedParagraphs emptyLatexState p.idList p.newIdsStart p.newIdsEnd
 
 
 {-| Let u and v be two lists of strings. Write them as
@@ -180,8 +182,8 @@ prefixer b k =
 Among other things, generate a fresh id list for the changed elements.
 
 -}
-renderDiff : Int -> (String -> String) -> DiffRecord -> EditRecord -> DiffPacket
-renderDiff seed renderer diffRecord editRecord =
+differentialRender : (String -> String) -> DiffRecord -> EditRecord -> List String
+differentialRender renderer diffRecord editRecord =
     let
         ii =
             List.length diffRecord.commonInitialSegment
@@ -197,8 +199,19 @@ renderDiff seed renderer diffRecord editRecord =
 
         middleSegmentRendered =
             List.map renderer diffRecord.middleSegmentInTarget
+    in
+    initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
 
-        {- id list stuff -}
+
+differentialIdList : Int -> DiffRecord -> EditRecord -> IdListPacket
+differentialIdList seed diffRecord editRecord =
+    let
+        ii =
+            List.length diffRecord.commonInitialSegment
+
+        it =
+            List.length diffRecord.commonTerminalSegment
+
         ns =
             List.length diffRecord.middleSegmentInSource
 
@@ -223,8 +236,7 @@ renderDiff seed renderer diffRecord editRecord =
             else
                 ( Just ii, Just (ii + nt - 1) )
     in
-    { renderedParagraphs = initialSegmentRendered ++ middleSegmentRendered ++ terminalSegmentRendered
-    , idList = idList
+    { idList = idList
     , newIdsStart = newIdsStart
     , newIdsEnd = newIdsEnd
     }
