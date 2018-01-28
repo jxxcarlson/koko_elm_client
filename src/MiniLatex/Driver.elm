@@ -117,7 +117,7 @@ getRenderedText macroDefinitions editRecord =
 -}
 setup : Int -> String -> EditRecord
 setup seed text =
-    MiniLatexDiffer.safeUpdate seed Differ.emptyEditRecord text
+    MiniLatexDiffer.update seed Differ.emptyEditRecord text
 
 
 {-| Return an empty EditRecord
@@ -162,4 +162,4 @@ because the "differ" used to detect changes is rather crude.
 -}
 update : Int -> EditRecord -> String -> EditRecord
 update seed editRecord text =
-    MiniLatexDiffer.safeUpdate seed editRecord text
+    MiniLatexDiffer.update seed editRecord text

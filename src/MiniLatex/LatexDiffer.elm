@@ -1,4 +1,4 @@
-module MiniLatex.LatexDiffer exposing (createEditRecord, safeUpdate)
+module MiniLatex.LatexDiffer exposing (createEditRecord, update)
 
 import MiniLatex.Accumulator as Accumulator
 import MiniLatex.Differ as Differ exposing (EditRecord)
@@ -40,15 +40,15 @@ makeIdList paragraphs =
     List.range 1 (List.length paragraphs) |> List.map (Differ.prefixer 0)
 
 
-update : Int -> EditRecord -> String -> EditRecord
-update seed editorRecord text =
+update_ : Int -> EditRecord -> String -> EditRecord
+update_ seed editorRecord text =
     text
         |> Differ.update seed (Render.transformText editorRecord.latexState) editorRecord
 
 
-safeUpdate : Int -> EditRecord -> String -> EditRecord
-safeUpdate seed editRecord content =
+update : Int -> EditRecord -> String -> EditRecord
+update seed editRecord content =
     if Differ.isEmpty editRecord then
         createEditRecord emptyLatexState content
     else
-        update seed editRecord content
+        update_ seed editRecord content
