@@ -57,7 +57,6 @@ render macroDefinitions text =
 parse : String -> List (List LatexExpression)
 parse text =
     text
-        -- |> MiniLatexDiffer.prepareContentForLatex
         |> Paragraph.logicalParagraphify
         |> List.map MiniLatexParser.parse
 
@@ -84,20 +83,6 @@ getRenderedText macroDefinitions editRecord =
     List.map2 (\para pTag -> pTag ++ "\n" ++ para ++ "\n</p>") paragraphs pTagList
         |> String.join "\n\n"
         |> (\x -> x ++ "\n\n" ++ macroDefinitions)
-
-
-{-| This version of getRenderedText ignores the idList.
-This give better mathJax performance. ??? NEED TO TEST THIS ASSERTION
--}
-getRenderedText2 : String -> EditRecord -> String
-getRenderedText2 macroDefinitions editRecord =
-    let
-        paragraphs =
-            editRecord.renderedParagraphs
-    in
-    List.map (\para -> "<p>\n" ++ para ++ "\n</p>") paragraphs
-        |> String.join "\n\n"
-        |> (\x -> macroDefinitions ++ "\n\n" ++ x)
 
 
 {-| Create an EditRecord from a string of MiniLaTeX text:

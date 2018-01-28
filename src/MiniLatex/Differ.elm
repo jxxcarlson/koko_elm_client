@@ -120,20 +120,24 @@ update seed transformer editorRecord text =
     EditRecord newParagraphs diffPacket.renderedParagraphs emptyLatexState diffPacket.idList diffPacket.newIdsStart diffPacket.newIdsEnd
 
 
+{-| Let u and v be two lists of strings. Write them as
+u = axb, v = ayb, where a is the greatest common prefix
+and b is the greatest common suffix. Return DiffRecord a b x y
+-}
 diff : List String -> List String -> DiffRecord
 diff u v =
     let
         a =
             commonInitialSegment u v
 
-        b =
+        b_ =
             commonTerminalSegment u v
 
         la =
             List.length a
 
         lb =
-            List.length b
+            List.length b_
 
         x =
             u |> List.drop la |> dropLast lb
@@ -141,13 +145,13 @@ diff u v =
         y =
             v |> List.drop la |> dropLast lb
 
-        bb =
+        b =
             if la == List.length u then
                 []
             else
-                b
+                b_
     in
-    DiffRecord a bb x y
+    DiffRecord a b x y
 
 
 prefixer : Int -> Int -> String
@@ -155,7 +159,17 @@ prefixer b k =
     "p." ++ toString b ++ "." ++ toString k
 
 
-{-| Among other things, generate a fresh id list for the changed elements.
+{-| Given:
+
+     - a `renderer` which maps strings to strings
+     - a `diffRecord`, which identifies the locaton of changed strings in a list of strings
+     - an `editRecord`, which gives
+       -- paragraphs : List String
+    , renderedParagraphs : List String
+    , latexState : LatexState
+
+Among other things, generate a fresh id list for the changed elements.
+
 -}
 renderDiff : Int -> (String -> String) -> DiffRecord -> EditRecord -> List String -> DiffPacket
 renderDiff seed renderer diffRecord editRecord renderedStringList =
