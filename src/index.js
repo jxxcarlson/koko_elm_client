@@ -49,11 +49,19 @@ var mountNode = document.getElementById('main');
            }
     }
 
-
+  var send_rendered_text = function() {
+    var rt = document.getElementById('rendered_text2').innerHTML
+    app.ports.getRenderedText.send(rt); // Send rendered text to Elm
+  }
 
    function typeset() {
     console.log(":: typesetting document ... ")
-    MathJax.Hub.Queue( ["Typeset", MathJax.Hub] );
+    MathJax.Hub.Queue( ["Typeset", MathJax.Hub, send_rendered_text] );
+  }
+
+  function typeset2() {
+    console.log(":: typesetting document ... ")
+    MathJax.Hub.Queue( ["Typeset", MathJax.Hub, ] );
   }
 
 

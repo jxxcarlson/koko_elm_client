@@ -67,6 +67,10 @@ updateUserState model =
 
 documentNeedsUpdate : Model -> Bool
 documentNeedsUpdate model =
+    let
+        _ =
+            Debug.log "::textNeedsUpdate" model.appState.textNeedsUpdate
+    in
     model.appState.page
         == EditorPage
         && model.appState.textNeedsUpdate

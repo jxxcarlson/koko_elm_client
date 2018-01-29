@@ -11,8 +11,7 @@ host =
 
 client : String
 client =
-    --- "http://localhost:3000"
-    "http://0.0.0.0"
+    "http://localhost:3000"
 
 
 websocketHost : String
