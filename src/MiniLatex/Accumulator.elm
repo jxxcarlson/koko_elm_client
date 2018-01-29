@@ -47,6 +47,12 @@ type alias RenderReducerTransformer a b c =
     -> Reducer b ( List c, a )
 
 
+type alias ParserReducerTransformer a b c =
+    (a -> b)
+    -> Reducer b c
+    -> Reducer a ( List b, c )
+
+
 
 {- EXPORTED FUNCTIONS -}
 -- transformParagraphs : LatexState -> List String -> ( List String, LatexState )
@@ -68,7 +74,7 @@ paragraphs and the upodated LatexState.
 parseParagraphs : LatexState -> List String -> ( List (List LatexExpression), LatexState )
 parseParagraphs latexState paragraphs =
     paragraphs
-        |> parseAccumulator Parser.parse updateState latexState
+        |> parseAccumulator latexState
 
 
 {-| renderParagraphs: take a list of (List LatexExpressions)
@@ -81,28 +87,32 @@ renderParagraphs latexState paragraphs =
 
 
 {- ACCUMULATORS AND TRANSFORMERS -}
+-- parseAccumulator :
+--     (String -> List LatexExpression) -- parse
+--     -> (List LatexExpression -> LatexState -> LatexState) -- updateState
+--     -> LatexState -- latexState
+--     -> List String
+--     -> ( List (List LatexExpression), LatexState )
 
 
-parseAccumulator :
-    (String -> List LatexExpression) -- parse
-    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
-    -> LatexState -- latexState
-    -> List String
-    -> ( List (List LatexExpression), LatexState )
-parseAccumulator parse updateState latexState inputList =
+parseAccumulator latexState inputList =
     inputList
-        |> List.foldl (parseTransformer parse updateState) ( [], latexState )
+        |> List.foldl parserAccumulatorReducer ( [], latexState )
 
 
-{-| parseTransformer parse updateState is a Reducer input acc
+
+-- parserAccumulatorReducer : Reducer (List LatexExpression) ( List String, LatexState )
+
+
+parserAccumulatorReducer : Reducer String ( List (List LatexExpression), LatexState )
+parserAccumulatorReducer =
+    parserReducerTransformer Parser.parse updateState
+
+
+{-| parserReducerTransformer parse updateState is a Reducer input acc
 -}
-parseTransformer :
-    (String -> List LatexExpression) -- parse
-    -> (List LatexExpression -> LatexState -> LatexState) -- updateState
-    -> String --input
-    -> ( List (List LatexExpression), LatexState ) -- acc
-    -> ( List (List LatexExpression), LatexState ) -- acc
-parseTransformer parse updateState input acc =
+parserReducerTransformer : ParserReducerTransformer String (List LatexExpression) LatexState
+parserReducerTransformer parse updateState input acc =
     let
         ( outputList, state ) =
             acc
@@ -118,12 +128,6 @@ parseTransformer parse updateState input acc =
 
 type alias ParserReducer =
     Reducer (List LatexExpression) LatexState
-
-
-type alias ParserReducerTransformer a b c =
-    (a -> b -> c)
-    -> Reducer b a
-    -> Reducer b ( List c, a )
 
 
 renderAccumulatorReducer : Reducer (List LatexExpression) ( List String, LatexState )
