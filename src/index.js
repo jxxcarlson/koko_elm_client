@@ -46,7 +46,7 @@ var mountNode = document.getElementById('main');
        console.log("render_asciidoc_latex, content length = " + content.length)
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
-             typeset()
+             typeset2()
              current_content = content
            }
     }
@@ -74,6 +74,11 @@ var mountNode = document.getElementById('main');
    function typeset() {
     console.log(":: typesetting document ... ")
     MathJax.Hub.Queue( ["Typeset", MathJax.Hub] );
+  }
+
+  function typeset2() {
+    console.log(":: typesetting document (2) ... ")
+    MathJax.Hub.Queue( ["Typeset", MathJax.Hub, sendRenderedTextToElm] );
   }
 
   var render_latex = function(force, idList, content) {
