@@ -38,6 +38,7 @@ var mountNode = document.getElementById('main');
             console.log("port rad:: send to Elm, co:: " + data.content.replace(" ", "").replace("\n","").slice(0,14))
             // app.ports.getRenderedText.send("RT!!"); // Send rendered text to Elm
             current_content = content
+            //sendRenderedTextToElm()
           }
       }  , millisecondsToWait);
    }
@@ -46,8 +47,9 @@ var mountNode = document.getElementById('main');
        console.log("render_asciidoc_latex, content length = " + content.length)
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
-             typeset2()
+             typeset()
              current_content = content
+             //sendRenderedTextToElm()
            }
     }
 
