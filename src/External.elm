@@ -29,6 +29,9 @@ force = False \ True, with True as the default.
 encodeDocument : Bool -> List String -> Bool -> Document -> Encode.Value
 encodeDocument force idList textNeedsUpdate document =
     let
+        _ =
+            Debug.log "::Encode document " document.id
+
         textType =
             document.attributes.textType
 
