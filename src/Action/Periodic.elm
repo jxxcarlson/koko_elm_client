@@ -69,7 +69,7 @@ documentNeedsUpdate : Model -> Bool
 documentNeedsUpdate model =
     model.appState.page
         == EditorPage
-        && model.appState.textBufferDirty
+        && model.appState.textNeedsUpdate
         && model.current_document.attributes.docType
         /= "master"
         && model.current_document.attributes.textType
@@ -77,7 +77,7 @@ documentNeedsUpdate model =
 
 
 saveLatexDocument model =
-    if (model.current_document.attributes.textType == "latex") && model.appState.textBufferDirty then
+    if (model.current_document.attributes.textType == "latex") && model.appState.textNeedsUpdate then
         Action.Document.saveCurrentDocument "" model
     else
         ( model, Cmd.none )

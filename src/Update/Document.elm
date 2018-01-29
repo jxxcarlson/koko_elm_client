@@ -23,7 +23,7 @@ update submessage model =
             Document.MasterDocument.prepareExportLatexFromMaster model
 
         DoRender key ->
-            Document.Render.putWithKey key model
+            Document.Render.putTextToRenderWithKey key model
 
         GetRenderedText str ->
             let

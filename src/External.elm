@@ -27,13 +27,13 @@ port getRenderedText : (String -> msg) -> Sub msg
 force = False \ True, with True as the default.
 -}
 encodeDocument : Bool -> List String -> Bool -> Document -> Encode.Value
-encodeDocument force idList textBufferDirty document =
+encodeDocument force idList textNeedsUpdate document =
     let
         textType =
             document.attributes.textType
 
         content_to_render =
-            case ( textType, textBufferDirty ) of
+            case ( textType, textNeedsUpdate ) of
                 ( "latex", True ) ->
                     document.rendered_content
 

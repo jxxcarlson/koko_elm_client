@@ -129,7 +129,7 @@ dispatchSearch searchState page model =
     ( updatedModel
     , Cmd.batch
         [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-        , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty model.current_document
+        , Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate model.current_document
         ]
     )
 

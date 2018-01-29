@@ -42,7 +42,7 @@ setEditPage model =
             { appState
                 | page = EditorPage
                 , tool = Action.UI.updateTool model EditorPage
-                , textBufferDirty = False
+                , textNeedsUpdate = False
             }
                 |> Action.Document.clearEditRecord
     in

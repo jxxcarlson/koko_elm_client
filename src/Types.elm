@@ -212,7 +212,7 @@ type alias AppState =
     , menuDropped : Bool
     , textTypeMenuDropped : Bool
     , docTypeMenuDropped : Bool
-    , textBufferDirty : Bool
+    , textNeedsUpdate : Bool
     , masterDocLoaded : Bool
     , masterDocOpened : Bool
     , tickerPaused : Bool

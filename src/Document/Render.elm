@@ -1,19 +1,29 @@
-module Document.Render exposing (put, putWithKey)
+module Document.Render exposing (putTextToRender, putTextToRenderWithKey)
 
-import External
-import Types exposing (Model, Document, Msg)
 import Document.Preprocess exposing (preprocessSource)
+import External
+import Types exposing (Document, Model, Msg)
 
 
-put : Bool -> List String -> Bool -> Document -> Cmd msg
-put force idList textBufferDirty document =
-    External.putTextToRender (External.encodeDocument force idList textBufferDirty document)
+putTextToRender : Bool -> List String -> Bool -> Document -> Cmd msg
+putTextToRender force idList textNeedsUpdate document =
+    External.putTextToRender (External.encodeDocument force idList textNeedsUpdate document)
 
 
-putWithKey : Int -> Model -> ( Model, Cmd Msg )
-putWithKey key model =
+putTextToRenderWithKey : Int -> Model -> ( Model, Cmd Msg )
+putTextToRenderWithKey key model =
+    let
+        _ =
+            Debug.log "key::" key
+    in
     if key == 27 then
         -- 27: ESCAPE
-        ( model, put True model.appState.editRecord.idList model.appState.textBufferDirty model.current_document )
+        ( model
+        , putTextToRender
+            True
+            model.appState.editRecord.idList
+            model.appState.textNeedsUpdate
+            model.current_document
+        )
     else
         ( model, Cmd.none )

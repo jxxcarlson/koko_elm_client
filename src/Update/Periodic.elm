@@ -24,7 +24,7 @@ update submessage model =
             if
                 model.appState.page
                     == EditorPage
-                    && model.appState.textBufferDirty
+                    && model.appState.textNeedsUpdate
                     && model.current_document.attributes.docType
                     /= "master"
             then

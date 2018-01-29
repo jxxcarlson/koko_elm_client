@@ -222,7 +222,7 @@ inputContent content model =
             model.appState
 
         newAppState =
-            { appState | textBufferDirty = True }
+            { appState | textNeedsUpdate = True }
 
         currentDocument =
             model.current_document
@@ -303,7 +303,7 @@ updateCurrentDocument model document =
             model.appState
 
         newAppState =
-            { appState | textBufferDirty = False }
+            { appState | textNeedsUpdate = False }
 
         saveTask =
             Request.Document.saveDocumentTask "" document model
@@ -329,11 +329,11 @@ updateCurrentDocument model document =
 
         cmds =
             if document.attributes.docType == "master" then
-                [ Render.put True model.appState.editRecord.idList True document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.putTextToRender True model.appState.editRecord.idList True document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt (DocMsg << GetUserDocuments) (saveTask |> Task.andThen (\_ -> refreshMasterDocumentTask))
                 ]
             else
-                [ Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document -- put new content in JS-mirror of document and save the document (XX: client-server)
+                [ Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt (DocMsg << SaveDocument) saveTask
                 , External.saveUserState (Data.User.encodeUserState newModel)
                 , Random.generate (DocMsg << NewSeed) (Random.int 1 10000)
@@ -427,7 +427,7 @@ updateDocuments model documentsRecord =
     , Cmd.batch
         [ toJs (windowData model model.appState.page)
         , External.saveUserState (Data.User.encodeUserState newModel)
-        , Render.put False model.appState.editRecord.idList newModel.appState.textBufferDirty current_document
+        , Render.putTextToRender False model.appState.editRecord.idList newModel.appState.textNeedsUpdate current_document
         , Document.Search.getDocumentsAndContent newDocumentList model.current_user.id model.current_user.token
         , User.Synchronize.setTexMacroDocument newModel
         ]
@@ -486,7 +486,7 @@ loadContentAndRender model documentsRecord =
             Debug.log "loadContentAndRender, id to PUT" document.id
 
         command =
-            Render.put True [] False document
+            Render.putTextToRender True [] False document
     in
     ( { model | message = "Get Content", documents = new_documents, current_document = document }, command )
 
@@ -762,7 +762,7 @@ selectDocument model document =
                 , masterDocLoaded = masterDocLoaded model document
                 , masterDocOpened = masterDocOpened model document
                 , page = displayPage model
-                , textBufferDirty = False
+                , textNeedsUpdate = False
             }
 
         documentAttributes =
@@ -789,7 +789,7 @@ selectDocument model document =
 
         basicCommands =
             [ toJs (windowData newModel (displayPage model))
-            , Render.put False newModel.appState.editRecord.idList model.appState.textBufferDirty document
+            , Render.putTextToRender False newModel.appState.editRecord.idList model.appState.textNeedsUpdate document
             , External.saveUserState (Data.User.encodeUserState newModel)
             ]
 
@@ -818,7 +818,7 @@ selectNewDocument model document =
         , counter = model.counter + 1
         , documentStack = Stack.push document model.documentStack
       }
-    , Render.put False model.appState.editRecord.idList model.appState.textBufferDirty document
+    , Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate document
     )
 
 
@@ -868,7 +868,7 @@ setTitle title model =
             model.appState
 
         newAppState =
-            { appState | textBufferDirty = True }
+            { appState | textNeedsUpdate = True }
     in
     ( { model | current_document = updatedDocument, appState = newAppState }, Cmd.none )
 

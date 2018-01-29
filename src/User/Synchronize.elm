@@ -121,7 +121,7 @@ setUserState data model =
         newAppState =
             { appState
                 | editRecord = MiniLatex.Driver.emptyEditRecord
-                , textBufferDirty = False
+                , textNeedsUpdate = False
             }
 
         newModel =
@@ -135,7 +135,7 @@ setUserState data model =
             External.saveUserState (Data.User.encodeUserState newModel)
 
         renderCommand =
-            Render.put False newModel.appState.editRecord.idList model.appState.textBufferDirty currentDocument
+            Render.putTextToRender False newModel.appState.editRecord.idList model.appState.textNeedsUpdate currentDocument
     in
     ( newModel
     , Cmd.batch [ saveUserStateToLocalStorageCommand, renderCommand, setTexMacroDocument newModel ]
