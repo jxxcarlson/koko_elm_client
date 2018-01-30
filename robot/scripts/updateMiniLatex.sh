@@ -26,6 +26,8 @@ cp src/MiniLatex/RenderLatexForExport.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/FastExportToLatex.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Utility.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Source.elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/MiniLatex.StateReducerHelpers.elm ../MiniLatex/src/MiniLatex/
+
 
 
 
@@ -49,8 +51,8 @@ cp src/MiniLatex/RenderLatexForExport.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/FastExportToLatex.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Source.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Utility.elm ../MiniLatexTester/src/MiniLatex/
-
-
+cp src/MiniLatex/MiniLatex.StateReducerHelpers.elm ../MiniLatexTester/src/MiniLatex/
+ 
 
 
 
