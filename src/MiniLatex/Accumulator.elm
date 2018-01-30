@@ -39,12 +39,16 @@ type alias RenderReducer =
     Reducer (List LatexExpression) ( List String, LatexState )
 
 
+{-| Tranform a reducer using (a -> b -> c)
+-}
 type alias RenderReducerTransformer a b c =
     (a -> b -> c)
     -> Reducer b a
     -> Reducer b ( List c, a )
 
 
+{-| Tranform a reducer using (a -> b)
+-}
 type alias ParserReducerTransformer a b c =
     (a -> b)
     -> Reducer b c

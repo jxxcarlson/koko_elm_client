@@ -5,10 +5,10 @@ require('./css/extra.css')
 require('./index.html');
 
 
-var Elm = require('./Main.elm');
-var mountNode = document.getElementById('main');
-
 // https://hackernoon.com/how-elm-ports-work-with-a-picture-just-one-25144ba43cdd
+
+  var Elm = require('./Main.elm');
+  var mountNode = document.getElementById('main');
 
   var app = Elm.Main.fullscreen(
       {
@@ -17,11 +17,50 @@ var mountNode = document.getElementById('main');
       }
     );
 
-
   var request_in_progress = false;
   var current_content = '';
-
   var asciidoctor = Asciidoctor();
+  var count = 0;
+
+  // Main function called through ports to render text. 
+  app.ports.putTextToRender.subscribe(function(data) {
+
+    console.log("port pttr, id:: " + data.id)
+    console.log("     type:: " + data.textType)
+    console.log("     length:: " + data.content.length)
+
+    if (data.force == true) {
+       console.log("DEBOUNCE = TRUE")
+    } else {
+      console.log("DEBOUNCE = FALSE")
+    }
+
+    requestAnimationFrame(function() {
+
+        count = count + 1
+        switch (data.textType) {
+
+          case "adoc":
+             render_asciidoc(data.content)
+             break;
+          case "adoc_latex":
+             render_asciidoc_latex(data.content)
+             break;
+          case "plain":
+             render_plain(data.content)
+             break;
+          case "latex":
+              // force = true
+              render_latex(true, data.idList, data.content)
+              break;
+          default:
+            console.log("Default rendering ... asciidoc")
+            render_asciidoc(data.content)
+        }
+    })
+})
+
+document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var render_asciidoc = function(content) {
       console.log(":: render_asciidoc, length = " + content.length)
@@ -84,45 +123,10 @@ var mountNode = document.getElementById('main');
        }  , millisecondsToWait);
     }
 
-  app.ports.putTextToRender.subscribe(function(data) {
 
-      console.log("port pttr, id:: " + data.id)
-      console.log("     type:: " + data.textType)
-      console.log("     length:: " + data.content.length)
-      if (data.force == true) {
-         console.log("DEBOUNCE = TRUE")
-      } else {
-        console.log("DEBOUNCE = FALSE")
-      }
+  
 
-      requestAnimationFrame(function() {
 
-          count = count + 1
-          switch (data.textType) {
-
-            case "adoc":
-               render_asciidoc(data.content)
-               break;
-            case "adoc_latex":
-               render_asciidoc_latex(data.content)
-               break;
-            case "plain":
-               render_plain(data.content)
-               break;
-            case "latex":
-                // force = true
-                render_latex(true, data.idList, data.content)
-                break;
-            default:
-              console.log("Default rendering ... asciidoc")
-              render_asciidoc(data.content)
-          }
-      })
-  })
-
-  document.getElementById("rendered_text2").style.visibility = "hidden";
-
-  var count = 0;
 
 
 
