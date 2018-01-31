@@ -467,7 +467,11 @@ renderBozo latexState args =
 
 renderBibItem : LatexState -> List LatexExpression -> String
 renderBibItem latexState args =
-    "[" ++ renderArg 0 latexState args ++ "] "
+    let
+        label =
+            renderArg 0 latexState args
+    in
+    " <span id=\"bib:" ++ label ++ "\">[" ++ label ++ "]</span> "
 
 
 renderBigSkip : LatexState -> List LatexExpression -> String
@@ -489,7 +493,11 @@ renderSmallSkip latexState args =
 -}
 renderCite : LatexState -> List LatexExpression -> String
 renderCite latexState args =
-    " [" ++ renderArg 0 latexState args ++ "]"
+    let
+        label =
+            renderArg 0 latexState args
+    in
+    " <span><a href=\"#bib:" ++ label ++ "\">[" ++ label ++ "]</a></span>"
 
 
 renderCode : LatexState -> List LatexExpression -> String
