@@ -497,7 +497,7 @@ renderCite latexState args =
         label =
             renderArg 0 latexState args
     in
-    " <span><a href=\"#bib:" ++ label ++ "\">[" ++ label ++ "]</a></span>"
+    " <span>[<a href=\"#bib:" ++ label ++ "\">" ++ label ++ "</a>]</span>"
 
 
 renderCode : LatexState -> List LatexExpression -> String
