@@ -49,8 +49,8 @@ macroSetCounter headElement latexState =
         latexState
 
 
-macroSection : LatexInfo -> LatexState -> LatexState
-macroSection headElement latexState =
+updateSectionNumber : LatexInfo -> LatexState -> LatexState
+updateSectionNumber headElement latexState =
     let
         label =
             getCounter "s1" latexState |> (\x -> x + 1) |> toString
@@ -62,8 +62,8 @@ macroSection headElement latexState =
         |> addSection (PT.unpackString headElement.value) label 1
 
 
-macroSubsection : LatexInfo -> LatexState -> LatexState
-macroSubsection headElement latexState =
+updateSubsectionNumber : LatexInfo -> LatexState -> LatexState
+updateSubsectionNumber headElement latexState =
     let
         s1 =
             getCounter "s1" latexState |> toString
@@ -80,8 +80,8 @@ macroSubsection headElement latexState =
         |> addSection (PT.unpackString headElement.value) label 2
 
 
-macroSubsubsection : LatexInfo -> LatexState -> LatexState
-macroSubsubsection headElement latexState =
+updateSubsubsectionNumber : LatexInfo -> LatexState -> LatexState
+updateSubsubsectionNumber headElement latexState =
     let
         s1 =
             getCounter "s1" latexState |> toString
@@ -100,53 +100,26 @@ macroSubsubsection headElement latexState =
         |> addSection (PT.unpackString headElement.value) label 2
 
 
-macroTitle : LatexInfo -> LatexState -> LatexState
-macroTitle headElement latexState =
-    setDictionaryItemForMacro "title" headElement latexState
+setDictionaryItemForMacro : LatexInfo -> LatexState -> LatexState
+setDictionaryItemForMacro latexInfo latexState =
+    let
+        value =
+            PT.unpackString latexInfo.value
+    in
+    setDictionaryItem latexInfo.name value latexState
 
 
-macroAuthor : LatexInfo -> LatexState -> LatexState
-macroAuthor headElement latexState =
-    setDictionaryItemForMacro "author" headElement latexState
+
+-- setDictionaryItemForMacro macroname headElement latexState =
+--     let
+--         value =
+--             PT.unpackString headElement.value
+--     in
+--     setDictionaryItem macroname value latexState
 
 
-macroDate : LatexInfo -> LatexState -> LatexState
-macroDate headElement latexState =
-    setDictionaryItemForMacro "date" headElement latexState
-
-
-macroEmail : LatexInfo -> LatexState -> LatexState
-macroEmail headElement latexState =
-    setDictionaryItemForMacro "email" headElement latexState
-
-
-macroRevision : LatexInfo -> LatexState -> LatexState
-macroRevision headElement latexState =
-    setDictionaryItemForMacro "revision" headElement latexState
-
-
-envTheorem : LatexInfo -> LatexState -> LatexState
-envTheorem headElement latexState =
-    handleTheoremNumbers latexState headElement
-
-
-envProposition : LatexInfo -> LatexState -> LatexState
-envProposition headElement latexState =
-    handleTheoremNumbers latexState headElement
-
-
-envLemma : LatexInfo -> LatexState -> LatexState
-envLemma headElement latexState =
-    handleTheoremNumbers latexState headElement
-
-
-envDefinition : LatexInfo -> LatexState -> LatexState
-envDefinition headElement latexState =
-    handleTheoremNumbers latexState headElement
-
-
-envCorollary : LatexInfo -> LatexState -> LatexState
-envCorollary headElement latexState =
+envProcessor : LatexInfo -> LatexState -> LatexState
+envProcessor headElement latexState =
     handleTheoremNumbers latexState headElement
 
 
@@ -164,23 +137,9 @@ envAlign headElement latexState =
 {- Handlers -}
 
 
-setDictionaryItemForMacro macroname headElement latexState =
-    let
-        value =
-            PT.unpackString headElement.value
-    in
-    setDictionaryItem macroname value latexState
-
-
 handleEquationNumbers : LatexState -> LatexInfo -> LatexState
 handleEquationNumbers latexState info =
     let
-        {- label =
-           info.value
-               |> List.head
-               |> Maybe.withDefault (Macro "NULL" [])
-               |> PT.getFirstMacroArg "label"
-        -}
         data =
             info.value
                 |> List.head
