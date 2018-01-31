@@ -153,7 +153,7 @@ renderEnvironmentDict =
         , ( "macros", \x y -> renderMacros x y )
         , ( "quotation", \x y -> renderQuotation x y )
         , ( "tabular", \x y -> renderTabular x y )
-        , ( "thebibliography", \x y -> renderTheBiblography x y )
+        , ( "thebibliography", \x y -> renderTheBibliography x y )
         , ( "maskforweb", \x y -> renderCommentEnvironment x y )
         , ( "useforweb", \x y -> renderUseForWeb x y )
         , ( "verbatim", \x y -> renderVerbatim x y )
@@ -186,8 +186,12 @@ renderDefaultEnvironment name latexState body =
 
 renderIndentEnvironment : LatexState -> LatexExpression -> String
 renderIndentEnvironment latexState body =
-    -- div [ "style=\"margin-left:2em\"" ] [ (render latexState body) ]
     Html.div [ "style=\"margin-left:2em\"" ] [ render latexState body ]
+
+
+renderTheBibliography : LatexState -> LatexExpression -> String
+renderTheBibliography latexState body =
+    Html.div [ "style=\"white-space: pre-line;\"" ] [ render latexState body ]
 
 
 renderTheoremLikeEnvironment : LatexState -> String -> LatexExpression -> String
@@ -307,22 +311,6 @@ renderVerse latexState body =
 
 renderUseForWeb latexState body =
     "\n$$\n" ++ render latexState body ++ "\n$$\n"
-
-
-renderTheBiblography : LatexState -> LatexExpression -> String
-renderTheBiblography latexState body =
-    "xxx"
-
-
-
--- let
---     bibText =
---         body
---             |> List.map render
---             |> List.map (\par -> "<p>" ++ par ++ "</p>")
---             |> List.foldr (\par acc -> par ++ "\n\n" ++ acc)
--- in
--- Html.div [ "class=\"verse\"" ] [ bibText ]
 
 
 renderTabular latexState body =
