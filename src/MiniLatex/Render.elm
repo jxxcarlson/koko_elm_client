@@ -387,6 +387,7 @@ renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String
 renderMacroDict =
     Dict.fromList
         [ ( "bozo", \x y -> renderBozo x y )
+        , ( "bibitem", \x y -> renderBibItem x y )
         , ( "bigskip", \x y -> renderBigSkip x y )
         , ( "cite", \x y -> renderCite x y )
         , ( "code", \x y -> renderCode x y )
@@ -462,6 +463,11 @@ renderArg k latexState args =
 renderBozo : LatexState -> List LatexExpression -> String
 renderBozo latexState args =
     "bozo{" ++ renderArg 0 latexState args ++ "}{" ++ renderArg 1 latexState args ++ "}"
+
+
+renderBibItem : LatexState -> List LatexExpression -> String
+renderBibItem latexState args =
+    "[" ++ renderArg 0 latexState args ++ "] "
 
 
 renderBigSkip : LatexState -> List LatexExpression -> String
