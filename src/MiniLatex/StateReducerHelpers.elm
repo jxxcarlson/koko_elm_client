@@ -22,11 +22,11 @@ type alias LatexInfo =
     { typ : String, name : String, value : List LatexExpression }
 
 
-macroSetCounter : LatexInfo -> LatexState -> LatexState
-macroSetCounter headElement latexState =
+setSectionCounters : LatexInfo -> LatexState -> LatexState
+setSectionCounters info latexState =
     let
         argList =
-            headElement.value |> List.map PT.latexList2List |> List.map PT.list2LeadingString
+            info.value |> List.map PT.latexList2List |> List.map PT.list2LeadingString
 
         arg1 =
             getAt 0 argList
@@ -50,7 +50,7 @@ macroSetCounter headElement latexState =
 
 
 updateSectionNumber : LatexInfo -> LatexState -> LatexState
-updateSectionNumber headElement latexState =
+updateSectionNumber info latexState =
     let
         label =
             getCounter "s1" latexState |> (\x -> x + 1) |> toString
@@ -59,11 +59,11 @@ updateSectionNumber headElement latexState =
         |> incrementCounter "s1"
         |> updateCounter "s2" 0
         |> updateCounter "s3" 0
-        |> addSection (PT.unpackString headElement.value) label 1
+        |> addSection (PT.unpackString info.value) label 1
 
 
 updateSubsectionNumber : LatexInfo -> LatexState -> LatexState
-updateSubsectionNumber headElement latexState =
+updateSubsectionNumber info latexState =
     let
         s1 =
             getCounter "s1" latexState |> toString
@@ -77,11 +77,11 @@ updateSubsectionNumber headElement latexState =
     latexState
         |> incrementCounter "s2"
         |> updateCounter "s3" 0
-        |> addSection (PT.unpackString headElement.value) label 2
+        |> addSection (PT.unpackString info.value) label 2
 
 
 updateSubsubsectionNumber : LatexInfo -> LatexState -> LatexState
-updateSubsubsectionNumber headElement latexState =
+updateSubsubsectionNumber info latexState =
     let
         s1 =
             getCounter "s1" latexState |> toString
@@ -97,7 +97,7 @@ updateSubsubsectionNumber headElement latexState =
     in
     latexState
         |> incrementCounter "s3"
-        |> addSection (PT.unpackString headElement.value) label 2
+        |> addSection (PT.unpackString info.value) label 2
 
 
 setDictionaryItemForMacro : LatexInfo -> LatexState -> LatexState
@@ -109,36 +109,35 @@ setDictionaryItemForMacro latexInfo latexState =
     setDictionaryItem latexInfo.name value latexState
 
 
+setTheoremNumber : LatexInfo -> LatexState -> LatexState
+setTheoremNumber info latexState =
+    let
+        label =
+            info.value
+                |> List.head
+                |> Maybe.withDefault (Macro "NULL" [])
+                |> PT.getFirstMacroArg "label"
 
--- setDictionaryItemForMacro macroname headElement latexState =
---     let
---         value =
---             PT.unpackString headElement.value
---     in
---     setDictionaryItem macroname value latexState
+        latexState1 =
+            incrementCounter "tno" latexState
+
+        tno =
+            getCounter "tno" latexState1
+
+        s1 =
+            getCounter "s1" latexState1
+
+        latexState2 =
+            if label /= "" then
+                setCrossReference label (toString s1 ++ "." ++ toString tno) latexState1
+            else
+                latexState1
+    in
+    latexState2
 
 
-envProcessor : LatexInfo -> LatexState -> LatexState
-envProcessor headElement latexState =
-    handleTheoremNumbers latexState headElement
-
-
-envEquation : LatexInfo -> LatexState -> LatexState
-envEquation headElement latexState =
-    handleEquationNumbers latexState headElement
-
-
-envAlign : LatexInfo -> LatexState -> LatexState
-envAlign headElement latexState =
-    handleEquationNumbers latexState headElement
-
-
-
-{- Handlers -}
-
-
-handleEquationNumbers : LatexState -> LatexInfo -> LatexState
-handleEquationNumbers latexState info =
+setEquationNumber : LatexInfo -> LatexState -> LatexState
+setEquationNumber info latexState =
     let
         data =
             info.value
@@ -171,35 +170,8 @@ handleEquationNumbers latexState info =
     latexState2
 
 
-handleTheoremNumbers : LatexState -> LatexInfo -> LatexState
-handleTheoremNumbers latexState info =
-    let
-        label =
-            info.value
-                |> List.head
-                |> Maybe.withDefault (Macro "NULL" [])
-                |> PT.getFirstMacroArg "label"
 
-        latexState1 =
-            incrementCounter "tno" latexState
-
-        tno =
-            getCounter "tno" latexState1
-
-        s1 =
-            getCounter "s1" latexState1
-
-        latexState2 =
-            if label /= "" then
-                setCrossReference label (toString s1 ++ "." ++ toString tno) latexState1
-            else
-                latexState1
-    in
-    latexState2
-
-
-
-{- Helpers  I -}
+{- Helpers -}
 
 
 getAt : Int -> List String -> String

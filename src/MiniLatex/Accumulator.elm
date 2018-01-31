@@ -182,7 +182,7 @@ info latexExpression =
 latexStateReducerDict : Dict.Dict ( String, String ) (LatexInfo -> LatexState -> LatexState)
 latexStateReducerDict =
     Dict.fromList
-        [ ( ( "macro", "setcounter" ), \x y -> SRH.macroSetCounter x y )
+        [ ( ( "macro", "setcounter" ), \x y -> SRH.setSectionCounters x y )
         , ( ( "macro", "section" ), \x y -> SRH.updateSectionNumber x y )
         , ( ( "macro", "subsection" ), \x y -> SRH.updateSubsectionNumber x y )
         , ( ( "macro", "subsubsection" ), \x y -> SRH.updateSubsubsectionNumber x y )
@@ -191,13 +191,13 @@ latexStateReducerDict =
         , ( ( "macro", "date" ), \x y -> SRH.setDictionaryItemForMacro x y )
         , ( ( "macro", "email" ), \x y -> SRH.setDictionaryItemForMacro x y )
         , ( ( "macro", "revision" ), \x y -> SRH.setDictionaryItemForMacro x y )
-        , ( ( "env", "theorem" ), \x y -> SRH.envProcessor x y )
-        , ( ( "env", "proposition" ), \x y -> SRH.envProcessor x y )
-        , ( ( "env", "lemma" ), \x y -> SRH.envProcessor x y )
-        , ( ( "env", "definition" ), \x y -> SRH.envProcessor x y )
-        , ( ( "env", "corollary" ), \x y -> SRH.envProcessor x y )
-        , ( ( "env", "equation" ), \x y -> SRH.envEquation x y )
-        , ( ( "env", "align" ), \x y -> SRH.envAlign x y )
+        , ( ( "env", "theorem" ), \x y -> SRH.setTheoremNumber x y )
+        , ( ( "env", "proposition" ), \x y -> SRH.setTheoremNumber x y )
+        , ( ( "env", "lemma" ), \x y -> SRH.setTheoremNumber x y )
+        , ( ( "env", "definition" ), \x y -> SRH.setTheoremNumber x y )
+        , ( ( "env", "corollary" ), \x y -> SRH.setTheoremNumber x y )
+        , ( ( "env", "equation" ), \x y -> SRH.setEquationNumber x y )
+        , ( ( "env", "align" ), \x y -> SRH.setEquationNumber x y )
         ]
 
 
