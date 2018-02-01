@@ -55,7 +55,7 @@ viewUser model user =
         , height (px 30)
         , width (px 500)
         ]
-        (text (Utility.shortString 35 (user.username ++ ": " ++ user.blurb)))
+        (text (Utility.shortString 35 (user.username ++ " (" ++ toString user.id ++ "): " ++ user.blurb)))
 
 
 titleStyle : Model -> User -> Styles
