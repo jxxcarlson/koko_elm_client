@@ -90,6 +90,9 @@ render latexState latexExpression =
         Macro name args ->
             renderMacro latexState name args
 
+        SMacro name args le ->
+            renderSMacro latexState name args le
+
         Item level latexExpression ->
             renderItem latexState level latexExpression
 
@@ -191,7 +194,7 @@ renderIndentEnvironment latexState body =
 
 renderTheBibliography : LatexState -> LatexExpression -> String
 renderTheBibliography latexState body =
-    Html.div [ "style=\"white-space: pre-line;\"" ] [ render latexState body ]
+    Html.div [ "style=\"\"" ] [ Html.h3 "Bibliography", render latexState body ]
 
 
 renderTheoremLikeEnvironment : LatexState -> String -> LatexExpression -> String
@@ -375,7 +378,6 @@ renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String
 renderMacroDict =
     Dict.fromList
         [ ( "bozo", \x y -> renderBozo x y )
-        , ( "bibitem", \x y -> renderBibItem x y )
         , ( "bigskip", \x y -> renderBigSkip x y )
         , ( "cite", \x y -> renderCite x y )
         , ( "code", \x y -> renderCode x y )
@@ -419,6 +421,13 @@ renderMacroDict =
         ]
 
 
+renderSMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> LatexExpression -> String)
+renderSMacroDict =
+    Dict.fromList
+        [ ( "bibitem", \x y z -> renderBibItem x y z )
+        ]
+
+
 macroRenderer : String -> (LatexState -> List LatexExpression -> String)
 macroRenderer name =
     case Dict.get name renderMacroDict of
@@ -444,6 +453,16 @@ renderArg k latexState args =
     render latexState (getElement k args) |> String.trim
 
 
+renderSMacro : LatexState -> String -> List LatexExpression -> LatexExpression -> String
+renderSMacro latexState name args le =
+    case Dict.get name renderSMacroDict of
+        Just f ->
+            f latexState args le
+
+        Nothing ->
+            "\\" ++ name ++ renderArgList emptyLatexState args ++ " " ++ render latexState le
+
+
 
 {- INDIVIDUAL MACRO RENDERERS -}
 
@@ -453,13 +472,13 @@ renderBozo latexState args =
     "bozo{" ++ renderArg 0 latexState args ++ "}{" ++ renderArg 1 latexState args ++ "}"
 
 
-renderBibItem : LatexState -> List LatexExpression -> String
-renderBibItem latexState args =
+renderBibItem : LatexState -> List LatexExpression -> LatexExpression -> String
+renderBibItem latexState args le =
     let
         label =
             renderArg 0 latexState args
     in
-    " <span id=\"bib:" ++ label ++ "\">[" ++ label ++ "]</span> "
+    " <p id=\"bib:" ++ label ++ "\">[" ++ label ++ "] " ++ render latexState le ++ "</p>\n"
 
 
 renderBigSkip : LatexState -> List LatexExpression -> String

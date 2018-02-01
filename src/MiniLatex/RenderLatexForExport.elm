@@ -32,6 +32,9 @@ render latexExpression =
         Macro name args ->
             renderMacro name args
 
+        SMacro name args le ->
+            renderSMacro name args le
+
         Item level latexExpression ->
             renderItem level latexExpression
 
@@ -120,6 +123,11 @@ renderMacroDict =
 renderMacro : String -> List LatexExpression -> String
 renderMacro name args =
     macroRenderer name args
+
+
+renderSMacro : String -> List LatexExpression -> LatexExpression -> String
+renderSMacro name args le =
+    " \\" ++ name ++ renderArgList args ++ " " ++ render le ++ "\n\n"
 
 
 macroRenderer : String -> (List LatexExpression -> String)
