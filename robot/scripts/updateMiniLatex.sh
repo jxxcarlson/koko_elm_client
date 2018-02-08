@@ -55,7 +55,7 @@ cp src/MiniLatex/Source.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Utility.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/StateReducerHelpers.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/ParserHelpers.elm ../MiniLatexTester/src/MiniLatex/
-cp src/MiniLatex/ErrorMessages.elm ../MiniLatexTester/src/MiniLatex/
+cp src/MiniLatex/ErrorMessages  x.elm ../MiniLatexTester/src/MiniLatex/
  
 
 
