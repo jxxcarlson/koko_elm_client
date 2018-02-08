@@ -35,6 +35,7 @@ type LatexExpression
     | Macro String (List LatexExpression)
     | Environment String LatexExpression
     | LatexList (List LatexExpression)
+    | LXError String String
 
 
 smacro : Parser LatexExpression
@@ -83,7 +84,7 @@ parse text =
             list
 
         Err error ->
-            [ LXString (errorMessage1 error) ]
+            [ LXError (toString error.source) (explanation error) ]
 
         _ ->
             [ LXString "yada!" ]
@@ -91,8 +92,53 @@ parse text =
 
 errorMessage1 error =
     "<div style=\"color: red\">ERROR: "
-        ++ error.source
+        ++ toString error.source
+        ++ "</div>\n"
+        ++ "<div style=\"color: blue\">"
+        ++ explanation error
         ++ "</div>"
+
+
+errorDict : Dict.Dict String String
+errorDict =
+    Dict.fromList
+        [ ( "ExpectingSymbol \"\\end{enumerate}\"", "Check \\begin--\\end par, then check \\items" )
+        , ( "ExpectingSymbol \"\\end{itemize}\"", "Check \\begin--\\end par, then check \\items" )
+        , ( "ExpectingSymbol \"}\"", "Looks like you didn't close a macro argument." )
+        ]
+
+
+errorDict2 : Dict.Dict String String
+errorDict2 =
+    Dict.fromList
+        [ ( "ExpectingClosing", "I believe you didn't close your begin-end pair properly." )
+        ]
+
+
+explanation error =
+    case Dict.get (toString error.problem) errorDict of
+        Just explanationText ->
+            explanationText
+
+        _ ->
+            explanation2 error
+
+
+explanation2 error =
+    let
+        errorWords =
+            Debug.log "errorWords" (toString error.problem |> String.words)
+
+        headError =
+            Debug.log "headError"
+                (errorWords |> List.head |> Maybe.withDefault "XXXX")
+    in
+    case Dict.get headError errorDict2 of
+        Just explanationText ->
+            explanationText
+
+        _ ->
+            "Problem: " ++ toString error.problem
 
 
 errorMessage2 error =
