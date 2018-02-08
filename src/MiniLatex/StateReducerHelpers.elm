@@ -14,6 +14,7 @@ import MiniLatex.LatexState
         , updateCounter
         )
 import MiniLatex.Parser as Parser exposing (LatexExpression(..))
+import MiniLatex.ParserHelpers as ParserHelpers
 import MiniLatex.ParserTools as PT
 import Parser as P
 
@@ -198,7 +199,7 @@ getLabel str =
         maybeMacro =
             str
                 |> String.trim
-                |> P.run (Parser.macro Parser.ws)
+                |> P.run (Parser.macro ParserHelpers.ws)
     in
     case maybeMacro of
         Ok macro ->
