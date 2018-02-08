@@ -83,19 +83,16 @@ parse text =
             list
 
         Err error ->
-            [ LXString (errorMessage2 error) ]
+            [ LXString (errorMessage1 error) ]
 
         _ ->
             [ LXString "yada!" ]
 
 
-errorMessage error =
-    "<strong>Error:</strong> "
-        ++ "<pre class=\"errormessage\">"
-        ++ toString error.problem
-        ++ " </pre><strong>in </strong> </span><pre class=\"errormessage\">"
+errorMessage1 error =
+    "<div style=\"color: red\">ERROR: "
         ++ error.source
-        ++ "</pre>"
+        ++ "</div>"
 
 
 errorMessage2 error =
