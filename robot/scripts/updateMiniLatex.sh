@@ -28,6 +28,7 @@ cp src/MiniLatex/Utility.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/Source.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/StateReducerHelpers.elm ../MiniLatex/src/MiniLatex/
 cp src/MiniLatex/ParserHelpers.elm ../MiniLatex/src/MiniLatex/
+cp src/MiniLatex/ErrorMessages.elm ../MiniLatex/src/MiniLatex/
 
 
 
@@ -54,6 +55,7 @@ cp src/MiniLatex/Source.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/Utility.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/StateReducerHelpers.elm ../MiniLatexTester/src/MiniLatex/
 cp src/MiniLatex/ParserHelpers.elm ../MiniLatexTester/src/MiniLatex/
+cp src/MiniLatex/ErrorMessages.elm ../MiniLatexTester/src/MiniLatex/
  
 
 
