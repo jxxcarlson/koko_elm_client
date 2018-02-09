@@ -1,13 +1,14 @@
-module MiniLatex.Parser
-    exposing
-        ( LatexExpression(..)
-        , defaultLatexList
-        , endWord
-        , envName
-        , latexList
-        , macro
-        , parse
-        )
+module MiniLatex.Parser exposing (..)
+
+-- exposing
+--     ( LatexExpression(..)
+--     , defaultLatexList
+--     , endWord
+--     , envName
+--     , latexList
+--     , macro
+--     , parse
+--     )
 
 import Dict
 import MiniLatex.ErrorMessages exposing (explanation)
@@ -32,7 +33,7 @@ type LatexExpression
     | InlineMath String
     | DisplayMath String
     | SMacro String (List LatexExpression) LatexExpression
-    | Macro String (List LatexExpression)
+    | Macro String (List LatexExpression) (List LatexExpression)
     | Environment String LatexExpression
     | LatexList (List LatexExpression)
     | LXError String String
@@ -62,7 +63,7 @@ defaultLatexList =
 
 defaultLatexExpression : List LatexExpression
 defaultLatexExpression =
-    [ Macro "NULL" [] ]
+    [ Macro "NULL" [] [] ]
 
 
 
@@ -108,13 +109,38 @@ texComment =
 -}
 
 
+type alias Macro2 =
+    String (List LatexExpression) (List LatexExpression)
+
+
 macro : Parser () -> Parser LatexExpression
 macro wsParser =
     inContext "macro" <|
-        succeed Macro
+        (succeed Macro
             |= macroName
+            |= repeat zeroOrMore optionalArg
             |= repeat zeroOrMore arg
+            -- |= andThen (\x -> repeat zeroOrMore arg) (repeat zeroOrMore optionalArg)
             |. wsParser
+        )
+
+
+joinArgs : Parser (List LatexExpression) -> Parser (List LatexExpression) -> Parser (List LatexExpression)
+joinArgs x y =
+    map2 (++) x y
+
+
+{-| Use to parse arguments for macros
+-}
+optionalArg : Parser LatexExpression
+optionalArg =
+    inContext "optionalArg" <|
+        (succeed identity
+            |. symbol "["
+            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, lazy (\_ -> macro ws) ])
+            |. symbol "]"
+            |> map LatexList
+        )
 
 
 {-| Use to parse arguments for macros
@@ -123,7 +149,7 @@ arg : Parser LatexExpression
 arg =
     inContext "arg" <|
         (succeed identity
-            |. keyword "{"
+            |. symbol "{"
             |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, lazy (\_ -> macro ws) ])
             |. symbol "}"
             |> map LatexList
