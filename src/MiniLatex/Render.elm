@@ -87,8 +87,8 @@ render latexState latexExpression =
         Comment str ->
             renderComment str
 
-        Macro name args ->
-            renderMacro latexState name args
+        Macro name optArgs args ->
+            renderMacro latexState name optArgs args
 
         SMacro name args le ->
             renderSMacro latexState name args le
@@ -149,6 +149,11 @@ renderLatexList latexState args =
 renderArgList : LatexState -> List LatexExpression -> String
 renderArgList latexState args =
     args |> List.map (render latexState) |> List.map (\x -> "{" ++ x ++ "}") |> String.join ""
+
+
+renderOptArgList : LatexState -> List LatexExpression -> String
+renderOptArgList latexState args =
+    args |> List.map (render latexState) |> List.map (\x -> "[" ++ x ++ "]") |> String.join ""
 
 
 itemClass : Int -> String
@@ -403,50 +408,50 @@ renderListing latexState body =
 {- MACROS: DISPATCHERS AND HELPERS -}
 
 
-renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> String)
+renderMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> List LatexExpression -> String)
 renderMacroDict =
     Dict.fromList
-        [ ( "bozo", \x y -> renderBozo x y )
-        , ( "bigskip", \x y -> renderBigSkip x y )
-        , ( "cite", \x y -> renderCite x y )
-        , ( "code", \x y -> renderCode x y )
-        , ( "comment", \x y -> renderInlineComment x y )
-        , ( "ellie", \x y -> renderEllie x y )
-        , ( "emph", \x y -> renderItalic x y )
-        , ( "eqref", \x y -> renderEqRef x y )
-        , ( "href", \x y -> renderHRef x y )
-        , ( "iframe", \x y -> renderIFrame x y )
-        , ( "image", \x y -> renderImage x y )
-        , ( "imageref", \x y -> renderImageRef x y )
-        , ( "index", \x y -> "" )
-        , ( "italic", \x y -> renderItalic x y )
-        , ( "label", \x y -> "" )
-        , ( "maketitle", \x y -> "" )
-        , ( "tableofcontents", \x y -> renderTableOfContents x y )
-        , ( "maketitle", \x y -> renderTitle x y )
-        , ( "mdash", \x y -> "&mdash;" )
-        , ( "ndash", \x y -> "&ndash;" )
-        , ( "newcommand", \x y -> renderNewCommand x y )
-        , ( "ref", \x y -> renderRef x y )
-        , ( "section", \x y -> renderSection x y )
-        , ( "section*", \x y -> renderSectionStar x y )
-        , ( "setcounter", \x y -> "" )
-        , ( "medskip", \x y -> renderMedSkip x y )
-        , ( "smallskip", \x y -> renderSmallSkip x y )
-        , ( "strong", \x y -> renderStrong x y )
-        , ( "subheading", \x y -> renderSubheading x y )
-        , ( "subsection", \x y -> renderSubsection x y )
-        , ( "subsection*", \x y -> renderSubsectionStar x y )
-        , ( "subsubsection", \x y -> renderSubSubsection x y )
-        , ( "subsubsection*", \x y -> renderSubSubsectionStar x y )
-        , ( "title", \x y -> "" )
-        , ( "author", \x y -> "" )
-        , ( "date", \x y -> "" )
-        , ( "revision", \x y -> "" )
-        , ( "email", \x y -> "" )
-        , ( "term", \x y -> renderTerm x y )
-        , ( "xlink", \x y -> renderXLink x y )
-        , ( "xlinkPublic", \x y -> renderXLinkPublic x y )
+        [ ( "bozo", \x y z -> renderBozo x z )
+        , ( "bigskip", \x y z -> renderBigSkip x z )
+        , ( "cite", \x y z -> renderCite x z )
+        , ( "code", \x y z -> renderCode x z )
+        , ( "comment", \x y z -> renderInlineComment x z )
+        , ( "ellie", \x y z -> renderEllie x z )
+        , ( "emph", \x y z -> renderItalic x z )
+        , ( "eqref", \x y z -> renderEqRef x z )
+        , ( "href", \x y z -> renderHRef x z )
+        , ( "iframe", \x y z -> renderIFrame x z )
+        , ( "image", \x y z -> renderImage x z )
+        , ( "imageref", \x y z -> renderImageRef x z )
+        , ( "index", \x y z -> "" )
+        , ( "italic", \x y z -> renderItalic x z )
+        , ( "label", \x y z -> "" )
+        , ( "maketitle", \x y z -> "" )
+        , ( "tableofcontents", \x y z -> renderTableOfContents x z )
+        , ( "maketitle", \x y z -> renderTitle x z )
+        , ( "mdash", \x y z -> "&mdash;" )
+        , ( "ndash", \x y z -> "&ndash;" )
+        , ( "newcommand", \x y z -> renderNewCommand x z )
+        , ( "ref", \x y z -> renderRef x z )
+        , ( "section", \x y z -> renderSection x z )
+        , ( "section*", \x y z -> renderSectionStar x z )
+        , ( "setcounter", \x y z -> "" )
+        , ( "medskip", \x y z -> renderMedSkip x z )
+        , ( "smallskip", \x y z -> renderSmallSkip x z )
+        , ( "strong", \x y z -> renderStrong x z )
+        , ( "subheading", \x y z -> renderSubheading x z )
+        , ( "subsection", \x y z -> renderSubsection x z )
+        , ( "subsection*", \x y z -> renderSubsectionStar x z )
+        , ( "subsubsection", \x y z -> renderSubSubsection x z )
+        , ( "subsubsection*", \x y z -> renderSubSubsectionStar x z )
+        , ( "title", \x y z -> "" )
+        , ( "author", \x y z -> "" )
+        , ( "date", \x y z -> "" )
+        , ( "revision", \x y z -> "" )
+        , ( "email", \x y z -> "" )
+        , ( "term", \x y z -> renderTerm x z )
+        , ( "xlink", \x y z -> renderXLink x z )
+        , ( "xlinkPublic", \x y z -> renderXLinkPublic x z )
         ]
 
 
@@ -457,7 +462,7 @@ renderSMacroDict =
         ]
 
 
-macroRenderer : String -> (LatexState -> List LatexExpression -> String)
+macroRenderer : String -> (LatexState -> List LatexExpression -> List LatexExpression -> String)
 macroRenderer name =
     case Dict.get name renderMacroDict of
         Just f ->
@@ -467,14 +472,14 @@ macroRenderer name =
             reproduceMacro name
 
 
-reproduceMacro : String -> LatexState -> List LatexExpression -> String
-reproduceMacro name latexState args =
-    "<span style=\"color: red;\">\\" ++ name ++ renderArgList emptyLatexState args ++ "</span>"
+reproduceMacro : String -> LatexState -> List LatexExpression -> List LatexExpression -> String
+reproduceMacro name latexState optArgs args =
+    "<span style=\"color: red;\">\\" ++ name ++ renderOptArgList emptyLatexState optArgs ++ renderArgList emptyLatexState args ++ "</span>"
 
 
-renderMacro : LatexState -> String -> List LatexExpression -> String
-renderMacro latexState name args =
-    macroRenderer name latexState args
+renderMacro : LatexState -> String -> List LatexExpression -> List LatexExpression -> String
+renderMacro latexState name optArgs args =
+    macroRenderer name latexState optArgs args
 
 
 renderArg : Int -> LatexState -> List LatexExpression -> String

@@ -33,8 +33,8 @@ hasMath expr =
         DisplayMath str ->
             True
 
-        Macro str expr ->
-            expr |> List.foldr (\x acc -> hasMath x || acc) False
+        Macro str optArgs args ->
+            args |> List.foldr (\x acc -> hasMath x || acc) False
 
         SMacro str expr str2 ->
             expr |> List.foldr (\x acc -> hasMath x || acc) False
