@@ -10,6 +10,7 @@ module MiniLatex.Render
 import Dict
 import List.Extra
 import MiniLatex.Configuration as Configuration
+import MiniLatex.ErrorMessages as ErrorMessages
 import MiniLatex.Html as Html
 import MiniLatex.Image as Image exposing (..)
 import MiniLatex.JoinStrings as JoinStrings
@@ -89,8 +90,8 @@ render latexState latexExpression =
         Macro name optArgs args ->
             renderMacro latexState name optArgs args
 
-        SMacro name args le ->
-            renderSMacro latexState name args le
+        SMacro name optArgs args le ->
+            renderSMacro latexState name optArgs args le
 
         Item level latexExpression ->
             renderItem latexState level latexExpression
@@ -110,12 +111,19 @@ render latexState latexExpression =
         LXString str ->
             str
 
-        LXError source explanation ->
-            renderError source explanation
+        LXError error ->
+            renderError error
 
 
-renderError : String -> String -> String
-renderError source explanation =
+renderError : Parser.Error -> String
+renderError error =
+    let
+        source =
+            error.source
+
+        explanation =
+            ErrorMessages.explanation error
+    in
     "<div style=\"color: red\">ERROR: "
         ++ (source |> normalizeError)
         ++ "</div>\n"
@@ -486,8 +494,8 @@ renderArg k latexState args =
     render latexState (getElement k args) |> String.trim
 
 
-renderSMacro : LatexState -> String -> List LatexExpression -> LatexExpression -> String
-renderSMacro latexState name args le =
+renderSMacro : LatexState -> String -> List LatexExpression -> List LatexExpression -> LatexExpression -> String
+renderSMacro latexState name optArgs args le =
     case Dict.get name renderSMacroDict of
         Just f ->
             f latexState args le

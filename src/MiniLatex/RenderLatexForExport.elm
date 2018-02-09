@@ -5,11 +5,14 @@ module MiniLatex.RenderLatexForExport
 
 import Dict
 import List.Extra
+import MiniLatex.ErrorMessages as ErrorMessages
 import MiniLatex.Image as Image
 import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 import MiniLatex.Utility as Utility
+import Parser
+import String.Extra
 
 
 {-| parse a string and render it back into Latex
@@ -32,8 +35,8 @@ render latexExpression =
         Macro name optArgs args ->
             renderMacro name optArgs args
 
-        SMacro name args le ->
-            renderSMacro name args le
+        SMacro name optArgs args le ->
+            renderSMacro name optArgs args le
 
         Item level latexExpression ->
             renderItem level latexExpression
@@ -53,15 +56,41 @@ render latexExpression =
         LXString str ->
             str
 
-        LXError source explanation ->
-            renderError source explanation
+        LXError error ->
+            renderError error
 
 
-renderError source explanation =
-    "ERROR: \n"
-        ++ source
-        ++ "\nExplanation: "
+renderError : Parser.Error -> String
+renderError error =
+    let
+        source =
+            error.source
+
+        explanation =
+            ErrorMessages.explanation error
+    in
+    "<div style=\"color: red\">ERROR: "
+        ++ (source |> normalizeError)
+        ++ "</div>\n"
+        ++ "<div style=\"color: blue\">"
         ++ explanation
+        ++ "</div>"
+
+
+normalizeError : String -> String
+normalizeError str =
+    str
+        |> reduceBackslashes
+        |> String.Extra.replace "\"" ""
+        |> String.Extra.softBreak 50
+        |> List.take 5
+        |> String.join " "
+        |> (\x -> x ++ " ...")
+
+
+reduceBackslashes : String -> String
+reduceBackslashes str =
+    str |> String.Extra.replace "\\\\" "\\" |> String.Extra.replace "\\n" "\n"
 
 
 renderLatexList : List LatexExpression -> String
@@ -140,9 +169,9 @@ renderMacro name optArgs args =
     macroRenderer name optArgs args
 
 
-renderSMacro : String -> List LatexExpression -> LatexExpression -> String
-renderSMacro name args le =
-    " \\" ++ name ++ renderArgList args ++ " " ++ render le ++ "\n\n"
+renderSMacro : String -> List LatexExpression -> List LatexExpression -> LatexExpression -> String
+renderSMacro name optArgs args le =
+    " \\" ++ name ++ renderOptArgList optArgs ++ renderArgList args ++ " " ++ render le ++ "\n\n"
 
 
 macroRenderer : String -> (List LatexExpression -> List LatexExpression -> String)

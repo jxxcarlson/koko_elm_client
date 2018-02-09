@@ -11,7 +11,6 @@ module MiniLatex.Parser exposing (..)
 --     )
 
 import Dict
-import MiniLatex.ErrorMessages exposing (explanation)
 import MiniLatex.ParserHelpers exposing (..)
 import Parser exposing (..)
 
@@ -32,11 +31,11 @@ type LatexExpression
     | Item Int LatexExpression
     | InlineMath String
     | DisplayMath String
-    | SMacro String (List LatexExpression) LatexExpression
-    | Macro String (List LatexExpression) (List LatexExpression)
-    | Environment String (List LatexExpression) LatexExpression
+    | SMacro String (List LatexExpression) (List LatexExpression) LatexExpression -- SMacro name optArgs args body
+    | Macro String (List LatexExpression) (List LatexExpression) -- Macro name optArgs args
+    | Environment String (List LatexExpression) LatexExpression -- Environment name optArgs body
     | LatexList (List LatexExpression)
-    | LXError String String
+    | LXError Error
 
 
 parse : String -> List LatexExpression
@@ -50,7 +49,7 @@ parse text =
             list
 
         Err error ->
-            [ LXError (toString error.source) (explanation error) ]
+            [ LXError error ]
 
         _ ->
             [ LXString "yada!" ]
@@ -92,6 +91,16 @@ specialWords =
         )
 
 
+macroArgWords : Parser LatexExpression
+macroArgWords =
+    inContext "specialWords" <|
+        (succeed identity
+            |= repeat oneOrMore macroArgWord
+            |> map (String.join " ")
+            |> map LXString
+        )
+
+
 texComment : Parser LatexExpression
 texComment =
     inContext "texComment" <|
@@ -120,7 +129,6 @@ macro wsParser =
             |= macroName
             |= repeat zeroOrMore optionalArg
             |= repeat zeroOrMore arg
-            -- |= andThen (\x -> repeat zeroOrMore arg) (repeat zeroOrMore optionalArg)
             |. wsParser
         )
 
@@ -137,7 +145,7 @@ optionalArg =
     inContext "optionalArg" <|
         (succeed identity
             |. symbol "["
-            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, lazy (\_ -> macro ws) ])
+            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces ])
             |. symbol "]"
             |> map LatexList
         )
@@ -150,7 +158,7 @@ arg =
     inContext "arg" <|
         (succeed identity
             |. symbol "{"
-            |= repeat zeroOrMore (oneOf [ specialWords, inlineMath spaces, lazy (\_ -> macro ws) ])
+            |= repeat zeroOrMore (oneOf [ macroArgWords, inlineMath spaces, lazy (\_ -> macro ws) ])
             |. symbol "}"
             |> map LatexList
         )
@@ -179,6 +187,7 @@ smacro : Parser LatexExpression
 smacro =
     succeed SMacro
         |= smacroName
+        |= repeat zeroOrMore optionalArg
         |= repeat zeroOrMore arg
         |= smacroBody
 
@@ -408,13 +417,13 @@ item =
 tabularEnvironmentBody : String -> String -> Parser LatexExpression
 tabularEnvironmentBody endWord envType =
     inContext "tabularEnvironmentBody" <|
-        (succeed identity
+        (succeed (Environment envType)
             |. ws
+            |= repeat zeroOrMore arg
             |= tableBody
             |. ws
             |. symbol endWord
             |. ws
-            |> map (Environment envType [])
         )
 
 
@@ -422,7 +431,7 @@ tableBody : Parser LatexExpression
 tableBody =
     inContext "tableBody" <|
         (succeed identity
-            |. repeat zeroOrMore arg
+            --|. repeat zeroOrMore arg
             |. ws
             |= repeat oneOrMore tableRow
             |> map LatexList
