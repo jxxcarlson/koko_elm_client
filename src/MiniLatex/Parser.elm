@@ -34,7 +34,7 @@ type LatexExpression
     | DisplayMath String
     | SMacro String (List LatexExpression) LatexExpression
     | Macro String (List LatexExpression) (List LatexExpression)
-    | Environment String LatexExpression
+    | Environment String (List LatexExpression) LatexExpression
     | LatexList (List LatexExpression)
     | LXError String String
 
@@ -349,7 +349,7 @@ standardEnvironmentBody endWord envType =
             |. symbol endWord
             |. ws
             |> map LatexList
-            |> map (Environment envType)
+            |> map (Environment envType [])
         )
 
 
@@ -365,7 +365,7 @@ passThroughBody endWord envType =
             |= parseUntil endWord
             |. ws
             |> map LXString
-            |> map (Environment envType)
+            |> map (Environment envType [])
         )
 
 
@@ -383,7 +383,7 @@ itemEnvironmentBody endWord envType =
             |. symbol endWord
             |. ws
             |> map LatexList
-            |> map (Environment envType)
+            |> map (Environment envType [])
         )
 
 
@@ -414,7 +414,7 @@ tabularEnvironmentBody endWord envType =
             |. ws
             |. symbol endWord
             |. ws
-            |> map (Environment envType)
+            |> map (Environment envType [])
         )
 
 

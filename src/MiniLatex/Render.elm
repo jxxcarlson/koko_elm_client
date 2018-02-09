@@ -13,7 +13,6 @@ import MiniLatex.Configuration as Configuration
 import MiniLatex.Html as Html
 import MiniLatex.Image as Image exposing (..)
 import MiniLatex.JoinStrings as JoinStrings
-import MiniLatex.KeyValueUtilities as KeyValueUtilities
 import MiniLatex.LatexState
     exposing
         ( LatexState
@@ -102,8 +101,8 @@ render latexState latexExpression =
         DisplayMath str ->
             "$$" ++ str ++ "$$"
 
-        Environment name args ->
-            renderEnvironment latexState name args
+        Environment name args body ->
+            renderEnvironment latexState name args body
 
         LatexList args ->
             renderLatexList latexState args
@@ -175,30 +174,30 @@ renderComment str =
 {- ENVIROMENTS -}
 
 
-renderEnvironmentDict : Dict.Dict String (LatexState -> LatexExpression -> String)
+renderEnvironmentDict : Dict.Dict String (LatexState -> List LatexExpression -> LatexExpression -> String)
 renderEnvironmentDict =
     Dict.fromList
-        [ ( "align", \x y -> renderAlignEnvironment x y )
-        , ( "center", \x y -> renderCenterEnvironment x y )
-        , ( "comment", \x y -> renderCommentEnvironment x y )
-        , ( "indent", \x y -> renderIndentEnvironment x y )
-        , ( "enumerate", \x y -> renderEnumerate x y )
-        , ( "eqnarray", \x y -> renderEqnArray x y )
-        , ( "equation", \x y -> renderEquationEnvironment x y )
-        , ( "itemize", \x y -> renderItemize x y )
-        , ( "listing", \x y -> renderListing x y )
-        , ( "macros", \x y -> renderMacros x y )
-        , ( "quotation", \x y -> renderQuotation x y )
-        , ( "tabular", \x y -> renderTabular x y )
-        , ( "thebibliography", \x y -> renderTheBibliography x y )
-        , ( "maskforweb", \x y -> renderCommentEnvironment x y )
-        , ( "useforweb", \x y -> renderUseForWeb x y )
-        , ( "verbatim", \x y -> renderVerbatim x y )
-        , ( "verse", \x y -> renderVerse x y )
+        [ ( "align", \x a y -> renderAlignEnvironment x y )
+        , ( "center", \x a y -> renderCenterEnvironment x y )
+        , ( "comment", \x a y -> renderCommentEnvironment x y )
+        , ( "indent", \x a y -> renderIndentEnvironment x y )
+        , ( "enumerate", \x a y -> renderEnumerate x y )
+        , ( "eqnarray", \x a y -> renderEqnArray x y )
+        , ( "equation", \x a y -> renderEquationEnvironment x y )
+        , ( "itemize", \x a y -> renderItemize x y )
+        , ( "listing", \x a y -> renderListing x y )
+        , ( "macros", \x a y -> renderMacros x y )
+        , ( "quotation", \x a y -> renderQuotation x y )
+        , ( "tabular", \x a y -> renderTabular x y )
+        , ( "thebibliography", \x a y -> renderTheBibliography x y )
+        , ( "maskforweb", \x a y -> renderCommentEnvironment x y )
+        , ( "useforweb", \x a y -> renderUseForWeb x y )
+        , ( "verbatim", \x a y -> renderVerbatim x y )
+        , ( "verse", \x a y -> renderVerse x y )
         ]
 
 
-environmentRenderer : String -> (LatexState -> LatexExpression -> String)
+environmentRenderer : String -> (LatexState -> List LatexExpression -> LatexExpression -> String)
 environmentRenderer name =
     case Dict.get name renderEnvironmentDict of
         Just f ->
@@ -208,17 +207,17 @@ environmentRenderer name =
             renderDefaultEnvironment name
 
 
-renderEnvironment : LatexState -> String -> LatexExpression -> String
-renderEnvironment latexState name body =
-    environmentRenderer name latexState body
+renderEnvironment : LatexState -> String -> List LatexExpression -> LatexExpression -> String
+renderEnvironment latexState name args body =
+    environmentRenderer name latexState args body
 
 
-renderDefaultEnvironment : String -> LatexState -> LatexExpression -> String
-renderDefaultEnvironment name latexState body =
+renderDefaultEnvironment : String -> LatexState -> List LatexExpression -> LatexExpression -> String
+renderDefaultEnvironment name latexState args body =
     if List.member name [ "theorem", "proposition", "corollary", "lemma", "definition" ] then
-        renderTheoremLikeEnvironment latexState name body
+        renderTheoremLikeEnvironment latexState name args body
     else
-        renderDefaultEnvironment2 latexState name body
+        renderDefaultEnvironment2 latexState name args body
 
 
 renderIndentEnvironment : LatexState -> LatexExpression -> String
@@ -231,8 +230,8 @@ renderTheBibliography latexState body =
     Html.div [ "style=\"\"" ] [ render latexState body ]
 
 
-renderTheoremLikeEnvironment : LatexState -> String -> LatexExpression -> String
-renderTheoremLikeEnvironment latexState name body =
+renderTheoremLikeEnvironment : LatexState -> String -> List LatexExpression -> LatexExpression -> String
+renderTheoremLikeEnvironment latexState name args body =
     let
         r =
             render latexState body
@@ -255,8 +254,8 @@ renderTheoremLikeEnvironment latexState name body =
     "\n<div class=\"environment\">\n<strong>" ++ String.Extra.toSentenceCase name ++ tnoString ++ "</strong>\n<div class=\"italic\">\n" ++ r ++ "\n</div>\n</div>\n"
 
 
-renderDefaultEnvironment2 : LatexState -> String -> LatexExpression -> String
-renderDefaultEnvironment2 latexState name body =
+renderDefaultEnvironment2 : LatexState -> String -> List LatexExpression -> LatexExpression -> String
+renderDefaultEnvironment2 latexState name args body =
     let
         r =
             render latexState body

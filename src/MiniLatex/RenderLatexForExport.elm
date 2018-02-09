@@ -44,8 +44,8 @@ render latexExpression =
         DisplayMath str ->
             "$$" ++ str ++ "$$"
 
-        Environment name args ->
-            renderEnvironment name args
+        Environment name args body ->
+            renderEnvironment name args body
 
         LatexList args ->
             renderLatexList args
@@ -89,23 +89,23 @@ renderComment str =
     "% " ++ str ++ "\n"
 
 
-renderEnvironment : String -> LatexExpression -> String
-renderEnvironment name body =
+renderEnvironment : String -> List LatexExpression -> LatexExpression -> String
+renderEnvironment name args body =
     case Dict.get name renderEnvironmentDict of
         Just f ->
             f body
 
         Nothing ->
-            renderDefaultEnvironment name body
+            renderDefaultEnvironment name args body
 
 
-renderDefaultEnvironment : String -> LatexExpression -> String
-renderDefaultEnvironment name body =
+renderDefaultEnvironment : String -> List LatexExpression -> LatexExpression -> String
+renderDefaultEnvironment name args body =
     let
         slimBody =
             String.trim <| render body
     in
-    "\\begin{" ++ name ++ "}\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n"
+    "\\begin{" ++ name ++ "}" ++ renderArgList args ++ "\n" ++ slimBody ++ "\n\\end{" ++ name ++ "}\n"
 
 
 renderEnvironmentDict : Dict.Dict String (LatexExpression -> String)

@@ -168,7 +168,7 @@ info latexExpression =
         Macro name optArgs args ->
             { typ = "macro", name = name, value = args }
 
-        Environment name body ->
+        Environment name args body ->
             { typ = "env", name = name, value = [ body ] }
 
         _ ->
