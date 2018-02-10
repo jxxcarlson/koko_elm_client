@@ -114,12 +114,15 @@ setBibItemXRef : LatexInfo -> LatexState -> LatexState
 setBibItemXRef latexInfo latexState =
     let
         label =
-            "bibitem:" ++ PT.unpackString latexInfo.value
+            PT.unpackString latexInfo.value
 
         value =
-            PT.unpackString latexInfo.options
+            if latexInfo.options == [] then
+                label
+            else
+                PT.unpackString latexInfo.options
     in
-    setDictionaryItem label value latexState
+    setDictionaryItem ("bibitem:" ++ label) value latexState
 
 
 setTheoremNumber : LatexInfo -> LatexState -> LatexState
