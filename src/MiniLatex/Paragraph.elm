@@ -9,11 +9,13 @@ type ParserState
     = Start
     | InParagraph
     | InBlock String
+    | IgnoreLine
     | Error
 
 
 type LineType
     = Blank
+    | Ignore
     | Text
     | BeginBlock String
     | EndBlock String
@@ -59,8 +61,10 @@ getEndArg line =
 
 lineType : String -> LineType
 lineType line =
-    if line == "" || line == "\\begin{thebibliography}" || line == "\\end{thebibliography}" then
+    if line == "" then
         Blank
+    else if line == "\\begin{thebibliography}" || line == "\\end{thebibliography}" then
+        Ignore
     else if String.startsWith "\\begin" line then
         BeginBlock (getBeginArg line)
     else if String.startsWith "\\end" line then
@@ -82,6 +86,18 @@ nextState line parserState =
             InParagraph
 
         ( Start, BeginBlock arg ) ->
+            InBlock arg
+
+        ( Start, Ignore ) ->
+            IgnoreLine
+
+        ( IgnoreLine, Blank ) ->
+            Start
+
+        ( IgnoreLine, Text ) ->
+            InParagraph
+
+        ( IgnoreLine, BeginBlock arg ) ->
             InBlock arg
 
         ( InBlock arg, Blank ) ->
@@ -166,6 +182,11 @@ updateParserRecord line parserRecord =
             { parserRecord
                 | currentParagraph = joinLines parserRecord.currentParagraph (fixLine line)
                 , state = state2
+            }
+
+        IgnoreLine ->
+            { parserRecord
+                | state = state2
             }
 
         Error ->

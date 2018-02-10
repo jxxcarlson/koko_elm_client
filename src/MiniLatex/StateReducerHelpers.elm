@@ -118,9 +118,6 @@ setBibItemXRef latexInfo latexState =
 
         value =
             PT.unpackString latexInfo.options
-
-        _ =
-            Debug.log "setBibItemXRef" [ label, value ]
     in
     setDictionaryItem label value latexState
 
