@@ -190,7 +190,7 @@ logicalParagraphify text =
         lastState =
             logicalParagraphParse text
     in
-    lastState.paragraphList ++ [ lastState.currentParagraph ] |> List.filter (\x -> x /= "") |> List.map (\paragraph -> paragraph ++ "\n\n    ")
+    lastState.paragraphList ++ [ lastState.currentParagraph ] |> List.filter (\x -> x /= "") |> List.map (\paragraph -> paragraph ++ "\n\n\n")
 
 
 paragraphify : String -> List String

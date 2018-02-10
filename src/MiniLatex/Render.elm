@@ -112,40 +112,7 @@ render latexState latexExpression =
             str
 
         LXError error ->
-            renderError error
-
-
-renderError : Parser.Error -> String
-renderError error =
-    let
-        source =
-            error.source
-
-        explanation =
-            ErrorMessages.explanation error
-    in
-    "<div style=\"color: red\">ERROR: "
-        ++ (source |> normalizeError)
-        ++ "</div>\n"
-        ++ "<div style=\"color: blue\">"
-        ++ explanation
-        ++ "</div>"
-
-
-reduceBackslashes : String -> String
-reduceBackslashes str =
-    str |> String.Extra.replace "\\\\" "\\" |> String.Extra.replace "\\n" "\n"
-
-
-normalizeError : String -> String
-normalizeError str =
-    str
-        |> reduceBackslashes
-        |> String.Extra.replace "\"" ""
-        |> String.Extra.softBreak 50
-        |> List.take 5
-        |> String.join " "
-        |> (\x -> x ++ " ...")
+            ErrorMessages.renderError error
 
 
 renderLatexList : LatexState -> List LatexExpression -> String
@@ -462,11 +429,15 @@ renderMacroDict =
         ]
 
 
-renderSMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> LatexExpression -> String)
+renderSMacroDict : Dict.Dict String (LatexState -> List LatexExpression -> List LatexExpression -> LatexExpression -> String)
 renderSMacroDict =
     Dict.fromList
-        [ ( "bibitem", \x y z -> renderBibItem x y z )
+        [ ( "bibitem", \latexState optArgs args body -> renderBibItem latexState optArgs args body )
         ]
+
+
+
+-- SMacro String (List LatexExpression) (List LatexExpression) LatexExpression
 
 
 macroRenderer : String -> (LatexState -> List LatexExpression -> List LatexExpression -> String)
@@ -498,7 +469,7 @@ renderSMacro : LatexState -> String -> List LatexExpression -> List LatexExpress
 renderSMacro latexState name optArgs args le =
     case Dict.get name renderSMacroDict of
         Just f ->
-            f latexState args le
+            f latexState optArgs args le
 
         Nothing ->
             "<span style=\"color: red;\">\\" ++ name ++ renderArgList emptyLatexState args ++ " " ++ render latexState le ++ "</span>"
@@ -513,13 +484,16 @@ renderBozo latexState args =
     "bozo{" ++ renderArg 0 latexState args ++ "}{" ++ renderArg 1 latexState args ++ "}"
 
 
-renderBibItem : LatexState -> List LatexExpression -> LatexExpression -> String
-renderBibItem latexState args le =
+renderBibItem : LatexState -> List LatexExpression -> List LatexExpression -> LatexExpression -> String
+renderBibItem latexState optArgs args body =
     let
         label =
-            renderArg 0 latexState args
+            if List.length optArgs == 1 then
+                renderArg 0 latexState optArgs
+            else
+                renderArg 0 latexState args
     in
-    " <p id=\"bib:" ++ label ++ "\">[" ++ label ++ "] " ++ render latexState le ++ "</p>\n"
+    " <p id=\"bib:" ++ label ++ "\">[" ++ label ++ "] " ++ render latexState body ++ "</p>\n"
 
 
 renderBigSkip : LatexState -> List LatexExpression -> String
@@ -542,8 +516,17 @@ renderSmallSkip latexState args =
 renderCite : LatexState -> List LatexExpression -> String
 renderCite latexState args =
     let
-        label =
+        label_ =
             renderArg 0 latexState args
+
+        ref =
+            getDictionaryItem ("bibitem:" ++ label_) latexState
+
+        label =
+            if ref /= "" then
+                ref
+            else
+                label_
     in
     " <span>[<a href=\"#bib:" ++ label ++ "\">" ++ label ++ "</a>]</span>"
 

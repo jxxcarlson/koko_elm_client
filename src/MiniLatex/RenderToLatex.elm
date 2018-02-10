@@ -8,6 +8,7 @@ module MiniLatex.RenderToLatex
         )
 
 import List.Extra
+import MiniLatex.ErrorMessages as ErrorMessages
 import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
@@ -66,15 +67,8 @@ render latexExpression =
         LXString str ->
             str
 
-        LXError source explanation ->
-            renderError source explanation
-
-
-renderError source explanation =
-    "ERROR: \n"
-        ++ source
-        ++ "\nExplanation: "
-        ++ explanation
+        LXError error ->
+            ErrorMessages.renderError error
 
 
 renderLatexList : List LatexExpression -> String

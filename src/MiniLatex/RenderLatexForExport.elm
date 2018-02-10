@@ -11,8 +11,6 @@ import MiniLatex.JoinStrings as JoinStrings
 import MiniLatex.Paragraph
 import MiniLatex.Parser exposing (LatexExpression(..), defaultLatexList, latexList)
 import MiniLatex.Utility as Utility
-import Parser
-import String.Extra
 
 
 {-| parse a string and render it back into Latex
@@ -57,40 +55,7 @@ render latexExpression =
             str
 
         LXError error ->
-            renderError error
-
-
-renderError : Parser.Error -> String
-renderError error =
-    let
-        source =
-            error.source
-
-        explanation =
-            ErrorMessages.explanation error
-    in
-    "<div style=\"color: red\">ERROR: "
-        ++ (source |> normalizeError)
-        ++ "</div>\n"
-        ++ "<div style=\"color: blue\">"
-        ++ explanation
-        ++ "</div>"
-
-
-normalizeError : String -> String
-normalizeError str =
-    str
-        |> reduceBackslashes
-        |> String.Extra.replace "\"" ""
-        |> String.Extra.softBreak 50
-        |> List.take 5
-        |> String.join " "
-        |> (\x -> x ++ " ...")
-
-
-reduceBackslashes : String -> String
-reduceBackslashes str =
-    str |> String.Extra.replace "\\\\" "\\" |> String.Extra.replace "\\n" "\n"
+            ErrorMessages.renderError error
 
 
 renderLatexList : List LatexExpression -> String
