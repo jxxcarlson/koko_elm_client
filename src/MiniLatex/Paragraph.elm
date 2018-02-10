@@ -59,7 +59,7 @@ getEndArg line =
 
 lineType : String -> LineType
 lineType line =
-    if line == "" then
+    if line == "" || line == "\\begin{thebibliography}" || line == "\\end{thebibliography}" then
         Blank
     else if String.startsWith "\\begin" line then
         BeginBlock (getBeginArg line)
@@ -190,7 +190,10 @@ logicalParagraphify text =
         lastState =
             logicalParagraphParse text
     in
-    lastState.paragraphList ++ [ lastState.currentParagraph ] |> List.filter (\x -> x /= "") |> List.map (\paragraph -> paragraph ++ "\n\n\n")
+    lastState.paragraphList
+        ++ [ lastState.currentParagraph ]
+        |> List.filter (\x -> x /= "")
+        |> List.map (\paragraph -> paragraph ++ "\n\n\n")
 
 
 paragraphify : String -> List String
