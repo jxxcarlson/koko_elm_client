@@ -96,10 +96,22 @@ editorPanel model =
         , notVisibleIfLatex model (toggleUpdateRateIndicator model)
         , notVisibleIfLatex model (toggleUpdateRateButton model)
         , full PanelInfo [] (el Zero [ verticalCenter ] (text ("ID: " ++ toString model.current_document.id)))
-        , full PanelInfo [] (el Zero [ verticalCenter ] (text ("Words: " ++ (toString <| wordCount <| model.current_document))))
+        , full PanelInfo [] (el Zero [ verticalCenter ] (text <| wordCountDisplay model))
         , deleteButton model
         , Views.Utility.visibleIf (model.appState.deleteState == Pending) (deleteConfirmation model)
         ]
+
+
+wordCountDisplay : Model -> String
+wordCountDisplay model =
+    let
+        words =
+            wordCount <| model.current_document
+
+        pages =
+            toString <| truncate <| toFloat words / 300.0
+    in
+    "Words: " ++ toString words ++ " (" ++ pages ++ " pp)"
 
 
 notVisibleIfLatex : Model -> Element Styles variation Msg -> Element Styles variation Msg
