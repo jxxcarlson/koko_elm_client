@@ -19,6 +19,7 @@ module Action.Document
         , setTitle
         , togglePublic
         , toggleUpdateRate
+        , updateArchive
         , updateContent
         , updateCurrentDocument
         , updateCurrentDocumentWithContent
@@ -106,6 +107,16 @@ import Views.External exposing (windowData)
    macros : DocumentDict -> String
 
 -}
+
+updateArchive : String -> Model -> ( Model, Cmd Msg )
+updateArchive archiveName model =
+  let
+      document = model.current_document
+      attributes = document.attributes
+      newAttributes = {attributes | archive = archiveName }
+      newDocument = { document | attributes = newAttributes }
+  in
+     ( {model | current_document = newDocument}, Cmd.none )
 
 
 clearEditRecord : AppState -> AppState

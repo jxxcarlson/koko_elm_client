@@ -37,6 +37,14 @@ printUrl : String
 printUrl =
     host ++ "/print/documents"
 
+showVersionsUrl : String
+showVersionsUrl =
+    host ++ "/archive/versions"   
+
+
+newVersionUrl : String
+newVersionUrl =
+    host ++ "/archive/new_version"
 
 exportUrl : String
 exportUrl =

@@ -16,6 +16,11 @@ import Utility
 
 update submessage model =
     case submessage of
+
+        SetRepositoryName name ->
+          Action.Document.updateArchive name model
+        
+ 
         RandomDocuments ->
             Document.Search.getRandomDocuments model
 

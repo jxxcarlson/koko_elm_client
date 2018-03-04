@@ -66,6 +66,7 @@ type Styles
     | PaleRed
     | PaleYellow
     | Panel
+    | PanelSmallType
     | PanelInfo
     | PanelInfoRed
     | PanelInfoGreen
@@ -181,6 +182,8 @@ stylesheet =
             ]
         , style Panel
             [ Color.background Color.lightCharcoal ]
+        , style PanelSmallType
+            [ Color.background Color.lightCharcoal, Font.size 12]    
         , style PanelInfo
             [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
         , style PanelInfoRed

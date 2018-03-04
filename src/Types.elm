@@ -121,6 +121,8 @@ type alias DocumentAttributes =
     , textType : String
     , docType : String
     , level : Int
+    , archive : String
+    , version : Int
     , lastViewed : Maybe Time
     }
 
@@ -147,8 +149,7 @@ type alias Document =
     , content : String
     , rendered_content : String
     , attributes : DocumentAttributes
-    , tags :
-        List String
+    , tags : List String
     , children : List Child
     , parent_id : Int
     , parent_title : String
@@ -272,6 +273,7 @@ type alias ErrorMessage =
 
 type DocMsg
     = AddToMasterDocument
+    | SetRepositoryName String
     | AdoptChildren
     | AttachCurrentDocument String
     | CreateDocument (Result Http.Error DocumentRecord)

@@ -223,7 +223,7 @@ editorTools model =
         [ alignLeft, padding 20, spacing 30, height (px (toFloat model.window.height - 129.0)) ]
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
-            [ spacing 4, height (px 130), alignLeft ]
+            [ spacing 2, height (px 130), alignLeft ]
             [ textArea Field
                 [ yScrollbar
                 , alignTop
@@ -240,16 +240,32 @@ editorTools model =
             , el None [ height (px 10) ] (text "")
             , parentalControls model
             , el None [ height (px 10) ] (text "")
-            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ toString model.current_document.attributes.level))
+            , row TOC [spacing 3] [ el Small [height (px 25), width (px 72), paddingTop 12.0, paddingLeft 8.0   ] (text "Repository:"), repositoryNamePane model]
+            , el Small [ height (px 25), width (px 250), paddingXY 8 12 ] (text (archiveDisplay model))
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (displayIdentifier model))
             , el None [ height (px 0) ] (text "")
+            , row TOC [ padding 8, spacing 12 ] [ newVersionButton model.current_document, showVersionsButton model.current_document]
+            , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
-            ]
+            
+        ]
         ]
 
+levelDisplay : Model -> String
+levelDisplay model = 
+  "Level: " ++ (toString model.current_document.attributes.level)
 
+versionDisplay : Model -> String 
+versionDisplay model =
+  "Version: " ++ (toString model.current_document.attributes.version)
 
--- el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text ("Level: " ++ toString model.current_document.attributes.level))
+repositoryDisplay : Model -> String 
+repositoryDisplay model  =
+  "Repository: " ++ Document.archiveName model model.current_document
+
+archiveDisplay : Model -> String 
+archiveDisplay model =
+  (versionDisplay model) ++ ", " ++ (levelDisplay model)
 
 
 displayLine line =
@@ -317,10 +333,10 @@ parentIdPanel model =
         [ height (px 80), width (px 250) ]
         [ row Panel
             [ paddingXY 8 12 ]
-            [ el Panel [ verticalCenter, paddingXY 8 0 ] (text "Parent: ")
+            [ el PanelSmallType [ verticalCenter, paddingXY 8 0 ] (text "Parent: ")
             , parentIdPane model
             ]
-        , el Panel [ verticalCenter, paddingXY 16 12 ] (text model.current_document.parent_title) -- model.current_document.parent_name
+        , el PanelSmallType [ verticalCenter, paddingXY 16 12 ] (text model.current_document.parent_title) -- model.current_document.parent_name
         ]
 
 
@@ -335,6 +351,40 @@ parentIdPane model =
         ]
         (toString model.current_document.parent_id)
 
+
+repositoryNamePane : Model -> Element Styles variation Msg
+repositoryNamePane model =
+    inputText Field
+        [ onInput (DocMsg << SetRepositoryName)
+        , placeholder "repository"
+        , paddingXY 5 0
+        , height (px 25)
+        , width (px 150)
+        ]
+        (Document.archiveName model model.current_document)  
+
+newVersionButton : Document -> Element Styles variation Msg
+newVersionButton document =
+    link (newVersionUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (text "New version")
+
+
+newVersionUrl : Document -> String
+newVersionUrl document =
+    Request.Api.newVersionUrl ++ "/" ++ toString document.id
+
+
+showVersionsButton : Document -> Element Styles variation Msg
+showVersionsButton document =
+    link (showVersionsUrl document) <|
+        el Zero [ verticalCenter, target "_blank" ] (text "Show versions")
+
+
+showVersionsUrl : Document -> String
+showVersionsUrl document =
+    Request.Api.showVersionsUrl ++ "/" ++ toString document.id
+
+        
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =

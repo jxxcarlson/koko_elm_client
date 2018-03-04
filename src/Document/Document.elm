@@ -1,6 +1,7 @@
 module Document.Document
     exposing
-        ( blankDocument
+        ( archiveName 
+        ,   blankDocument
         , defaultDocument
         , defaultMasterDocument
         , diaryEntry
@@ -13,8 +14,34 @@ module Document.Document
 
 import Date exposing (Date, day, dayOfWeek, month, year)
 import Date.Extra
-import Types exposing (Document, DocumentAttributes)
+import Types exposing (Model, Document, DocumentAttributes)
 
+
+archiveName : Model -> Document -> String
+archiveName model document =
+  let
+    maybeParent = if model.appState.masterDocLoaded then
+          List.head model.documents
+        else
+          Nothing
+
+    parentArchiveName = case maybeParent of 
+       Just parent -> parent.attributes.archive
+       Nothing -> "default" 
+
+    _ = Debug.log "parentArchiveName" parentArchiveName
+
+    documentArchiveName = document.attributes.archive 
+
+    archiveName = if documentArchiveName /= "default" then
+      documentArchiveName
+    else if parentArchiveName /= "default" then
+      parentArchiveName
+    else
+      "default" 
+  in
+  archiveName
+  
 
 hasTag : String -> Document -> Bool
 hasTag tagg document =
@@ -23,7 +50,7 @@ hasTag tagg document =
 
 defaultAttributes : DocumentAttributes
 defaultAttributes =
-    DocumentAttributes False "adoc" "standard" 0 Nothing
+    DocumentAttributes False "adoc" "standard" 0 "default" 0 Nothing
 
 
 diaryEntry : Maybe Date -> Document

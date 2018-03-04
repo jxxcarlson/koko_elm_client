@@ -35,6 +35,8 @@ encodeDocumentAttributes record =
         , ( "public", Encode.bool <| record.public )
         , ( "doc_type", Encode.string <| record.docType )
         , ( "level", Encode.int <| record.level )
+        , ( "archive", Encode.string <| record.archive )
+        , ( "version", Encode.int <| record.version )
         ]
 
 
@@ -93,6 +95,8 @@ decodeDocumentAttributes =
         |> JPipeline.required "text_type" (Decode.string)
         |> JPipeline.required "doc_type" (Decode.string)
         |> JPipeline.required "level" (Decode.int)
+        |> JPipeline.optional "archive" (Decode.string) "default"
+        |> JPipeline.optional "version" (Decode.int) 0
         |> JPipeline.hardcoded Nothing
 
 

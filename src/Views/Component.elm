@@ -27,6 +27,7 @@ textFormatMenu model =
             ]
 
 
+
 setTextTypeButton : String -> String -> Model -> Element Styles variation Msg
 setTextTypeButton textType label model =
     el (textFormatButton textType model) [ EA.width (px 85), EE.onClick ((DocMsg << SetTextType) textType), EA.height (px 30), paddingXY 8 14 ] (EL.text label)
