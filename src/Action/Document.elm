@@ -4,6 +4,7 @@ module Action.Document
         , createDocument
         , deleteDocument
         , hasId
+        , incrementVersion
         , inputContent
         , latexFullRender
         , loadContent
@@ -107,6 +108,18 @@ import Views.External exposing (windowData)
    macros : DocumentDict -> String
 
 -}
+
+
+incrementVersion : Model -> ( Model, Cmd Msg )
+incrementVersion model =
+  let
+      document = model.current_document
+      attributes = document.attributes 
+      newVersion = attributes.version + 1
+      newAttributes = {attributes | version = newVersion}
+      newDocument = {document | attributes = newAttributes}
+  in
+      ( { model | current_document = newDocument }, Cmd.none )
 
 updateArchive : String -> Model -> ( Model, Cmd Msg )
 updateArchive archiveName model =

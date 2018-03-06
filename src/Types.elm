@@ -273,6 +273,7 @@ type alias ErrorMessage =
 
 type DocMsg
     = AddToMasterDocument
+    | IncrementVersion
     | SetRepositoryName String
     | AdoptChildren
     | AttachCurrentDocument String

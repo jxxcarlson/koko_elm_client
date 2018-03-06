@@ -366,7 +366,7 @@ repositoryNamePane model =
 newVersionButton : Document -> Element Styles variation Msg
 newVersionButton document =
     link (newVersionUrl document) <|
-        el Zero [ verticalCenter, target "_blank" ] (text "New version")
+        el Zero [ verticalCenter, target "_blank", onClick (DocMsg IncrementVersion)] (text "New version")
 
 
 newVersionUrl : Document -> String

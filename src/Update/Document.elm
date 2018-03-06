@@ -17,6 +17,12 @@ import Utility
 update submessage model =
     case submessage of
 
+
+
+
+        IncrementVersion ->
+          Action.Document.incrementVersion model
+
         SetRepositoryName name ->
           Action.Document.updateArchive name model
         
