@@ -16,10 +16,6 @@ import Types
 import User.Login
 import User.Synchronize
 
-
--- SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
-
-
 update submessage model =
     case submessage of
         GetUsers (Ok usersRecord) ->
@@ -126,4 +122,4 @@ update submessage model =
             User.Synchronize.setUserState result model
 
         SetUserState (Err err) ->
-            ( { model | message = "Error in SetUserState: " ++ toString err }, Cmd.none )
+            ( { model | message = "User state not set" }, Cmd.none )
