@@ -15,6 +15,7 @@ module Views.Common
         , tool
         )
 
+import Document.Access
 import Array
 import Color
 import Configuration
@@ -26,7 +27,7 @@ import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Element.Keyed as Keyed
 import FontAwesome
-import Json.Encode
+import                                                                                                                            Json.Encode
 import Request.Api
 import StyleSheet exposing (..)
 import Types
@@ -245,11 +246,23 @@ editorTools model =
             , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (displayIdentifier model))
             , el None [ height (px 0) ] (text "")
             , row TOC [ padding 8, spacing 12 ] [ newVersionButton model.current_document, showVersionsButton model.current_document]
-            , el None [ height (px 0) ] (text "")
+            , el None [ height (px 10) ] (text "")
+            , el Small [ height (px 15),  paddingXY 8 8 ] (text "Shared with:")
+            , accessDisplay model
             , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
+            
             
         ]
         ]
+
+
+accessDisplay model = 
+  let 
+    lines = Document.Access.accessElementList model.current_document 
+  in 
+    column Zero [spacing 8,  paddingXY 8 12] lines
+
+
 
 levelDisplay : Model -> String
 levelDisplay model = 

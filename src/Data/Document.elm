@@ -67,6 +67,7 @@ documentDecoder =
         |> JPipeline.required "identifier" Decode.string
         |> JPipeline.required "author_id" Decode.int
         |> JPipeline.required "author_name" Decode.string
+        |> JPipeline.required "access" (Decode.dict Decode.string)
         |> JPipeline.required "title" Decode.string
         |> JPipeline.required "content" Decode.string
         |> JPipeline.required "rendered_content" Decode.string

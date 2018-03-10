@@ -15,6 +15,7 @@ module Document.Document
 import Date exposing (Date, day, dayOfWeek, month, year)
 import Date.Extra
 import Types exposing (Model, Document, DocumentAttributes)
+import Dict 
 
 
 archiveName : Model -> Document -> String
@@ -69,6 +70,7 @@ realDiaryEntry date =
     , identifier = "nullDocument"
     , author_id = 0
     , author_name = ""
+    , access = Dict.empty
     , title = Date.Extra.toFormattedString "EEE MMM d, y" date
     , content = "New diary entry"
     , rendered_content = "New diary entry"
@@ -116,6 +118,7 @@ emptyDocument =
     , identifier = "-"
     , author_id = 0
     , author_name = ""
+    , access = Dict.empty
     , title = ""
     , content = ""
     , rendered_content = ""

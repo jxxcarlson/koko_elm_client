@@ -1,7 +1,7 @@
 module Types exposing (..)
 
 import Date exposing (Date)
-import Dict
+import Dict 
 import Http
 import Image.FileReader as FileReader exposing (NativeFile)
 import Json.Encode as JsEncode
@@ -115,6 +115,8 @@ type alias CredentialsWrapper =
 type alias DocumentDict =
     Dict.Dict String Document
 
+type alias AccessDict =
+  Dict.Dict String String
 
 type alias DocumentAttributes =
     { public : Bool
@@ -145,6 +147,7 @@ type alias Document =
     , identifier : String
     , author_id : Int
     , author_name : String
+    , access : AccessDict
     , title : String
     , content : String
     , rendered_content : String
