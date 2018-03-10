@@ -28,6 +28,9 @@ fixQueryIfEmpty query searchDomain user_id =
             Private ->
                 "random_user=" ++ toString user_id
 
+            Shared ->
+                "random_user=" ++ toString user_id
+
             All ->
                 "random=all"
     else
@@ -37,11 +40,15 @@ fixQueryIfEmpty query searchDomain user_id =
 makeQuery : SearchState -> SearchDomain -> Int -> String
 makeQuery searchState updatedSearchDomain user_id =
     let
+
         rawQuery =
             searchState.query
 
         cmd =
             rawQuery |> String.split "=" |> List.head |> Maybe.withDefault "NoCommand"
+
+        _ = Debug.log("rawQuery") (updatedSearchDomain, rawQuery, cmd)  
+         
     in
     if List.member cmd [ "idlist" ] then
         rawQuery
@@ -51,7 +58,13 @@ makeQuery searchState updatedSearchDomain user_id =
 
 makeQueryHelper : SearchState -> SearchDomain -> Int -> String
 makeQueryHelper searchState updatedSearchDomain user_id =
-    let
+    let 
+        suffix = case updatedSearchDomain of 
+            Private -> "shared=yes"
+            Shared -> "shared_only=yes"
+            Public -> ""
+            All -> "shared=yes"
+
         basicQuery =
             -- if searchState.query == "" then
             --     "publicdocs=all"
@@ -81,7 +94,7 @@ makeQueryHelper searchState updatedSearchDomain user_id =
                     ""
 
         queryList =
-            [ prefix ] ++ [ parseQuery searchState.query, soq ]
+            [ prefix ] ++ [ parseQuery searchState.query, soq, suffix ]
     in
     buildQuery queryList
 
@@ -94,6 +107,10 @@ processorAndRoute searchDomain =
 
         Private ->
             ( GetUserDocuments, "documents" )
+
+        Shared ->
+
+           ( GetUserDocuments, "documents" )
 
         All ->
             ( GetUserDocuments, "documents" )

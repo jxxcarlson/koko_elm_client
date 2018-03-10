@@ -176,6 +176,7 @@ type alias DocumentsRecord =
 type SearchDomain
     = Private
     | Public
+    | Shared
     | All
 
 

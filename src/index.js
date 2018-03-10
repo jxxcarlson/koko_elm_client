@@ -179,7 +179,7 @@ app.ports.saveUserState.subscribe(function (str) {
   var data = JSON.parse(str)
 
   console.log("data.documentStack = " + data.documentStack )
-  console.log("data.currentDocumentId = " + data.currentDocumentId )
+  console.log("data.currentDocumentId (1) = " + data.currentDocumentId )
 
   localStorage.setItem("documentStack", data.documentStack);
   localStorage.setItem("currentDocumentId", data.currentDocumentId);
@@ -195,7 +195,7 @@ app.ports.saveDocumentStack.subscribe(function (str) {
 app.ports.saveCurrentDocumentId.subscribe(function (str) {
   console.log("xxx I will put the CurrentDocumentId in local storage");
   var data = JSON.parse(str)
-  console.log("data.currentDocumentId = " + data.currentDocumentId )
+  console.log("data.currentDocumentId (2)= " + data.currentDocumentId )
   localStorage.setItem("currentDocumentId", data.currentDocumentId);
 })
 

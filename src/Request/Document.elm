@@ -38,8 +38,8 @@ import Types exposing (..)
 getDocumentsRequest : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> HB.RequestBuilder Types.DocumentsRecord
 getDocumentsRequest route query message token =
     let
-        url =
-            api ++ route ++ "?" ++ parseQuery query
+        url = Debug.log "Request.getDocumentsRequest"
+            (api ++ route ++ "?" ++ parseQuery query)
     in
     HB.get url
         |> HB.withHeader "Authorization" ("Bearer " ++ token)
@@ -55,8 +55,8 @@ getDocuments route query message token =
 getDocumentWithId : String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Int -> Cmd Msg
 getDocumentWithId route message token id =
     let
-        query =
-            "id=" ++ toString id
+        query =  Debug.log "Request.getDocumentWithId, id"
+            ("id=" ++ toString id)
     in
     getDocumentsRequest route query message token
         |> HB.send message

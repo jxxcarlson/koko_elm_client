@@ -160,6 +160,9 @@ queryMessage domain =
                 Public ->
                     "public documents"
 
+                Shared ->
+                    "shared documents"    
+
                 All ->
                     "all documents"
     in

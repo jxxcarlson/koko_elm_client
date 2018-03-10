@@ -50,7 +50,7 @@ encodeDocument force idList textNeedsUpdate document =
             List.map Encode.string idList
 
         _ =
-            Debug.log "port:: send to JSw, id:" document.id
+            Debug.log "(encodeDocument) port:: send to JSw, id:" document.id
     in
     [ ( "force", Encode.bool force )
     , ( "idList", Encode.list idValueList )

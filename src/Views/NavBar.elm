@@ -78,6 +78,7 @@ searchOptionsMenu model =
         [ height (px 25), EA.verticalCenter, onInput (SearchMsg << SelectSearchMode) ]
         [ option "public" (model.searchState.domain == Public) (text "Public")
         , option "private" (model.searchState.domain == Private) (text "My docs")
+        , option "shared" (model.searchState.domain == Shared) (text "Shared")
         , option "all" (model.searchState.domain == All) (text "All")
         ]
 

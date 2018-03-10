@@ -104,7 +104,7 @@ searchOnEnter searchDomain key model =
     if Debug.log "key" key == 13 then
         let
             _ =
-                Debug.log "Firing Action.Document.searchOnEnter" 1
+                Debug.log "Firing Action.Document.searchOnEnter" "now"
 
             searchState =
                 model.searchState
@@ -125,11 +125,12 @@ dispatchSearch searchState page model =
     let
         updatedModel =
             prepareModelForSearch searchState page model
+        _ = Debug.log "dispatchSearch, current_document.id" model.current_document.id
     in
     ( updatedModel
     , Cmd.batch
         [ getDocuments updatedModel.searchState model.current_user.id model.current_user.token
-        , Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate model.current_document
+        --, Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate model.current_document
         ]
     )
 
@@ -157,11 +158,11 @@ prepareModelForSearch searchState page model =
         query =
             Query.fixQueryIfEmpty searchState.query searchState.domain model.current_user.id
 
-        domain =
-            makeSureSearchDomainIsAuthorized2 searchState model.current_user.token
+        domain = Debug.log "prepareModelForSearch, domain"
+            (makeSureSearchDomainIsAuthorized2 searchState model.current_user.token)
 
-        newSearchState =
-            SearchState query domain searchState.order
+        newSearchState = Debug.log "prepareModelForSearch, searchState"
+            (SearchState query domain searchState.order)
     in
     { model
         | appState = newAppState
@@ -218,6 +219,9 @@ getRandomDocuments model =
 
                 Public ->
                     "random=public"
+
+                Shared ->
+                    "random_user=" ++ toString model.current_user.id
 
                 Private ->
                     "random_user=" ++ toString model.current_user.id
@@ -299,16 +303,14 @@ getDocuments searchState user_id token =
             Debug.log "processor and route"
                 (Query.processorAndRoute searchDomain)
 
-        adjustedQuery =
-            Query.makeQuery searchState searchDomain user_id
-
-        searchTask1 =
-            Request.Document.getDocumentsTask route (adjustedQuery ++ "&loading") token
+        adjustedQuery = Debug.log "getDocuments, adjustedQuery"
+            ((Query.makeQuery searchState searchDomain user_id) ++ "&loading")
 
         searchTask =
             Request.Document.getDocumentsTask route adjustedQuery token
+
     in
-    Task.attempt (DocMsg << GetUserDocuments) (searchTask1 |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
+    Task.attempt (DocMsg << GetUserDocuments) (searchTask |> Task.andThen (\documentsRecord -> refreshMasterDocumentTask route token documentsRecord))
 
 
 getDocumentsAndContent : List Document -> Int -> String -> Cmd Msg
@@ -317,10 +319,12 @@ getDocumentsAndContent documents user_id token =
         idList =
             List.map (\doc -> doc.id) documents
 
+        _ = Debug.log  "getDocumentsAndContent, idList"   idList
+
         headCommand =
             case List.head idList of
                 Just id ->
-                    Request.Document.getDocumentWithId "documents" (DocMsg << LoadContentAndRender) token id
+                    Request.Document.getDocumentWithId "documents" (DocMsg << LoadContentAndRender) token (Debug.log "getDocumentsAndContent, id" id)
 
                 Nothing ->
                     Cmd.none
@@ -328,7 +332,7 @@ getDocumentsAndContent documents user_id token =
         tailCommand =
             case List.tail idList of
                 Just ids ->
-                    List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) (List.reverse ids)
+                    List.map (Request.Document.getDocumentWithId "documents" (DocMsg << LoadContent) token) (Debug.log "IDLIST" (List.reverse ids))
 
                 Nothing ->
                     [ Cmd.none ]

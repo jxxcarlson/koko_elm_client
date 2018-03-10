@@ -384,6 +384,8 @@ updateDocuments model documentsRecord =
                 Nothing ->
                     pageNotFoundDocument
 
+        _ = Debug.log "updateDocuments, current_document.id" (toString current_document.id)
+
         masterDocLoaded =
             if current_document.attributes.docType == "master" then
                 True
@@ -414,6 +416,8 @@ updateDocuments model documentsRecord =
                 docAtTopOfStack
             else
                 current_document
+
+        _ = Debug.log "current_document2.id" current_document2.id    
 
         appState =
             model.appState
@@ -491,11 +495,25 @@ loadContent model documentsRecord =
     ( { model | message = "Get Content", documents = new_documents }, Cmd.none )
 
 
+
 loadContentAndRender : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 loadContentAndRender model documentsRecord =
+  let
+      _ = Debug.log "loadContentAndRender, data" (documentsRecord.documents |> List.map .id)
+  in  
+    if documentsRecord.documents /= [] then 
+        loadContentAndRender_  model documentsRecord
+    else 
+        ( model, Cmd.none)
+        
+
+loadContentAndRender_ : Model -> DocumentsRecord -> ( Model, Cmd Msg )
+loadContentAndRender_ model documentsRecord =
     let
         documentsFound =
             documentsRecord.documents
+
+        ids = Debug.log "loadContentAndRender, ids" (List.map .id documentsFound)
 
         document =
             List.head documentsFound |> Maybe.withDefault Document.defaultDocument
