@@ -63,7 +63,7 @@ makeQueryHelper searchState updatedSearchDomain user_id =
             Private -> "shared=yes"
             Shared -> "shared_only=yes"
             Public -> ""
-            All -> "shared=yes"
+            All -> ""
 
         basicQuery =
             -- if searchState.query == "" then
