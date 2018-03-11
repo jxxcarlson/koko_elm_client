@@ -221,7 +221,7 @@ getDocument style searchTerm label model =
 editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 10, height (px (toFloat model.window.height - 129.0)) ]
+        [ alignLeft, yScrollbar, padding 20, spacing 10, height (px (toFloat model.window.height - 129.0)) ]
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
             [ spacing 5, height (px 130), alignLeft ]
