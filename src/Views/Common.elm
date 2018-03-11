@@ -221,10 +221,10 @@ getDocument style searchTerm label model =
 editorTools : Model -> Element Styles variation Msg
 editorTools model =
     column TOC
-        [ alignLeft, padding 20, spacing 30, height (px (toFloat model.window.height - 129.0)) ]
+        [ alignLeft, padding 20, spacing 10, height (px (toFloat model.window.height - 129.0)) ]
         [ el Blue [ width (px 250), height (px 35), paddingXY 10 10 ] (text "Editor tools")
         , column Zero
-            [ spacing 2, height (px 130), alignLeft ]
+            [ spacing 5, height (px 130), alignLeft ]
             [ textArea Field
                 [ yScrollbar
                 , alignTop
@@ -238,35 +238,64 @@ editorTools model =
             , el None [ height (px 10) ] (text "")
             , Utility.visibleIf (currentDocumentIsMaster model) (compileMasterButton model)
             , Utility.visibleIf (currentDocumentIsMaster model) (displayMasterDocumentWordCount model)
-            , el None [ height (px 10) ] (text "")
+            , row TOC [ padding 8, spacing 12 , height (px 200) ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
             , parentalControls model
-            , el None [ height (px 10) ] (text "")
-            , row TOC [spacing 3] [ el Small [height (px 25), width (px 72), paddingTop 12.0, paddingLeft 8.0   ] (text "Repository:"), repositoryNamePane model]
-            , el Small [ height (px 25), width (px 250), paddingXY 8 12 ] (text (archiveDisplay model))
-            , el Small [ height (px 25), width (px 200), paddingXY 8 12 ] (text (displayIdentifier model))
-            , el None [ height (px 0) ] (text "")
-            , row TOC [ padding 8, spacing 12 ] [ newVersionButton model.current_document, showVersionsButton model.current_document]
-            , el None [ height (px 10) ] (text "")
-            , el Small [ height (px 15),  paddingXY 8 8 ] (text "Shared with:")
-            , accessDisplay model
-            , row TOC [ padding 8, spacing 12 ] [ Component.textFormatMenu model, Component.docTypeMenu model ]
-            
-            
+            , el Small [ height (px 30), width (px 200), paddingLeft 8, paddingTop 16, paddingBottom 12 ] (text (displayIdentifier model))
+            , versionPanel model
+            , accessPanel model
         ]
         ]
 
 
-accessDisplay model = 
+
+fullAccessPanel model lines =
+   column EditorPanel
+        [ height (px 100), width (px 250), spacing 4 ]
+        [ row EditorPanel [ paddingLeft 8, paddingTop 8][ el PanelSmallTypeHeading [ height (px 15),  paddingXY 8 8 ] (text "Shared with:")    ]
+        , row EditorPanel [ paddingLeft 8,paddingLeft 8] [ column EditorPanel [spacing 4,  width (px 200), paddingXY 8 8] lines ]
+        , row EditorPanel [paddingLeft 8, spacing 3] [shareDocumentButton model, shareDocumentPane model]
+        ]
+
+basicAccessPanel model =
+   column Zero
+        [ height (px 50), width (px 250), spacing 4, paddingXY 8 12]
+        [  row Zero [spacing 3] [shareDocumentButton model, shareDocumentPane model] ]
+
+
+accessPanel model = 
   let 
     lines = Document.Access.accessElementList model.current_document 
   in 
-    column Zero [spacing 8,  paddingXY 8 12] lines
+    if List.length lines > 0 then
+      fullAccessPanel model lines
+    else  
+      basicAccessPanel model
 
 
 
 levelDisplay : Model -> String
 levelDisplay model = 
   "Level: " ++ (toString model.current_document.attributes.level)
+
+versionPanel : Model -> Element Styles variation Msg
+versionPanel model = 
+   column EditorPanel
+        [ height (px 100), width (px 250), spacing 8]
+        [ row EditorPanel [ paddingLeft 8, paddingTop 16, paddingBottom 8 ][ el PanelSmallTypeHeading [ verticalCenter, paddingXY 8 8 ] (text (versionDisplay model)) ]
+        , row EditorPanel [ paddingXY 16 0, spacing 12 ] [ newVersionButton model.current_document, showVersionsButton model.current_document]
+        , row EditorPanel  [spacing 12, paddingTop 8, paddingBottom 8] [ el Small [height (px 25), width (px 72), paddingTop 12.0, paddingBottom 8.0, paddingLeft 16.0, paddingRight 8.0   ] (text "Repository:"), repositoryNamePane model]
+        ]
+
+repositoryNamePane : Model -> Element Styles variation Msg
+repositoryNamePane model =
+    inputText Field
+        [ onInput (DocMsg << SetRepositoryName)
+        , placeholder "repository"
+        , paddingLeft 12.0  
+        , height (px 25)
+        , width (px 120)
+        ]
+        (Document.archiveName model model.current_document) 
 
 versionDisplay : Model -> String 
 versionDisplay model =
@@ -275,6 +304,27 @@ versionDisplay model =
 repositoryDisplay : Model -> String 
 repositoryDisplay model  =
   "Repository: " ++ Document.archiveName model model.current_document
+
+newVersionButton : Document -> Element Styles variation Msg
+newVersionButton document =
+    link (newVersionUrl document) <|
+        el FlatLinkBlue [ verticalCenter, target "_blank", onClick (DocMsg IncrementVersion)] (text "New version")
+
+
+newVersionUrl : Document -> String
+newVersionUrl document =
+    Request.Api.newVersionUrl ++ "/" ++ toString document.id
+
+
+showVersionsButton : Document -> Element Styles variation Msg
+showVersionsButton document =
+    link (showVersionsUrl document) <|
+        el FlatLinkBlue [ verticalCenter, target "_blank" ] (text "Show versions")
+
+
+showVersionsUrl : Document -> String
+showVersionsUrl document =
+    Request.Api.showVersionsUrl ++ "/" ++ toString document.id  
 
 archiveDisplay : Model -> String 
 archiveDisplay model =
@@ -342,14 +392,14 @@ parentalControls model =
 
 parentIdPanel : Model -> Element Styles variation Msg
 parentIdPanel model =
-    column Panel
-        [ height (px 80), width (px 250) ]
-        [ row Panel
-            [ paddingXY 8 12 ]
+    column EditorPanel
+        [ height (px 62), width (px 250) ]
+        [ row EditorPanel
+            [ paddingXY 8 10 ]
             [ el PanelSmallType [ verticalCenter, paddingXY 8 0 ] (text "Parent: ")
-            , parentIdPane model
+            , parentIdPane model,   el PanelSmallType [ verticalCenter, paddingXY 8 0 ] (text (levelDisplay model))
             ]
-        , el PanelSmallType [ verticalCenter, paddingXY 16 12 ] (text model.current_document.parent_title) -- model.current_document.parent_name
+        , el PanelSmallType [ verticalCenter, paddingXY 16 8 ] (text model.current_document.parent_title) -- model.current_document.parent_name
         ]
 
 
@@ -359,45 +409,28 @@ parentIdPane model =
         [ onInput (DocMsg << SetParentId)
         , placeholder "parent_id"
         , paddingXY 5 0
-        , height (px 25)
+        , height (px 20)
         , width (px 50)
         ]
         (toString model.current_document.parent_id)
 
 
-repositoryNamePane : Model -> Element Styles variation Msg
-repositoryNamePane model =
+shareDocumentPane : Model -> Element Styles variation Msg
+shareDocumentPane model =
     inputText Field
-        [ onInput (DocMsg << SetRepositoryName)
-        , placeholder "repository"
+        [ onInput (DocMsg << InputShareDocumentCommand)
+        , placeholder "username: rw"
         , paddingXY 5 0
-        , height (px 25)
+        , height (px 30)
         , width (px 150)
         ]
-        (Document.archiveName model model.current_document)  
+        (model.appState.shareDocumentCommand)  
+         
 
-newVersionButton : Document -> Element Styles variation Msg
-newVersionButton document =
-    link (newVersionUrl document) <|
-        el Zero [ verticalCenter, target "_blank", onClick (DocMsg IncrementVersion)] (text "New version")
-
-
-newVersionUrl : Document -> String
-newVersionUrl document =
-    Request.Api.newVersionUrl ++ "/" ++ toString document.id
-
-
-showVersionsButton : Document -> Element Styles variation Msg
-showVersionsButton document =
-    link (showVersionsUrl document) <|
-        el Zero [ verticalCenter, target "_blank" ] (text "Show versions")
-
-
-showVersionsUrl : Document -> String
-showVersionsUrl document =
-    Request.Api.showVersionsUrl ++ "/" ++ toString document.id
-
-        
+shareDocumentButton : Model -> Element Styles variation Msg
+shareDocumentButton model =
+    Basic.button "Share with:" FlatButtonBlue [ onClick (DocMsg UpdateShareData), width (px 85) ]
+      
 
 adoptChildrenButton : Model -> Element Styles variation Msg
 adoptChildrenButton model =

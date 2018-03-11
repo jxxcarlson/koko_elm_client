@@ -227,6 +227,7 @@ type alias AppState =
     , tickInterval : Float
     , seed : Int
     , command : String
+    , shareDocumentCommand : String 
     }
 
 
@@ -277,6 +278,8 @@ type alias ErrorMessage =
 
 type DocMsg
     = AddToMasterDocument
+    | InputShareDocumentCommand String
+    | UpdateShareData
     | IncrementVersion
     | SetRepositoryName String
     | AdoptChildren

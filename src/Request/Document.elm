@@ -10,6 +10,7 @@ module Request.Document
         , getDocumentsRequest
         , getDocumentsTask
         , getPublicDocumentsTask
+        , putDocument   
         , put
         , reloadMasterDocument
         , saveDocumentTask
@@ -221,14 +222,39 @@ putDocumentRB queryString token document =
         |> withJsonBody params
 
 
-put : String -> Model -> Document -> Cmd Msg
-put queryString model document =
+putDocument : String -> Model -> Document -> Cmd Msg
+putDocument queryString model document =
     let
         request =
             putDocumentRB queryString model.current_user.token document
                 |> HB.toRequest
     in
     Http.send (DocMsg << PutDocument) request
+
+putRB : String -> String -> String -> Document -> RequestBuilder ()
+putRB segment queryString token document =
+    let
+        
+        url =
+            if queryString == "" then
+                segment
+            else
+                segment ++ "?" ++ queryString
+    in
+    HB.put url
+        |> HB.withHeader "Authorization" ("Bearer " ++ token)
+      
+
+
+put : String -> String -> Model -> Document -> Cmd Msg
+put segment queryString model document =
+    let
+        request =
+            putRB segment queryString model.current_user.token document
+                |> HB.toRequest
+    in
+    Http.send (DocMsg << PutDocument) request
+
 
 
 

@@ -118,6 +118,7 @@ init flags location =
             , editRecord = emptyEditRecord
             , tickInterval = Configuration.tickInterval
             , command = ""
+            , shareDocumentCommand = ""
             }
 
         channel =

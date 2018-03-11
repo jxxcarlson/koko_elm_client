@@ -40,6 +40,7 @@ type Styles
     | Field
     | FlatButton
     | FlatButtonBlue
+    | FlatLinkBlue
     | Footer
     | FooterNote
     | Form
@@ -66,7 +67,9 @@ type Styles
     | PaleRed
     | PaleYellow
     | Panel
+    | EditorPanel
     | PanelSmallType
+    | PanelSmallTypeHeading
     | PanelInfo
     | PanelInfoRed
     | PanelInfoGreen
@@ -181,9 +184,13 @@ stylesheet =
             , pseudo "active" [ Transition.all, Color.background Color.darkBlue, Color.text Color.blue ]
             ]
         , style Panel
-            [ Color.background Color.lightCharcoal ]
+            [ Color.background (Color.lightCharcoal) ]
+        , style EditorPanel
+            [ Color.background (Color.rgb 180 180 180) ]
         , style PanelSmallType
-            [ Color.background Color.lightCharcoal, Font.size 12]    
+            [ Color.background (Color.rgb 180 180 180), Font.size 13]  
+        , style PanelSmallTypeHeading
+            [ Color.background (Color.rgb 180 180 180), Font.size 13, Font.weight 600]    
         , style PanelInfo
             [ Color.background Color.lightCharcoal, Color.text Color.lightGray, Font.lineHeight 1.3 ]
         , style PanelInfoRed
@@ -271,6 +278,19 @@ stylesheet =
             , Font.size 14
             , Font.center
             , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "link" [ Transition.all, Color.background Color.darkBlue ]
+            , pseudo "visited" [ Transition.all, Color.background Color.darkBlue ]
+            , pseudo "hover" [ Transition.all, Color.background Color.darkRed ]
+            , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
+            ]
+        , style FlatLinkBlue
+            [ Color.text Color.blue
+            , Font.size 16
+            , Font.center
+            , Font.typeface [ "helvetica", "arial", "sans-serif" ]
+            , pseudo "link" [ Transition.all, Color.background Color.darkBlue ]
+            , pseudo "visited" [ Transition.all, Color.background Color.darkBlue ]
+            , pseudo "hover" [ Transition.all, Color.background Color.darkRed ]
             , pseudo "active" [ Transition.all, Color.background Color.lightBlue ]
             ]
         , style HeaderLabel
@@ -323,7 +343,7 @@ stylesheet =
         , style OKFooterNote [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusSuccess [ Color.background Color.darkGreen, Color.text Color.white ]
         , style StatusFailure [ Color.background Color.darkRed, Color.text Color.white ]
-        , style Small [ Font.size 12 ]
+        , style Small [ Font.size 13 ]
         , style Smaller [ Font.size 10 ]
         , style Mono [ Font.typeface [ "Lucida Sans Unicode" ] ]
         , style PaleBlue [ Color.background (Color.rgb 200 200 255), Color.text Color.blue ]

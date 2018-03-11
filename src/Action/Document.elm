@@ -25,6 +25,8 @@ module Action.Document
         , updateCurrentDocument
         , updateCurrentDocumentWithContent
         , updateDocuments
+        , updateShareDocumentCommand
+        , updateSharingData
         , updateTags
         , wordCount
         )
@@ -44,6 +46,7 @@ import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
 import Random
 import Regex
+import Request.Api
 import Request.Document
 import Task
 import Types exposing (..)
@@ -109,6 +112,37 @@ import Views.External exposing (windowData)
 
 -}
 
+updateSharingData : Model -> Cmd Msg
+updateSharingData model =
+  let  
+    _ = Debug.log "updateSharingData" "now"
+    parts = String.split ":" model.appState.shareDocumentCommand 
+    maybeUsername = parts |> List.take 1 |> List.head
+    maybeAction = parts |> List.drop 1 |> List.head
+    finalSegment = case (maybeUsername, maybeAction) of
+      (Just username, Just action) -> (String.trim username) ++ "/" ++ (String.trim action)
+      (_, _) -> ""
+    url = if finalSegment == ""  then 
+      "" 
+    else 
+      Debug.log "updateSharingData, url" (Request.Api.api ++ "share/" ++ (toString model.current_document.id) ++ "/" ++ finalSegment)
+  in 
+  if url == "" then
+    Cmd.none
+  else 
+    Request.Document.put url "" model model.current_document
+    
+      
+                                                                                                                                                      
+
+
+updateShareDocumentCommand : Model -> String -> (Model, Cmd Msg)
+updateShareDocumentCommand model command =
+  let
+      appState = model.appState 
+      newAppState = { appState | shareDocumentCommand  = command }
+  in
+      ( {model | appState = newAppState }, Cmd.none )
 
 incrementVersion : Model -> ( Model, Cmd Msg )
 incrementVersion model =
@@ -559,7 +593,7 @@ saveDocumentCmd queryString document model =
 
         cmd =
             if document.author_id == model.current_user.id then
-                Request.Document.put queryString model document
+                Request.Document.putDocument queryString model document
             else
                 Cmd.none
     in

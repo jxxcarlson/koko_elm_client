@@ -17,8 +17,11 @@ import Utility
 update submessage model =
     case submessage of
 
+        UpdateShareData -> 
+          (model, Action.Document.updateSharingData model)
 
-
+        InputShareDocumentCommand command ->
+          Action.Document.updateShareDocumentCommand model command
 
         IncrementVersion ->
           Action.Document.incrementVersion model
