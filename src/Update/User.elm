@@ -101,12 +101,6 @@ update submessage model =
             in
             ( model, Cmd.none )
 
-        ReconnectUser jsonString ->
-            User.Login.doReconnectUser jsonString model
-
-        RecoverUserState jsonString ->
-            User.Synchronize.doRecoverUserState jsonString model
-
         UpdateCurrentUser ->
             Action.User.updateCurrentUser model
 

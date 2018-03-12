@@ -6,6 +6,7 @@ import Document.Document exposing (pageNotFoundDocument)
 import Document.Render as Render
 import External
 import Http
+import Json.Encode
 import MiniLatex.Driver
 import Request.Document
 import Task exposing (Task)
@@ -20,8 +21,10 @@ import Types
         , Page(..)
         , UserMsg(SetUserState)
         , UserStateRecord
+        , InfoForOutside(UserState, SaveDocumentStack)
         )
 import Utility.KeyValue as KeyValue
+import OutsideInfo
 
 
 setTexMacroDocument : Model -> Cmd Msg
@@ -48,45 +51,38 @@ texMacroDocmentID document =
 
 {-| Recover state from local storage
 -}
-doRecoverUserState : String -> Model -> ( Model, Cmd Msg )
-doRecoverUserState jsonString model =
+doRecoverUserState : UserStateRecord -> Model -> ( Model, Cmd Msg )
+doRecoverUserState userStateRecord model =
     let
-        maybeUserStateRecord =
-            Data.User.decodeUserStateRecord jsonString
+        appState =
+            model.appState
+
+        newAppState =
+            { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
+
+        token =
+            userStateRecord.token
+
+        docStackTask =
+            recoverDocumentStackTask userStateRecord token
+
+        currentDocTask =
+            recoverCurrentDocumentTask userStateRecord token
+
+        innerSetUserStateTask =
+            Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
     in
-    case maybeUserStateRecord of
-        Ok userStateRecord ->
-            let
-                appState =
-                    model.appState
+    ( { model | appState = newAppState }
+    , Cmd.batch
+        [ Task.attempt (UserMsg << SetUserState) innerSetUserStateTask
+        , Request.Document.getDocumentWithAuthenticatedQuery
+            (DocMsg << GetSpecialDocument)
+            token
+            "key=sidebarNotes"
+        ]
+    )       
 
-                newAppState =
-                    { appState | page = ReaderPage, activeDocumentList = DocumentStackList }
-
-                token =
-                    userStateRecord.token
-
-                docStackTask =
-                    recoverDocumentStackTask userStateRecord token
-
-                currentDocTask =
-                    recoverCurrentDocumentTask userStateRecord token
-
-                innerSetUserStateTask =
-                    Task.map2 (\a b -> ( a, b )) currentDocTask docStackTask
-            in
-            ( { model | appState = newAppState }
-            , Cmd.batch
-                [ Task.attempt (UserMsg << SetUserState) innerSetUserStateTask
-                , Request.Document.getDocumentWithAuthenticatedQuery
-                    (DocMsg << GetSpecialDocument)
-                    token
-                    "key=sidebarNotes"
-                ]
-            )
-
-        Err error ->
-            ( { model | warning = "Sorry, I cannot recover your user state" }, Cmd.none )
+        
 
 
 setUserStateTask : UserStateRecord -> String -> Task Http.Error ( DocumentsRecord, DocumentsRecord )
@@ -132,7 +128,7 @@ setUserState data model =
             }
 
         saveUserStateToLocalStorageCommand =
-            External.saveUserState (Data.User.encodeUserState newModel)
+            OutsideInfo.sendInfoOutside (UserState <| Data.User.encodeUserStateAsValue newModel)
 
         renderCommand =
             Render.putTextToRender False newModel.appState.editRecord.idList model.appState.textNeedsUpdate currentDocument
@@ -145,7 +141,7 @@ setUserState data model =
 recoverCurrentDocumentTask userStateRecord token =
     let
         queryForCurrentDocument =
-            case userStateRecord.currentDocumentId of
+                case userStateRecord.currentDocumentId of
                 Ok currentDocumentId ->
                     Debug.log "xxxx queryForCurrentDocument"
                         ("id=" ++ toString currentDocumentId ++ "&docs=any")
@@ -210,7 +206,7 @@ setCurrentDocument documentsRecord model =
             { model | current_document = currentDocument, documents = documentsRecord.documents }
 
         cmd =
-            External.saveUserState (Data.User.encodeUserState newModel)
+            OutsideInfo.sendInfoOutside (UserState <| Data.User.encodeUserStateAsValue newModel)
     in
     ( newModel, Cmd.none )
 
@@ -233,10 +229,9 @@ loadDocumentStack documentsRecord model =
             { appState | page = ReaderPage }
 
         cmd =
-            External.saveDocumentStack (Data.User.encodeDocumentStack newModel)
+            OutsideInfo.sendInfoOutside (SaveDocumentStack <| Data.User.encodeDocumentStack newModel)
 
         _ =
             Debug.log "xxx number of documents" (List.length documents)
     in
-    --( { model | documentStack = documents }, Cmd.none )
     ( { newModel | documentStack = documents }, cmd )

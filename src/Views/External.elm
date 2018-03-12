@@ -3,25 +3,31 @@ module Views.External exposing (..)
 import Types exposing (Model, Page, Document)
 import Json.Encode exposing (encode, object, int, string, bool, list)
 
-
-windowData : Model -> Page -> String
-windowData model page =
-    let
+encodeWindowData : Model -> Page -> Json.Encode.Value
+encodeWindowData model page =
+    let 
         signedIn =
             if model.current_user.token == "" then
                 False
             else
                 True
+    in 
+    Json.Encode.object
+        [ ( "width", Json.Encode.int <| model.window.width )
+        , ( "height", Json.Encode.int <| model.window.height )
+        , ( "page", Json.Encode.string <| toString page )
+        , ( "signed_in", Json.Encode.bool <| signedIn )
+        ]
 
-        data =
-            object
-                [ ( "width", int model.window.width )
-                , ( "height", int model.window.height )
-                , ( "page", string (toString page) )
-                , ( "signed_in", bool signedIn )
+encodeUserData : String -> String -> Int -> String -> String -> Json.Encode.Value
+encodeUserData name email userId username token =
+    Json.Encode.object
+                [ ( "name", Json.Encode.string name )
+                , ( "email", Json.Encode.string email )
+                , ( "id", Json.Encode.int userId )
+                , ( "username", Json.Encode.string username )
+                , ( "token", Json.Encode.string token )
                 ]
-    in
-        encode 2 data
 
 
 windowSetup : Int -> Int -> Page -> Bool -> Bool -> String

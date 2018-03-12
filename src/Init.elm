@@ -5,10 +5,11 @@ import Date
 import Dict
 import Document.Dictionary
 import Document.Document as Document
-import External
+import Json.Encode  
 import MiniLatex.Differ exposing (EditRecord, emptyEditRecord)
 import Nav.UrlParseExtra as Url
 import Navigation
+import OutsideInfo
 import Parser
 import Phoenix.Channel
 import Phoenix.Socket
@@ -26,6 +27,7 @@ import Types
         , DocMsg(..)
         , Flags
         , ImageRecord
+        , InfoForOutside(AskToReconnectUser, AskToRecoverUserState)
         , KWindow
         , Model
         , Msg
@@ -171,9 +173,8 @@ init flags location =
 
         standardCommands =
             [ Cmd.map (ChannelMsg << PhoenixMsg) phxCmd
-            , External.toJs ws
-            , External.askToReconnectUser "reconnectUser"
-            , External.askToRecoverUserState "recoverUserState"
+            , OutsideInfo.sendInfoOutside (AskToReconnectUser Json.Encode.null)
+            , OutsideInfo.sendInfoOutside (AskToRecoverUserState Json.Encode.null)
             , Task.perform (PeriodicMsg << ReceiveDate) Date.now
             , Task.perform (PeriodicMsg << ReceiveTime) Time.now
             , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"

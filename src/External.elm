@@ -51,62 +51,32 @@ compress str =
     str |> String.Extra.replace " " "" |> String.Extra.replace "\n" ""
 
 
-port toJs : String -> Cmd msg
-
-
-port saveUserLogin : String -> Cmd msg
-
-
-port saveUserState : String -> Cmd msg
-
-
-port saveDocumentStack : String -> Cmd msg
-
-
-port saveCurrentDocumentId : String -> Cmd msg
-
-
-port askToRecoverUserState : String -> Cmd msg
-
-
-port recoverUserState : (String -> msg) -> Sub msg
-
-
-
--- Ask JS to send back the token, if any, in localStorage:
-
-
-port askToReconnectUser : String -> Cmd msg
-
-
-port reconnectUser : (String -> msg) -> Sub msg
+{- OUTGOING -}
 
 
 port disconnectUser : String -> Cmd msg
 
 
 
--- TEST:
-
-
-port toElm : (String -> msg) -> Sub msg
-
-
-
 -- IMAGE UPLOAD
-
 
 port fileSelected : String -> Cmd msg
 
+port fileUpload : String -> Cmd msg
+
+
+
+{- INCOMING -}
+
+port reconnectUser : (String -> msg) -> Sub msg
 
 port fileContentRead : (ImagePortData -> msg) -> Sub msg
 
+port fileUploaded : (Bool -> msg) -> Sub msg
 
 
 -- @zghor: FILE UPLOAD
 
 
-port fileUpload : String -> Cmd msg
 
 
-port fileUploaded : (Bool -> msg) -> Sub msg

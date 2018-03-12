@@ -13,6 +13,7 @@ import Types exposing (..)
 import User.Request
 import Utility exposing (gotoPage)
 import Views.External
+import OutsideInfo
 
 
 loginUserCmd : Model -> String -> Cmd Msg
@@ -79,7 +80,7 @@ getTokenCompleted model result =
                     , Cmd.batch
                         [ User.Request.getUserState user2.id
                         , Utility.gotoPage model StartPage
-                        , External.saveUserLogin (Views.External.userData user2.name user2.email user2.id user2.username newToken)
+                        , OutsideInfo.sendInfoOutside (UserData <| Views.External.encodeUserData user2.name user2.email user2.id user2.username newToken)
                         , Request.Document.getDocumentWithAuthenticatedQuery
                             (DocMsg << GetSpecialDocument)
                             user2.token

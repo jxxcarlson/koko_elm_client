@@ -11,7 +11,6 @@ import Types
         , Model
         , Msg(ChannelMsg, DocMsg, ImageMsg, PeriodicMsg, UserMsg, WindowMsg, Outside, LogErr    )
         , PeriodicMsg(Tick)
-        , UserMsg(ReconnectUser, RecoverUserState)
         , WindowMsg(Resize) 
         )
 import Window
@@ -23,8 +22,6 @@ subscriptions model =
     Sub.batch
         [ Time.every (model.appState.tickInterval * Time.second) (PeriodicMsg << Tick)
         , Window.resizes (\{ width, height } -> WindowMsg (Resize width height))
-        , External.reconnectUser (UserMsg << ReconnectUser)
-        , External.recoverUserState (UserMsg << RecoverUserState)
         , Phoenix.Socket.listen model.phxSocket (ChannelMsg << PhoenixMsg)
         , OutsideInfo.getInfoFromOutside Outside LogErr
         , External.fileContentRead (ImageMsg << ImageRead)

@@ -11,6 +11,7 @@ import Time
 import Types exposing (..)
 import User.Login
 import Views.External
+import OutsideInfo
 
 
 setHomePage model =
@@ -48,7 +49,7 @@ setEditPage model =
     in
     ( { model | appState = newAppState, lastEditTime = lastEditTime }
     , Cmd.batch
-        [ External.toJs (Views.External.windowData model EditorPage)
+        [ OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model EditorPage)
         , Task.perform (PeriodicMsg << ReceiveTime) Time.now
 
         --, Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
@@ -67,7 +68,7 @@ goToPage p model =
                 | appState = Action.UI.appStateWithPage model StartPage
                 , message = "Please sign in if you wish to edit"
               }
-            , External.toJs (Views.External.windowData model p)
+            , OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model p)
             )
 
         ( StartPage, True ) ->
@@ -114,4 +115,4 @@ goToPage p model =
             )
 
         ( _, _ ) ->
-            ( { model | appState = Action.UI.appStateWithPage model p }, External.toJs (Views.External.windowData model p) )
+            ( { model | appState = Action.UI.appStateWithPage model p }, OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model p))

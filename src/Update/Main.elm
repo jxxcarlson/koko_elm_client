@@ -12,6 +12,8 @@ import Update.UI
 import Update.User
 import Update.Window
 import Action.Document
+import User.Synchronize
+import User.Login
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -54,6 +56,11 @@ update msg model =
             case infoForElm of 
                RenderedText renderedText ->
                  Action.Document.updateRenderedText model renderedText
+               RecoveredUserState userStateRecord ->
+                 User.Synchronize.doRecoverUserState userStateRecord model
+               UserLoginInfo userLoginRecord ->
+                 User.Login.reconnectUser model userLoginRecord
+
            
 
         LogErr errorMessage ->

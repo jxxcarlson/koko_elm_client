@@ -23,10 +23,12 @@ import Types
         , PeriodicMsg(..)
         , SearchDomain(..)
         , SearchOrder(..)
+        , InfoForOutside(WindowData)
         )
 import User.Auth
 import User.Request
 import Views.External
+import OutsideInfo
 
 
 completeRegistration result model =
@@ -189,7 +191,7 @@ signout message model =
     in
     ( Init.resetModel model
     , Cmd.batch
-        [ External.toJs (Views.External.windowData model StartPage)
+        [ OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model StartPage)   
         , Document.Dictionary.setPublicItemInDict "ident=2017-8-26@18-1-42.887330" "welcome"
         , Request.Document.getDocumentWithQuery (DocMsg << GetSpecialDocument) "ident=2017-8-26@18-1-42.887330"
         , External.disconnectUser "foo"

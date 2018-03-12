@@ -7,6 +7,7 @@ import Configuration
 import External
 import Types exposing (..)
 import Views.External
+import OutsideInfo
 
 
 displayPage : Model -> Page
@@ -84,7 +85,7 @@ toggleAuthorizing model =
         newAppState =
             { oldAppState | authorizing = not oldAppState.authorizing, page = Types.StartPage }
     in
-    ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
+    ( { model | appState = newAppState }, OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model Types.StartPage)) 
 
 
 setAuthorizing : Model -> Bool -> ( Model, Cmd Msg )
@@ -96,7 +97,7 @@ setAuthorizing model value =
         newAppState =
             { oldAppState | authorizing = value, page = Types.LoginPage }
     in
-    ( { model | appState = newAppState }, External.toJs (Views.External.windowData model Types.StartPage) )
+    ( { model | appState = newAppState }, OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model Types.StartPage))
 
 
 appStateWithPage : Model -> Page -> AppState

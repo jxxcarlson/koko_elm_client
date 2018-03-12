@@ -17,11 +17,3 @@ main =
         , update = Update.Main.update
         , subscriptions = subscriptions
         }
-
-
-
--- ----
--- SendToJS str ->
---     ( model, toJs str )
--- LinkTo path ->
---     ( model, Navigation.newUrl path )

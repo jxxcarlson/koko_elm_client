@@ -10,11 +10,13 @@ module Data.User
         , decodeUserStateRecord
         , encodeDocumentStack
         , encodeUserState
+        , encodeUserStateAsValue
         , localStorageUserRecord
+        , localStorageUserDecoder
         )
 
 import Json.Encode as Encode
-import Json.Decode exposing (map, map2, map3, field, at, int, list, string, decodeString, Decoder)
+import Json.Decode exposing (decodeValue, map, map2, map3, field, at, int, list, string, decodeString, Decoder)
 import Json.Decode.Pipeline as JPipeline exposing (decode, required, optional, hardcoded)
 import Types exposing (Model, LoginUserRecord, UserRecord, ErrorMessage, LoginLocalStorageRecord, UserStateRecord)
 
@@ -91,8 +93,8 @@ string2IntList str =
 userStateRecordDecoder : Decoder UserStateRecord
 userStateRecordDecoder =
     map3 UserStateRecord
-        (map string2IntList (field "documentStack" string))
-        (map String.toInt (field "currentDocumentId" string))
+        (field "documentStack" (list int))
+        (map Ok (field "currentDocumentId" int))
         (field "token" string)
 
 
@@ -104,27 +106,11 @@ userStateRecordDecoder2 =
         (field "token" string)
 
 
-decodeUserStateRecord : String -> Result String UserStateRecord
-decodeUserStateRecord jsonString =
-    decodeString userStateRecordDecoder jsonString
+decodeUserStateRecord : Encode.Value -> Result String UserStateRecord
+decodeUserStateRecord jsonValue =
+    decodeValue userStateRecordDecoder jsonValue
 
 
-encodeUserState2 : Model -> Encode.Value
-encodeUserState2 model =
-    let
-        ids =
-            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
-
-        currentDocumentId =
-            Encode.int model.current_document.id
-
-        token =
-            Encode.string model.current_user.token
-
-        data =
-            (Encode.object [ ( "documentStack", ids ), ( "currentDocumentId", currentDocumentId ), ( "token", token ) ])
-    in
-        Encode.object [ ( "user", data ) ]
 
 
 encodeUserState : Model -> String
@@ -141,18 +127,29 @@ encodeUserState model =
     in
         Encode.encode 2 data
 
+encodeUserStateAsValue : Model -> Encode.Value
+encodeUserStateAsValue model =
+    let
+        ids =
+            List.map (\doc -> doc.id) model.documentStack 
 
-encodeDocumentStack : Model -> String
+        currentDocumentId =
+            Encode.int model.current_document.id
+   
+    in
+        Encode.object  [ 
+            ( "documentStack", Encode.list (List.map Encode.int ids) )
+          , ( "currentDocumentId", Encode.int model.current_document.id ) 
+        ]
+
+encodeDocumentStack : Model -> Encode.Value
 encodeDocumentStack model =
     let
         ids =
-            List.map (\doc -> doc.id) model.documentStack |> encodeIntegerList
-
-        data =
-            (Encode.object [ ( "documentStack", ids ) ])
-    in
-        Encode.encode 2 data
-
+            List.map (\doc -> doc.id) model.documentStack 
+    in 
+        Encode.object [ ( "documentStack", Encode.list (List.map Encode.int ids) ) ]
+  
 
 encodeIntegerList : List Int -> Encode.Value
 encodeIntegerList ints =

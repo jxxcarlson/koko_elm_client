@@ -2,14 +2,14 @@ module Utility exposing (..)
 
 import Element
 import Element.Events as EE exposing (keyCode, on)
-import External exposing (toJs)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Json.Decode as Json exposing (Decoder, float, int, list, string)
 import Regex
 import String.Extra
-import Types exposing (Model, Page)
-import Views.External exposing (windowData)
+import Types exposing (Model, Page, InfoForOutside(WindowData))
+import Views.External
+import OutsideInfo 
 
 
 queryText : String -> String
@@ -32,8 +32,8 @@ onKeyUp tagger =
 
 gotoPage : Model -> Page -> Cmd msg
 gotoPage model p =
-    toJs (Views.External.windowData model p)
-
+    OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model p)
+    
 
 
 -- youtube : String -> Html

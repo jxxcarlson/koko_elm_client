@@ -404,8 +404,6 @@ type UserMsg
     | GetUsers (Result Http.Error UsersRecord)
     | GetUserState (Result Http.Error UserStateRecord)
     | PutUser (Result Http.Error ())
-    | ReconnectUser String
-    | RecoverUserState String
     | SetUserState (Result Http.Error ( DocumentsRecord, DocumentsRecord ))
 
 
@@ -415,11 +413,19 @@ type WindowMsg
 
 type InfoForOutside
     = PutTextToRender Json.Encode.Value
+    | WindowData Json.Encode.Value
+    | UserData Json.Encode.Value
+    | UserState Json.Encode.Value
+    | SaveDocumentStack Json.Encode.Value
+    | AskToReconnectUser Json.Encode.Value
+    | AskToRecoverUserState Json.Encode.Value
     
 
 
 type InfoForElm
     = RenderedText String
+   | RecoveredUserState UserStateRecord
+   | UserLoginInfo LoginLocalStorageRecord
 
 
 type alias GenericOutsideData =

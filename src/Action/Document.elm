@@ -41,10 +41,10 @@ import Document.MiniLatex
 import Document.Render as Render
 import Document.Search
 import Document.Stack as Stack
-import External exposing (toJs)
 import MiniLatex.Driver
 import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
+import OutsideInfo
 import Random
 import Regex
 import Request.Api
@@ -54,7 +54,8 @@ import Types exposing (..)
 import User.Synchronize
 import Utility exposing (replaceIf)
 import Utility.KeyValue as KeyValue
-import Views.External exposing (windowData)
+import Views.External
+import External 
 
 
 {-
@@ -409,7 +410,7 @@ updateCurrentDocument model document =
             else
                 [ Render.putTextToRender False model.appState.editRecord.idList model.appState.textNeedsUpdate document -- put new content in JS-mirror of document and save the document (XX: client-server)
                 , Task.attempt (DocMsg << SaveDocument) saveTask
-                , External.saveUserState (Data.User.encodeUserState newModel)
+                , OutsideInfo.sendInfoOutside (UserState <| Data.User.encodeUserStateAsValue newModel)
                 , Random.generate (DocMsg << NewSeed) (Random.int 1 10000)
                 ]
     in
@@ -503,8 +504,8 @@ updateDocuments model documentsRecord =
     in
     ( newModel
     , Cmd.batch
-        [ toJs (windowData model model.appState.page)
-        , External.saveUserState (Data.User.encodeUserState newModel)
+        [ OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model model.appState.page) 
+        , OutsideInfo.sendInfoOutside (UserState <| Data.User.encodeUserStateAsValue newModel)
         , Render.putTextToRender False model.appState.editRecord.idList newModel.appState.textNeedsUpdate current_document
         , Document.Search.getDocumentsAndContent newDocumentList model.current_user.id model.current_user.token
         , User.Synchronize.setTexMacroDocument newModel
@@ -880,9 +881,9 @@ selectDocument model document =
             }
 
         basicCommands =
-            [ toJs (windowData newModel (displayPage model))
+            [ OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData newModel (displayPage model))
             , Render.putTextToRender False newModel.appState.editRecord.idList model.appState.textNeedsUpdate document
-            , External.saveUserState (Data.User.encodeUserState newModel)
+            , OutsideInfo.sendInfoOutside (UserState <| Data.User.encodeUserStateAsValue newModel)
             ]
 
         setTexMacroFileCmd =

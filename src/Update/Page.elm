@@ -5,10 +5,11 @@ import Document.Search
 import External
 import Nav.Navigation
 import Request.Document
-import Types exposing (DocMsg(..), Msg(DocMsg), Page(..), PageMsg(..), SearchDomain(..), SearchOrder(..))
+import Types exposing (DocMsg(..), Msg(DocMsg), Page(..), PageMsg(..), SearchDomain(..), SearchOrder(..), InfoForOutside(WindowData))
 import User.Display
 import User.Request
 import Views.External
+import OutsideInfo
 
 
 update submessage model =
@@ -63,7 +64,7 @@ update submessage model =
             Action.Page.goToPage p model
 
         SetupPages ->
-            ( model, External.toJs (Views.External.windowData model model.appState.page) )
-
+            ( model, OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model Types.StartPage))
+            
         GoToPage maybepage ->
             Nav.Navigation.navigateTo maybepage model

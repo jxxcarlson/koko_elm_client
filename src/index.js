@@ -22,44 +22,6 @@ require('./index.html');
   var asciidoctor = Asciidoctor();
   var count = 0;
 
-//   // Main function called through ports to render text. 
-//   app.ports.putTextToRender.subscribe(function(data) {
-
-//     console.log("port pttr, id:: " + data.id)
-//     console.log("     type:: " + data.textType)
-//     console.log("     length:: " + data.content.length)
-
-//     if (data.force == true) {
-//        console.log("DEBOUNCE = TRUE")
-//     } else {
-//       console.log("DEBOUNCE = FALSE")
-//     }
-
-//     requestAnimationFrame(function() {
-
-//         count = count + 1
-//         switch (data.textType) {
-
-//           case "adoc":
-//              render_asciidoc(data.content)
-//              break;
-//           case "adoc_latex":
-//              render_asciidoc_latex(data.content)
-//              break;
-//           case "plain":
-//              render_plain(data.content)
-//              break;
-//           case "latex":
-//               // force = true
-//               render_latex(true, data.idList, data.content)
-//               break;
-//           default:
-//             console.log("Default rendering ... asciidoc")
-//             render_asciidoc(data.content)
-//         }
-//     })
-// })
-
 var processDocumentContent = function(data) {
 
   if (data.force == true) {
@@ -96,12 +58,65 @@ var processDocumentContent = function(data) {
 // INFO FOR OUTSIDE
 
 app.ports.infoForOutside.subscribe(msg => {
-  if (msg.tag == "PutTextToRender") {
-    processDocumentContent(msg.data)
-   
-  } 
+  switch(msg.tag) {
 
+     case "PutTextToRender":
+       processDocumentContent(msg.data)
+       break;
+      
+    case "UserData":
+       processUserData(msg.data)
+       break; 
+
+    case "UserState":
+      processUserState(msg.data)
+      break; 
+
+    case "SaveDocumentStack":
+      processDocumentStack(msg.data)
+      break;
+
+    case "AskToRecoverUserState":
+      askToRecoverUserState(msg.data)
+      break;
+
+    case "AskToReconnectUser":
+      askToReconnectUser(msg.data)
+      break;   
+  }
+  
 })
+
+var askToReconnectUser = function (str) {
+  console.log("reconnectUser");
+  app.ports.infoForElm.send({tag: "ReconnectUser", data: localStorage})
+}
+
+var askToRecoverUserState = function(str) {
+  console.log("RecoverUserState :");
+  app.ports.infoForElm.send({tag: "RecoverUserState", data: localStorage});
+}
+ 
+var processDocumentStack = function(data) {
+  console.log("xxx I will put the documentStack in local storage"); 
+  localStorage.setItem("documentStack", data.documentStack);
+}
+
+var processUserData = function(userSettings) {
+  console.log("I will put this stuff in local storage" );
+  localStorage.setItem("username", userSettings.username);
+  localStorage.setItem("token", userSettings.token);
+  localStorage.setItem("id", userSettings.id);
+  localStorage.setItem("email", userSettings.email);
+  localStorage.setItem("name", userSettings.name);
+  localStorage.setItem("blurb", userSettings.blurb);
+}
+
+var processUserState = function(data) {
+  console.log("I will put the documentStack in local storage");
+  localStorage.setItem("documentStack", data.documentStack);
+  localStorage.setItem("currentDocumentId", data.currentDocumentId);
+}
 
 
 document.getElementById("rendered_text2").style.visibility = "hidden";
@@ -162,35 +177,19 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
 
-  
-
-
-
-
 
 // PERSIST AND RECONNECT USER
 
-app.ports.saveUserLogin.subscribe(function (str) {
-  console.log("I will put this in local storage: " + str);
-  var userSettings = JSON.parse(str)
-  console.log("userSettings = " + JSON.stringify(userSettings))
-  localStorage.setItem("username", userSettings.username);
-  localStorage.setItem("token", userSettings.token);
-  localStorage.setItem("id", userSettings.id);
-  localStorage.setItem("email", userSettings.email);
-  localStorage.setItem("name", userSettings.name);
-  localStorage.setItem("blurb", userSettings.blurb);
 
-   // prepareLocalStorage();
 
-})
 
-async function reconnect(localStorageAsString) {
-  console.log('Request to reconnect received.');
-  await sleep(300);
-  app.ports.reconnectUser.send(localStorageAsString);
-  console.log('Request to reconnect EXECUTED.');
-}
+
+// async function reconnect(localStorageAsString) {
+//   console.log('Request to reconnect received.');
+//   await sleep(300);
+//   app.ports.reconnectUser.send(localStorageAsString);
+//   console.log('Request to reconnect EXECUTED.');
+// }
 
 app.ports.disconnectUser.subscribe(function () {
   console.log("app.ports.disconnectUser command received");
@@ -198,56 +197,20 @@ app.ports.disconnectUser.subscribe(function () {
   console.log("local storage cleared")
 })
 
-app.ports.askToReconnectUser.subscribe(function (str) {
-  console.log("app.ports.reconnectUser received: " + str);
-  if (str == "reconnectUser") {
-    var localStorageAsString = JSON.stringify(localStorage)
-    console.log("ask to reconnect user with data: " + localStorageAsString)
-    app.ports.reconnectUser.send(localStorageAsString);
-    app.ports.toElm.send("Yada yada!");
-  } else {
-    console.log("I dont't unerstand that: " + str)
-  }
-
-})
 
 
-app.ports.saveUserState.subscribe(function (str) {
-  console.log("I will put the documentStack in local storage");
-  var data = JSON.parse(str)
 
-  console.log("data.documentStack = " + data.documentStack )
-  console.log("data.currentDocumentId (1) = " + data.currentDocumentId )
+// app.ports.askToRecoverUserState.subscribe(function (str) {
+//   console.log("app.ports.askToRecoverUserState received: " + str);
+//   if (str == "recoverUserState") {
+//     var localStorageAsString = JSON.stringify(localStorage)
+//     console.log("ask to recover user state with data: " + localStorageAsString)
+//     app.ports.recoverUserState.send(localStorageAsString);
+//   } else {
+//     console.log("I don't unerstand that: " + str)
+//   }
 
-  localStorage.setItem("documentStack", data.documentStack);
-  localStorage.setItem("currentDocumentId", data.currentDocumentId);
-})
-
-app.ports.saveDocumentStack.subscribe(function (str) {
-  console.log("xxx I will put the documentStack in local storage");
-  var data = JSON.parse(str)
-  console.log("data.documentStack = " + data.documentStack )
-  localStorage.setItem("documentStack", data.documentStack);
-})
-
-app.ports.saveCurrentDocumentId.subscribe(function (str) {
-  console.log("xxx I will put the CurrentDocumentId in local storage");
-  var data = JSON.parse(str)
-  console.log("data.currentDocumentId (2)= " + data.currentDocumentId )
-  localStorage.setItem("currentDocumentId", data.currentDocumentId);
-})
-
-app.ports.askToRecoverUserState.subscribe(function (str) {
-  console.log("app.ports.askToRecoverUserState received: " + str);
-  if (str == "recoverUserState") {
-    var localStorageAsString = JSON.stringify(localStorage)
-    console.log("ask to recover user state with data: " + localStorageAsString)
-    app.ports.recoverUserState.send(localStorageAsString);
-  } else {
-    console.log("I don't unerstand that: " + str)
-  }
-
-})
+// })
 
 
 // FILE UPLOAD I
