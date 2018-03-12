@@ -107,7 +107,6 @@ app.ports.infoForOutside.subscribe(msg => {
 document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var render_asciidoc = function(content) {
-      console.log(":: render_asciidoc, length = " + content.length)
       request_in_progress = true;
       var millisecondsToWait = 100;
       setTimeout(function() {
@@ -115,14 +114,12 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
           if (content !== current_content) {
             var rt = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'})
             app.ports.infoForElm.send({ tag: "RenderedText", data: rt });
-            console.log("port rad:: send to Elm, id:: " + data.id)
             current_content = content
           }
       }  , millisecondsToWait);
    }
 
    var render_asciidoc_latex = function(content) {
-       console.log("render_asciidoc_latex, content length = " + content.length)
            if (content !== current_content) {
              document.getElementById('rendered_text2').innerHTML = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'});
              typeset()
@@ -153,7 +150,6 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
   }
 
    var render_plain = function(content) {
-       console.log("rende_plain,  content length = " + content.length)
        request_in_progress = true;
        var millisecondsToWait = 100;
        setTimeout(function() {
