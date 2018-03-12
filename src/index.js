@@ -22,43 +22,87 @@ require('./index.html');
   var asciidoctor = Asciidoctor();
   var count = 0;
 
-  // Main function called through ports to render text. 
-  app.ports.putTextToRender.subscribe(function(data) {
+//   // Main function called through ports to render text. 
+//   app.ports.putTextToRender.subscribe(function(data) {
 
-    console.log("port pttr, id:: " + data.id)
-    console.log("     type:: " + data.textType)
-    console.log("     length:: " + data.content.length)
+//     console.log("port pttr, id:: " + data.id)
+//     console.log("     type:: " + data.textType)
+//     console.log("     length:: " + data.content.length)
 
-    if (data.force == true) {
-       console.log("DEBOUNCE = TRUE")
-    } else {
-      console.log("DEBOUNCE = FALSE")
-    }
+//     if (data.force == true) {
+//        console.log("DEBOUNCE = TRUE")
+//     } else {
+//       console.log("DEBOUNCE = FALSE")
+//     }
 
-    requestAnimationFrame(function() {
+//     requestAnimationFrame(function() {
 
-        count = count + 1
-        switch (data.textType) {
+//         count = count + 1
+//         switch (data.textType) {
 
-          case "adoc":
-             render_asciidoc(data.content)
-             break;
-          case "adoc_latex":
-             render_asciidoc_latex(data.content)
-             break;
-          case "plain":
-             render_plain(data.content)
-             break;
-          case "latex":
-              // force = true
-              render_latex(true, data.idList, data.content)
-              break;
-          default:
-            console.log("Default rendering ... asciidoc")
-            render_asciidoc(data.content)
-        }
-    })
+//           case "adoc":
+//              render_asciidoc(data.content)
+//              break;
+//           case "adoc_latex":
+//              render_asciidoc_latex(data.content)
+//              break;
+//           case "plain":
+//              render_plain(data.content)
+//              break;
+//           case "latex":
+//               // force = true
+//               render_latex(true, data.idList, data.content)
+//               break;
+//           default:
+//             console.log("Default rendering ... asciidoc")
+//             render_asciidoc(data.content)
+//         }
+//     })
+// })
+
+var processDocumentContent = function(data) {
+
+  if (data.force == true) {
+     console.log("DEBOUNCE = TRUE")
+  } else {
+    console.log("DEBOUNCE = FALSE")
+  }
+
+  requestAnimationFrame(function() {
+
+      count = count + 1
+      switch (data.textType) {
+
+        case "adoc":
+           render_asciidoc(data.content)
+           break;
+        case "adoc_latex":
+           render_asciidoc_latex(data.content)
+           break;
+        case "plain":
+           render_plain(data.content)
+           break;
+        case "latex":
+            // force = true
+            render_latex(true, data.idList, data.content)
+            break;
+        default:
+          console.log("Default rendering ... asciidoc")
+          render_asciidoc(data.content)
+      }
+  })
+}
+
+// INFO FOR OUTSIDE
+
+app.ports.infoForOutside.subscribe(msg => {
+  if (msg.tag == "PutTextToRender") {
+    processDocumentContent(msg.data)
+   
+  } 
+
 })
+
 
 document.getElementById("rendered_text2").style.visibility = "hidden";
 
@@ -70,7 +114,7 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
           request_in_progress = false;
           if (content !== current_content) {
             var rt = asciidoctor.convert(content, {safe: 'safe', attributes: 'icons=font'})
-            app.ports.getRenderedText.send(rt); // Send rendered text to Elm
+            app.ports.infoForElm.send({ tag: "RenderedText", data: rt });
             console.log("port rad:: send to Elm, id:: " + data.id)
             current_content = content
           }
@@ -84,18 +128,16 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
              typeset()
              current_content = content
              var rt = document.getElementById('rendered_text2').innerHTML
-             app.ports.getRenderedText.send(rt); // Send rendered text to Elm
+             app.ports.infoForElm.send({ tag: "RenderedText", data: rt });
            }
     }
 
   var send_rendered_text = function() {
-    var rt = document.getElementById('rendered_text2').innerHTML
-    console.log("ptx, send_rendered_text")
-    app.ports.getRenderedText.send(rt); // Send rendered text to Elm
+    var rt = document.getElementById('rendered_text2').innerHTML  
+    app.ports.infoForElm.send({ tag: "RenderedText", data: rt });
   }
 
    function typeset() {
-    console.log(":: typesetting document ... ")
     MathJax.Hub.Queue( ["Typeset", MathJax.Hub, send_rendered_text] );
   }
 
@@ -106,7 +148,6 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
 
 
   var render_latex = function(force, idList, content) {
-    console.log(":: render_latex, putting content in DOM")
     document.getElementById('rendered_text2').innerHTML = content;
     typeset()
   }
@@ -118,7 +159,7 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
        setTimeout(function() {
            request_in_progress = false;
            if (content !== current_content) {
-             app.ports.getRenderedText.send("<pre>\n" + content + "\n</pre>\n\n");
+             app.ports.infoForElm.send({ tag: "RenderedText", data: "<pre>\n" + content + "\n</pre>\n\n" });
              current_content = content
            }
        }  , millisecondsToWait);

@@ -24,6 +24,7 @@ module Action.Document
         , updateContent
         , updateCurrentDocument
         , updateCurrentDocumentWithContent
+        , updateRenderedText
         , updateDocuments
         , updateShareDocumentCommand
         , updateSharingData
@@ -40,7 +41,7 @@ import Document.MiniLatex
 import Document.Render as Render
 import Document.Search
 import Document.Stack as Stack
-import External exposing (putTextToRender, toJs)
+import External exposing (toJs)
 import MiniLatex.Driver
 import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
@@ -111,6 +112,21 @@ import Views.External exposing (windowData)
    macros : DocumentDict -> String
 
 -}
+
+updateRenderedText : Model -> String -> (Model, Cmd Msg)
+updateRenderedText model str = 
+    let
+        document =
+            model.current_document
+
+        newDocument =
+            { document | rendered_content = str }
+
+        newModel =
+            { model | current_document = newDocument }
+
+    in
+    ( { model | current_document = newDocument }, Cmd.none )
 
 updateSharingData : Model -> Cmd Msg
 updateSharingData model =

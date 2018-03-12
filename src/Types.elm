@@ -4,7 +4,7 @@ import Date exposing (Date)
 import Dict 
 import Http
 import Image.FileReader as FileReader exposing (NativeFile)
-import Json.Encode as JsEncode
+import Json.Encode
 import MiniLatex.Differ exposing (EditRecord)
 import Phoenix.Socket
 import Time exposing (Time)
@@ -271,8 +271,6 @@ type alias Model =
 type alias ErrorMessage =
     String
 
-
-
 -- https://www.reddit.com/r/elm/comments/5jd2xn/how_to_structure_elm_with_multiple_models/dbuu0m4/
 
 
@@ -295,7 +293,6 @@ type DocMsg
     | GetDiary
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
-    | GetRenderedText String
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | InputContent String
@@ -345,8 +342,8 @@ type AuthMsg
 type ChannelMsg
     = SetMessage String
     | SendMessage
-    | ReceiveChatMessage JsEncode.Value
-    | HandleSendError JsEncode.Value
+    | ReceiveChatMessage Json.Encode.Value
+    | HandleSendError Json.Encode.Value
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
 
 
@@ -416,8 +413,22 @@ type WindowMsg
     = Resize Int Int
 
 
+type InfoForOutside
+    = PutTextToRender Json.Encode.Value
+    
+
+
+type InfoForElm
+    = RenderedText String
+
+
+type alias GenericOutsideData =
+    { tag : String, data : Json.Encode.Value }
+
+
 type Msg
     = NoOp
+    | LogErr String
     | AuthMsg AuthMsg
     | ChannelMsg ChannelMsg
     | UIMsg UIMsg
@@ -428,6 +439,7 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | WindowMsg WindowMsg
+    | Outside InfoForElm
 
 
 type Page

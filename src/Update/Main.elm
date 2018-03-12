@@ -1,6 +1,6 @@
 module Update.Main exposing (update)
 
-import Types exposing (Model, Msg(..))
+import Types exposing (Model, Msg(..), InfoForElm(..    ))
 import Update.Auth
 import Update.Channel
 import Update.Document
@@ -11,6 +11,7 @@ import Update.Search
 import Update.UI
 import Update.User
 import Update.Window
+import Action.Document
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -48,3 +49,12 @@ update msg model =
 
         WindowMsg submessage ->
             Update.Window.update submessage model
+
+        Outside infoForElm -> 
+            case infoForElm of 
+               RenderedText renderedText ->
+                 Action.Document.updateRenderedText model renderedText
+           
+
+        LogErr errorMessage ->
+           ({model | message = "ERROR: " ++ errorMessage}, Cmd.none)
