@@ -10,7 +10,6 @@ putTextToRender force idList textNeedsUpdate document =
     let
         value = (External.encodeDocument force idList textNeedsUpdate document)
     in  
-    -- External.putTextToRender (External.encodeDocument force idList textNeedsUpdate document)
     OutsideInfo.sendInfoOutside (OutsideInfo.PutTextToRender value)
 
 

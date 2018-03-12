@@ -4,7 +4,7 @@ import Date exposing (Date)
 import Dict 
 import Http
 import Image.FileReader as FileReader exposing (NativeFile)
-import Json.Encode as JsEncode
+import Json.Encode
 import MiniLatex.Differ exposing (EditRecord)
 import Phoenix.Socket
 import Time exposing (Time)
@@ -345,8 +345,8 @@ type AuthMsg
 type ChannelMsg
     = SetMessage String
     | SendMessage
-    | ReceiveChatMessage JsEncode.Value
-    | HandleSendError JsEncode.Value
+    | ReceiveChatMessage Json.Encode.Value
+    | HandleSendError Json.Encode.Value
     | PhoenixMsg (Phoenix.Socket.Msg Msg)
 
 
@@ -416,6 +416,19 @@ type WindowMsg
     = Resize Int Int
 
 
+type InfoForOutside
+    = PutTextToRender Json.Encode.Value
+    
+
+
+type InfoForElm
+    = EntriesChanged (List String)
+
+
+type alias GenericOutsideData =
+    { tag : String, data : Json.Encode.Value }
+
+
 type Msg
     = NoOp
     | AuthMsg AuthMsg
@@ -428,6 +441,7 @@ type Msg
     | SearchMsg SearchMsg
     | UserMsg UserMsg
     | WindowMsg WindowMsg
+    | Outside InfoForElm
 
 
 type Page

@@ -112,6 +112,24 @@ import Views.External exposing (windowData)
 
 -}
 
+updateRenderedText : Model -> String -> (Model, Cmd Msg)
+updateRenderedText model str = 
+    let
+        document =
+            model.current_document
+
+        newDocument =
+            { document | rendered_content = str }
+
+        newModel =
+            { model | current_document = newDocument }
+
+        _ =
+            Debug.log "::port, GetRenderedText for id " document.id
+    in
+    -- Action.Document.saveCurrentDocument "" newModel
+    ( { model | current_document = newDocument }, Cmd.none )
+
 updateSharingData : Model -> Cmd Msg
 updateSharingData model =
   let  

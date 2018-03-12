@@ -1,7 +1,8 @@
 port module OutsideInfo exposing (..)
 
-import Json.Decode exposing (decodeValue)
+import Json.Decode exposing (decodeValue, decodeString, string)
 import Json.Encode
+import Types exposing(Msg(..), DocMsg(..), InfoForOutside(..), InfoForElm(..), GenericOutsideData)
 
 
 sendInfoOutside : InfoForOutside -> Cmd msg
@@ -12,35 +13,22 @@ sendInfoOutside info =
 
  
 
--- getInfoFromOutside : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
--- getInfoFromOutside tagger onError =
---     infoForElm
---         (\outsideInfo ->
---             case outsideInfo.tag of
---                 "EntriesChanged" ->
---                     case decodeValue (Json.Decode.list entryDecoder) outsideInfo.data of
---                         Ok entries ->
---                             tagger <| EntriesChanged entries
+getInfoFromOutside : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
+getInfoFromOutside tagger onError =
+    infoForElm
+        (\outsideInfo ->
+            -- case decodeValue (Json.Decode.list entryDecoder) outsideInfo.data of
+            case decodeString string outsideInfo.data of
+                        Ok renderedText ->
+                            tagger <| (EntriesChanged) entries
 
---                         Err e ->
---                             onError e
-
---                 _ ->
---                     onError <| "Unexpected info from outside: " ++ toString outsideInfo
---         )
+                        Err e ->
+                            onError e
 
 
-type InfoForOutside
-    = PutTextToRender Json.Encode.Value
-    
-
-
-type InfoForElm
-    = EntriesChanged (List String)
-
-
-type alias GenericOutsideData =
-    { tag : String, data : Json.Encode.Value }
+                _ ->
+                    onError <| "Unexpected info from outside: " ++ toString outsideInfo
+        )
 
 
 port infoForOutside : GenericOutsideData -> Cmd msg

@@ -98,7 +98,7 @@ var processDocumentContent = function(data) {
   })
 }
 
-
+// INFO FOR OUTSIDE
 
 app.ports.infoForOutside.subscribe(msg => {
   if (msg.tag == "PutTextToRender") {
@@ -108,6 +108,8 @@ app.ports.infoForOutside.subscribe(msg => {
   } 
 
 })
+
+
 //   else if (msg.tag == "PutTextToRender") {
 //     localforage
 //       .length()
@@ -160,8 +162,8 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var send_rendered_text = function() {
     console.log("ptx, send_rendered_text")
-    var rt = document.getElementById('rendered_text2').innerHTML
-    console.log("ptx" + rt)
+    var rt = document.getElementById('rendered_text2').innerHTML  
+    app.ports.infoForElm.send({ tag: "RenderedText", data: rt });
     app.ports.getRenderedText.send(rt); // Send rendered text to Elm
   }
 
