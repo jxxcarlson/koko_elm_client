@@ -90,6 +90,7 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var send_rendered_text = function() {
     var rt = document.getElementById('rendered_text2').innerHTML
+    console.log("ptx, send_rendered_text")
     app.ports.getRenderedText.send(rt); // Send rendered text to Elm
   }
 
