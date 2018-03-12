@@ -293,7 +293,6 @@ type DocMsg
     | GetDiary
     | GetDocuments (Result Http.Error DocumentsRecord)
     | GetUserDocuments (Result Http.Error DocumentsRecord)
-    | GetRenderedText String
     | GetSpecialDocument (Result Http.Error DocumentsRecord)
     | GetMasterDocument (Result Http.Error DocumentsRecord)
     | InputContent String

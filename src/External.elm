@@ -6,21 +6,6 @@ import String.Extra
 import Types exposing (Document, ImagePortData)
 
 
-{-| }
-NOTE: render and getRenderedText establish a client-server
-relationship between the Elm app and JS-world
-where Asciidoctor.js and MathJax.js live.
-
-Use render (encodeDocument document) to send
-rendered_content to JS-world.
-
--}
-port putTextToRender : Encode.Value -> Cmd msg
-
-
-{-| Subscribe to rendereed text.
--}
-port getRenderedText : (String -> msg) -> Sub msg
 
 
 {-| encodeDocument is used to send rendered content to JS-world.

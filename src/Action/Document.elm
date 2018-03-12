@@ -41,7 +41,7 @@ import Document.MiniLatex
 import Document.Render as Render
 import Document.Search
 import Document.Stack as Stack
-import External exposing (putTextToRender, toJs)
+import External exposing (toJs)
 import MiniLatex.Driver
 import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
@@ -125,10 +125,7 @@ updateRenderedText model str =
         newModel =
             { model | current_document = newDocument }
 
-        _ =
-            Debug.log "::port, GetRenderedText for id " document.id
     in
-    -- Action.Document.saveCurrentDocument "" newModel
     ( { model | current_document = newDocument }, Cmd.none )
 
 updateSharingData : Model -> Cmd Msg

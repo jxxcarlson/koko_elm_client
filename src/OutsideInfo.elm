@@ -21,10 +21,10 @@ getInfoFromOutside tagger onError =
                 "RenderedText" -> 
                     case decodeValue string outsideInfo.data of
                         Ok renderedText ->
-                            tagger <| RenderedText (Debug.log "ptx, (ok, 1)" renderedText)
+                            tagger <| RenderedText renderedText
 
                         Err e ->
-                            onError (Debug.log "ptx (err,2)" e)
+                            onError e
 
                 _   ->
                     onError <| "Unexpected info from outside: " ++ toString outsideInfo
