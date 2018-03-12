@@ -60,6 +60,76 @@ require('./index.html');
     })
 })
 
+var processDocumentContent = function(data) {
+
+  console.log("ptx, processDocumentContent")
+  console.log("port pttr, id:: " + data.id)
+  console.log("     type:: " + data.textType)
+  console.log("     length:: " + data.content.length)
+
+  if (data.force == true) {
+     console.log("DEBOUNCE = TRUE")
+  } else {
+    console.log("DEBOUNCE = FALSE")
+  }
+
+  requestAnimationFrame(function() {
+
+      count = count + 1
+      switch (data.textType) {
+
+        case "adoc":
+           render_asciidoc(data.content)
+           break;
+        case "adoc_latex":
+           render_asciidoc_latex(data.content)
+           break;
+        case "plain":
+           render_plain(data.content)
+           break;
+        case "latex":
+            // force = true
+            render_latex(true, data.idList, data.content)
+            break;
+        default:
+          console.log("Default rendering ... asciidoc")
+          render_asciidoc(data.content)
+      }
+  })
+}
+
+
+
+app.ports.infoForOutside.subscribe(msg => {
+  if (msg.tag == "PutTextToRender") {
+    console.log("ptx: PutTextToRender")
+    processDocumentContent(msg.data)
+   
+  } 
+
+})
+//   else if (msg.tag == "PutTextToRender") {
+//     localforage
+//       .length()
+//       .then(length => {
+//         var newEntry = { id: length, date: Date.now(), content: "" };
+//         return localforage.setItem("entry:" + length, newEntry);
+//       })
+//       .then(sendEntries)
+//       .catch(console.error);
+//   } else if (msg.tag == "EntryModified") {
+//     localforage
+//       .setItem("entry:" + msg.data.id, msg.data)
+//       .then(sendEntries)
+//       .catch(console.error);
+//   } else if (msg.tag == "EntryDeleted") {
+//     localforage
+//       .removeItem("entry:" + msg.data)
+//       .then(sendEntries)
+//       .catch(console.error);
+//   }
+// });
+
 document.getElementById("rendered_text2").style.visibility = "hidden";
 
   var render_asciidoc = function(content) {
@@ -89,12 +159,14 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
   var send_rendered_text = function() {
+    console.log("ptx, send_rendered_text")
     var rt = document.getElementById('rendered_text2').innerHTML
+    console.log("ptx" + rt)
     app.ports.getRenderedText.send(rt); // Send rendered text to Elm
   }
 
    function typeset() {
-    console.log(":: typesetting document ... ")
+    console.log("ptx :: typesetting document ... ")
     MathJax.Hub.Queue( ["Typeset", MathJax.Hub, send_rendered_text] );
   }
 
@@ -105,7 +177,7 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
 
 
   var render_latex = function(force, idList, content) {
-    console.log(":: render_latex, putting content in DOM")
+    console.log("ptx :: render_latex, putting content in DOM")
     document.getElementById('rendered_text2').innerHTML = content;
     typeset()
   }

@@ -3,11 +3,15 @@ module Document.Render exposing (putTextToRender, putTextToRenderWithKey)
 import Document.Preprocess exposing (preprocessSource)
 import External
 import Types exposing (Document, Model, Msg)
-
+import OutsideInfo
 
 putTextToRender : Bool -> List String -> Bool -> Document -> Cmd msg
 putTextToRender force idList textNeedsUpdate document =
-    External.putTextToRender (External.encodeDocument force idList textNeedsUpdate document)
+    let
+        value = (External.encodeDocument force idList textNeedsUpdate document)
+    in  
+    -- External.putTextToRender (External.encodeDocument force idList textNeedsUpdate document)
+    OutsideInfo.sendInfoOutside (OutsideInfo.PutTextToRender value)
 
 
 putTextToRenderWithKey : Int -> Model -> ( Model, Cmd Msg )
