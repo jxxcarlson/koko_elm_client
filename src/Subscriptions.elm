@@ -10,10 +10,10 @@ import Types
         , ErrorMessage
         , ImageMsg(FileUploaded, ImageRead)
         , Model
-        , Msg(ChannelMsg, DocMsg, ImageMsg, PeriodicMsg, UserMsg, WindowMsg)
+        , Msg(ChannelMsg, DocMsg, ImageMsg, PeriodicMsg, UserMsg, WindowMsg, Outside, LogErr    )
         , PeriodicMsg(Tick)
         , UserMsg(ReconnectUser, RecoverUserState)
-        , WindowMsg(Resize)
+        , WindowMsg(Resize) 
         )
 import Window
 import OutsideInfo
@@ -28,7 +28,7 @@ subscriptions model =
         , External.recoverUserState (UserMsg << RecoverUserState)
         , Phoenix.Socket.listen model.phxSocket (ChannelMsg << PhoenixMsg)
         , External.getRenderedText (DocMsg << GetRenderedText) -- pull rendered text from JS-land, then store in DB
-        , OutsideInfo.infoForElm Outside ErrorMessage
+        , OutsideInfo.getInfoFromOutside Outside LogErr
         , External.fileContentRead (ImageMsg << ImageRead)
         , External.fileUploaded (ImageMsg << FileUploaded)
         ]

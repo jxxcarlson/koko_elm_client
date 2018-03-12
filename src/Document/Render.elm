@@ -2,7 +2,7 @@ module Document.Render exposing (putTextToRender, putTextToRenderWithKey)
 
 import Document.Preprocess exposing (preprocessSource)
 import External
-import Types exposing (Document, Model, Msg)
+import Types exposing (Document, Model, Msg, InfoForOutside(PutTextToRender))
 import OutsideInfo
 
 putTextToRender : Bool -> List String -> Bool -> Document -> Cmd msg
@@ -10,7 +10,7 @@ putTextToRender force idList textNeedsUpdate document =
     let
         value = (External.encodeDocument force idList textNeedsUpdate document)
     in  
-    OutsideInfo.sendInfoOutside (OutsideInfo.PutTextToRender value)
+    OutsideInfo.sendInfoOutside (PutTextToRender value)
 
 
 putTextToRenderWithKey : Int -> Model -> ( Model, Cmd Msg )

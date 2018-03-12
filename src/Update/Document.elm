@@ -40,21 +40,22 @@ update submessage model =
             Document.Render.putTextToRenderWithKey key model
 
         GetRenderedText str ->
-            let
-                document =
-                    model.current_document
+            -- let
+            --     document =
+            --         model.current_document
 
-                newDocument =
-                    { document | rendered_content = str }
+            --     newDocument =
+            --         { document | rendered_content = str }
 
-                newModel =
-                    { model | current_document = newDocument }
+            --     newModel =
+            --         { model | current_document = newDocument }
 
-                _ =
-                    Debug.log "::port, GetRenderedText for id " document.id
-            in
-            -- Action.Document.saveCurrentDocument "" newModel
-            ( { model | current_document = newDocument }, Cmd.none )
+            --     _ =
+            --         Debug.log "::port, GetRenderedText for id " document.id
+            -- in
+            -- -- Action.Document.saveCurrentDocument "" newModel
+            -- ( { model | current_document = newDocument }, Cmd.none )
+            (model, Cmd.none)
 
         EditSpecialDocument ->
             let

@@ -17,16 +17,16 @@ getInfoFromOutside : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
 getInfoFromOutside tagger onError =
     infoForElm
         (\outsideInfo ->
-            -- case decodeValue (Json.Decode.list entryDecoder) outsideInfo.data of
-            case decodeString string outsideInfo.data of
+            case outsideInfo.tag of 
+                "RenderedText" -> 
+                    case decodeValue string outsideInfo.data of
                         Ok renderedText ->
-                            tagger <| (EntriesChanged) entries
+                            tagger <| RenderedText (Debug.log "ptx, (ok, 1)" renderedText)
 
                         Err e ->
-                            onError e
+                            onError (Debug.log "ptx (err,2)" e)
 
-
-                _ ->
+                _   ->
                     onError <| "Unexpected info from outside: " ++ toString outsideInfo
         )
 

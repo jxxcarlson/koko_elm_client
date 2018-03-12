@@ -271,8 +271,6 @@ type alias Model =
 type alias ErrorMessage =
     String
 
-
-
 -- https://www.reddit.com/r/elm/comments/5jd2xn/how_to_structure_elm_with_multiple_models/dbuu0m4/
 
 
@@ -422,7 +420,7 @@ type InfoForOutside
 
 
 type InfoForElm
-    = EntriesChanged (List String)
+    = RenderedText String
 
 
 type alias GenericOutsideData =
@@ -431,6 +429,7 @@ type alias GenericOutsideData =
 
 type Msg
     = NoOp
+    | LogErr String
     | AuthMsg AuthMsg
     | ChannelMsg ChannelMsg
     | UIMsg UIMsg

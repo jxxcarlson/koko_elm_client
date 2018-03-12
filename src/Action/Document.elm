@@ -24,6 +24,7 @@ module Action.Document
         , updateContent
         , updateCurrentDocument
         , updateCurrentDocumentWithContent
+        , updateRenderedText
         , updateDocuments
         , updateShareDocumentCommand
         , updateSharingData
