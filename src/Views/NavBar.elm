@@ -190,7 +190,7 @@ modeSelector model =
         , Utility.visibleIf (model.appState.signedIn && (model.window.width > Configuration.tabletWidth))
             (Basic.button "Editor" (Component.activeButton EditorPage model) [ EE.onClick (PageMsg (GoTo EditorPage)), width (px 50), center ])
 
-        -- , Utility.visibleIf model.appState.signedIn (el (activeButton ImagePage model) [ EE.onClick (GoTo ImagePage), alignBottom, height (px 30), padding 8 ] (text "Image"))
+        , Utility.visibleIf model.appState.signedIn (Basic.button "Image" (Component.activeButton ImagePage model) [ EE.onClick (PageMsg (GoTo ImagePage)), alignBottom, width (px 60), height (px 30), padding 8 ])
         , Utility.visibleIf ((model.current_user.username == "jxxcarlson") && (model.window.width > Configuration.tabletWidth))
             (Basic.button "Admin" (Component.activeButton AdminPage model) [ EE.onClick (PageMsg (GoTo AdminPage)), width (px 55), center ])
         ]

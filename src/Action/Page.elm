@@ -71,6 +71,16 @@ goToPage p model =
             , OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model p)
             )
 
+        (ImagePage, True) ->
+            let
+                appState =
+                    model.appState
+
+                newAppState =
+                    { appState | page = ImagePage, masterDocLoaded = False }
+            in
+            ( { model | appState = newAppState }, Cmd.none )
+
         ( StartPage, True ) ->
             let
                 appState =

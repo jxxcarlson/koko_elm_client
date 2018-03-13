@@ -69,24 +69,24 @@ app.ports.infoForOutside.subscribe(msg => {
        break; 
 
     case "UserState":
-      processUserState(msg.data)
-      break; 
+       processUserState(msg.data)
+       break; 
 
     case "SaveDocumentStack":
-      processDocumentStack(msg.data)
-      break;
+       processDocumentStack(msg.data)
+       break;
 
     case "AskToRecoverUserState":
-      askToRecoverUserState(msg.data)
-      break;
+       askToRecoverUserState(msg.data)
+       break;
 
     case "AskToReconnectUser":
-      askToReconnectUser(msg.data)
-      break; 
+       askToReconnectUser(msg.data)
+       break; 
       
     case "DisconnectUser":
-      disconnectUser()
-      break;
+       disconnectUser()
+       break;
   }
   
 })
