@@ -82,12 +82,19 @@ app.ports.infoForOutside.subscribe(msg => {
 
     case "AskToReconnectUser":
       askToReconnectUser(msg.data)
-      break;   
+      break; 
+      
+    case "DisconnectUser":
+      disconnectUser()
+      break;
   }
   
 })
 
-// LogErr "Expecting a List at _.documentStack but instead got: \"559,628\""
+var disconnectUser = function () {
+  console.log("disconnectUser");
+  localStorage.clear()
+}
 
 var askToReconnectUser = function (str) {
   console.log("reconnectUser");
@@ -179,40 +186,6 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
 
-
-// PERSIST AND RECONNECT USER
-
-
-
-
-
-// async function reconnect(localStorageAsString) {
-//   console.log('Request to reconnect received.');
-//   await sleep(300);
-//   app.ports.reconnectUser.send(localStorageAsString);
-//   console.log('Request to reconnect EXECUTED.');
-// }
-
-app.ports.disconnectUser.subscribe(function () {
-  console.log("app.ports.disconnectUser command received");
-  localStorage.clear()
-  console.log("local storage cleared")
-})
-
-
-
-
-// app.ports.askToRecoverUserState.subscribe(function (str) {
-//   console.log("app.ports.askToRecoverUserState received: " + str);
-//   if (str == "recoverUserState") {
-//     var localStorageAsString = JSON.stringify(localStorage)
-//     console.log("ask to recover user state with data: " + localStorageAsString)
-//     app.ports.recoverUserState.send(localStorageAsString);
-//   } else {
-//     console.log("I don't unerstand that: " + str)
-//   }
-
-// })
 
 
 // FILE UPLOAD I

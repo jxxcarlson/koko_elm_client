@@ -419,6 +419,7 @@ type InfoForOutside
     | SaveDocumentStack Json.Encode.Value
     | AskToReconnectUser Json.Encode.Value
     | AskToRecoverUserState Json.Encode.Value
+    | DisconnectUser Json.Encode.Value
     
 
 

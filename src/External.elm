@@ -54,8 +54,6 @@ compress str =
 
 {- OUTGOING -}
 
-port disconnectUser : String -> Cmd msg
-
 -- IMAGE UPLOAD
 
 port fileSelected : String -> Cmd msg

@@ -28,6 +28,8 @@ sendInfoOutside info =
             infoForOutside { tag = "AskToReconnectUser", data = value }
         AskToRecoverUserState value ->
             infoForOutside { tag = "AskToRecoverUserState", data = value }
+        DisconnectUser value ->
+            infoForOutside { tag = "DisconnectUser", data = value }
  
 
 getInfoFromOutside : (InfoForElm -> msg) -> (String -> msg) -> Sub msg
