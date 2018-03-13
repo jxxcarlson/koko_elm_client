@@ -87,13 +87,15 @@ app.ports.infoForOutside.subscribe(msg => {
   
 })
 
+// LogErr "Expecting a List at _.documentStack but instead got: \"559,628\""
+
 var askToReconnectUser = function (str) {
   console.log("reconnectUser");
   app.ports.infoForElm.send({tag: "ReconnectUser", data: localStorage})
 }
 
 var askToRecoverUserState = function(str) {
-  console.log("RecoverUserState :");
+  console.log("RecoverUserState" + JSON.stringify(localStorage));
   app.ports.infoForElm.send({tag: "RecoverUserState", data: localStorage});
 }
  

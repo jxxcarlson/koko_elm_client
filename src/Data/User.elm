@@ -82,6 +82,7 @@ userRecordDecoder =
         |> JPipeline.required "user" (userDecoder)
 
 
+
 string2IntList str =
     str
         |> String.split ","
@@ -93,10 +94,17 @@ string2IntList str =
 userStateRecordDecoder : Decoder UserStateRecord
 userStateRecordDecoder =
     map3 UserStateRecord
-        (field "documentStack" (list int))
-        (map Ok (field "currentDocumentId" int))
+        (map stringToIntList (field "documentStack" string))
+        (map String.toInt (field "currentDocumentId" string))
         (field "token" string)
 
+
+stringToIntList : String -> List Int
+stringToIntList str =
+  str 
+    |> String.split "," 
+    |> List.map (String.toInt >> (Result.withDefault 0))
+    |> List.filter (\x -> x /= 0)
 
 userStateRecordDecoder2 : Decoder UserStateRecord
 userStateRecordDecoder2 =

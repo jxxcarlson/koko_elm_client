@@ -54,6 +54,11 @@ texMacroDocmentID document =
 doRecoverUserState : UserStateRecord -> Model -> ( Model, Cmd Msg )
 doRecoverUserState userStateRecord model =
     let
+
+        _ = Debug.log "HERE IS" "doRecoverUserState"
+        
+        _ = Debug.log "doRecoverUserState, userStateRecord" userStateRecord
+
         appState =
             model.appState
 

@@ -67,3 +67,4 @@ port infoForOutside : GenericOutsideData -> Cmd msg
 
 
 port infoForElm : (GenericOutsideData -> msg) -> Sub msg
+

@@ -51,12 +51,10 @@ compress str =
     str |> String.Extra.replace " " "" |> String.Extra.replace "\n" ""
 
 
+
 {- OUTGOING -}
 
-
 port disconnectUser : String -> Cmd msg
-
-
 
 -- IMAGE UPLOAD
 
@@ -68,12 +66,9 @@ port fileUpload : String -> Cmd msg
 
 {- INCOMING -}
 
-port reconnectUser : (String -> msg) -> Sub msg
-
 port fileContentRead : (ImagePortData -> msg) -> Sub msg
 
 port fileUploaded : (Bool -> msg) -> Sub msg
-
 
 -- @zghor: FILE UPLOAD
 
