@@ -2,9 +2,10 @@ module Update.Image exposing (update)
 
 import External
 import Image.Upload
-import Types exposing (ImageMsg(..), Msg(ImageMsg))
+import Types exposing (Model, ImageMsg(..), Msg(ImageMsg))
 
 
+update : ImageMsg -> Model -> (Model, Cmd Msg)
 update submessage model =
     case submessage of
         ImageSelected ->
@@ -30,9 +31,15 @@ update submessage model =
             Image.Upload.getUploadCredentials model
 
         CredentialsResult (Ok result) ->
+           let 
+             _ = Debug.log "Credentials Result" result
+           in
             Image.Upload.request result.credentials model
 
         CredentialsResult (Err error) ->
+            let
+              _ = Debug.log("CredentialsResult") error
+            in
             ( model, Cmd.none )
 
         Files nativeFiles ->
@@ -43,7 +50,7 @@ update submessage model =
             ( model, Cmd.none )
 
         UploadComplete (Err error) ->
-            ( model, Cmd.none )
+            ( {model | message = "ERROR: " ++ (toString error)}  , Cmd.none )
 
         FileSelected ->
             ( model, External.fileUpload model.fileInputId )

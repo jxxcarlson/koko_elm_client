@@ -98,11 +98,12 @@ defaultImageRecord =
 
 type alias Credentials =
     { signature : String
+    , date : String
+    , credential : String
+    , algorithm : String
     , policy : String
     , key : String
     , acl : String
-    , awsAccessKeyId : String
-    , date : String
     }
 
 

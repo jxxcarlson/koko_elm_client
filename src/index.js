@@ -22,38 +22,6 @@ require('./index.html');
   var asciidoctor = Asciidoctor();
   var count = 0;
 
-var processDocumentContent = function(data) {
-
-  if (data.force == true) {
-     console.log("DEBOUNCE = TRUE")
-  } else {
-    console.log("DEBOUNCE = FALSE")
-  }
-
-  requestAnimationFrame(function() {
-
-      count = count + 1
-      switch (data.textType) {
-
-        case "adoc":
-           render_asciidoc(data.content)
-           break;
-        case "adoc_latex":
-           render_asciidoc_latex(data.content)
-           break;
-        case "plain":
-           render_plain(data.content)
-           break;
-        case "latex":
-            // force = true
-            render_latex(true, data.idList, data.content)
-            break;
-        default:
-          console.log("Default rendering ... asciidoc")
-          render_asciidoc(data.content)
-      }
-  })
-}
 
 // INFO FOR OUTSIDE
 
@@ -91,6 +59,43 @@ app.ports.infoForOutside.subscribe(msg => {
   
 })
 
+// BEGIN: Helper functions for app.ports.infoForOutside.subscribe
+// That is, the functions below process data received from Elm.
+
+var processDocumentContent = function(data) {
+
+  if (data.force == true) {
+     console.log("DEBOUNCE = TRUE")
+  } else {
+    console.log("DEBOUNCE = FALSE")
+  }
+
+  requestAnimationFrame(function() {
+
+      count = count + 1
+      switch (data.textType) {
+
+        case "adoc":
+           render_asciidoc(data.content)
+           break;
+        case "adoc_latex":
+           render_asciidoc_latex(data.content)
+           break;
+        case "plain":
+           render_plain(data.content)
+           break;
+        case "latex":
+            // force = true
+            render_latex(true, data.idList, data.content)
+            break;
+        default:
+          console.log("Default rendering ... asciidoc")
+          render_asciidoc(data.content)
+      }
+  })
+}
+
+
 var disconnectUser = function () {
   console.log("disconnectUser");
   localStorage.clear()
@@ -127,6 +132,10 @@ var processUserState = function(data) {
   localStorage.setItem("currentDocumentId", data.currentDocumentId);
 }
 
+
+// END of helper functions for 
+
+// BEGIN Document rendering functions
 
 document.getElementById("rendered_text2").style.visibility = "hidden";
 
@@ -186,11 +195,12 @@ document.getElementById("rendered_text2").style.visibility = "hidden";
     }
 
 
+// END Document rendering functions
 
-
-// FILE UPLOAD I
+// BEGIN: File upload functions
 
 app.ports.fileSelected.subscribe(function (id) {
+  console.log("app.ports.fileSelected.subscribe: " + id)
   var node = document.getElementById(id);
   if (node === null) {
     return;
@@ -225,6 +235,7 @@ app.ports.fileSelected.subscribe(function (id) {
 // FILE UPLOAD II (@zghor)
 
    app.ports.fileUpload.subscribe(function(id) {
+     console.log("app.ports.fileUpload.subscribe: " + id)
      var node = document.getElementById(id);
      if (node === null) {
        return;
@@ -253,4 +264,4 @@ app.ports.fileSelected.subscribe(function (id) {
 
 
 
-// app.ports.localStorageToElm.send(prepareLocalStorage());
+// END: File upload functions

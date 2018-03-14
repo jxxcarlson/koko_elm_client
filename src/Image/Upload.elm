@@ -1,6 +1,7 @@
 module Image.Upload exposing (..)
 
 -- import Types exposing(Model, Image, defaultImage, Credentials, CredentialsResult)
+-- https://elmseeds.thaterikperson.com/upload-to-s3
 
 import Date exposing (Date)
 import Date.Extra
@@ -93,45 +94,19 @@ dateString date =
     y ++ md
 
 
-getFormattedDate : Maybe Date -> String
-getFormattedDate date =
-    case date of
-        Just d ->
-            dateString d
-
-        Nothing ->
-            "19010101"
-
-
-awzCredential : Credentials -> String
-awzCredential credentials =
-    let
-        accessKeyId =
-            credentials.awsAccessKeyId
-
-        date =
-            credentials.date
-
-        cred =
-            accessKeyId ++ "/" ++ date ++ "/us-east-1/s3/aws4_request"
-
-        _ =
-            Debug.log "cred:" cred
-    in
-    cred
-
 
 decodeCredentials : Json.Decode.Decoder Credentials
 decodeCredentials =
-    Json.Decode.map6 Credentials
-        (field "signature" Json.Decode.string)
+    Json.Decode.map7 Credentials
+        (field "x-amz-signature" Json.Decode.string)
+        (field "x-amz-date" Json.Decode.string)
+        (field "x-amz-credential" Json.Decode.string)
+        (field "x-amz-algorithm" Json.Decode.string)
         (field "policy" Json.Decode.string)
         (field "key" Json.Decode.string)
         (field "acl" Json.Decode.string)
-        (field "AWSAccessKeyId" Json.Decode.string)
-        (field "date" Json.Decode.string)
-
-
+ 
+        
 decodeCredentialsWrapper : Json.Decode.Decoder CredentialsWrapper
 decodeCredentialsWrapper =
     Json.Decode.map2 CredentialsWrapper
@@ -141,20 +116,10 @@ decodeCredentialsWrapper =
 
 multiPartBody : Credentials -> FR.NativeFile -> Http.Body
 multiPartBody creds nf =
-    let
-        _ =
-            Debug.log "key" nf.name
-
-        _ =
-            Debug.log "x-amz-date" creds.date
-
-        _ =
-            Debug.log "x-amz-credential" (awzCredential creds)
-    in
     Http.multipartBody
         [ stringPart "key" nf.name
-        , stringPart "x-amz-algorithm" "AWS4-HMAC-SHA256"
-        , stringPart "x-amz-credential" (awzCredential creds)
+        , stringPart "x-amz-algorithm" creds.algorithm
+        , stringPart "x-amz-credential" creds.credential
         , stringPart "x-amz-date" creds.date
         , stringPart "policy" creds.policy
         , stringPart "x-amz-signature" creds.signature
@@ -174,23 +139,15 @@ uploadRequest creds file =
         , withCredentials = False
         }
 
-
-request result model =
+request : Credentials -> Model -> (Model, Cmd Msg)
+request credentials model =
     let
-        _ =
-            Debug.log "credentials" result
-
-        _ =
-            Debug.log "awzCredential = " (awzCredential result)
-
-        _ =
-            Debug.log "model.fileToUpload" model.fileToUpload
-
+        _ = Debug.log "Image.upload.request credentials" credentials 
         cmd =
             model.fileToUpload
                 |> Maybe.map
                     (\file ->
-                        uploadRequest result file
+                        uploadRequest credentials file
                             |> Http.send (ImageMsg << UploadComplete)
                     )
                 |> Maybe.withDefault Cmd.none
