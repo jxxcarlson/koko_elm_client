@@ -9,7 +9,7 @@ update submessage model =
     case submessage of
         ImageSelected ->
             ( { model | message = "Image selected" }
-            , External.fileSelected model.imageRecord.id
+            , External.fileSelected (Debug.log "IMAGE SELECTED" model.imageRecord.id)
             )
 
         ImageRead data ->
