@@ -53,7 +53,7 @@ update submessage model =
            let 
              _ = Debug.log "ERROR" error
            in
-            ( {model | message = "ERROR: " ++ (String error)}  , Cmd.none )
+            ( {model | message = "ERROR: " ++ (toString error)}  , Cmd.none )
 
         FileSelected ->
             ( model, External.fileUpload model.fileInputId )
