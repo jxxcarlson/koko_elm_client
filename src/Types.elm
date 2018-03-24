@@ -1,7 +1,7 @@
 module Types exposing (..)
 
 import Date exposing (Date)
-import Dict 
+import Dict
 import Http
 import Image.FileReader as FileReader exposing (NativeFile)
 import Json.Encode
@@ -116,8 +116,10 @@ type alias CredentialsWrapper =
 type alias DocumentDict =
     Dict.Dict String Document
 
+
 type alias AccessDict =
-  Dict.Dict String String
+    Dict.Dict String String
+
 
 type alias DocumentAttributes =
     { public : Bool
@@ -228,7 +230,7 @@ type alias AppState =
     , tickInterval : Float
     , seed : Int
     , command : String
-    , shareDocumentCommand : String 
+    , shareDocumentCommand : String
     }
 
 
@@ -271,6 +273,8 @@ type alias Model =
 
 type alias ErrorMessage =
     String
+
+
 
 -- https://www.reddit.com/r/elm/comments/5jd2xn/how_to_structure_elm_with_multiple_models/dbuu0m4/
 
@@ -421,13 +425,12 @@ type InfoForOutside
     | AskToReconnectUser Json.Encode.Value
     | AskToRecoverUserState Json.Encode.Value
     | DisconnectUser Json.Encode.Value
-    
 
 
 type InfoForElm
     = RenderedText String
-   | RecoveredUserState UserStateRecord
-   | UserLoginInfo LoginLocalStorageRecord
+    | RecoveredUserState UserStateRecord
+    | UserLoginInfo LoginLocalStorageRecord
 
 
 type alias GenericOutsideData =
