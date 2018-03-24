@@ -50,6 +50,9 @@ update submessage model =
             ( model, Cmd.none )
 
         UploadComplete (Err error) ->
+           let 
+             _ = Debug.log "ERROR" error
+           in
             ( {model | message = "ERROR: " ++ (toString error)}  , Cmd.none )
 
         FileSelected ->
@@ -62,3 +65,10 @@ update submessage model =
         FileUploaded False ->
             -- obviously, set some state notifying failure
             ( model, Cmd.none )
+
+-- errorMessage error =
+--   case error of 
+--         BadStatus status -> status.code |> toString 
+--     _ -> "Some other error"
+
+  
