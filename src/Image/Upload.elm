@@ -13,21 +13,6 @@ import Request.Api
 import Types exposing (..)
 
 
-getUploadCredentials1 model =
-    let
-        image =
-            model.imageRecord.mImage |> Maybe.withDefault defaultImage
-
-        url =
-            Request.Api.api ++ "/credentials?filename=" ++ image.filename ++ "&mimetype=image/jpeg&bucket=noteimages"
-
-        cmd =
-            Http.get url decodeCredentialsWrapper
-                |> Http.send CredentialsResult
-    in
-    ( { model | message = "image: " ++ image.filename }, cmd )
-
-
 getUploadCredentials : Model -> ( Model, Cmd Msg )
 getUploadCredentials model =
     let
@@ -65,7 +50,7 @@ getUploadCredentials model =
             Debug.log "FILE = " model.fileToUpload
 
         url =
-            Request.Api.api ++ "/credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
+            Request.Api.api ++ "credentials?filename=" ++ filename ++ "&mimetype=" ++ mimeType ++ "&bucket=noteimages"
 
         cmd =
             HB.get url
@@ -142,7 +127,7 @@ uploadRequest creds file =
 request : Credentials -> Model -> (Model, Cmd Msg)
 request credentials model =
     let
-        _ = Debug.log "Image.upload.request credentials" credentials 
+        _ = Debug.log "Image.upload.request credentials (Yada yada)" credentials 
         cmd =
             model.fileToUpload
                 |> Maybe.map
