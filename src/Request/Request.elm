@@ -1,4 +1,4 @@
-module Request exposing (doRequest, RequestParameters)
+module Request.Request exposing (doRequest, RequestParameters)
 
 import Http exposing (send)
 import HttpBuilder as HB
