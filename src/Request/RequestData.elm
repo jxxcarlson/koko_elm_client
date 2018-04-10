@@ -1,45 +1,70 @@
 module Request.RequestData exposing (..)
 
 import Data.Document
-import Types
-    exposing
-        ( Model
-        
-        )
+-- import Types exposing (DocMsg(..), Document, DocumentDict, Msg(DocMsg))
+import Types exposing(..)
 import HttpBuilder as HB
 import Json.Encode as Encode
-import Configuration
+import Json.Decode as Decode
 import Request.Request exposing (RequestParameters)
+import Http
+
+import Data.Document
+import Request.Api
+
+
+type alias DocumentRequestType resourceType = String -> String -> RequestParameters resourceType
+
+--  GetDocuments
+-- <function> : Result.Result Http.Error Types.DocumentsRecord -> Types.DocMsg
+
+
+-- -- getDocumentsParameters : String -> String -> RequestParameters resourceType -> RequestParameters resourceType
+-- getDocumentsParameters : String -> String -> (Result.Result Http.Error Types.DocumentsRecord -> Types.DocMsg)-> RequestParameters DocumentsRecord 
 
 
 
--- signupParameters : Model -> RequestParameters VerifiedVoter
--- signupParameters model =
---     { api = Configuration.api
---     , route = "/voters"
---     , payload = Data.encodeVoter model
---     , resourceType = CreateVoter
---     , token = ""
---     , decoder = Data.verifiedVoterDecoder
---     , method = HB.post
+-- value type is 
+getDocumentsParameters  token tagger route =
+    { api = Request.Api.api
+    , route = route
+    , payload = Encode.null
+    , tagger = tagger
+    , token = token
+    , decoder = Data.Document.decodeDocumentsRecord
+    , method = HB.get
+    }
+
+}
+
+-- getDocumentsParameters
+--     : token
+--     -> msg
+--     -> route
+--     -> { api : String
+--     , decoder : Json.Decode.Decoder DocumentsRecord
+--     , method : String -> HB.RequestBuilder ()
+--     , msg : Result Http.Error resourceType -> Msg
+--     , payload : Encode.Value
+--     , route : route
+--     , token : token
 --     }
 
+--     | GetDocuments (Result Http.Error DocumentsRecord)
+--     | GetUserDocuments (Result Http.Error DocumentsRecord)
+--     | GetSpecialDocument (Result Http.Error DocumentsRecord)
+--     | GetMasterDocument (Result Http.Error DocumentsRecord)
 
--- inviteBuddyRequestData : Model -> RequestParameters Int
--- inviteBuddyRequestData model =
---     let
---         buddy_ =
---             model.buddy
+--     | CampaignsReceived (Result Http.Error CampaignList)
 
---         buddy =
---             { buddy_ | campaign = model.voter.campaign }
---     in
---         { api = Configuration.api
---         , route = "/voters/invitebuddy"
---         , payload = Data.buddyEncoder buddy
---         , resourceType = InviteBuddy
---         , token = model.token
---         , decoder = Data.pointsDecoder
---         , method = HB.post
---         }
-
+-- Msg = CampaignsReceived (Result Http.Error CampaignList)
+-- getCampaignsData : Model -> RequestParameters CampaignList
+-- getCampaignsData model =
+--     { api = Configuration.api
+--     , route = "/campaigns"
+--     , payload = Data.signInCredentialsEncoder model.voter.email model.password
+--     , msg = CampaignsReceived
+--     , token = ""
+--     , decoder = Data.campaignListDecoder
+--     , method = HB.get
+--     }

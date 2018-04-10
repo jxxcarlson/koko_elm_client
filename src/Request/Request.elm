@@ -1,4 +1,4 @@
-module Request.Request exposing (doRequest, RequestParameters)
+module Request.Request exposing (doRequest, Tagger, RequestParameters)
 
 import Http exposing (send)
 import HttpBuilder as HB
@@ -6,12 +6,14 @@ import Json.Encode as Encode
 import Json.Decode exposing (Decoder)
 import Types exposing (Msg)
 
+type alias Tagger resourceType = Result Http.Error resourceType -> Msg
+
 
 type alias RequestParameters resourceType =
     { api : String
     , route : String
     , payload : Encode.Value
-    , resourceType : Result Http.Error resourceType -> Msg
+    , tagger : Tagger resourceType
     , token : String
     , decoder : Decoder resourceType
     , method : String -> HB.RequestBuilder ()
@@ -21,7 +23,7 @@ type alias RequestParameters resourceType =
 type alias RequestPacket resourceType =
     RequestParameters resourceType -> HB.RequestBuilder resourceType
 
-
+putHeader : String -> HB.RequestBuilder a -> HB.RequestBuilder a
 putHeader token =
     if token == "" then
         identity
@@ -45,4 +47,4 @@ doRequest requestData =
         request =
             setupRequest requestData
     in
-        Http.send requestData.resourceType (request requestData |> HB.toRequest)
+        Http.send requestData.tagger (request requestData |> HB.toRequest)
