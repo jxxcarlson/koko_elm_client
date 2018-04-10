@@ -27,6 +27,7 @@ import Document.QueryParser exposing (parseQuery)
 import Http exposing (send)
 import HttpBuilder as HB exposing (..)
 import Json.Decode as Decode exposing (..)
+import Json.Encode as Encode
 import Request.Api exposing (api, documentsUrl, publicDocumentsUrl)
 import Task
 import Types exposing (..)
@@ -53,6 +54,10 @@ getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) ->
 getDocuments route query message token =
     getDocumentsRequest route query message token
         |> HB.send message
+
+getDocumentsNew : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> Cmd Msg
+getDocumentsNew route token tagger =
+   Request.doRequest <| RequestData.getDocumentsParameters route token (DocMsg << GetDocuments)
 
 
 getPublicDocuments : String -> String -> Tagger DocumentsRecord -> Cmd Msg

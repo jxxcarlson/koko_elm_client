@@ -225,46 +225,63 @@ tableOfContentsMacro document =
             "\n\n"
 
 
+getEnrichedContent : Document -> String 
+getEnrichedContent document =
+  let
+    maybeSectionNumber =
+            KeyValue.getIntValueForKeyFromTagList "sectionNumber" document.tags
+
+    sectionNumberCommand_ =
+            sectionNumberCommand 0 document
+
+    tableOfContentsMacro_ =
+                (tableOfContentsMacro document)
+  in
+    sectionNumberCommand_ ++ tableOfContentsMacro_ ++ document.content
+
+getMacroDefinitions model = 
+    let
+        macrosString =
+             Document.MiniLatex.macros model.documentDict |> (\x -> "\n$$\n" ++ String.trim x ++ "\n$$\n")
+    in
+        macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
+
+
+{-| XX: Too long -}
 latexFullRender : Model -> ( Model, Cmd Msg )
 latexFullRender model =
     let
+        {- Extract values -}
         appState =
             model.appState
 
         document =
             model.current_document
 
-        maybeSectionNumber =
-            KeyValue.getIntValueForKeyFromTagList "sectionNumber" document.tags
+        texmacros =
+            Document.MiniLatex.macros model.documentDict
 
-        sectionNumberCommand_ =
-            sectionNumberCommand 0 document
+       {-Computed values -}
+        enrichedContent = getEnrichedContent document
 
-        tableOfContentsMacro_ =
-            Debug.log "TOC"
-                (tableOfContentsMacro model.current_document)
-
-        enrichedContent =
-            sectionNumberCommand_ ++ tableOfContentsMacro_ ++ document.content
-
-        macroDefinitions =
-            let
-                macrosString =
-                    Document.MiniLatex.macros model.documentDict |> (\x -> "\n$$\n" ++ String.trim x ++ "\n$$\n")
-            in
-            macrosString ++ "\n\n$$\n\\newcommand{\\label}[1]{}" ++ "\n$$\n\n"
-
+        macroDefinitions = getMacroDefinitions model
+ 
+        {-New values -}
         newEditRecord =
             MiniLatex.Driver.update model.appState.seed MiniLatex.Driver.emptyEditRecord enrichedContent
 
         rendered_content =
             MiniLatex.Driver.getRenderedText macroDefinitions newEditRecord
 
-        texmacros =
-            Document.MiniLatex.macros model.documentDict
-
         textToExport =
-            Source.texPrefix ++ texmacros ++ sectionNumberCommand -1 document ++ tableOfContentsMacro_ ++ MiniLatex.RenderLatexForExport.renderLatexForExport document.content ++ Source.texSuffix
+            [
+                Source.texPrefix, 
+                texmacros, 
+                sectionNumberCommand -1 document,
+                tableOfContentsMacro document,
+                MiniLatex.RenderLatexForExport.renderLatexForExport document.content,
+                Source.texSuffix 
+            ] |> String.join ""
 
         newAppState =
             { appState | editRecord = newEditRecord }
@@ -328,6 +345,8 @@ updateCurrentDocumentWithContent model =
         updateCurrentDocument model model.current_document
 
 
+
+{-| XX: Too long -}
 updateCurrentLatexDocumentWithContent : Model -> ( Model, Cmd Msg )
 updateCurrentLatexDocumentWithContent model =
     let
@@ -362,6 +381,8 @@ updateCurrentLatexDocumentWithContent model =
     updateCurrentDocument newModel newDocument
 
 
+
+{-| XX: Too long -}
 updateCurrentDocument : Model -> Document -> ( Model, Cmd Msg )
 updateCurrentDocument model document =
     let
@@ -424,6 +445,8 @@ updateCurrentDocument model document =
 -- (a -> msg) -> Generator a -> Cmd msg
 
 
+
+{-| XX: Too long -}
 updateDocuments : Model -> DocumentsRecord -> ( Model, Cmd Msg )
 updateDocuments model documentsRecord =
     let
@@ -840,6 +863,7 @@ masterDocOpened model document =
 -}
 
 
+{-| XX: Too long -}
 selectDocument : Model -> Document -> ( Model, Cmd Msg )
 selectDocument model document =
     let

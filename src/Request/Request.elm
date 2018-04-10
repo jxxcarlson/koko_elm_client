@@ -8,7 +8,10 @@ import Types exposing (Msg)
 
 type alias Tagger resourceType = Result Http.Error resourceType -> Msg
 
-type alias SetupRequestData resourceType =  String -> String -> Tagger resourceType -> RequestParameters resourceType 
+type alias SetupRequestData resourceType =  String -> String  -> Tagger resourceType -> RequestParameters resourceType 
+
+type alias SetupRequestDataWithPayload resourceType =  String -> String -> Encode.Value -> Tagger resourceType -> RequestParameters resourceType 
+
 
 type alias RequestParameters resourceType =
     { api : String
