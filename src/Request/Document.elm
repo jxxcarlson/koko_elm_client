@@ -30,6 +30,8 @@ import Json.Decode as Decode exposing (..)
 import Request.Api exposing (api, documentsUrl, publicDocumentsUrl)
 import Task
 import Types exposing (..)
+import Request.Request  as Request exposing(Tagger)
+import Request.RequestData   as RequestData
 
 
 -- http://package.elm-lang.org/packages/lukewestby/elm-http-extra/5.2.0/Http-Extra
@@ -51,6 +53,14 @@ getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) ->
 getDocuments route query message token =
     getDocumentsRequest route query message token
         |> HB.send message
+
+
+getPublicDocuments : String -> String -> Tagger DocumentsRecord -> Cmd Msg
+getPublicDocuments query token tagger =
+  let 
+    route = "/public/documents" ++ "?"  ++ query
+  in
+   Request.doRequest <| RequestData.getDocumentsParameters route "" (DocMsg << GetDocuments)
 
 
 getDocumentWithId : String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Int -> Cmd Msg

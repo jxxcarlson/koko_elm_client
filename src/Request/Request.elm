@@ -1,4 +1,4 @@
-module Request.Request exposing (doRequest, Tagger, RequestParameters)
+module Request.Request exposing (doRequest, Tagger, RequestParameters, SetupRequestData)
 
 import Http exposing (send)
 import HttpBuilder as HB
@@ -8,6 +8,7 @@ import Types exposing (Msg)
 
 type alias Tagger resourceType = Result Http.Error resourceType -> Msg
 
+type alias SetupRequestData resourceType =  String -> String -> Tagger resourceType -> RequestParameters resourceType 
 
 type alias RequestParameters resourceType =
     { api : String
@@ -18,7 +19,6 @@ type alias RequestParameters resourceType =
     , decoder : Decoder resourceType
     , method : String -> HB.RequestBuilder ()
     }
-
 
 type alias RequestPacket resourceType =
     RequestParameters resourceType -> HB.RequestBuilder resourceType
