@@ -46,16 +46,18 @@ import MiniLatex.RenderLatexForExport
 import MiniLatex.Source as Source
 import OutsideInfo
 import Random
-import Regex
 import Request.Api
 import Request.Document
 import Task
-import Types exposing (..)
+import Types exposing (AppState, 
+            Model, Document, 
+            DocumentsRecord, Msg(DocMsg), DocMsg(..)
+            ,Device(..), Page(..),Tool(..), InfoForOutside(UserState, WindowData))
 import User.Synchronize
 import Utility exposing (replaceIf)
 import Utility.KeyValue as KeyValue
 import Views.External
-import External 
+
 
 
 {-
@@ -191,7 +193,8 @@ clearEditRecord appState =
     in
     { appState | editRecord = newEditRecord }
 
-
+-- sectionNumberCommand : Int -> { a | tags : List String } -> String
+sectionNumberCommand : Int -> Document -> String
 sectionNumberCommand shift document =
     let
         maybeSectionNumber =
