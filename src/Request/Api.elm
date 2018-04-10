@@ -7,32 +7,32 @@ host : String
 host =
     Configuration.host
 
-api : String 
-api = host ++ "/api"
+api2 : String 
+api2 = host ++ "/api"
 
-api1 : String
-api1 =
+api : String
+api =
     host ++ "/api/"
 
 
 publicDocumentsUrl : String
 publicDocumentsUrl =
-    api1 ++ "public/documents"
+    api ++ "public/documents"
 
 
 documentsUrl : String
 documentsUrl =
-    api1 ++ "documents"
+    api ++ "documents"
 
 
 loginUrl : String
 loginUrl =
-    api1 ++ "authentication"
+    api ++ "authentication"
 
 
 registerUserUrl : String
 registerUserUrl =
-    api1 ++ "users"
+    api ++ "users"
 
 
 printUrl : String

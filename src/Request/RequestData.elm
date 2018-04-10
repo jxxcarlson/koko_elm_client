@@ -16,7 +16,7 @@ import Request.Api
    from Msg = ... GetDocuments (Result Http.Error DocumentsRecord) .. -}
 getDocumentsParameters : SetupRequestData DocumentsRecord
 getDocumentsParameters  route token tagger =
-    { api = Request.Api.api
+    { api = Request.Api.api2
     , route = route
     , payload = Encode.null
     , tagger = tagger
