@@ -7,6 +7,7 @@ module Request.Document
         , getDocumentWithId
         , getDocumentWithQuery
         , getDocuments
+        , getDocumentsNew
         , getDocumentsRequest
         , getDocumentsTask
         , getPublicDocumentsTask

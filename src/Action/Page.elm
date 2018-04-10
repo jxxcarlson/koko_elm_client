@@ -3,24 +3,22 @@ module Action.Page exposing (..)
 import Action.Document
 import Action.UI
 import Document.Dictionary
-import External
-import MiniLatex.Differ as Differ exposing (EditRecord)
 import Request.Document
 import Task
 import Time
-import Types exposing (..)
+import Types exposing (Model, Page(..), Msg(DocMsg, PeriodicMsg), PeriodicMsg(ReceiveTime), DocMsg(..), 
+   ActiveDocumentList(..), InfoForOutside(WindowData))
 import User.Login
 import Views.External
 import OutsideInfo
 
-
+setHomePage : Model -> (Model, Cmd Msg)
 setHomePage model =
     let
-        query =
-            "key=home&authorname=" ++ User.Login.shortUsername model
+        route = "public/documents" ++ "key=home&authorname=" ++ User.Login.shortUsername model
 
         cmd =
-            Request.Document.getDocuments "public/documents" query (DocMsg << GetDocuments) model.current_user.token
+            Request.Document.getDocumentsNew route model.current_user.token (DocMsg << GetDocuments)
 
         appState =
             model.appState
@@ -31,6 +29,7 @@ setHomePage model =
     ( { model | appState = newAppState }, cmd )
 
 
+setEditPage : Model -> (Model, Cmd Msg)
 setEditPage model =
     let
         appState =
@@ -51,8 +50,6 @@ setEditPage model =
     , Cmd.batch
         [ OutsideInfo.sendInfoOutside (WindowData <| Views.External.encodeWindowData model EditorPage)
         , Task.perform (PeriodicMsg << ReceiveTime) Time.now
-
-        --, Document.Dictionary.setItemInDict ("title=texmacros&authorname=" ++ model.current_user.username) "texmacros" model.current_user.token
         ]
     )
 
