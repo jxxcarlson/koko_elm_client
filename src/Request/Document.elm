@@ -7,7 +7,7 @@ module Request.Document
         , getDocumentWithId
         , getDocumentWithQuery
         , getDocuments
-        , getDocumentsNew
+        , getDocumentsNew       
         , getDocumentsRequest
         , getDocumentsTask
         , getPublicDocumentsTask
@@ -70,13 +70,13 @@ getPublicDocuments query token tagger =
 
 
 getDocumentWithId : String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Int -> Cmd Msg
-getDocumentWithId route message token id =
+getDocumentWithId route tagger token id =
     let
-        query =  Debug.log "Request.getDocumentWithId, id"
+        query =  
             ("id=" ++ toString id)
     in
-    getDocumentsRequest route query message token
-        |> HB.send message
+    getDocumentsRequest route query tagger token
+        |> HB.send tagger
 
 
 getDocumentsTask : String -> String -> String -> Task.Task Http.Error DocumentsRecord
@@ -92,6 +92,8 @@ getDocumentsTask route query token =
                 |> HB.toRequest
     in
     request |> Http.toTask
+
+
 
 
 getPublicDocumentsTask : String -> String -> Task.Task Http.Error DocumentsRecord
@@ -126,12 +128,12 @@ saveDocumentTask queryString document model =
 
 
 getDocumentWithQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
-getDocumentWithQuery processor query =
-    getDocuments "public/documents" query processor ""
+getDocumentWithQuery tagger query =
+    getDocuments "public/documents" query tagger ""
 
 
 getDocumentWithAuthenticatedQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> String -> Cmd Msg
-getDocumentWithAuthenticatedQuery processor token query =
+getDocumentWithAuthenticatedQuery tagger token query =
     let
         url =
             documentsUrl ++ "?" ++ query
@@ -139,7 +141,7 @@ getDocumentWithAuthenticatedQuery processor token query =
     HB.get url
         |> HB.withHeader "Authorization" ("Bearer " ++ token)
         |> withExpect (Http.expectJson decodeDocumentsRecord)
-        |> HB.send processor
+        |> HB.send tagger
 
 
 getDocumentWithAuthenticatedQueryTask : String -> String -> Task.Task Http.Error DocumentsRecord

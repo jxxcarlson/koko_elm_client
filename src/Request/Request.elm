@@ -51,3 +51,7 @@ doRequest requestData =
             setupRequest requestData
     in
         Http.send requestData.tagger (request requestData |> HB.toRequest)
+
+
+-- reallyDoRequest route token tagger =
+--    doRequest <| getDocumentsParameters route token tagger
