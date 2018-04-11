@@ -28,7 +28,6 @@ import Document.QueryParser exposing (parseQuery)
 import Http exposing (send)
 import HttpBuilder as HB exposing (..)
 import Json.Decode as Decode exposing (..)
-import Json.Encode as Encode
 import Request.Api exposing (api, documentsUrl, publicDocumentsUrl)
 import Task
 import Types exposing (..)
@@ -40,7 +39,8 @@ import Request.RequestData   as RequestData
 -- getDocumentsRequest : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
 
 
-getDocumentsRequest : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> HB.RequestBuilder Types.DocumentsRecord
+
+getDocumentsRequest : String -> String -> Tagger DocumentsRecord -> String -> HB.RequestBuilder Types.DocumentsRecord
 getDocumentsRequest route query message token =
     let
         url = Debug.log "Request.getDocumentsRequest"
@@ -51,12 +51,12 @@ getDocumentsRequest route query message token =
         |> withExpect (Http.expectJson decodeDocumentsRecord)
 
 
-getDocuments : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocuments : String -> String -> Tagger DocumentsRecord -> String -> Cmd Msg
 getDocuments route query message token =
     getDocumentsRequest route query message token
         |> HB.send message
 
-getDocumentsNew : String -> String -> (Result Http.Error DocumentsRecord -> Msg) -> Cmd Msg
+getDocumentsNew : String -> String -> Tagger DocumentsRecord -> Cmd Msg
 getDocumentsNew route token tagger =
    Request.doRequest <| RequestData.getDocumentsParameters route token (DocMsg << GetDocuments)
 
@@ -69,7 +69,7 @@ getPublicDocuments query token tagger =
    Request.doRequest <| RequestData.getDocumentsParameters route "" (DocMsg << GetDocuments)
 
 
-getDocumentWithId : String -> (Result Http.Error DocumentsRecord -> Msg) -> String -> Int -> Cmd Msg
+getDocumentWithId : String -> Tagger DocumentsRecord -> String -> Int -> Cmd Msg
 getDocumentWithId route tagger token id =
     let
         query =  
@@ -127,12 +127,12 @@ saveDocumentTask queryString document model =
     request |> Http.toTask
 
 
-getDocumentWithQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> Cmd Msg
+getDocumentWithQuery : Tagger DocumentsRecord -> String -> Cmd Msg
 getDocumentWithQuery tagger query =
     getDocuments "public/documents" query tagger ""
 
 
-getDocumentWithAuthenticatedQuery : (Result.Result Http.Error DocumentsRecord -> Msg) -> String -> String -> Cmd Msg
+getDocumentWithAuthenticatedQuery : Tagger DocumentsRecord -> String -> String -> Cmd Msg
 getDocumentWithAuthenticatedQuery tagger token query =
     let
         url =
@@ -276,9 +276,8 @@ put segment queryString model document =
 
 
 
--- createDocument : Document -> String -> Cmd Msg
 
-
+createDocument : Document -> String -> Cmd Msg
 createDocument document token =
     let
         params =
