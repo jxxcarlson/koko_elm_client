@@ -7,8 +7,11 @@ host : String
 host =
     Configuration.host
 
-api2 : String 
-api2 = host ++ "/api"
+
+api2 : String
+api2 =
+    host ++ "/api"
+
 
 api : String
 api =
@@ -39,14 +42,16 @@ printUrl : String
 printUrl =
     host ++ "/print/documents"
 
+
 showVersionsUrl : String
 showVersionsUrl =
-    host ++ "/archive/versions"   
+    host ++ "/archive/versions"
 
 
 newVersionUrl : String
 newVersionUrl =
     host ++ "/archive/new_version"
+
 
 exportUrl : String
 exportUrl =
