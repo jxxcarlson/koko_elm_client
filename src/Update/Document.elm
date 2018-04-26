@@ -16,20 +16,18 @@ import Utility
 
 update submessage model =
     case submessage of
-
-        UpdateShareData -> 
-          (model, Action.Document.updateSharingData model)
+        UpdateShareData ->
+            ( model, Document.Cmd.updateSharingData model )
 
         InputShareDocumentCommand command ->
-          Action.Document.updateShareDocumentCommand model command
+            Action.Document.updateShareDocumentCommand model command
 
         IncrementVersion ->
-          Action.Document.incrementVersion model
+            Action.Document.incrementVersion model
 
         SetRepositoryName name ->
-          Action.Document.updateArchive name model
-        
- 
+            Action.Document.updateArchive name model
+
         RandomDocuments ->
             Document.Search.getRandomDocuments model
 
@@ -47,9 +45,9 @@ update submessage model =
                 newAppState =
                     { appState | page = EditorPage }
             in
-            ( { model | current_document = model.specialDocument, appState = newAppState }
-            , Cmd.none
-            )
+                ( { model | current_document = model.specialDocument, appState = newAppState }
+                , Cmd.none
+                )
 
         LoadContent (Ok documentsRecord) ->
             Action.Document.loadContent model documentsRecord
@@ -85,7 +83,7 @@ update submessage model =
                         Nothing ->
                             Document.emptyDocument
             in
-            ( { model | specialDocument = specialDocument }, Cmd.none )
+                ( { model | specialDocument = specialDocument }, Cmd.none )
 
         GetSpecialDocument (Err err) ->
             ( { model | message = "Getting special document: error" }, Cmd.none )
@@ -109,7 +107,7 @@ update submessage model =
                     else
                         documentDict
             in
-            ( { model | documentDict = newDocumentDict }, Cmd.none )
+                ( { model | documentDict = newDocumentDict }, Cmd.none )
 
         SetDocumentInDict (Err err) ->
             ( { model | message = "Error setting key in documentDict" }, Cmd.none )
@@ -130,32 +128,24 @@ update submessage model =
                 newDocuments =
                     Utility.replaceIf (Action.Document.hasId masterDocument.id) masterDocument oldDocuments
             in
-            ( { model | master_document = masterDocument }, Cmd.none )
+                ( { model | master_document = masterDocument }, Cmd.none )
 
         GetMasterDocument (Err err) ->
             ( { model | message = "Getting master document: error" }, Cmd.none )
-
-        PutDocument (Ok serverReply) ->
-            case serverReply of
-                () ->
-                    ( model, Cmd.none )
-
-        PutDocument (Err error) ->
-            ( { model | message = "PD: " ++ Action.Error.httpErrorString error }, Cmd.none )
 
         NewDocument ->
             let
                 newDocument =
                     Document.defaultDocument
             in
-            Action.Document.createDocument model Document.blankDocument
+                Action.Document.createDocument model Document.blankDocument
 
         NewDiaryEntry ->
             let
                 newDocument =
                     Document.diaryEntry
             in
-            Action.Document.createDocument model (Document.diaryEntry model.date)
+                Action.Document.createDocument model (Document.diaryEntry model.date)
 
         GetDiary ->
             Document.Search.searchWithParameters "key=diary" Created Private ReaderPage model
@@ -165,7 +155,7 @@ update submessage model =
                 _ =
                     Debug.log "MAIN: AddToMasterDocument" "now"
             in
-            Document.MasterDocument.addTo model
+                Document.MasterDocument.addTo model
 
         --( model , Request.Document.createDocument newDocument model.current_user.token )
         AttachCurrentDocument location ->
@@ -176,7 +166,7 @@ update submessage model =
                 newAppState =
                     { appState | command = Document.MasterDocument.attach location model }
             in
-            ( { model | appState = newAppState }, Cmd.none )
+                ( { model | appState = newAppState }, Cmd.none )
 
         CreateDocument (Ok documentRecord) ->
             Action.Document.selectNewDocument model documentRecord.document
@@ -192,7 +182,7 @@ update submessage model =
                 newAppState =
                     { appState | deleteState = Pending }
             in
-            ( { model | appState = newAppState }, Cmd.none )
+                ( { model | appState = newAppState }, Cmd.none )
 
         CancelDocumentDelete ->
             let
@@ -202,7 +192,7 @@ update submessage model =
                 newAppState =
                     { appState | deleteState = Resting }
             in
-            ( { model | appState = newAppState }, Cmd.none )
+                ( { model | appState = newAppState }, Cmd.none )
 
         DeleteCurrentDocument ->
             let
@@ -212,12 +202,12 @@ update submessage model =
                 newAppState =
                     { appState | deleteState = Resting }
             in
-            ( { model
-                | appState = newAppState
-                , message = "Delete current document"
-              }
-            , Request.Document.deleteCurrentDocument model
-            )
+                ( { model
+                    | appState = newAppState
+                    , message = "Delete current document"
+                  }
+                , Request.Document.deleteCurrentDocument model
+                )
 
         DeleteDocument serverReply ->
             Action.Document.deleteDocument serverReply model
@@ -287,4 +277,4 @@ update submessage model =
                 newAppState =
                     { appState | seed = Debug.log "newSeed" newSeed }
             in
-            ( { model | appState = newAppState }, Cmd.none )
+                ( { model | appState = newAppState }, Cmd.none )
